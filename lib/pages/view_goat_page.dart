@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
 import '../models/goat.dart';
+import '../models/event.dart'; // Import Event model from models
 import 'edit_goat_page.dart';
 
 class ViewGoatPage extends StatefulWidget {
@@ -22,14 +23,15 @@ class _ViewGoatPageState extends State<ViewGoatPage>
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
   late Goat _currentGoat;
+  List<Event> _goatEvents = [];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _currentGoat = widget.goat;
-    // load persisted image if any
     _loadPersistedImage();
+    _loadGoatEvents();
   }
 
   Future<void> _loadPersistedImage() async {
@@ -63,37 +65,113 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     } catch (_) {}
   }
 
+  Future<void> _loadGoatEvents() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final data = prefs.getString('events');
+      if (data != null) {
+        final List<dynamic> list = jsonDecode(data) as List<dynamic>;
+        final allEvents = list.map((e) => Event.fromJson(e as Map<String, dynamic>)).toList();
+        
+        // Filter events for this specific goat
+        setState(() {
+          _goatEvents = allEvents.where((event) => 
+            event.tagNo == widget.goat.tagNo || 
+            (event.isMassEvent && event.tagNo.contains(widget.goat.tagNo))
+          ).toList();
+        });
+      }
+    } catch (e) {
+      // ignore errors
+    }
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
 
+  // Fixed Age Calculation
+  DateTime? _tryParseDate(String dateString) {
+    try {
+      // Try ISO format first
+      final isoDate = DateTime.tryParse(dateString);
+      if (isoDate != null) return isoDate;
+      
+      // Try common formats
+      final parts = dateString.split(RegExp(r'[/\-.]'));
+      if (parts.length == 3) {
+        // Try DD/MM/YYYY
+        final day = int.tryParse(parts[0]);
+        final month = int.tryParse(parts[1]);
+        final year = int.tryParse(parts[2]);
+        
+        if (year != null && month != null && day != null) {
+          if (year > 1000 && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+            return DateTime(year, month, day);
+          }
+        }
+        
+        // Try YYYY-MM-DD
+        if (parts[0].length == 4) {
+          final year2 = int.tryParse(parts[0]);
+          final month2 = int.tryParse(parts[1]);
+          final day2 = int.tryParse(parts[2]);
+          
+          if (year2 != null && month2 != null && day2 != null) {
+            return DateTime(year2, month2, day2);
+          }
+        }
+      }
+    } catch (e) {
+      return null;
+    }
+    return null;
+  }
+
   String _calculateAge() {
     if (widget.goat.dateOfBirth == null || widget.goat.dateOfBirth!.isEmpty) {
       return '-';
     }
-    try {
-      DateTime dob = DateTime.parse(widget.goat.dateOfBirth!);
-      DateTime now = DateTime.now();
-      int days = now.difference(dob).inDays;
-      
-      if (days == 0) return '1 day';
-      if (days == 1) return '1 day';
-      if (days < 30) return '$days days';
-      if (days < 365) {
-        int months = (days / 30).floor();
-        return months == 1 ? '1 month' : '$months months';
-      }
-      int years = (days / 365).floor();
-      return years == 1 ? '1 year' : '$years years';
-    } catch (e) {
-      return '-';
+    
+    final dobString = widget.goat.dateOfBirth!;
+    final dob = _tryParseDate(dobString);
+    
+    if (dob == null) return '-';
+    
+    final now = DateTime.now();
+    
+    // Calculate years, months, days
+    int years = now.year - dob.year;
+    int months = now.month - dob.month;
+    int days = now.day - dob.day;
+    
+    // Adjust for negative days
+    if (days < 0) {
+      final prevMonth = DateTime(now.year, now.month, 0);
+      days += prevMonth.day;
+      months -= 1;
+    }
+    
+    // Adjust for negative months
+    if (months < 0) {
+      months += 12;
+      years -= 1;
+    }
+    
+    // Format the age
+    if (years > 0) {
+      return '$years year${years > 1 ? 's' : ''} ${months > 0 ? '$months month${months > 1 ? 's' : ''}' : ''}';
+    } else if (months > 0) {
+      return '$months month${months > 1 ? 's' : ''} ${days > 0 ? '$days day${days > 1 ? 's' : ''}' : ''}';
+    } else {
+      return '$days day${days != 1 ? 's' : ''}';
     }
   }
 
   Future<void> _pickImage() async {
-    showModalBottomSheet(
+    final result = await showModalBottomSheet(
       context: context,
       builder: (BuildContext sheetContext) {
         return SafeArea(
@@ -102,177 +180,23 @@ class _ViewGoatPageState extends State<ViewGoatPage>
               ListTile(
                 leading: const Icon(Icons.photo_camera),
                 title: Text(AppLocalizations.of(context)!.takePhoto),
-                onTap: () async {
-                  // Use the sheet's context to close the sheet, but capture
-                  // the parent scaffold/navigator context before awaiting.
-                  final parentContext = context;
-                  final scaffoldMessenger = ScaffoldMessenger.of(parentContext);
-                  Navigator.pop(sheetContext);
-                  final XFile? image = await _picker.pickImage(
-                    source: ImageSource.camera,
-                    maxWidth: 1024,
-                    maxHeight: 1024,
-                    imageQuality: 85,
-                  );
-                  if (image != null) {
-                    if (mounted) {
-                      setState(() {
-                        _selectedImage = File(image.path);
-                      });
-                      // persist image path for this goat so other pages can load it
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('goat_image_${widget.goat.tagNo}', image.path);
-                      // also update stored goats JSON so photoPath persists in goat data
-                      final String? goatsJson = prefs.getString('goats');
-                      if (goatsJson != null) {
-                        try {
-                          final List<dynamic> decoded = jsonDecode(goatsJson);
-                          for (var item in decoded) {
-                            if (item['tagNo'] == widget.goat.tagNo) {
-                              item['photoPath'] = image.path;
-                              break;
-                            }
-                          }
-                          await prefs.setString('goats', jsonEncode(decoded));
-                        } catch (_) {}
-                      }
-                      _currentGoat = Goat(
-                        tagNo: widget.goat.tagNo,
-                        name: widget.goat.name,
-                        breed: widget.goat.breed,
-                        gender: widget.goat.gender,
-                        goatStage: widget.goat.goatStage,
-                        dateOfBirth: widget.goat.dateOfBirth,
-                        dateOfEntry: widget.goat.dateOfEntry,
-                        weight: widget.goat.weight,
-                        group: widget.goat.group,
-                        obtained: widget.goat.obtained,
-                        motherTag: widget.goat.motherTag,
-                        fatherTag: widget.goat.fatherTag,
-                        notes: widget.goat.notes,
-                        photoPath: image.path,
-                      );
-                      // Show a snackbar using the captured scaffold messenger.
-                      if (!mounted) return;
-                      scaffoldMessenger.showSnackBar(
-                        SnackBar(
-                          content: Text(AppLocalizations.of(context)!.photoCaptured),
-                          backgroundColor: const Color(0xFF4CAF50),
-                        ),
-                      );
-                    }
-                  }
+                onTap: () {
+                  Navigator.pop(sheetContext, 'camera');
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: Text(AppLocalizations.of(context)!.chooseFromGallery),
-                onTap: () async {
-                  final parentContext = context;
-                  final scaffoldMessenger = ScaffoldMessenger.of(parentContext);
-                  Navigator.pop(sheetContext);
-                  final XFile? image = await _picker.pickImage(
-                    source: ImageSource.gallery,
-                    maxWidth: 1024,
-                    maxHeight: 1024,
-                    imageQuality: 85,
-                  );
-                  if (image != null) {
-                    if (mounted) {
-                      setState(() {
-                        _selectedImage = File(image.path);
-                      });
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('goat_image_${widget.goat.tagNo}', image.path);
-                      final String? goatsJson = prefs.getString('goats');
-                      if (goatsJson != null) {
-                        try {
-                          final List<dynamic> decoded = jsonDecode(goatsJson);
-                          for (var item in decoded) {
-                            if (item['tagNo'] == widget.goat.tagNo) {
-                              item['photoPath'] = image.path;
-                              break;
-                            }
-                          }
-                          await prefs.setString('goats', jsonEncode(decoded));
-                        } catch (_) {}
-                      }
-                      _currentGoat = Goat(
-                        tagNo: widget.goat.tagNo,
-                        name: widget.goat.name,
-                        breed: widget.goat.breed,
-                        gender: widget.goat.gender,
-                        goatStage: widget.goat.goatStage,
-                        dateOfBirth: widget.goat.dateOfBirth,
-                        dateOfEntry: widget.goat.dateOfEntry,
-                        weight: widget.goat.weight,
-                        group: widget.goat.group,
-                        obtained: widget.goat.obtained,
-                        motherTag: widget.goat.motherTag,
-                        fatherTag: widget.goat.fatherTag,
-                        notes: widget.goat.notes,
-                        photoPath: image.path,
-                      );
-                      if (!mounted) return;
-                      scaffoldMessenger.showSnackBar(
-                        SnackBar(
-                          content: Text(AppLocalizations.of(context)!.imageSelected),
-                          backgroundColor: const Color(0xFF4CAF50),
-                        ),
-                      );
-                    }
-                  }
+                onTap: () {
+                  Navigator.pop(sheetContext, 'gallery');
                 },
               ),
               if (_selectedImage != null)
                 ListTile(
                   leading: const Icon(Icons.delete, color: Colors.red),
                   title: Text(AppLocalizations.of(context)!.removePhoto, style: const TextStyle(color: Colors.red)),
-                  onTap: () async {
-                    final parentContext = context;
-                    final scaffoldMessenger = ScaffoldMessenger.of(parentContext);
-                    Navigator.pop(sheetContext);
-                    setState(() {
-                      _selectedImage = null;
-                    });
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.remove('goat_image_${widget.goat.tagNo}');
-                    final String? goatsJson = prefs.getString('goats');
-                    if (goatsJson != null) {
-                      try {
-                        final List<dynamic> decoded = jsonDecode(goatsJson);
-                        for (var item in decoded) {
-                          if (item['tagNo'] == widget.goat.tagNo) {
-                            item.remove('photoPath');
-                            break;
-                          }
-                        }
-                        await prefs.setString('goats', jsonEncode(decoded));
-                      } catch (_) {}
-                    }
-                    _currentGoat = Goat(
-                      tagNo: widget.goat.tagNo,
-                      name: widget.goat.name,
-                      breed: widget.goat.breed,
-                      gender: widget.goat.gender,
-                      goatStage: widget.goat.goatStage,
-                      dateOfBirth: widget.goat.dateOfBirth,
-                      dateOfEntry: widget.goat.dateOfEntry,
-                      weight: widget.goat.weight,
-                      group: widget.goat.group,
-                      obtained: widget.goat.obtained,
-                      motherTag: widget.goat.motherTag,
-                      fatherTag: widget.goat.fatherTag,
-                      notes: widget.goat.notes,
-                      photoPath: null,
-                    );
-                    if (!mounted) return;
-                    scaffoldMessenger.showSnackBar(
-                      SnackBar(
-                        content: Text(AppLocalizations.of(context)!.photoRemoved),
-                        backgroundColor: Colors.grey,
-                      ),
-                    );
+                  onTap: () {
+                    Navigator.pop(sheetContext, 'remove');
                   },
                 ),
             ],
@@ -280,6 +204,112 @@ class _ViewGoatPageState extends State<ViewGoatPage>
         );
       },
     );
+
+    if (result == null || !mounted) return;
+
+    if (result == 'camera' || result == 'gallery') {
+      final source = result == 'camera' ? ImageSource.camera : ImageSource.gallery;
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      
+      if (image != null && mounted) {
+        setState(() {
+          _selectedImage = File(image.path);
+        });
+        
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('goat_image_${widget.goat.tagNo}', image.path);
+        
+        final String? goatsJson = prefs.getString('goats');
+        if (goatsJson != null) {
+          try {
+            final List<dynamic> decoded = jsonDecode(goatsJson);
+            for (var item in decoded) {
+              if (item['tagNo'] == widget.goat.tagNo) {
+                item['photoPath'] = image.path;
+                break;
+              }
+            }
+            await prefs.setString('goats', jsonEncode(decoded));
+          } catch (_) {}
+        }
+        
+        _currentGoat = Goat(
+          tagNo: widget.goat.tagNo,
+          name: widget.goat.name,
+          breed: widget.goat.breed,
+          gender: widget.goat.gender,
+          goatStage: widget.goat.goatStage,
+          dateOfBirth: widget.goat.dateOfBirth,
+          dateOfEntry: widget.goat.dateOfEntry,
+          weight: widget.goat.weight,
+          group: widget.goat.group,
+          obtained: widget.goat.obtained,
+          motherTag: widget.goat.motherTag,
+          fatherTag: widget.goat.fatherTag,
+          notes: widget.goat.notes,
+          photoPath: image.path,
+        );
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result == 'camera' 
+                ? AppLocalizations.of(context)!.photoCaptured
+                : AppLocalizations.of(context)!.imageSelected),
+            backgroundColor: const Color(0xFF4CAF50),
+          ),
+        );
+      }
+    } else if (result == 'remove' && mounted) {
+      setState(() {
+        _selectedImage = null;
+      });
+      
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('goat_image_${widget.goat.tagNo}');
+      
+      final String? goatsJson = prefs.getString('goats');
+      if (goatsJson != null) {
+        try {
+          final List<dynamic> decoded = jsonDecode(goatsJson);
+          for (var item in decoded) {
+            if (item['tagNo'] == widget.goat.tagNo) {
+              item.remove('photoPath');
+              break;
+            }
+          }
+          await prefs.setString('goats', jsonEncode(decoded));
+        } catch (_) {}
+      }
+      
+      _currentGoat = Goat(
+        tagNo: widget.goat.tagNo,
+        name: widget.goat.name,
+        breed: widget.goat.breed,
+        gender: widget.goat.gender,
+        goatStage: widget.goat.goatStage,
+        dateOfBirth: widget.goat.dateOfBirth,
+        dateOfEntry: widget.goat.dateOfEntry,
+        weight: widget.goat.weight,
+        group: widget.goat.group,
+        obtained: widget.goat.obtained,
+        motherTag: widget.goat.motherTag,
+        fatherTag: widget.goat.fatherTag,
+        notes: widget.goat.notes,
+        photoPath: null,
+      );
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.photoRemoved),
+          backgroundColor: Colors.grey,
+        ),
+      );
+    }
   }
 
   @override
@@ -388,7 +418,7 @@ class _ViewGoatPageState extends State<ViewGoatPage>
           // Tabs
           Container(
             color: Colors.white,
-              child: TabBar(
+            child: TabBar(
               controller: _tabController,
               indicatorColor: genderColor,
               labelColor: genderColor,
@@ -470,15 +500,14 @@ class _ViewGoatPageState extends State<ViewGoatPage>
                         IconButton(
                           icon: const Icon(Icons.edit, color: Colors.white),
                           onPressed: () {
-                            final navigator = Navigator.of(context);
-                            navigator.push(
+                            Navigator.push(
+                              context,
                               MaterialPageRoute(
                                 builder: (context) => EditGoatPage(goat: widget.goat),
                               ),
                             ).then((updatedGoat) {
-                              if (updatedGoat != null) {
-                                if (!mounted) return;
-                                navigator.pop(updatedGoat);
+                              if (updatedGoat != null && mounted) {
+                                Navigator.pop(context, updatedGoat);
                               }
                             });
                           },
@@ -645,6 +674,168 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     );
   }
 
+  // Events Tab
+  Widget _buildEventsTab() {
+    if (_goatEvents.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.event_note, size: 80, color: Colors.grey[300]),
+            const SizedBox(height: 20),
+            Text(
+              AppLocalizations.of(context)!.noEventsYet,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              AppLocalizations.of(context)!.eventsPlaceholder,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[400],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: _goatEvents.length,
+      itemBuilder: (context, index) {
+        final event = _goatEvents[index];
+        return _buildEventCard(event);
+      },
+    );
+  }
+
+  Widget _buildEventCard(Event event) {
+    final loc = AppLocalizations.of(context)!;
+    Color cardColor = widget.goat.gender == 'Male' 
+        ? const Color(0xFF4CAF50) 
+        : const Color(0xFFFFA726);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Event header
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: cardColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  event.isMassEvent ? Icons.group : Icons.person,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    event.eventType,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                if (event.isMassEvent)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      loc.massEvent,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: cardColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          // Event details
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildEventDetailRow(loc.dateLabel, _formatEventDate(event.date)),
+                if (event.symptoms != null) 
+                  _buildEventDetailRow(loc.symptomsLabel, event.symptoms!),
+                if (event.diagnosis != null) 
+                  _buildEventDetailRow(loc.diagnosisLabel, event.diagnosis!),
+                if (event.technician != null) 
+                  _buildEventDetailRow(loc.treatedByLabel, event.technician!),
+                if (event.medicine != null) 
+                  _buildEventDetailRow(loc.medicineLabel, event.medicine!),
+                if (event.weighedResult != null) 
+                  _buildEventDetailRow(loc.weighedLabel, event.weighedResult!),
+                if (event.otherName != null) 
+                  _buildEventDetailRow(loc.eventNameLabel, event.otherName!),
+                if (event.notes != null) 
+                  _buildEventDetailRow(loc.notesLabel, event.notes!),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEventDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatEventDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
   Widget _buildDetailRow(String label, String value, {Color? valueColor}) {
     Color defaultColor = widget.goat.gender == 'Male'
         ? const Color(0xFF4CAF50)
@@ -754,33 +945,6 @@ class _ViewGoatPageState extends State<ViewGoatPage>
             onPressed: () {
               // TODO: Navigate to offspring details
             },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEventsTab() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.event, size: 80, color: Colors.grey[300]),
-          const SizedBox(height: 20),
-                Text(
-            AppLocalizations.of(context)!.noEventsYet,
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.grey[600],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            AppLocalizations.of(context)!.eventsPlaceholder,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[400],
-            ),
           ),
         ],
       ),
