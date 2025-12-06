@@ -52,16 +52,16 @@ class _GoatsPageState extends State<GoatsPage> {
     await prefs.setString('goats', goatsJson);
   }
 
-  final List<String> breeds = [
-    'All Breeds',
-    'Alpine',
-    'Boer',
-    'Kiko',
-    'Nubian',
+  List<String> get breeds => [
+    AppLocalizations.of(context)!.allBreeds,
+    AppLocalizations.of(context)!.alpine,
+    AppLocalizations.of(context)!.boer,
+    AppLocalizations.of(context)!.kiko,
+    AppLocalizations.of(context)!.nubian,
   ];
 
-  final List<String> groups = [
-    'All Groups',
+  List<String> get groups => [
+    AppLocalizations.of(context)!.allGroups,
   ];
 
   void _showBreedPicker() {
@@ -381,13 +381,11 @@ class _GoatsPageState extends State<GoatsPage> {
                   await _exportGoatsPdf();
                   break;
                 case 'filter':
-                  // Open breed picker as an example
                   _showBreedPicker();
                   break;
                 case 'sort_age':
                   setState(() {
                     goats.sort((a, b) {
-                      // attempt to parse dateOfBirth and sort by age (oldest first)
                       DateTime? da = _tryParseDate(a.dateOfBirth);
                       DateTime? db = _tryParseDate(b.dateOfBirth);
                       if (da == null && db == null) return 0;
@@ -551,7 +549,7 @@ class _GoatsPageState extends State<GoatsPage> {
   }
 
   Widget _buildGoatCard(Goat goat) {
-    final isMale = goat.gender.toLowerCase() == 'male';
+    final isMale = goat.gender.toLowerCase() == AppLocalizations.of(context)!.male.toLowerCase();
     final genderColor = isMale ? const Color(0xFF4CAF50) : const Color(0xFFFFA726);
     final isSelected = selectedGoats.contains(goat.tagNo);
 
@@ -564,7 +562,6 @@ class _GoatsPageState extends State<GoatsPage> {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () async {
-          // Navigate to View Goat page and handle possible updates (like photo)
           final result = await Navigator.push(
             context,
             MaterialPageRoute(
@@ -639,7 +636,7 @@ class _GoatsPageState extends State<GoatsPage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    goat.name ?? 'goat',
+                    goat.name ?? AppLocalizations.of(context)!.goat,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[600],
@@ -672,7 +669,6 @@ class _GoatsPageState extends State<GoatsPage> {
               onSelected: (value) {
                 switch (value) {
                   case 'view':
-                    // Navigate to view record and handle updated goat
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -689,7 +685,6 @@ class _GoatsPageState extends State<GoatsPage> {
                     });
                     break;
                   case 'edit':
-                    // Navigate to edit record
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -708,7 +703,6 @@ class _GoatsPageState extends State<GoatsPage> {
                     });
                     break;
                   case 'event':
-                    // Navigate to add event
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -717,7 +711,6 @@ class _GoatsPageState extends State<GoatsPage> {
                     );
                     break;
                   case 'delete':
-                    // TODO: Show delete confirmation
                     _showDeleteDialog(goat);
                     break;
                 }
@@ -787,11 +780,9 @@ class _GoatsPageState extends State<GoatsPage> {
   DateTime? _tryParseDate(String? s) {
     if (s == null) return null;
     final str = s.trim();
-    // Try ISO parse first
     final iso = DateTime.tryParse(str);
     if (iso != null) return iso;
 
-    // Handle common separators: '-' or '/'
     String? sep;
     if (str.contains('/')) sep = '/';
     else if (str.contains('-')) sep = '-';
@@ -799,7 +790,6 @@ class _GoatsPageState extends State<GoatsPage> {
     if (sep != null) {
       final parts = str.split(sep);
       if (parts.length == 3) {
-        // If first part is year (yyyy-mm-dd)
         if (parts[0].length == 4) {
           final y = int.tryParse(parts[0]);
           final m = int.tryParse(parts[1]);
@@ -810,7 +800,6 @@ class _GoatsPageState extends State<GoatsPage> {
             } catch (_) {}
           }
         }
-        // If last part is year (dd-mm-yyyy or dd/mm/yyyy)
         if (parts[2].length == 4) {
           final d = int.tryParse(parts[0]);
           final m = int.tryParse(parts[1]);
@@ -824,7 +813,6 @@ class _GoatsPageState extends State<GoatsPage> {
       }
     }
 
-    // Handle relative formats like "10 days" or "10 days ago"
     final daysMatch = RegExp(r'^(\d+)\s*days?\b', caseSensitive: false).firstMatch(str);
     if (daysMatch != null) {
       final days = int.tryParse(daysMatch.group(1) ?? '');
@@ -855,7 +843,7 @@ class _GoatsPageState extends State<GoatsPage> {
 
     if (years > 0) return '${years}y ${months}m';
     if (months > 0) return '${months}m ${days}d';
-    return '${days} days';
+    return '${days} ${AppLocalizations.of(context)!.days}';
   }
 
   Future<void> _exportGoatsPdf() async {
@@ -869,15 +857,27 @@ class _GoatsPageState extends State<GoatsPage> {
       logoBytes = null;
     }
 
-    // Capture localized strings OUTSIDE the PDF builder context
     final localizations = AppLocalizations.of(context)!;
     final goatsListTitle = localizations.goatsListPdf;
     final breedLabel = localizations.breedLabel2;
     final groupLabel = localizations.groupLabel2;
     final dateLabel = localizations.dateLabel;
     final totalLabel = localizations.totalGoats;
+    final setFarmLogo = localizations.setFarmLogo;
+    final setFarmName = localizations.setFarmName;
+    final setFarmLocation = localizations.setFarmLocation;
 
-    final headers = ['Tag.', 'Name', 'Gender', 'Stage', 'D.O.B', 'Age', 'Breed', 'Group', 'Weight'];
+    final headers = [
+      AppLocalizations.of(context)!.tagLabel,
+      AppLocalizations.of(context)!.nameLabel,
+      AppLocalizations.of(context)!.genderLabel,
+      AppLocalizations.of(context)!.stageLabel,
+      AppLocalizations.of(context)!.dobLabel,
+      AppLocalizations.of(context)!.ageLabel,
+      AppLocalizations.of(context)!.breedLabel,
+      AppLocalizations.of(context)!.groupLabel,
+      AppLocalizations.of(context)!.weightLabel,
+    ];
 
     final data = goats.map((g) {
       final dob = g.dateOfBirth ?? '-';
@@ -897,9 +897,9 @@ class _GoatsPageState extends State<GoatsPage> {
                   child: pw.Image(pw.MemoryImage(logoBytes), width: 48, height: 48),
                 ),
               pw.SizedBox(height: 6),
-              pw.Text('Set farm\'s logo under app settings!', style: pw.TextStyle(fontSize: 10)),
-              pw.Text('Set farm name under app settings!', style: pw.TextStyle(fontSize: 10)),
-              pw.Text('Set farm location under app settings!', style: pw.TextStyle(fontSize: 10)),
+              pw.Text(setFarmLogo, style: pw.TextStyle(fontSize: 10)),
+              pw.Text(setFarmName, style: pw.TextStyle(fontSize: 10)),
+              pw.Text(setFarmLocation, style: pw.TextStyle(fontSize: 10)),
               pw.SizedBox(height: 8),
               pw.Text(goatsListTitle, style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
               pw.Text('$breedLabel $selectedBreed', style: pw.TextStyle(fontSize: 10)),
@@ -926,6 +926,9 @@ class _GoatsPageState extends State<GoatsPage> {
 
     final bytes = await doc.save();
 
-    await Printing.sharePdf(bytes: bytes, filename: 'goats_${DateTime.now().millisecondsSinceEpoch}.pdf');
+    await Printing.sharePdf(
+      bytes: bytes, 
+      filename: '${AppLocalizations.of(context)!.goatsFilename}_${DateTime.now().millisecondsSinceEpoch}.pdf'
+    );
   }
 }

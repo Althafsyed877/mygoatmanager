@@ -311,7 +311,7 @@ abstract class AppLocalizations {
   /// No description provided for @close.
   ///
   /// In en, this message translates to:
-  /// **'Close'**
+  /// **'CLOSE'**
   String get close;
 
   /// No description provided for @allBreeds.
@@ -401,13 +401,13 @@ abstract class AppLocalizations {
   /// No description provided for @dobLabel.
   ///
   /// In en, this message translates to:
-  /// **'D.O.B:'**
+  /// **'D.O.B'**
   String get dobLabel;
 
   /// No description provided for @ageLabel.
   ///
   /// In en, this message translates to:
-  /// **'Age:'**
+  /// **'Age'**
   String get ageLabel;
 
   /// No description provided for @genderLabel.
@@ -419,25 +419,25 @@ abstract class AppLocalizations {
   /// No description provided for @weightLabel.
   ///
   /// In en, this message translates to:
-  /// **'Weight:'**
+  /// **'Weight'**
   String get weightLabel;
 
   /// No description provided for @stageLabel.
   ///
   /// In en, this message translates to:
-  /// **'Stage:'**
+  /// **'Stage'**
   String get stageLabel;
 
   /// No description provided for @breedLabel.
   ///
   /// In en, this message translates to:
-  /// **'Breed:'**
+  /// **'Breed'**
   String get breedLabel;
 
   /// No description provided for @groupLabel.
   ///
   /// In en, this message translates to:
-  /// **'Group:'**
+  /// **'Group'**
   String get groupLabel;
 
   /// No description provided for @joinedOn.
@@ -473,7 +473,7 @@ abstract class AppLocalizations {
   /// No description provided for @notesLabel.
   ///
   /// In en, this message translates to:
-  /// **'Notes:'**
+  /// **'Write some notes ...'**
   String get notesLabel;
 
   /// No description provided for @tapToUpload.
@@ -563,7 +563,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectGroup.
   ///
   /// In en, this message translates to:
-  /// **'Select group ..'**
+  /// **'Select Group'**
   String get selectGroup;
 
   /// No description provided for @addGoat.
@@ -746,6 +746,156 @@ abstract class AppLocalizations {
   /// **'Goat updated successfully!'**
   String get goatUpdated;
 
+  /// No description provided for @kid.
+  ///
+  /// In en, this message translates to:
+  /// **'Kid'**
+  String get kid;
+
+  /// No description provided for @wether.
+  ///
+  /// In en, this message translates to:
+  /// **'Wether'**
+  String get wether;
+
+  /// No description provided for @buckling.
+  ///
+  /// In en, this message translates to:
+  /// **'Buckling'**
+  String get buckling;
+
+  /// No description provided for @buck.
+  ///
+  /// In en, this message translates to:
+  /// **'Buck'**
+  String get buck;
+
+  /// No description provided for @alpine.
+  ///
+  /// In en, this message translates to:
+  /// **'Alpine'**
+  String get alpine;
+
+  /// No description provided for @boer.
+  ///
+  /// In en, this message translates to:
+  /// **'Boer'**
+  String get boer;
+
+  /// No description provided for @kiko.
+  ///
+  /// In en, this message translates to:
+  /// **'Kiko'**
+  String get kiko;
+
+  /// No description provided for @nubian.
+  ///
+  /// In en, this message translates to:
+  /// **'Nubian'**
+  String get nubian;
+
+  /// No description provided for @days.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get days;
+
+  /// No description provided for @goatsFilename.
+  ///
+  /// In en, this message translates to:
+  /// **'goats'**
+  String get goatsFilename;
+
+  /// No description provided for @gift.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift'**
+  String get gift;
+
+  /// No description provided for @selectGenderRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Gender *'**
+  String get selectGenderRequired;
+
+  /// No description provided for @selectGoatStage.
+  ///
+  /// In en, this message translates to:
+  /// **'- Select goat stage -'**
+  String get selectGoatStage;
+
+  /// No description provided for @selectObtainedRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select how the goat was obtained *'**
+  String get selectObtainedRequired;
+
+  /// No description provided for @tagNoRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag no. *'**
+  String get tagNoRequired;
+
+  /// No description provided for @dateOfBirthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth.'**
+  String get dateOfBirthLabel;
+
+  /// No description provided for @dateOfEntryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of entry on the farm.'**
+  String get dateOfEntryLabel;
+
+  /// No description provided for @fillRequiredFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in all required fields'**
+  String get fillRequiredFields;
+
+  /// No description provided for @setFarmLogo.
+  ///
+  /// In en, this message translates to:
+  /// **'Set farm\'s logo under app settings!'**
+  String get setFarmLogo;
+
+  /// No description provided for @setFarmName.
+  ///
+  /// In en, this message translates to:
+  /// **'Set farm name under app settings!'**
+  String get setFarmName;
+
+  /// No description provided for @setFarmLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Set farm location under app settings!'**
+  String get setFarmLocation;
+
+  /// No description provided for @tagLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag.'**
+  String get tagLabel;
+
+  /// No description provided for @goat.
+  ///
+  /// In en, this message translates to:
+  /// **'goat'**
+  String get goat;
+
+  /// No description provided for @allGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'All Groups'**
+  String get allGroups;
+
+  /// No description provided for @groupOptional2.
+  ///
+  /// In en, this message translates to:
+  /// **'Group (optional)'**
+  String get groupOptional2;
+
   /// No description provided for @filterByPeriod.
   ///
   /// In en, this message translates to:
@@ -905,7 +1055,7 @@ abstract class AppLocalizations {
   /// No description provided for @to.
   ///
   /// In en, this message translates to:
-  /// **'to'**
+  /// **'To:'**
   String get to;
 
   /// No description provided for @searchEventsHint.
@@ -1061,7 +1211,7 @@ abstract class AppLocalizations {
   /// No description provided for @noGoatsFound.
   ///
   /// In en, this message translates to:
-  /// **'No goats found'**
+  /// **'No goats found. Please add goats first'**
   String get noGoatsFound;
 
   /// No description provided for @medicineLabel.
@@ -1219,6 +1369,852 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Other'**
   String get other;
+
+  /// No description provided for @income.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get income;
+
+  /// No description provided for @expenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get expenses;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get filter;
+
+  /// No description provided for @more_options.
+  ///
+  /// In en, this message translates to:
+  /// **'More Options'**
+  String get more_options;
+
+  /// No description provided for @search_transactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Transactions'**
+  String get search_transactions;
+
+  /// No description provided for @search_by_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by description, amount...'**
+  String get search_by_description;
+
+  /// No description provided for @filter_by_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by Date'**
+  String get filter_by_date;
+
+  /// No description provided for @custom_date_range.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Date Range'**
+  String get custom_date_range;
+
+  /// No description provided for @custom_range.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Range'**
+  String get custom_range;
+
+  /// No description provided for @no_income_to_display.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no income to display\nfor the selected date range.'**
+  String get no_income_to_display;
+
+  /// No description provided for @no_expenses_to_display.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no expenses to display\nfor the selected date range.'**
+  String get no_expenses_to_display;
+
+  /// No description provided for @export_pdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Pdf'**
+  String get export_pdf;
+
+  /// No description provided for @income_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Income type'**
+  String get income_type;
+
+  /// No description provided for @expense_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense type'**
+  String get expense_type;
+
+  /// No description provided for @filter_by_income_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by Income Type'**
+  String get filter_by_income_type;
+
+  /// No description provided for @filter_by_expense_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by Expense Type'**
+  String get filter_by_expense_type;
+
+  /// No description provided for @all_types.
+  ///
+  /// In en, this message translates to:
+  /// **'All Types'**
+  String get all_types;
+
+  /// No description provided for @edit_view_record.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit / View record'**
+  String get edit_view_record;
+
+  /// No description provided for @record_deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Record deleted'**
+  String get record_deleted;
+
+  /// No description provided for @income_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Income updated'**
+  String get income_updated;
+
+  /// No description provided for @expense_updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense updated'**
+  String get expense_updated;
+
+  /// No description provided for @income_saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Income saved'**
+  String get income_saved;
+
+  /// No description provided for @expense_saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense saved'**
+  String get expense_saved;
+
+  /// No description provided for @add_income.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Income'**
+  String get add_income;
+
+  /// No description provided for @add_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Expense'**
+  String get add_expense;
+
+  /// No description provided for @date_of_income.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Income'**
+  String get date_of_income;
+
+  /// No description provided for @select_income_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Select income type'**
+  String get select_income_type;
+
+  /// No description provided for @milk_sale.
+  ///
+  /// In en, this message translates to:
+  /// **'Milk Sale'**
+  String get milk_sale;
+
+  /// No description provided for @goat_sale.
+  ///
+  /// In en, this message translates to:
+  /// **'Goat Sale'**
+  String get goat_sale;
+
+  /// No description provided for @category_income.
+  ///
+  /// In en, this message translates to:
+  /// **'Category Income'**
+  String get category_income;
+
+  /// No description provided for @other_specify.
+  ///
+  /// In en, this message translates to:
+  /// **'Other (specify)'**
+  String get other_specify;
+
+  /// No description provided for @category_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Category Expense'**
+  String get category_expense;
+
+  /// No description provided for @other_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Other (specify)'**
+  String get other_expense;
+
+  /// No description provided for @milk_quantity_sold.
+  ///
+  /// In en, this message translates to:
+  /// **'Milk quantity sold'**
+  String get milk_quantity_sold;
+
+  /// No description provided for @selling_price_per_litre.
+  ///
+  /// In en, this message translates to:
+  /// **'Selling price per litre/unit'**
+  String get selling_price_per_litre;
+
+  /// No description provided for @how_much_did_you_earn.
+  ///
+  /// In en, this message translates to:
+  /// **'How much did you earn?'**
+  String get how_much_did_you_earn;
+
+  /// No description provided for @please_go_to_record.
+  ///
+  /// In en, this message translates to:
+  /// **'Please go to the record of the goat sold and archive it with a reason \'Sold\' and an income record will be created automatically!'**
+  String get please_go_to_record;
+
+  /// No description provided for @quantity_of_items.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity of items'**
+  String get quantity_of_items;
+
+  /// No description provided for @please_specify_source.
+  ///
+  /// In en, this message translates to:
+  /// **'Please specify the source of income'**
+  String get please_specify_source;
+
+  /// No description provided for @specify_income_source.
+  ///
+  /// In en, this message translates to:
+  /// **'Specify income source'**
+  String get specify_income_source;
+
+  /// No description provided for @receipt_no_optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt no. (optional)'**
+  String get receipt_no_optional;
+
+  /// No description provided for @write_some_notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Write some notes ...'**
+  String get write_some_notes;
+
+  /// No description provided for @enter_receipt_number.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter receipt number'**
+  String get enter_receipt_number;
+
+  /// No description provided for @enter_your_notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your notes here...'**
+  String get enter_your_notes;
+
+  /// No description provided for @new_income.
+  ///
+  /// In en, this message translates to:
+  /// **'New Income'**
+  String get new_income;
+
+  /// No description provided for @new_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'New Expense'**
+  String get new_expense;
+
+  /// No description provided for @please_select_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a date'**
+  String get please_select_date;
+
+  /// No description provided for @please_select_income_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select income type'**
+  String get please_select_income_type;
+
+  /// No description provided for @please_enter_amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter amount'**
+  String get please_enter_amount;
+
+  /// No description provided for @please_enter_quantity_price.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter quantity and price'**
+  String get please_enter_quantity_price;
+
+  /// No description provided for @please_enter_quantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter quantity'**
+  String get please_enter_quantity;
+
+  /// No description provided for @please_specify_income_source.
+  ///
+  /// In en, this message translates to:
+  /// **'Please specify income source'**
+  String get please_specify_income_source;
+
+  /// No description provided for @date_of_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of expense'**
+  String get date_of_expense;
+
+  /// No description provided for @select_expense_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Select expense type'**
+  String get select_expense_type;
+
+  /// No description provided for @please_select_expense_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select expense type'**
+  String get please_select_expense_type;
+
+  /// No description provided for @please_enter_name_of_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter name of expense'**
+  String get please_enter_name_of_expense;
+
+  /// No description provided for @please_select_category.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a category'**
+  String get please_select_category;
+
+  /// No description provided for @how_much_did_you_spend.
+  ///
+  /// In en, this message translates to:
+  /// **'How much did you spend?'**
+  String get how_much_did_you_spend;
+
+  /// No description provided for @name_of_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Name of expense'**
+  String get name_of_expense;
+
+  /// No description provided for @select_category.
+  ///
+  /// In en, this message translates to:
+  /// **'Select category'**
+  String get select_category;
+
+  /// No description provided for @add_category.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get add_category;
+
+  /// No description provided for @category_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get category_name;
+
+  /// No description provided for @enter_milk_quantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter milk quantity'**
+  String get enter_milk_quantity;
+
+  /// No description provided for @enter_price_per_litre.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter price per litre'**
+  String get enter_price_per_litre;
+
+  /// No description provided for @enter_quantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter quantity'**
+  String get enter_quantity;
+
+  /// No description provided for @enter_amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter amount'**
+  String get enter_amount;
+
+  /// No description provided for @income_records.
+  ///
+  /// In en, this message translates to:
+  /// **'Income Records'**
+  String get income_records;
+
+  /// No description provided for @expense_records.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Records'**
+  String get expense_records;
+
+  /// No description provided for @no_income_records.
+  ///
+  /// In en, this message translates to:
+  /// **'No income records to export'**
+  String get no_income_records;
+
+  /// No description provided for @no_expense_records.
+  ///
+  /// In en, this message translates to:
+  /// **'No expense records to export'**
+  String get no_expense_records;
+
+  /// No description provided for @incomeCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Income Categories'**
+  String get incomeCategories;
+
+  /// No description provided for @expenseCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Categories'**
+  String get expenseCategories;
+
+  /// No description provided for @goatBreeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Goat Breeds'**
+  String get goatBreeds;
+
+  /// No description provided for @goatGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Goat Groups'**
+  String get goatGroups;
+
+  /// No description provided for @newCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'New Category'**
+  String get newCategory;
+
+  /// No description provided for @enterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter name ...'**
+  String get enterName;
+
+  /// No description provided for @searchCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Search categories...'**
+  String get searchCategories;
+
+  /// No description provided for @noIncomeCategoriesAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'No income categories have been added as of yet!'**
+  String get noIncomeCategoriesAdded;
+
+  /// No description provided for @noResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get noResultsFound;
+
+  /// No description provided for @editCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Category'**
+  String get editCategory;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @recordSuccessfullyUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Record successfully updated'**
+  String get recordSuccessfullyUpdated;
+
+  /// No description provided for @noExpenseCategoriesAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'No expense categories have been added as of yet!'**
+  String get noExpenseCategoriesAdded;
+
+  /// No description provided for @newBreed.
+  ///
+  /// In en, this message translates to:
+  /// **'New Breed'**
+  String get newBreed;
+
+  /// No description provided for @enterBreedName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter breed name...'**
+  String get enterBreedName;
+
+  /// No description provided for @searchBreeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Search breeds...'**
+  String get searchBreeds;
+
+  /// No description provided for @noGoatBreedsAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'No goat breeds have been added yet!'**
+  String get noGoatBreedsAdded;
+
+  /// No description provided for @editBreed.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Breed'**
+  String get editBreed;
+
+  /// No description provided for @goatsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'({count}) Goats'**
+  String goatsCount(Object count);
+
+  /// No description provided for @newGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'New Group'**
+  String get newGroup;
+
+  /// No description provided for @enterGroupName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter group name...'**
+  String get enterGroupName;
+
+  /// No description provided for @searchGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Search groups...'**
+  String get searchGroups;
+
+  /// No description provided for @noGoatGroupsRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'No goat groups currently registered as of yet!'**
+  String get noGoatGroupsRegistered;
+
+  /// No description provided for @editGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Group'**
+  String get editGroup;
+
+  /// No description provided for @transactionsReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get transactionsReport;
+
+  /// No description provided for @milkReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Milk Report'**
+  String get milkReport;
+
+  /// No description provided for @goatsReport.
+  ///
+  /// In en, this message translates to:
+  /// **'GOATS REPORT'**
+  String get goatsReport;
+
+  /// No description provided for @eventsReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Events Report'**
+  String get eventsReport;
+
+  /// No description provided for @breedingReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Breeding Report'**
+  String get breedingReport;
+
+  /// No description provided for @pregnanciesReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Pregnancies Report'**
+  String get pregnanciesReport;
+
+  /// No description provided for @weightReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Report'**
+  String get weightReport;
+
+  /// No description provided for @stageTrackingReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Stage Tracking Report'**
+  String get stageTrackingReport;
+
+  /// No description provided for @stageTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Stage Tracking'**
+  String get stageTracking;
+
+  /// No description provided for @updateSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Selected'**
+  String get updateSelected;
+
+  /// No description provided for @animalsNeedStageUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Animals that might need stage update.'**
+  String get animalsNeedStageUpdate;
+
+  /// No description provided for @wethersNotListed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wethers and animals without birth dates are not listed!'**
+  String get wethersNotListed;
+
+  /// No description provided for @allCaughtUp.
+  ///
+  /// In en, this message translates to:
+  /// **'All caught up!'**
+  String get allCaughtUp;
+
+  /// No description provided for @noGoatsNeedStageUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'No goats need stage updates at this time.'**
+  String get noGoatsNeedStageUpdates;
+
+  /// No description provided for @doe.
+  ///
+  /// In en, this message translates to:
+  /// **'Doe'**
+  String get doe;
+
+  /// No description provided for @updateStages.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Stages'**
+  String get updateStages;
+
+  /// No description provided for @updateGoatsQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Update {count} goats from Kid to next stage?'**
+  String updateGoatsQuestion(Object count);
+
+  /// No description provided for @update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// No description provided for @updatedGoatsSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {count} goats successfully!'**
+  String updatedGoatsSuccessfully(Object count);
+
+  /// No description provided for @daysSinceBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String daysSinceBirth(Object days);
+
+  /// No description provided for @breed.
+  ///
+  /// In en, this message translates to:
+  /// **'Breed'**
+  String get breed;
+
+  /// No description provided for @group.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get group;
+
+  /// No description provided for @source.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get source;
+
+  /// No description provided for @stagesSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'STAGES SUMMARY'**
+  String get stagesSummary;
+
+  /// No description provided for @stage.
+  ///
+  /// In en, this message translates to:
+  /// **'Stage'**
+  String get stage;
+
+  /// No description provided for @count.
+  ///
+  /// In en, this message translates to:
+  /// **'Count'**
+  String get count;
+
+  /// No description provided for @genderSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'GENDER SUMMARY'**
+  String get genderSummary;
+
+  /// No description provided for @gender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// No description provided for @male.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get male;
+
+  /// No description provided for @female.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get female;
+
+  /// No description provided for @does.
+  ///
+  /// In en, this message translates to:
+  /// **'Does'**
+  String get does;
+
+  /// No description provided for @doelings.
+  ///
+  /// In en, this message translates to:
+  /// **'Doelings'**
+  String get doelings;
+
+  /// No description provided for @bucks.
+  ///
+  /// In en, this message translates to:
+  /// **'Bucks'**
+  String get bucks;
+
+  /// No description provided for @bucklings.
+  ///
+  /// In en, this message translates to:
+  /// **'Bucklings'**
+  String get bucklings;
+
+  /// No description provided for @wethers.
+  ///
+  /// In en, this message translates to:
+  /// **'Wethers'**
+  String get wethers;
+
+  /// No description provided for @kids.
+  ///
+  /// In en, this message translates to:
+  /// **'Kids'**
+  String get kids;
+
+  /// No description provided for @allSources.
+  ///
+  /// In en, this message translates to:
+  /// **'All Sources'**
+  String get allSources;
+
+  /// No description provided for @bornOnFarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Born on farm'**
+  String get bornOnFarm;
+
+  /// No description provided for @purchased.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchased'**
+  String get purchased;
+
+  /// No description provided for @milk.
+  ///
+  /// In en, this message translates to:
+  /// **'milk'**
+  String get milk;
+
+  /// No description provided for @noGoatsDataToExport.
+  ///
+  /// In en, this message translates to:
+  /// **'No goats data to export'**
+  String get noGoatsDataToExport;
+
+  /// No description provided for @failedToExportPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to export PDF'**
+  String get failedToExportPdf;
+
+  /// No description provided for @filterBySource.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by Source'**
+  String get filterBySource;
+
+  /// No description provided for @goatsTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goats Total.'**
+  String get goatsTotal;
+
+  /// No description provided for @goatsByStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Goats by stage.'**
+  String get goatsByStage;
+
+  /// No description provided for @goatsByGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Goats by gender.'**
+  String get goatsByGender;
 }
 
 class _AppLocalizationsDelegate

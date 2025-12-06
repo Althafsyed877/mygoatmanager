@@ -21,7 +21,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get syncData => 'தரவு ஒத்திசைக்கவும்';
 
   @override
-  String get cancel => 'ரத்து செய்';
+  String get cancel => 'ரத்துசெய்';
 
   @override
   String get delete => 'அழி';
@@ -115,7 +115,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get close => 'மூடு';
 
   @override
-  String get allBreeds => 'அனைத்து இனங்கள்';
+  String get allBreeds => 'எல்லா இனங்களும்';
 
   @override
   String get breedOptional => 'இனம் (விருப்பமானது)';
@@ -157,25 +157,25 @@ class AppLocalizationsTa extends AppLocalizations {
   String get nameLabel => 'பெயர்:';
 
   @override
-  String get dobLabel => 'பிறந்த தேதி:';
+  String get dobLabel => 'பி.தே';
 
   @override
-  String get ageLabel => 'வயது:';
+  String get ageLabel => 'வயது';
 
   @override
   String get genderLabel => 'பாலினம்:';
 
   @override
-  String get weightLabel => 'எடை:';
+  String get weightLabel => 'எடை';
 
   @override
-  String get stageLabel => 'நிலை:';
+  String get stageLabel => 'நிலை';
 
   @override
-  String get breedLabel => 'இனம்:';
+  String get breedLabel => 'இனம்';
 
   @override
-  String get groupLabel => 'குழு:';
+  String get groupLabel => 'குழு';
 
   @override
   String get joinedOn => 'சேர்ந்த தேதி:';
@@ -193,7 +193,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get fatherLabel => 'தந்தை:';
 
   @override
-  String get notesLabel => 'குறிப்புகள்:';
+  String get notesLabel => 'சில குறிப்புகளை எழுதவும் ...';
 
   @override
   String get tapToUpload => 'படம் பதிவேற்ற கிளிக் செய்யவும்...';
@@ -226,7 +226,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get noGoatsAvailableToPreview => 'முன்னோட்டத்திற்கு ஆடுகள் இல்லை';
 
   @override
-  String get exportPdf => 'PDF ஏற்றுமதி செய்';
+  String get exportPdf => 'PDF ஏற்றுமதி';
 
   @override
   String get filterBy => 'வடிகட்டு';
@@ -239,7 +239,7 @@ class AppLocalizationsTa extends AppLocalizations {
       'தேர்ந்தெடுக்கப்பட்ட வடிப்பான்களுக்கு இன்னும் ஆடுகள் பதிவு செய்யப்படவில்லை!';
 
   @override
-  String get selectGroup => 'குழுவைத் தேர்ந்தெடுக்கவும் ..';
+  String get selectGroup => 'குழுவைத் தேர்ந்தெடுக்கவும்';
 
   @override
   String get addGoat => 'சேர்';
@@ -307,17 +307,17 @@ class AppLocalizationsTa extends AppLocalizations {
   String get groupOptional => 'குழு (விருப்பமானது)';
 
   @override
-  String get breedOptional2 => 'இனம் (விருப்பமானது)';
+  String get breedOptional2 => 'இனம் (விருப்பம்)';
 
   @override
   String get selectObtained =>
       'ஆடு எவ்வாறு பெறப்பட்டது எனத் தேர்ந்தெடுக்கவும். *';
 
   @override
-  String get motherTagLabel => 'தாயின் டேக் எண்.';
+  String get motherTagLabel => 'தாயின் குறி எண்';
 
   @override
-  String get fatherTagLabel => 'தந்தையின் டேக் எண்.';
+  String get fatherTagLabel => 'தந்தையின் குறி எண்';
 
   @override
   String get notesPlaceholder => 'சில குறிப்புகளை எழுதுக ...';
@@ -333,6 +333,84 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get goatUpdated => 'ஆடு வெற்றிகரமாக புதுப்பிக்கப்பட்டது!';
+
+  @override
+  String get kid => 'పిల్ల';
+
+  @override
+  String get wether => 'నపుంసకం';
+
+  @override
+  String get buckling => 'మగ పిల్ల';
+
+  @override
+  String get buck => 'ஆண் ஆடு';
+
+  @override
+  String get alpine => 'அல்பைன்';
+
+  @override
+  String get boer => 'போயர்';
+
+  @override
+  String get kiko => 'கிகோ';
+
+  @override
+  String get nubian => 'நூபியன்';
+
+  @override
+  String get days => 'நாட்கள்';
+
+  @override
+  String get goatsFilename => 'ஆடுகள்';
+
+  @override
+  String get gift => 'பரிசு';
+
+  @override
+  String get selectGenderRequired => 'பாலினத்தைத் தேர்ந்தெடுக்கவும் *';
+
+  @override
+  String get selectGoatStage => '- ஆட்டின் நிலையைத் தேர்ந்தெடுக்கவும் -';
+
+  @override
+  String get selectObtainedRequired =>
+      'ஆடு எப்படி பெறப்பட்டது என்பதைத் தேர்ந்தெடுக்கவும் *';
+
+  @override
+  String get tagNoRequired => 'குறி எண் *';
+
+  @override
+  String get dateOfBirthLabel => 'பிறந்த தேதி';
+
+  @override
+  String get dateOfEntryLabel => 'பண்ணையில் நுழைந்த தேதி';
+
+  @override
+  String get fillRequiredFields =>
+      'தயவு செய்து அனைத்து தேவையான புலங்களையும் நிரப்பவும்';
+
+  @override
+  String get setFarmLogo => 'பயன்பாட்டு அமைப்புகளில் பண்ணை லோகோவை அமைக்கவும்!';
+
+  @override
+  String get setFarmName => 'பயன்பாட்டு அமைப்புகளில் பண்ணை பெயரை அமைக்கவும்!';
+
+  @override
+  String get setFarmLocation =>
+      'பயன்பாட்டு அமைப்புகளில் பண்ணை இடத்தை அமைக்கவும்!';
+
+  @override
+  String get tagLabel => 'குறி';
+
+  @override
+  String get goat => 'ஆடு';
+
+  @override
+  String get allGroups => 'எல்லா குழுக்களும்';
+
+  @override
+  String get groupOptional2 => 'குழு (விருப்பம்)';
 
   @override
   String get filterByPeriod => 'காலப்பகுதியின்படி வடிகட்டு';
@@ -414,7 +492,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get all => 'அனைத்தும்';
 
   @override
-  String get to => 'க்கு';
+  String get to => 'வரை:';
 
   @override
   String get searchEventsHint => 'நிகழ்வுகளைத் தேடு...';
@@ -494,7 +572,8 @@ class AppLocalizationsTa extends AppLocalizations {
   String get searchGoatHint => 'ஆட்டைத் தேடு...';
 
   @override
-  String get noGoatsFound => 'ஆடுகள் கிடைக்கவில்லை';
+  String get noGoatsFound =>
+      'ஆடுகள் கிடைக்கவில்லை. முதலில் ஆடுகளைச் சேர்க்கவும்';
 
   @override
   String get medicineLabel => 'மருந்து:';
@@ -575,4 +654,452 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get other => 'மற்றவை';
+
+  @override
+  String get income => 'வருவாய்';
+
+  @override
+  String get expenses => 'செலவுகள்';
+
+  @override
+  String get search => 'தேடு';
+
+  @override
+  String get filter => 'வடிகட்டி';
+
+  @override
+  String get more_options => 'மேலும் விருப்பங்கள்';
+
+  @override
+  String get search_transactions => 'பரிவர்த்தனைகளை தேடுங்கள்';
+
+  @override
+  String get search_by_description => 'விளக்கம், தொகை மூலம் தேடு...';
+
+  @override
+  String get filter_by_date => 'தேதியின்படி வடிகட்டு';
+
+  @override
+  String get custom_date_range => 'தனிப்பயன் தேதி வரம்பு';
+
+  @override
+  String get custom_range => 'தனிப்பயன் வரம்பு';
+
+  @override
+  String get no_income_to_display =>
+      'தேர்ந்தெடுக்கப்பட்ட தேதி வரம்பிற்கு காண்பிக்க வருவாய் இல்லை.';
+
+  @override
+  String get no_expenses_to_display =>
+      'தேர்ந்தெடுக்கப்பட்ட தேதி வரம்பிற்கு காண்பிக்க செலவுகள் இல்லை.';
+
+  @override
+  String get export_pdf => 'PDF ஏற்றுமதி செய்யுங்கள்';
+
+  @override
+  String get income_type => 'வருவாய் வகை';
+
+  @override
+  String get expense_type => 'செலவு வகை';
+
+  @override
+  String get filter_by_income_type => 'வருவாய் வகை மூலம் வடிகட்டு';
+
+  @override
+  String get filter_by_expense_type => 'செலவு வகை மூலம் வடிகட்டு';
+
+  @override
+  String get all_types => 'அனைத்து வகைகள்';
+
+  @override
+  String get edit_view_record => 'பதிவைத் திருத்து / காண்க';
+
+  @override
+  String get record_deleted => 'பதிவு நீக்கப்பட்டது';
+
+  @override
+  String get income_updated => 'வருவாய் புதுப்பிக்கப்பட்டது';
+
+  @override
+  String get expense_updated => 'செலவு புதுப்பிக்கப்பட்டது';
+
+  @override
+  String get income_saved => 'வருவாய் சேமிக்கப்பட்டது';
+
+  @override
+  String get expense_saved => 'செலவு சேமிக்கப்பட்டது';
+
+  @override
+  String get add_income => 'வருவாய் சேர்க்க';
+
+  @override
+  String get add_expense => 'செலவு சேர்க்க';
+
+  @override
+  String get date_of_income => 'வருவாய் தேதி';
+
+  @override
+  String get select_income_type => 'வருவாய் வகையைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get milk_sale => 'பால் விற்பனை';
+
+  @override
+  String get goat_sale => 'ஆடு விற்பனை';
+
+  @override
+  String get category_income => 'வகை வருவாய்';
+
+  @override
+  String get other_specify => 'மற்றவை (குறிப்பிடவும்)';
+
+  @override
+  String get category_expense => 'வகைச் செலவு';
+
+  @override
+  String get other_expense => 'மற்றவை (குறிப்பிடவும்)';
+
+  @override
+  String get milk_quantity_sold => 'விற்கப்பட்ட பாலின் அளவு';
+
+  @override
+  String get selling_price_per_litre => 'லிட்டருக்கு விற்பனை விலை';
+
+  @override
+  String get how_much_did_you_earn => 'நீங்கள் எவ்வளவு சம்பாதித்தீர்கள்?';
+
+  @override
+  String get please_go_to_record =>
+      'தயவு செய்து விற்கப்பட்ட ஆட்டின் பதிவிற்குச் சென்று \'விற்கப்பட்டது\' என்ற காரணத்துடன் காப்பகப்படுத்துங்கள், ஒரு வருவாய் பதிவு தானாகவே உருவாக்கப்படும்!';
+
+  @override
+  String get quantity_of_items => 'பொருட்களின் அளவு';
+
+  @override
+  String get please_specify_source =>
+      'தயவு செய்து வருவாய் மூலத்தைக் குறிப்பிடவும்';
+
+  @override
+  String get specify_income_source => 'வருவாய் மூலத்தைக் குறிப்பிடவும்';
+
+  @override
+  String get receipt_no_optional => 'ரசீது எண் (விருப்பமானது)';
+
+  @override
+  String get write_some_notes => 'சில குறிப்புகளை எழுதுங்கள் ...';
+
+  @override
+  String get enter_receipt_number => 'ரசீது எண்ணை உள்ளிடவும்';
+
+  @override
+  String get enter_your_notes => 'உங்கள் குறிப்புகளை இங்கே உள்ளிடவும்...';
+
+  @override
+  String get new_income => 'புதிய வருவாய்';
+
+  @override
+  String get new_expense => 'புதிய செலவு';
+
+  @override
+  String get please_select_date => 'தயவு செய்து தேதியைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get please_select_income_type =>
+      'தயவு செய்து வருவாய் வகையைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get please_enter_amount => 'தயவு செய்து தொகையை உள்ளிடவும்';
+
+  @override
+  String get please_enter_quantity_price =>
+      'தயவு செய்து அளவு மற்றும் விலையை உள்ளிடவும்';
+
+  @override
+  String get please_enter_quantity => 'தயவு செய்து அளவை உள்ளிடவும்';
+
+  @override
+  String get please_specify_income_source =>
+      'தயவு செய்து வருவாய் மூலத்தைக் குறிப்பிடவும்';
+
+  @override
+  String get date_of_expense => 'செலவு தேதி';
+
+  @override
+  String get select_expense_type => 'செலவு வகையைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get please_select_expense_type =>
+      'தயவு செய்து செலவு வகையைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get please_enter_name_of_expense =>
+      'தயவு செய்து செலவின் பெயரை உள்ளிடவும்';
+
+  @override
+  String get please_select_category => 'தயவு செய்து வகையைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get how_much_did_you_spend => 'நீங்கள் எவ்வளவு செலவு செய்தீர்கள்?';
+
+  @override
+  String get name_of_expense => 'செலவின் பெயர்';
+
+  @override
+  String get select_category => 'வகையைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get add_category => 'வகையைச் சேர்க்கவும்';
+
+  @override
+  String get category_name => 'வகை பெயர்';
+
+  @override
+  String get enter_milk_quantity => 'பால் அளவை உள்ளிடவும்';
+
+  @override
+  String get enter_price_per_litre => 'லிட்டருக்கு விலையை உள்ளிடவும்';
+
+  @override
+  String get enter_quantity => 'அளவை உள்ளிடவும்';
+
+  @override
+  String get enter_amount => 'தொகையை உள்ளிடவும்';
+
+  @override
+  String get income_records => 'வருவாய் பதிவுகள்';
+
+  @override
+  String get expense_records => 'செலவு பதிவுகள்';
+
+  @override
+  String get no_income_records => 'ஏற்றுமதி செய்ய வருவாய் பதிவுகள் இல்லை';
+
+  @override
+  String get no_expense_records => 'ஏற்றுமதி செய்ய செலவு பதிவுகள் இல்லை';
+
+  @override
+  String get incomeCategories => 'வருமான வகைகள்';
+
+  @override
+  String get expenseCategories => 'செலவு வகைகள்';
+
+  @override
+  String get goatBreeds => 'வெள்ளாடு இனங்கள்';
+
+  @override
+  String get goatGroups => 'வெள்ளாடு குழுக்கள்';
+
+  @override
+  String get newCategory => 'புதிய வகை';
+
+  @override
+  String get enterName => 'பெயரை உள்ளிடவும் ...';
+
+  @override
+  String get searchCategories => 'வகைகளை தேடவும்...';
+
+  @override
+  String get noIncomeCategoriesAdded =>
+      'இதுவரை எந்த வருமான வகைகளும் சேர்க்கப்படவில்லை!';
+
+  @override
+  String get noResultsFound => 'முடிவுகள் எதுவும் கிடைக்கவில்லை';
+
+  @override
+  String get editCategory => 'வகையைத் திருத்து';
+
+  @override
+  String get save => 'சேமி';
+
+  @override
+  String get recordSuccessfullyUpdated =>
+      'பதிவு வெற்றிகரமாக புதுப்பிக்கப்பட்டது';
+
+  @override
+  String get noExpenseCategoriesAdded =>
+      'இதுவரை எந்த செலவு வகைகளும் சேர்க்கப்படவில்லை!';
+
+  @override
+  String get newBreed => 'புதிய இனம்';
+
+  @override
+  String get enterBreedName => 'இனப் பெயரை உள்ளிடவும்...';
+
+  @override
+  String get searchBreeds => 'இனங்களைத் தேடு...';
+
+  @override
+  String get noGoatBreedsAdded =>
+      'இதுவரை எந்த வெள்ளாடு இனங்களும் சேர்க்கப்படவில்லை!';
+
+  @override
+  String get editBreed => 'இனத்தைத் திருத்து';
+
+  @override
+  String goatsCount(Object count) {
+    return '($count) வெள்ளாடுகள்';
+  }
+
+  @override
+  String get newGroup => 'புதிய குழு';
+
+  @override
+  String get enterGroupName => 'குழுப் பெயரை உள்ளிடவும்...';
+
+  @override
+  String get searchGroups => 'குழுக்களைத் தேடு...';
+
+  @override
+  String get noGoatGroupsRegistered =>
+      'இதுவரை எந்த வெள்ளாடு குழுக்களும் பதிவு செய்யப்படவில்லை!';
+
+  @override
+  String get editGroup => 'குழுவைத் திருத்து';
+
+  @override
+  String get transactionsReport => 'பரிவர்த்தனைகள்';
+
+  @override
+  String get milkReport => 'பால் அறிக்கை';
+
+  @override
+  String get goatsReport => 'ஆடுகள் அறிக்கை';
+
+  @override
+  String get eventsReport => 'நிகழ்வுகள் அறிக்கை';
+
+  @override
+  String get breedingReport => 'இனப்பெருக்கம் அறிக்கை';
+
+  @override
+  String get pregnanciesReport => 'கர்ப்பம் அறிக்கை';
+
+  @override
+  String get weightReport => 'எடை அறிக்கை';
+
+  @override
+  String get stageTrackingReport => 'நிலை கண்காணிப்பு அறிக்கை';
+
+  @override
+  String get stageTracking => 'நிலை கண்காணிப்பு';
+
+  @override
+  String get updateSelected => 'தேர்ந்தெடுத்தவை புதுப்பிக்கவும்';
+
+  @override
+  String get animalsNeedStageUpdate =>
+      'நிலை புதுப்பிப்பு தேவைப்படும் விலங்குகள்.';
+
+  @override
+  String get wethersNotListed =>
+      'முட்டையிடப்பட்ட ஆடுகள் மற்றும் பிறந்த தேதி இல்லாத விலங்குகள் பட்டியலிடப்படவில்லை!';
+
+  @override
+  String get allCaughtUp => 'அனைத்தும் முடிந்துவிட்டன!';
+
+  @override
+  String get noGoatsNeedStageUpdates =>
+      'தற்போது ஆடுகளுக்கு நிலை புதுப்பிப்புகள் தேவையில்லை.';
+
+  @override
+  String get doe => 'பெண் ஆடு';
+
+  @override
+  String get updateStages => 'நிலைகள் புதுப்பிக்கவும்';
+
+  @override
+  String updateGoatsQuestion(Object count) {
+    return '$count ஆடுகளை குட்டி நிலையிலிருந்து அடுத்த நிலைக்கு புதுப்பிக்க வேண்டுமா?';
+  }
+
+  @override
+  String get update => 'புதுப்பிக்கவும்';
+
+  @override
+  String updatedGoatsSuccessfully(Object count) {
+    return '$count ஆடுகள் வெற்றிகரமாக புதுப்பிக்கப்பட்டன!';
+  }
+
+  @override
+  String daysSinceBirth(Object days) {
+    return '$days நாட்கள்';
+  }
+
+  @override
+  String get breed => 'இனம்';
+
+  @override
+  String get group => 'குழு';
+
+  @override
+  String get source => 'மூலம்';
+
+  @override
+  String get stagesSummary => 'நிலைகள் சுருக்கம்';
+
+  @override
+  String get stage => 'நிலை';
+
+  @override
+  String get count => 'எண்ணிக்கை';
+
+  @override
+  String get genderSummary => 'பாலின சுருக்கம்';
+
+  @override
+  String get gender => 'பாலினம்';
+
+  @override
+  String get male => 'ஆண்';
+
+  @override
+  String get female => 'பெண்';
+
+  @override
+  String get does => 'பெண் ஆடுகள்';
+
+  @override
+  String get doelings => 'பெண் ஆட்டுக்குட்டிகள்';
+
+  @override
+  String get bucks => 'ஆண் ஆடுகள்';
+
+  @override
+  String get bucklings => 'ஆண் ஆட்டுக்குட்டிகள்';
+
+  @override
+  String get wethers => 'முட்டையிடப்பட்ட ஆடுகள்';
+
+  @override
+  String get kids => 'குட்டிகள்';
+
+  @override
+  String get allSources => 'எல்லா மூலங்களும்';
+
+  @override
+  String get bornOnFarm => 'பண்ணையில் பிறந்தவை';
+
+  @override
+  String get purchased => 'வாங்கப்பட்டவை';
+
+  @override
+  String get milk => 'பால்';
+
+  @override
+  String get noGoatsDataToExport => 'ஏற்றுமதி செய்ய ஆடுகளின் தரவு இல்லை';
+
+  @override
+  String get failedToExportPdf => 'PDF ஏற்றுமதி தோல்வியடைந்தது';
+
+  @override
+  String get filterBySource => 'மூலம் வடிகட்டு';
+
+  @override
+  String get goatsTotal => 'ஆடுகள் மொத்தம்.';
+
+  @override
+  String get goatsByStage => 'நிலை மூலம் ஆடுகள்.';
+
+  @override
+  String get goatsByGender => 'பாலினம் மூலம் ஆடுகள்.';
 }

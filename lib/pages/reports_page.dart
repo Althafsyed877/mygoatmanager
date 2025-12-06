@@ -6,12 +6,17 @@ import 'stage_tracking_page.dart';
 import '../models/goat.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:mygoatmanager/l10n/app_localizations.dart';
+
+
 
 class ReportsPage extends StatelessWidget {
   const ReportsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -45,7 +50,7 @@ class ReportsPage extends StatelessWidget {
                 // Title - Expanded to prevent overflow
                 Expanded(
                   child: Text(
-                    'Reports',
+                    loc.reports,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 26,
@@ -85,14 +90,14 @@ class ReportsPage extends StatelessWidget {
                     mainAxisSpacing: spacing,
                     childAspectRatio: aspectRatio,
                     children: [
-                      _buildMenuCard(context, 'Transactions', 'assets/images/transactions.png'),
-                      _buildMenuCard(context, 'Milk Report', 'assets/images/milk.png'),
-                      _buildMenuCard(context, 'Goats Report', 'assets/images/goat.png'),
-                      _buildMenuCard(context, 'Events Report', 'assets/images/events.png'),
-                      _buildMenuCard(context, 'Breeding Report', 'assets/images/breeding_report.png'),
-                      _buildMenuCard(context, 'Pregnancies Report', 'assets/images/pregnancies.png'),
-                      _buildMenuCard(context, 'Weight Report', 'assets/images/weight_report.png'),
-                      _buildMenuCard(context, 'Stage Tracking Report', 'assets/images/stage_tracking.png'),
+                      _buildMenuCard(context, loc.transactionsReport, 'assets/images/transactions.png'),
+                      _buildMenuCard(context, loc.milkReport, 'assets/images/milk.png'),
+                      _buildMenuCard(context, loc.goatsReport, 'assets/images/goat.png'),
+                      _buildMenuCard(context, loc.eventsReport, 'assets/images/events.png'),
+                      _buildMenuCard(context, loc.breedingReport, 'assets/images/breeding_report.png'),
+                      _buildMenuCard(context, loc.pregnanciesReport, 'assets/images/pregnancies.png'),
+                      _buildMenuCard(context, loc.weightReport, 'assets/images/weight_report.png'),
+                      _buildMenuCard(context, loc.stageTrackingReport, 'assets/images/stage_tracking.png'),
                     ],
                   ),
                 );
@@ -105,6 +110,8 @@ class ReportsPage extends StatelessWidget {
   }
 
   Widget _buildMenuCard(BuildContext context, String title, String iconPath) {
+    final loc = AppLocalizations.of(context)!;
+    
     return Card(
       elevation: 6,
       shape: RoundedRectangleBorder(
@@ -121,19 +128,19 @@ class ReportsPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             onTap: () {
               // Navigate to the appropriate report page based on title
-              if (title == 'Transactions') {
+              if (title == loc.transactionsReport) {
                 Navigator.push(context, MaterialPageRoute(builder: (ctx) => const TransactionsReportPage()));
                 return;
               }
-              if (title == 'Goats Report') {
+              if (title == loc.goatsReport) {
                 Navigator.push(context, MaterialPageRoute(builder: (ctx) => const GoatsReportPage()));
                 return;
               }
-              if (title == 'Pregnancies' || title == 'Pregnancies Report') {
+              if (title == loc.pregnanciesReport) {
                 Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PregnanciesPage()));
                 return;
               }
-              if (title == 'Stage Tracking' || title == 'Stage Tracking Report') {
+              if (title == loc.stageTrackingReport) {
                 _navigateToStageTracking(context);
                 return;
               }
@@ -203,6 +210,8 @@ class ReportsPage extends StatelessWidget {
   }
 
   Future<void> _navigateToStageTracking(BuildContext context) async {
+    final loc = AppLocalizations.of(context)!;
+    
     // Load goats from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     final String? goatsJson = prefs.getString('goats');
@@ -210,8 +219,8 @@ class ReportsPage extends StatelessWidget {
     if (goatsJson == null) {
       // Show error if no goats found
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No goats found. Please add goats first.'),
+        SnackBar(
+          content: Text(loc.noGoatsFound),
           backgroundColor: Colors.orange,
         ),
       );

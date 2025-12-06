@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/goat.dart';
+import 'package:mygoatmanager/l10n/app_localizations.dart';
 
 class StageTrackingPage extends StatefulWidget {
   final List<Goat> goats;
@@ -30,18 +31,20 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
     }).toList();
   }
 
-  String _getNextStage(String gender) {
+  String _getNextStage(String gender, BuildContext context) {
     final lowerGender = gender.toLowerCase();
     
-    if (lowerGender == 'female') return 'Doe';
-    if (lowerGender == 'male') return 'Buck';
-    if (lowerGender == 'buckling') return 'Buck';
+    if (lowerGender == 'female') return AppLocalizations.of(context)!.doe;
+    if (lowerGender == 'male') return AppLocalizations.of(context)!.buck;
+    if (lowerGender == 'buckling') return AppLocalizations.of(context)!.buck;
     
-    return 'Buck'; // default for other male types
+    return AppLocalizations.of(context)!.buck; // default for other male types
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -50,9 +53,9 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Stage Tracking', 
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+        title: Text(
+          loc.stageTracking, 
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
         ),
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(4),
@@ -75,12 +78,12 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
                 alignment: Alignment.centerRight,
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.check_box, color: Colors.white, size: 20),
-                  label: const Text('Update Selected', style: TextStyle(color: Colors.white)),
+                  label: Text(loc.updateSelected, style: const TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFFA726),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   ),
-                  onPressed: selectedGoats.isEmpty ? null : _updateSelectedStages,
+                  onPressed: selectedGoats.isEmpty ? null : () => _updateSelectedStages(context),
                 ),
               ),
               const SizedBox(height: 12),
@@ -92,9 +95,9 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
                   color: const Color(0xFF4CAF50),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Text(
-                  'Animals that might need stage update.',
-                  style: TextStyle(
+                child: Text(
+                  loc.animalsNeedStageUpdate,
+                  style: const TextStyle(
                     color: Colors.white, 
                     fontSize: 16, 
                     fontWeight: FontWeight.bold
@@ -108,7 +111,7 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  'Wethers and animals without birth dates are not listed!',
+                  loc.wethersNotListed,
                   style: TextStyle(
                     color: Colors.orange[700],
                     fontSize: 14,
@@ -130,12 +133,12 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
               // Goats List
               Expanded(
                 child: goatsNeedingUpdate.isEmpty
-                    ? _buildEmptyState()
+                    ? _buildEmptyState(context)
                     : ListView.builder(
                         itemCount: goatsNeedingUpdate.length,
                         itemBuilder: (context, index) {
                           final goat = goatsNeedingUpdate[index];
-                          return _buildGoatCard(goat);
+                          return _buildGoatCard(goat, context);
                         },
                       ),
               ),
@@ -146,21 +149,23 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.check_circle, size: 64, color: Colors.green[700]),
           const SizedBox(height: 16),
-          const Text(
-            'All caught up!',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            loc.allCaughtUp,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'No goats need stage updates at this time.',
-            style: TextStyle(color: Colors.grey),
+          Text(
+            loc.noGoatsNeedStageUpdates,
+            style: const TextStyle(color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ],
@@ -168,10 +173,11 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
     );
   }
 
-  Widget _buildGoatCard(Goat goat) {
+  Widget _buildGoatCard(Goat goat, BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final isSelected = selectedGoats.contains(goat.tagNo);
     final daysSinceBirth = _calculateDaysSinceBirth(goat.dateOfBirth);
-    final nextStage = _getNextStage(goat.gender);
+    final nextStage = _getNextStage(goat.gender, context);
     final isMale = goat.gender.toLowerCase() == 'male' || 
                    goat.gender.toLowerCase() == 'buckling' || 
                    goat.gender.toLowerCase() == 'buck';
@@ -244,14 +250,14 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'goat',
+                    loc.goat,
                     style: TextStyle(
                       color: Colors.grey[600],
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '$daysSinceBirth days',
+                    '${loc.daysSinceBirth(daysSinceBirth)}',
                     style: const TextStyle(
                       fontWeight: FontWeight.w600, 
                       color: Color(0xFFFFA726)
@@ -313,25 +319,27 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
     return 0;
   }
 
-  void _updateSelectedStages() {
+  void _updateSelectedStages(BuildContext context) {
     if (selectedGoats.isEmpty) return;
+
+    final loc = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Update Stages'),
-        content: Text('Update ${selectedGoats.length} goats from Kid to next stage?'),
+        title: Text(loc.updateStages),
+        content: Text('${loc.updateGoatsQuestion(selectedGoats.length)}'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(loc.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               // Update logic here
               for (final tagNo in selectedGoats) {
                 final goat = widget.goats.firstWhere((g) => g.tagNo == tagNo);
-                final newStage = _getNextStage(goat.gender);
+                final newStage = _getNextStage(goat.gender, context);
                 
                 // Update the goat stage (in real app, save to database)
                 debugPrint('Updating ${goat.tagNo} from Kid to $newStage');
@@ -340,7 +348,7 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Updated ${selectedGoats.length} goats successfully!'),
+                  content: Text('${loc.updatedGoatsSuccessfully(selectedGoats.length)}'),
                   backgroundColor: Colors.green,
                 )
               );
@@ -353,7 +361,7 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF4CAF50),
             ),
-            child: const Text('Update'),
+            child: Text(loc.update),
           ),
         ],
       ),

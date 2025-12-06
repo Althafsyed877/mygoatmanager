@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mygoatmanager/l10n/app_localizations.dart';
 
 Future<void> showCenteredSuccess(BuildContext context, String message) async {
   showDialog(
@@ -38,8 +39,16 @@ class FarmSetupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use AppLocalizations with null-aware operator
+    final loc = AppLocalizations.of(context);
+    if (loc == null) {
+      // If localization is not available, show a loading screen
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     
     // Calculate responsive sizes
     final cardSize = screenWidth * 0.4;
@@ -71,9 +80,9 @@ class FarmSetupPage extends StatelessWidget {
                           },
                         ),
                         const SizedBox(width: 8),
-                        const Text(
-                          'Farm Setup',
-                          style: TextStyle(
+                        Text(
+                          loc.farmSetup,
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -105,8 +114,8 @@ class FarmSetupPage extends StatelessWidget {
                 childAspectRatio: 1.0,
                 children: [
                   _buildMenuCard(
-                    'Income\nCategories',
-                    'assets/images/income.png', // PNG icon
+                    loc.incomeCategories,
+                    'assets/images/income.png',
                     cardSize,
                     () {
                       Navigator.push(
@@ -116,8 +125,8 @@ class FarmSetupPage extends StatelessWidget {
                     },
                   ),
                   _buildMenuCard(
-                    'Expense\nCategories',
-                    'assets/images/expense.png', // PNG icon
+                    loc.expenseCategories,
+                    'assets/images/expense.png',
                     cardSize,
                     () {
                       Navigator.push(
@@ -127,8 +136,8 @@ class FarmSetupPage extends StatelessWidget {
                     },
                   ),
                   _buildMenuCard(
-                    'Goat Breeds',
-                    'assets/images/goat_breed.png', // PNG icon
+                    loc.goatBreeds,
+                    'assets/images/goat_breed.png',
                     cardSize,
                     () {
                       Navigator.push(
@@ -138,8 +147,8 @@ class FarmSetupPage extends StatelessWidget {
                     },
                   ),
                   _buildMenuCard(
-                    'Goat Groups',
-                    'assets/images/goat_group.png', // PNG icon
+                    loc.goatGroups,
+                    'assets/images/goat_group.png',
                     cardSize,
                     () {
                       Navigator.push(
@@ -204,7 +213,7 @@ class FarmSetupPage extends StatelessWidget {
                   title,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: cardSize * 0.08, // Responsive font size
+                    fontSize: cardSize * 0.08,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
@@ -219,8 +228,7 @@ class FarmSetupPage extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Individual setup pages (Income/Expense/Goat Breeds/Groups)
-// Search activates inline in the AppBar when the icon is tapped.
+// Income Categories Page
 // ---------------------------------------------------------------------------
 
 class IncomeCategoriesPage extends StatefulWidget {
@@ -257,7 +265,8 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
     await prefs.setStringList('incomeCategories', _categories);
   }
 
-  void _showAddDialog() {
+  void _showAddDialog(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     _categoryController.clear();
     showDialog(
       context: context,
@@ -271,13 +280,13 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('New Category', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(loc.newCategory, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
                 TextField(
                   controller: _categoryController,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter name ...',
-                    border: UnderlineInputBorder(),
+                  decoration: InputDecoration(
+                    hintText: loc.enterName,
+                    border: const UnderlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -287,7 +296,7 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
                     ElevatedButton(
                       onPressed: () => Navigator.pop(ctx),
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA726)),
-                      child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                      child: Text(loc.cancel, style: const TextStyle(color: Colors.white)),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(
@@ -299,7 +308,7 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4CAF50)),
-                      child: const Text('Add', style: TextStyle(color: Colors.white)),
+                      child: Text(loc.add, style: const TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -313,6 +322,8 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -327,12 +338,12 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
                 autofocus: true,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  hintText: 'Search categories...',
+                  hintText: loc.searchCategories,
                   hintStyle: const TextStyle(color: Colors.white70),
                   border: InputBorder.none,
                 ),
               )
-            : const Text('Income Categories', style: TextStyle(color: Colors.white)),
+            : Text(loc.incomeCategories, style: const TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             onPressed: () {
@@ -347,9 +358,9 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
             icon: const Icon(Icons.search, color: Colors.white),
           )
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(height: 4, color: const Color(0xFFFFB300)),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(4),
+          child: SizedBox(height: 4, child: DecoratedBox(decoration: BoxDecoration(color: Color(0xFFFFB300)))),
         ),
       ),
       body: _searchQuery.isEmpty && _categories.isEmpty
@@ -357,7 +368,7 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Text(
-                    'No income categories have been added as of yet!',
+                    loc.noIncomeCategoriesAdded,
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: Color(0xFFFFB300), fontSize: 16, fontWeight: FontWeight.w600),
                   ),
@@ -372,7 +383,7 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
                   if (filtered.isEmpty && _searchQuery.isNotEmpty) {
                     return Center(
                       child: Text(
-                        'No results found',
+                        loc.noResultsFound,
                         style: TextStyle(color: Colors.grey[600]),
                       ),
                     );
@@ -395,6 +406,7 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
                                 setState(() => _categories.removeAt(originalIndex));
                                 _saveCategories();
                               } else if (val == 'edit') {
+                                final editLoc = AppLocalizations.of(context)!;
                                 _categoryController.text = cat;
                                 showDialog(
                                   context: context,
@@ -409,13 +421,13 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
                                           mainAxisSize: MainAxisSize.min,
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            const Text('Edit Category', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                            Text(editLoc.editCategory, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                                             const SizedBox(height: 20),
                                             TextField(
                                               controller: _categoryController,
-                                              decoration: const InputDecoration(
-                                                hintText: 'Enter name ...',
-                                                border: UnderlineInputBorder(),
+                                              decoration: InputDecoration(
+                                                hintText: editLoc.enterName,
+                                                border: const UnderlineInputBorder(),
                                               ),
                                             ),
                                             const SizedBox(height: 24),
@@ -425,7 +437,7 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
                                                 ElevatedButton(
                                                   onPressed: () => Navigator.pop(ctx),
                                                   style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA726)),
-                                                  child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                                                  child: Text(editLoc.cancel, style: const TextStyle(color: Colors.white)),
                                                 ),
                                                 const SizedBox(width: 12),
                                                 ElevatedButton(
@@ -434,11 +446,11 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
                                                       setState(() => _categories[originalIndex] = _categoryController.text);
                                                       await _saveCategories();
                                                       Navigator.pop(ctx);
-                                                      showCenteredSuccess(context, 'Record successfully updated');
+                                                      showCenteredSuccess(context, loc.recordSuccessfullyUpdated);
                                                     }
                                                   },
                                                   style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4CAF50)),
-                                                  child: const Text('Save', style: TextStyle(color: Colors.white)),
+                                                  child: Text(editLoc.save, style: const TextStyle(color: Colors.white)),
                                                 ),
                                               ],
                                             ),
@@ -451,9 +463,9 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
                               }
                             },
                             color: Colors.white,
-                            itemBuilder: (_) => const [
-                              PopupMenuItem(value: 'edit', child: Text('Edit/View Record')),
-                              PopupMenuItem(value: 'delete', child: Text('Delete')),
+                            itemBuilder: (_) => [
+                              PopupMenuItem(value: 'edit', child: Text(loc.editViewRecord)),
+                              PopupMenuItem(value: 'delete', child: Text(loc.delete)),
                             ],
                           ),
                         ),
@@ -463,8 +475,8 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
                 },
               ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddDialog,
-        label: const Text('Add', style: TextStyle(color: Colors.white)),
+        onPressed: () => _showAddDialog(context),
+        label: Text(loc.add, style: const TextStyle(color: Colors.white)),
         icon: const Icon(Icons.add, color: Colors.white),
         backgroundColor: const Color(0xFFFFA726),
       ),
@@ -478,6 +490,10 @@ class _IncomeCategoriesPageState extends State<IncomeCategoriesPage> {
     super.dispose();
   }
 }
+
+// ---------------------------------------------------------------------------
+// Expense Categories Page
+// ---------------------------------------------------------------------------
 
 class ExpenseCategoriesPage extends StatefulWidget {
   const ExpenseCategoriesPage({super.key});
@@ -513,7 +529,8 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
     await prefs.setStringList('expenseCategories', _categories);
   }
 
-  void _showAddDialog() {
+  void _showAddDialog(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     _categoryController.clear();
     showDialog(
       context: context,
@@ -527,13 +544,13 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('New Category', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(loc.newCategory, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
                 TextField(
                   controller: _categoryController,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter name ...',
-                    border: UnderlineInputBorder(),
+                  decoration: InputDecoration(
+                    hintText: loc.enterName,
+                    border: const UnderlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -543,7 +560,7 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
                     ElevatedButton(
                       onPressed: () => Navigator.pop(ctx),
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA726)),
-                      child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                      child: Text(loc.cancel, style: const TextStyle(color: Colors.white)),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(
@@ -555,7 +572,7 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4CAF50)),
-                      child: const Text('Add', style: TextStyle(color: Colors.white)),
+                      child: Text(loc.add, style: const TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -569,6 +586,8 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -583,12 +602,12 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
                 autofocus: true,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  hintText: 'Search categories...',
+                  hintText: loc.searchCategories,
                   hintStyle: const TextStyle(color: Colors.white70),
                   border: InputBorder.none,
                 ),
               )
-            : const Text('Expense Categories', style: TextStyle(color: Colors.white)),
+            : Text(loc.expenseCategories, style: const TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             onPressed: () {
@@ -603,9 +622,9 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
             icon: const Icon(Icons.search, color: Colors.white),
           )
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(height: 4, color: const Color(0xFFFFB300)),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(4),
+          child: SizedBox(height: 4, child: DecoratedBox(decoration: BoxDecoration(color: Color(0xFFFFB300)))),
         ),
       ),
       body: _searchQuery.isEmpty && _categories.isEmpty
@@ -613,7 +632,7 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Text(
-                    'No expense categories have been added as of yet!',
+                    loc.noExpenseCategoriesAdded,
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: Color(0xFFFFB300), fontSize: 16, fontWeight: FontWeight.w600),
                   ),
@@ -628,7 +647,7 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
                   if (filtered.isEmpty && _searchQuery.isNotEmpty) {
                     return Center(
                       child: Text(
-                        'No results found',
+                        loc.noResultsFound,
                         style: TextStyle(color: Colors.grey[600]),
                       ),
                     );
@@ -651,6 +670,7 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
                                 setState(() => _categories.removeAt(originalIndex));
                                 _saveCategories();
                               } else if (val == 'edit') {
+                                final editLoc = AppLocalizations.of(context)!;
                                 _categoryController.text = cat;
                                 showDialog(
                                   context: context,
@@ -665,13 +685,13 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
                                           mainAxisSize: MainAxisSize.min,
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            const Text('Edit Category', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                            Text(editLoc.editCategory, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                                             const SizedBox(height: 20),
                                             TextField(
                                               controller: _categoryController,
-                                              decoration: const InputDecoration(
-                                                hintText: 'Enter name ...',
-                                                border: UnderlineInputBorder(),
+                                              decoration: InputDecoration(
+                                                hintText: editLoc.enterName,
+                                                border: const UnderlineInputBorder(),
                                               ),
                                             ),
                                             const SizedBox(height: 24),
@@ -681,7 +701,7 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
                                                 ElevatedButton(
                                                   onPressed: () => Navigator.pop(ctx),
                                                   style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA726)),
-                                                  child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                                                  child: Text(editLoc.cancel, style: const TextStyle(color: Colors.white)),
                                                 ),
                                                 const SizedBox(width: 12),
                                                 ElevatedButton(
@@ -690,11 +710,11 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
                                                       setState(() => _categories[originalIndex] = _categoryController.text);
                                                       await _saveCategories();
                                                       Navigator.pop(ctx);
-                                                      showCenteredSuccess(context, 'Record successfully updated');
+                                                      showCenteredSuccess(context, loc.recordSuccessfullyUpdated);
                                                     }
                                                   },
                                                   style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4CAF50)),
-                                                  child: const Text('Save', style: TextStyle(color: Colors.white)),
+                                                  child: Text(editLoc.save, style: const TextStyle(color: Colors.white)),
                                                 ),
                                               ],
                                             ),
@@ -707,9 +727,9 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
                               }
                             },
                             color: Colors.white,
-                            itemBuilder: (_) => const [
-                              PopupMenuItem(value: 'edit', child: Text('Edit/View Record')),
-                              PopupMenuItem(value: 'delete', child: Text('Delete')),
+                            itemBuilder: (_) => [
+                              PopupMenuItem(value: 'edit', child: Text(loc.editViewRecord)),
+                              PopupMenuItem(value: 'delete', child: Text(loc.delete)),
                             ],
                           ),
                         ),
@@ -719,8 +739,8 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
                 },
               ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddDialog,
-        label: const Text('Add', style: TextStyle(color: Colors.white)),
+        onPressed: () => _showAddDialog(context),
+        label: Text(loc.add, style: const TextStyle(color: Colors.white)),
         icon: const Icon(Icons.add, color: Colors.white),
         backgroundColor: const Color(0xFFFFA726),
       ),
@@ -734,6 +754,10 @@ class _ExpenseCategoriesPageState extends State<ExpenseCategoriesPage> {
     super.dispose();
   }
 }
+
+// ---------------------------------------------------------------------------
+// Goat Breeds Page
+// ---------------------------------------------------------------------------
 
 class GoatBreedsPage extends StatefulWidget {
   const GoatBreedsPage({super.key});
@@ -770,7 +794,8 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
     await prefs.setStringList('goatBreeds', _breeds);
   }
 
-  void _showAddDialog() {
+  void _showAddDialog(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     _breedController.clear();
     showDialog(
       context: context,
@@ -784,13 +809,13 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('New Breed', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(loc.newBreed, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
                 TextField(
                   controller: _breedController,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter breed name...',
-                    border: UnderlineInputBorder(),
+                  decoration: InputDecoration(
+                    hintText: loc.enterBreedName,
+                    border: const UnderlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -800,7 +825,7 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
                     ElevatedButton(
                       onPressed: () => Navigator.pop(ctx),
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA726)),
-                      child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                      child: Text(loc.cancel, style: const TextStyle(color: Colors.white)),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(
@@ -812,7 +837,7 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4CAF50)),
-                      child: const Text('Add', style: TextStyle(color: Colors.white)),
+                      child: Text(loc.add, style: const TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -826,6 +851,8 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -840,12 +867,12 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
                 autofocus: true,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  hintText: 'Search breeds...',
+                  hintText: loc.searchBreeds,
                   hintStyle: const TextStyle(color: Colors.white70),
                   border: InputBorder.none,
                 ),
               )
-            : const Text('Goat Breeds', style: TextStyle(color: Colors.white)),
+            : Text(loc.goatBreeds, style: const TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             onPressed: () {
@@ -860,9 +887,9 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
             icon: const Icon(Icons.search, color: Colors.white),
           )
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(height: 4, color: const Color(0xFFFFB300)),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(4),
+          child: SizedBox(height: 4, child: DecoratedBox(decoration: BoxDecoration(color: Color(0xFFFFB300)))),
         ),
       ),
       body: _breeds.isEmpty && _searchQuery.isEmpty
@@ -870,7 +897,7 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Text(
-                  'No goat breeds have been added yet!',
+                  loc.noGoatBreedsAdded,
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Color(0xFFFFB300), fontSize: 16, fontWeight: FontWeight.w600),
                 ),
@@ -883,7 +910,7 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
                 if (filtered.isEmpty && _searchQuery.isNotEmpty) {
                   return Center(
                     child: Text(
-                      'No results found',
+                      loc.noResultsFound,
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                   );
@@ -899,7 +926,7 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       child: ListTile(
                         title: Text(b, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                        subtitle: const Text('(0) Goats', style: TextStyle(color: Colors.grey)),
+                        subtitle: Text('(0) ${loc.goats}', style: const TextStyle(color: Colors.grey)),
                         trailing: PopupMenuButton<String>(
                           onSelected: (val) {
                             final originalIndex = _breeds.indexOf(b);
@@ -907,6 +934,7 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
                               setState(() => _breeds.removeAt(originalIndex));
                               _saveBreeds();
                             } else if (val == 'edit') {
+                              final editLoc = AppLocalizations.of(context)!;
                               _breedController.text = b;
                               showDialog(
                                 context: context,
@@ -921,13 +949,13 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
                                         mainAxisSize: MainAxisSize.min,
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          const Text('Edit Breed', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                          Text(editLoc.editBreed, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                                           const SizedBox(height: 20),
                                           TextField(
                                             controller: _breedController,
-                                            decoration: const InputDecoration(
-                                              hintText: 'Enter breed name...',
-                                              border: UnderlineInputBorder(),
+                                            decoration: InputDecoration(
+                                              hintText: editLoc.enterBreedName,
+                                              border: const UnderlineInputBorder(),
                                             ),
                                           ),
                                           const SizedBox(height: 24),
@@ -937,7 +965,7 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
                                               ElevatedButton(
                                                 onPressed: () => Navigator.pop(ctx),
                                                 style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA726)),
-                                                child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                                                child: Text(editLoc.cancel, style: const TextStyle(color: Colors.white)),
                                               ),
                                               const SizedBox(width: 12),
                                               ElevatedButton(
@@ -946,11 +974,11 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
                                                     setState(() => _breeds[originalIndex] = _breedController.text);
                                                     await _saveBreeds();
                                                     Navigator.pop(ctx);
-                                                    showCenteredSuccess(context, 'Record successfully updated');
+                                                    showCenteredSuccess(context, loc.recordSuccessfullyUpdated);
                                                   }
                                                 },
                                                 style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4CAF50)),
-                                                child: const Text('Save', style: TextStyle(color: Colors.white)),
+                                                child: Text(editLoc.save, style: const TextStyle(color: Colors.white)),
                                               ),
                                             ],
                                           ),
@@ -963,9 +991,9 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
                             }
                           },
                           color: Colors.white,
-                          itemBuilder: (_) => const [
-                            PopupMenuItem(value: 'edit', child: Text('Edit/View Record')),
-                            PopupMenuItem(value: 'delete', child: Text('Delete')),
+                          itemBuilder: (_) => [
+                            PopupMenuItem(value: 'edit', child: Text(loc.editViewRecord)),
+                            PopupMenuItem(value: 'delete', child: Text(loc.delete)),
                           ],
                         ),
                       ),
@@ -975,8 +1003,8 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
               },
             ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddDialog,
-        label: const Text('Add', style: TextStyle(color: Colors.white)),
+        onPressed: () => _showAddDialog(context),
+        label: Text(loc.add, style: const TextStyle(color: Colors.white)),
         icon: const Icon(Icons.add, color: Colors.white),
         backgroundColor: const Color(0xFFFFA726),
       ),
@@ -990,6 +1018,10 @@ class _GoatBreedsPageState extends State<GoatBreedsPage> {
     super.dispose();
   }
 }
+
+// ---------------------------------------------------------------------------
+// Goat Groups Page
+// ---------------------------------------------------------------------------
 
 class GoatGroupsPage extends StatefulWidget {
   const GoatGroupsPage({super.key});
@@ -1025,7 +1057,8 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
     await prefs.setStringList('goatGroups', _groups);
   }
 
-  void _showAddGroupDialog() {
+  void _showAddGroupDialog(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     _groupController.clear();
     showDialog(
       context: context,
@@ -1039,13 +1072,13 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('New Group', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(loc.newGroup, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
                 TextField(
                   controller: _groupController,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter group name...',
-                    border: UnderlineInputBorder(),
+                  decoration: InputDecoration(
+                    hintText: loc.enterGroupName,
+                    border: const UnderlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -1055,7 +1088,7 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
                     ElevatedButton(
                       onPressed: () => Navigator.pop(ctx),
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA726)),
-                      child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                      child: Text(loc.cancel, style: const TextStyle(color: Colors.white)),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(
@@ -1067,7 +1100,7 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4CAF50)),
-                      child: const Text('Add', style: TextStyle(color: Colors.white)),
+                      child: Text(loc.add, style: const TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -1081,6 +1114,8 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -1095,12 +1130,12 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
                 autofocus: true,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  hintText: 'Search groups...',
+                  hintText: loc.searchGroups,
                   hintStyle: const TextStyle(color: Colors.white70),
                   border: InputBorder.none,
                 ),
               )
-            : const Text('Goat Groups', style: TextStyle(color: Colors.white)),
+            : Text(loc.goatGroups, style: const TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             onPressed: () {
@@ -1115,9 +1150,9 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
             icon: const Icon(Icons.search, color: Colors.white),
           )
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(height: 4, color: const Color(0xFFFFB300)),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(4),
+          child: SizedBox(height: 4, child: DecoratedBox(decoration: BoxDecoration(color: Color(0xFFFFB300)))),
         ),
       ),
       body: _groups.isEmpty
@@ -1125,7 +1160,7 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Text(
-                  'No goat groups currently registered as of yet!',
+                  loc.noGoatGroupsRegistered,
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Color(0xFFFFB300), fontSize: 16, fontWeight: FontWeight.w600),
                 ),
@@ -1140,7 +1175,7 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
                 if (filtered.isEmpty && _searchQuery.isNotEmpty) {
                   return Center(
                     child: Text(
-                      'No results found',
+                      loc.noResultsFound,
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                   );
@@ -1163,6 +1198,7 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
                               setState(() => _groups.removeAt(originalIndex));
                               _saveGroups();
                             } else if (val == 'edit') {
+                              final editLoc = AppLocalizations.of(context)!;
                               _groupController.text = g;
                               showDialog(
                                 context: context,
@@ -1177,13 +1213,13 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
                                         mainAxisSize: MainAxisSize.min,
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          const Text('Edit Group', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                          Text(editLoc.editGroup, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                                           const SizedBox(height: 20),
                                           TextField(
                                             controller: _groupController,
-                                            decoration: const InputDecoration(
-                                              hintText: 'Enter group name...',
-                                              border: UnderlineInputBorder(),
+                                            decoration: InputDecoration(
+                                              hintText: editLoc.enterGroupName,
+                                              border: const UnderlineInputBorder(),
                                             ),
                                           ),
                                           const SizedBox(height: 24),
@@ -1193,20 +1229,20 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
                                               ElevatedButton(
                                                 onPressed: () => Navigator.pop(ctx),
                                                 style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA726)),
-                                                child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                                                child: Text(editLoc.cancel, style: const TextStyle(color: Colors.white)),
                                               ),
                                               const SizedBox(width: 12),
                                               ElevatedButton(
-                                                  onPressed: () async {
-                                                    if (_groupController.text.isNotEmpty) {
-                                                      setState(() => _groups[originalIndex] = _groupController.text);
-                                                      await _saveGroups();
-                                                      Navigator.pop(ctx);
-                                                      showCenteredSuccess(context, 'Record successfully updated');
-                                                    }
-                                                  },
+                                                onPressed: () async {
+                                                  if (_groupController.text.isNotEmpty) {
+                                                    setState(() => _groups[originalIndex] = _groupController.text);
+                                                    await _saveGroups();
+                                                    Navigator.pop(ctx);
+                                                    showCenteredSuccess(context, loc.recordSuccessfullyUpdated);
+                                                  }
+                                                },
                                                 style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4CAF50)),
-                                                child: const Text('Save', style: TextStyle(color: Colors.white)),
+                                                child: Text(editLoc.save, style: const TextStyle(color: Colors.white)),
                                               ),
                                             ],
                                           ),
@@ -1219,9 +1255,9 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
                             }
                           },
                           color: Colors.white,
-                          itemBuilder: (_) => const [
-                            PopupMenuItem(value: 'edit', child: Text('Edit/View Record')),
-                            PopupMenuItem(value: 'delete', child: Text('Delete')),
+                          itemBuilder: (_) => [
+                            PopupMenuItem(value: 'edit', child: Text(loc.editViewRecord)),
+                            PopupMenuItem(value: 'delete', child: Text(loc.delete)),
                           ],
                         ),
                       ),
@@ -1231,8 +1267,8 @@ class _GoatGroupsPageState extends State<GoatGroupsPage> {
               },
             ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddGroupDialog,
-        label: const Text('Add', style: TextStyle(color: Colors.white)),
+        onPressed: () => _showAddGroupDialog(context),
+        label: Text(loc.add, style: const TextStyle(color: Colors.white)),
         icon: const Icon(Icons.add, color: Colors.white),
         backgroundColor: const Color(0xFFFFA726),
       ),

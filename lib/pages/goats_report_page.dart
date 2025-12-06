@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart' as pdf;
 import 'dart:typed_data';
 import 'package:printing/printing.dart';
 import '../models/goat.dart';
+import 'package:mygoatmanager/l10n/app_localizations.dart';
 
 class GoatsReportPage extends StatefulWidget {
   const GoatsReportPage({super.key});
@@ -23,15 +24,23 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
   String selectedSource = 'All Sources';
   bool _isLoading = true;
 
-  final List<String> stages = ['Does', 'Doelings', 'Bucks', 'Bucklings', 'Wethers', 'Kids'];
-  final List<String> breeds = ['All Breeds', 'Alpine', 'Boer', 'Kiko', 'Nubian'];
-  final List<String> groups = ['All Groups', 'milk'];
-  final List<String> sources = ['All Sources', 'Born on farm', 'Purchased', 'Other'];
+  List<String> stages = [];
+  List<String> breeds = [];
+  List<String> groups = [];
+  List<String> sources = [];
 
   @override
   void initState() {
     super.initState();
     _loadGoats();
+  }
+
+  void _updateLocalizedLists(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    stages = [loc.does, loc.doelings, loc.bucks, loc.bucklings, loc.wethers, loc.kids];
+    breeds = [loc.allBreeds, 'Alpine', 'Boer', 'Kiko', 'Nubian'];
+    groups = [loc.allGroups, loc.milk];
+    sources = [loc.allSources, loc.bornOnFarm, loc.purchased, loc.other];
   }
 
   Future<void> _loadGoats() async {
@@ -76,22 +85,23 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
   }
 
   void _applyFilters() {
+    final loc = AppLocalizations.of(context)!;
     List<Goat> filtered = List.from(_goats);
 
-    if (selectedBreed != 'All Breeds') {
+    if (selectedBreed != loc.allBreeds) {
       filtered = filtered.where((goat) => goat.breed == selectedBreed).toList();
     }
 
-    if (selectedGroup != 'All Groups') {
+    if (selectedGroup != loc.allGroups) {
       filtered = filtered.where((goat) => goat.group == selectedGroup).toList();
     }
 
-    if (selectedSource != 'All Sources') {
+    if (selectedSource != loc.allSources) {
       filtered = filtered.where((goat) {
         final obtained = goat.obtained?.toLowerCase() ?? '';
-        if (selectedSource == 'Born on farm') return obtained.contains('born');
-        if (selectedSource == 'Purchased') return obtained.contains('purchased');
-        if (selectedSource == 'Other') return obtained.contains('other') || obtained.contains('gift');
+        if (selectedSource == loc.bornOnFarm) return obtained.contains('born');
+        if (selectedSource == loc.purchased) return obtained.contains('purchased');
+        if (selectedSource == loc.other) return obtained.contains('other') || obtained.contains('gift');
         return true;
       }).toList();
     }
@@ -105,28 +115,33 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
     final gender = goat.gender?.toLowerCase() ?? '';
     final stage = goat.goatStage?.toLowerCase() ?? '';
     
-    if (stages.map((s) => s.toLowerCase()).contains(stage)) {
+    final loc = AppLocalizations.of(context)!;
+    final stageList = [loc.does.toLowerCase(), loc.doelings.toLowerCase(), 
+                      loc.bucks.toLowerCase(), loc.bucklings.toLowerCase(), 
+                      loc.wethers.toLowerCase(), loc.kids.toLowerCase()];
+    
+    if (stageList.contains(stage)) {
       return stage;
     }
     
     if (gender == 'male') {
       switch (stage) {
-        case 'kid': return 'kids';
-        case 'buckling': return 'bucklings';
-        case 'buck': return 'bucks';
-        case 'wether': return 'wethers';
-        default: return 'kids';
+        case 'kid': return loc.kids.toLowerCase();
+        case 'buckling': return loc.bucklings.toLowerCase();
+        case 'buck': return loc.bucks.toLowerCase();
+        case 'wether': return loc.wethers.toLowerCase();
+        default: return loc.kids.toLowerCase();
       }
     } else if (gender == 'female') {
       switch (stage) {
-        case 'kid': return 'kids';
-        case 'doeling': return 'doelings';
-        case 'doe': return 'does';
-        default: return 'kids';
+        case 'kid': return loc.kids.toLowerCase();
+        case 'doeling': return loc.doelings.toLowerCase();
+        case 'doe': return loc.does.toLowerCase();
+        default: return loc.kids.toLowerCase();
       }
     }
     
-    return 'kids';
+    return loc.kids.toLowerCase();
   }
 
   int _countStage(String stage) {
@@ -137,12 +152,14 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
   }
 
   Future<void> _exportGoatsPdf() async {
+    final loc = AppLocalizations.of(context)!;
+    
     try {
       // Check if there's data to export
       if (_filteredGoats.isEmpty) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No goats data to export'))
+          SnackBar(content: Text(loc.noGoatsDataToExport))
         );
         return;
       }
@@ -166,12 +183,12 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
       final female = _filteredGoats.where((g) => (g.gender ?? '').toLowerCase() == 'female').length;
 
       final maleKids = _filteredGoats.where((g) => 
-        _getCorrectedStage(g) == 'kids' && 
+        _getCorrectedStage(g) == loc.kids.toLowerCase() && 
         (g.gender ?? '').toLowerCase() == 'male'
       ).length;
       
       final femaleKids = _filteredGoats.where((g) => 
-        _getCorrectedStage(g) == 'kids' && 
+        _getCorrectedStage(g) == loc.kids.toLowerCase() && 
         (g.gender ?? '').toLowerCase() == 'female'
       ).length;
 
@@ -197,7 +214,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
                           pw.Text(
-                            'GOATS REPORT',
+                            loc.goatsReport,
                             style: pw.TextStyle(
                               fontSize: 16, 
                               fontWeight: pw.FontWeight.bold,
@@ -205,11 +222,11 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                             ),
                           ),
                           pw.Text(
-                            'Date: $dateStr',
+                            '${loc.date}: $dateStr',
                             style: const pw.TextStyle(fontSize: 10),
                           ),
                           pw.Text(
-                            'Breed: $selectedBreed | Group: $selectedGroup | Source: $selectedSource',
+                            '${loc.breed}: $selectedBreed | ${loc.group}: $selectedGroup | ${loc.source}: $selectedSource',
                             style: const pw.TextStyle(fontSize: 9),
                           ),
                         ],
@@ -221,7 +238,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
 
                 // Stages Summary
                 pw.Text(
-                  'STAGES SUMMARY',
+                  loc.stagesSummary,
                   style: pw.TextStyle(
                     fontSize: 14,
                     fontWeight: pw.FontWeight.bold,
@@ -237,11 +254,11 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Stage', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text(loc.stage, style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Count', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text(loc.count, style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                       ],
                     ),
@@ -262,7 +279,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Total', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text(loc.total, style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
@@ -276,7 +293,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
 
                 // Gender Summary
                 pw.Text(
-                  'GENDER SUMMARY',
+                  loc.genderSummary,
                   style: pw.TextStyle(
                     fontSize: 14,
                     fontWeight: pw.FontWeight.bold,
@@ -292,11 +309,11 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Gender', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text(loc.gender, style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Count', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text(loc.count, style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                       ],
                     ),
@@ -304,7 +321,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Male'),
+                          child: pw.Text(loc.male),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
@@ -316,7 +333,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Female'),
+                          child: pw.Text(loc.female),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
@@ -327,7 +344,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                   ],
                 ),
 
-                if (_countStage('Kids') > 0) ...[
+                if (_countStage(loc.kids) > 0) ...[
                   pw.SizedBox(height: 15),
                   pw.Container(
                     padding: const pw.EdgeInsets.all(8),
@@ -338,11 +355,11 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Text(
-                          'Kids',
+                          loc.kids,
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                         ),
                         pw.Text(
-                          '(Male = $maleKids, Female = $femaleKids)',
+                          '(${loc.male} = $maleKids, ${loc.female} = $femaleKids)',
                           style: const pw.TextStyle(fontSize: 10),
                         ),
                       ],
@@ -366,12 +383,14 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
       debugPrint('PDF export error: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to export PDF: ${e.toString()}'))
+        SnackBar(content: Text('${loc.failedToExportPdf}: ${e.toString()}'))
       );
     }
   }
 
   void _showFilterDialog() {
+    final loc = AppLocalizations.of(context)!;
+    
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -389,9 +408,9 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
-                    child: const Text(
-                      'Filter by Source',
-                      style: TextStyle(
+                    child: Text(
+                      loc.filterBySource,
+                      style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF424242),
@@ -414,7 +433,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                   
                   // ONLY SOURCE Selection
                   _buildFilterSection(
-                    title: 'SOURCE',
+                    title: loc.source,
                     options: sources,
                     currentSelection: selectedSource,
                     onSelected: (value) {
@@ -442,9 +461,9 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
-                          'CLOSE',
-                          style: TextStyle(
+                        child: Text(
+                          loc.close,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -540,6 +559,8 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
   }
 
   void _showGroupPicker() {
+    final loc = AppLocalizations.of(context)!;
+    
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -556,9 +577,9 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
-                  child: const Text(
-                    'Select Group',
-                    style: TextStyle(
+                  child: Text(
+                    loc.selectGroup,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF424242),
@@ -650,9 +671,9 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text(
-                        'CLOSE',
-                        style: TextStyle(
+                      child: Text(
+                        loc.close,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -671,17 +692,20 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
 
   @override
   Widget build(BuildContext context) {
+    _updateLocalizedLists(context);
+    final loc = AppLocalizations.of(context)!;
+    
     final total = _filteredGoats.length;
     final maleCount = _filteredGoats.where((g) => (g.gender ?? '').toLowerCase() == 'male').length;
     final femaleCount = _filteredGoats.where((g) => (g.gender ?? '').toLowerCase() == 'female').length;
 
     final maleKids = _filteredGoats.where((g) => 
-      _getCorrectedStage(g) == 'kids' && 
+      _getCorrectedStage(g) == loc.kids.toLowerCase() && 
       (g.gender ?? '').toLowerCase() == 'male'
     ).length;
     
     final femaleKids = _filteredGoats.where((g) => 
-      _getCorrectedStage(g) == 'kids' && 
+      _getCorrectedStage(g) == loc.kids.toLowerCase() && 
       (g.gender ?? '').toLowerCase() == 'female'
     ).length;
 
@@ -711,7 +735,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                 _applyFilters();
               },
               itemBuilder: (BuildContext context) => [
-                const PopupMenuItem(value: 'All Breeds', child: Text('All Breeds')),
+                PopupMenuItem(value: loc.allBreeds, child: Text(loc.allBreeds)),
                 const PopupMenuItem(value: 'Alpine', child: Text('Alpine')),
                 const PopupMenuItem(value: 'Boer', child: Text('Boer')),
                 const PopupMenuItem(value: 'Kiko', child: Text('Kiko')),
@@ -725,13 +749,13 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
         actions: [
           // PDF icon
           IconButton(
-            tooltip: 'Export PDF',
+            tooltip: loc.exportPdf,
             onPressed: _exportGoatsPdf,
             icon: const Icon(Icons.picture_as_pdf, color: Colors.white, size: 24),
           ),
           // Filter icon
           IconButton(
-            tooltip: 'Filter',
+            tooltip: loc.filter,
             onPressed: _showFilterDialog,
             icon: const Icon(Icons.filter_list, color: Colors.white, size: 24),
           ),
@@ -805,10 +829,10 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                               ),
                               child: Row(
                                 children: [
-                                  const Expanded(
+                                  Expanded(
                                     child: Text(
-                                      'Goats Total.', 
-                                      style: TextStyle(
+                                      loc.goatsTotal, 
+                                      style: const TextStyle(
                                         color: Colors.white, 
                                         fontSize: 18, 
                                         fontWeight: FontWeight.bold
@@ -861,7 +885,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                             const SizedBox(height: 16),
                             
                             // Kids Details
-                            if (_countStage('Kids') > 0) ...[
+                            if (_countStage(loc.kids) > 0) ...[
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
@@ -871,13 +895,13 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      'Kids',
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                    Text(
+                                      loc.kids,
+                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      '(Male = $maleKids, Female = $femaleKids)',
+                                      '(${loc.male} = $maleKids, ${loc.female} = $femaleKids)',
                                       style: const TextStyle(fontSize: 14, color: Colors.grey),
                                     ),
                                   ],
@@ -887,9 +911,9 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                             ],
 
                             // Charts Section
-                            const Text(
-                              'Goats by stage.', 
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
+                            Text(
+                              loc.goatsByStage, 
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
                             ),
                             const SizedBox(height: 12),
 
@@ -924,9 +948,9 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                                               fontWeight: FontWeight.bold
                                             )
                                           ),
-                                          const Text(
-                                            'Total', 
-                                            style: TextStyle(fontSize: 14, color: Colors.grey)
+                                          Text(
+                                            loc.total, 
+                                            style: const TextStyle(fontSize: 14, color: Colors.grey)
                                           ),
                                         ],
                                       ),
@@ -939,9 +963,9 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                             const SizedBox(height: 24),
 
                             // Gender Chart
-                            const Text(
-                              'Goats by gender.', 
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
+                            Text(
+                              loc.goatsByGender, 
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
                             ),
                             const SizedBox(height: 12),
 
@@ -981,9 +1005,9 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                                               fontWeight: FontWeight.bold
                                             )
                                           ),
-                                          const Text(
-                                            'Total', 
-                                            style: TextStyle(fontSize: 14, color: Colors.grey)
+                                          Text(
+                                            loc.total, 
+                                            style: const TextStyle(fontSize: 14, color: Colors.grey)
                                           ),
                                         ],
                                       ),
@@ -999,8 +1023,8 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                _buildGenderIndicator('Male', maleCount, const Color(0xFF4CAF50)),
-                                _buildGenderIndicator('Female', femaleCount, const Color(0xFFFFA726)),
+                                _buildGenderIndicator(loc.male, maleCount, const Color(0xFF4CAF50)),
+                                _buildGenderIndicator(loc.female, femaleCount, const Color(0xFFFFA726)),
                               ],
                             ),
                           ],

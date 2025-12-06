@@ -5,6 +5,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:mygoatmanager/l10n/app_localizations.dart';
 
 class TransactionsPage extends StatefulWidget {
   const TransactionsPage({super.key});
@@ -84,17 +85,18 @@ class _TransactionsPageState extends State<TransactionsPage> {
     super.dispose();
   }
 
-  void _showSearchDialog() {
+  void _showSearchDialog(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Search Transactions'),
+          title: Text(loc.search_transactions),
           content: TextField(
             controller: _searchController,
-            decoration: const InputDecoration(
-              hintText: 'Search by description, amount...',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: loc.search_by_description,
+              border: const OutlineInputBorder(),
             ),
           ),
           actions: [
@@ -103,13 +105,13 @@ class _TransactionsPageState extends State<TransactionsPage> {
                 Navigator.pop(context);
                 _searchController.clear();
               },
-              child: const Text('Cancel'),
+              child: Text(loc.cancel),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Search'),
+              child: Text(loc.search),
             ),
           ],
         );
@@ -117,7 +119,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
     );
   }
 
-  void _showFilterDialog() {
+  void _showFilterDialog(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     String selectedDateRange = _selectedDateRangeFilter;
     DateTime? fromDate = _filterFromDate;
     DateTime? toDate = _filterToDate;
@@ -127,8 +130,27 @@ class _TransactionsPageState extends State<TransactionsPage> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
+            Widget buildDateChip(String label, String value, String selectedDateRange, 
+                                StateSetter setState, VoidCallback onSelected) {
+              return ChoiceChip(
+                label: Text(label),
+                selected: selectedDateRange == value,
+                onSelected: (selected) {
+                  setState(() {
+                    selectedDateRange = value;
+                  });
+                  onSelected();
+                },
+                backgroundColor: Colors.white,
+                selectedColor: const Color(0xFFFFA726),
+                labelStyle: TextStyle(
+                  color: selectedDateRange == value ? Colors.white : Colors.black,
+                ),
+              );
+            }
+
             return AlertDialog(
-              title: const Text('Filter by Date'),
+              title: Text(loc.filter_by_date),
               content: SizedBox(
                 width: double.maxFinite,
                 child: Column(
@@ -139,27 +161,27 @@ class _TransactionsPageState extends State<TransactionsPage> {
                       spacing: 8.0,
                       runSpacing: 8.0,
                       children: [
-                        _buildDateChip('Today', 'Today', selectedDateRange, setState, () {
+                        buildDateChip(loc.today, 'Today', selectedDateRange, setState, () {
                           final now = DateTime.now();
                           fromDate = now;
                           toDate = now;
                         }),
-                        _buildDateChip('Yesterday', 'Yesterday', selectedDateRange, setState, () {
+                        buildDateChip(loc.yesterday, 'Yesterday', selectedDateRange, setState, () {
                           final now = DateTime.now();
                           fromDate = now.subtract(const Duration(days: 1));
                           toDate = now.subtract(const Duration(days: 1));
                         }),
-                        _buildDateChip('Last Week', 'Last Week', selectedDateRange, setState, () {
+                        buildDateChip(loc.lastWeek, 'Last Week', selectedDateRange, setState, () {
                           final now = DateTime.now();
                           fromDate = now.subtract(const Duration(days: 7));
                           toDate = now;
                         }),
-                        _buildDateChip('Current Month', 'Current Month', selectedDateRange, setState, () {
+                        buildDateChip(loc.currentMonth, 'Current Month', selectedDateRange, setState, () {
                           final now = DateTime.now();
                           fromDate = DateTime(now.year, now.month, 1);
                           toDate = DateTime(now.year, now.month + 1, 0);
                         }),
-                        _buildDateChip('Last Month', 'Last Month', selectedDateRange, setState, () {
+                        buildDateChip(loc.lastMonth, 'Last Month', selectedDateRange, setState, () {
                           final now = DateTime.now();
                           fromDate = DateTime(now.year, now.month - 1, 1);
                           toDate = DateTime(now.year, now.month, 0);
@@ -169,9 +191,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
                     const SizedBox(height: 16),
                     
                     // Custom Date Range
-                    const Text(
-                      'Custom Date Range',
-                      style: TextStyle(
+                    Text(
+                      loc.custom_date_range,
+                      style: const TextStyle(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -183,7 +205,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('From:'),
+                              Text(loc.from),
                               const SizedBox(height: 4),
                               GestureDetector(
                                 onTap: () async {
@@ -196,7 +218,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                   if (picked != null && picked != fromDate) {
                                     setState(() {
                                       fromDate = picked;
-                                      selectedDateRange = 'Custom Range';
+                                      selectedDateRange = loc.custom_range;
                                     });
                                   }
                                 },
@@ -209,7 +231,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                   child: Text(
                                     fromDate != null 
                                         ? '${fromDate!.day}/${fromDate!.month}/${fromDate!.year}'
-                                        : 'Select Date',
+                                        : loc.selectDate,
                                   ),
                                 ),
                               ),
@@ -221,7 +243,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('To:'),
+                              Text(loc.to),
                               const SizedBox(height: 4),
                               GestureDetector(
                                 onTap: () async {
@@ -234,7 +256,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                   if (picked != null && picked != toDate) {
                                     setState(() {
                                       toDate = picked;
-                                      selectedDateRange = 'Custom Range';
+                                      selectedDateRange = loc.custom_range;
                                     });
                                   }
                                 },
@@ -247,7 +269,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                   child: Text(
                                     toDate != null 
                                         ? '${toDate!.day}/${toDate!.month}/${toDate!.year}'
-                                        : 'Select Date',
+                                        : loc.selectDate,
                                   ),
                                 ),
                               ),
@@ -263,19 +285,19 @@ class _TransactionsPageState extends State<TransactionsPage> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      selectedDateRange = 'Current Month';
+                      selectedDateRange = loc.currentMonth;
                       fromDate = null;
                       toDate = null;
                     });
                     Navigator.pop(context);
                   },
-                  child: const Text('Clear'),
+                  child: Text(loc.clear),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Cancel'),
+                  child: Text(loc.cancel),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -290,9 +312,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4CAF50),
                   ),
-                  child: const Text(
-                    'Apply',
-                    style: TextStyle(color: Colors.white),
+                  child: Text(
+                    loc.apply,
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ],
@@ -303,25 +325,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
     );
   }
 
-  Widget _buildDateChip(String label, String value, String selectedDateRange, StateSetter setState, VoidCallback onSelected) {
-    return ChoiceChip(
-      label: Text(label),
-      selected: selectedDateRange == value,
-      onSelected: (selected) {
-        setState(() {
-          selectedDateRange = value;
-        });
-        onSelected();
-      },
-      backgroundColor: Colors.white,
-      selectedColor: const Color(0xFFFFA726),
-      labelStyle: TextStyle(
-        color: selectedDateRange == value ? Colors.white : Colors.black,
-      ),
-    );
-  }
-
-  void _showMoreOptionsMenu() {
+  void _showMoreOptionsMenu(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -331,9 +336,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (_selectedTab == 0) // Income tab
-                ..._buildIncomeMoreOptions()
+                ..._buildIncomeMoreOptions(context)
               else // Expenses tab
-                ..._buildExpensesMoreOptions(),
+                ..._buildExpensesMoreOptions(context),
             ],
           ),
         );
@@ -341,7 +346,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
     );
   }
 
-  Widget _buildFilteredListView() {
+  Widget _buildFilteredListView(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final source = _selectedTab == 0 ? _incomes : _expenses;
     final DateTime? from = _filterFromDate;
     final DateTime? to = _filterToDate;
@@ -382,8 +388,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
           const SizedBox(height: 16),
           Text(
             _selectedTab == 0
-                ? 'There is no income to display\nfor the selected date range.'
-                : 'There are no expenses to display\nfor the selected date range.',
+                ? loc.no_income_to_display
+                : loc.no_expenses_to_display,
             textAlign: TextAlign.center,
             style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
           ),
@@ -398,7 +404,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
         final e = filtered[idx];
         final origIndex = source.indexOf(e);
         final amount = double.tryParse((e['amount'] ?? '0').toString()) ?? 0.0;
-        final displayTitle = (e['type'] ?? (_selectedTab == 0 ? 'Income' : 'Expense')) +
+        final displayTitle = (e['type'] ?? (_selectedTab == 0 ? loc.income : loc.expenses)) +
             ((e['quantity'] ?? '') != '' ? ' (${e['quantity']})' : '');
         final dateDisplay = _formatDateDisplay(e['date']?.toString());
 
@@ -448,7 +454,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                     ],
                   ),
                 ),
-                  Padding(
+                Padding(
                   padding: const EdgeInsets.only(right: 12.0),
                   child: PopupMenuButton<String>(
                     color: Colors.white,
@@ -461,29 +467,39 @@ class _TransactionsPageState extends State<TransactionsPage> {
                             _expenses.removeAt(origIndex);
                           }
                         });
-                        if (_selectedTab == 0) await _saveIncomes(); else await _saveExpenses();
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Record deleted')));
+                        if (_selectedTab == 0) {
+                          await _saveIncomes();
+                        } else {
+                          await _saveExpenses();
+                        }
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(loc.record_deleted)));
+                        }
                       } else if (val == 'edit') {
                         if (_selectedTab == 0) {
                           final result = await Navigator.push(context, MaterialPageRoute(builder: (ctx) => NewIncomePage(initialData: e)));
                           if (result != null && result is Map<String, dynamic>) {
                             setState(() => _incomes[origIndex] = result);
                             await _saveIncomes();
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Income updated')));
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(loc.income_updated)));
+                            }
                           }
                         } else {
                           final result = await Navigator.push(context, MaterialPageRoute(builder: (ctx) => NewExpensePage(initialData: e)));
                           if (result != null && result is Map<String, dynamic>) {
                             setState(() => _expenses[origIndex] = result);
                             await _saveExpenses();
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Expense updated')));
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(loc.expense_updated)));
+                            }
                           }
                         }
                       }
                     },
-                    itemBuilder: (ctx) => const [
-                      PopupMenuItem(value: 'edit', child: Text('Edit / View record')),
-                      PopupMenuItem(value: 'delete', child: Text('Delete')),
+                    itemBuilder: (ctx) => [
+                      PopupMenuItem(value: 'edit', child: Text(loc.edit_view_record)),
+                      PopupMenuItem(value: 'delete', child: Text(loc.delete)),
                     ],
                     icon: const Icon(Icons.more_vert, color: Colors.grey),
                   ),
@@ -496,54 +512,63 @@ class _TransactionsPageState extends State<TransactionsPage> {
     );
   }
 
-  List<Widget> _buildIncomeMoreOptions() {
+  List<Widget> _buildIncomeMoreOptions(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return [
       ListTile(
         leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
-        title: const Text('Export Pdf'),
+        title: Text(loc.export_pdf),
         onTap: () async {
           Navigator.pop(context);
-          await _exportIncomePdf();
+          await _exportIncomePdf(context);
         },
       ),
       ListTile(
         leading: const Icon(Icons.category, color: Colors.blue),
-        title: const Text('Income type'),
+        title: Text(loc.income_type),
         onTap: () {
           Navigator.pop(context);
-          _showIncomeTypeFilter();
+          _showIncomeTypeFilter(context);
         },
       ),
     ];
   }
 
-  List<Widget> _buildExpensesMoreOptions() {
+  List<Widget> _buildExpensesMoreOptions(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return [
       ListTile(
         leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
-        title: const Text('Export Pdf'),
+        title: Text(loc.export_pdf),
         onTap: () async {
           Navigator.pop(context);
-          await _exportExpensePdf();
+          await _exportExpensePdf(context);
         },
       ),
       ListTile(
         leading: const Icon(Icons.category, color: Colors.blue),
-        title: const Text('Expense type'),
+        title: Text(loc.expense_type),
         onTap: () {
           Navigator.pop(context);
-          _showExpenseTypeFilter();
+          _showExpenseTypeFilter(context);
         },
       ),
     ];
   }
 
-  void _showIncomeTypeFilter() {
-    final types = ['All Types', 'Milk Sale', 'Goat Sale', 'Category Income', 'Other (specify)'];
+  void _showIncomeTypeFilter(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final types = [
+      loc.all_types,
+      loc.milk_sale,
+      loc.goat_sale,
+      loc.category_income,
+      loc.other_specify
+    ];
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Filter by Income Type'),
+        title: Text(loc.filter_by_income_type),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.separated(
@@ -551,14 +576,14 @@ class _TransactionsPageState extends State<TransactionsPage> {
             separatorBuilder: (_, __) => const Divider(height: 1),
             itemBuilder: (context, index) {
               final type = types[index];
-              final isSelected = (type == 'All Types' && _selectedIncomeTypeFilter == null) ||
+              final isSelected = (type == loc.all_types && _selectedIncomeTypeFilter == null) ||
                   _selectedIncomeTypeFilter == type;
               return ListTile(
                 title: Text(type),
                 trailing: isSelected ? const Icon(Icons.check, color: Colors.green) : null,
                 onTap: () {
                   setState(() {
-                    _selectedIncomeTypeFilter = type == 'All Types' ? null : type;
+                    _selectedIncomeTypeFilter = type == loc.all_types ? null : type;
                   });
                   Navigator.pop(ctx);
                 },
@@ -570,12 +595,17 @@ class _TransactionsPageState extends State<TransactionsPage> {
     );
   }
 
-  void _showExpenseTypeFilter() {
-    final types = ['All Types', 'Category', 'Other'];
+  void _showExpenseTypeFilter(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final types = [
+      loc.all_types,
+      loc.category_expense,
+      loc.other_expense
+    ];
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Filter by Expense Type'),
+        title: Text(loc.filter_by_expense_type),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.separated(
@@ -583,14 +613,14 @@ class _TransactionsPageState extends State<TransactionsPage> {
             separatorBuilder: (_, __) => const Divider(height: 1),
             itemBuilder: (context, index) {
               final type = types[index];
-              final isSelected = (type == 'All Types' && _selectedExpenseTypeFilter == null) ||
+              final isSelected = (type == loc.all_types && _selectedExpenseTypeFilter == null) ||
                   _selectedExpenseTypeFilter == type;
               return ListTile(
                 title: Text(type),
                 trailing: isSelected ? const Icon(Icons.check, color: Colors.orange) : null,
                 onTap: () {
                   setState(() {
-                    _selectedExpenseTypeFilter = type == 'All Types' ? null : type;
+                    _selectedExpenseTypeFilter = type == loc.all_types ? null : type;
                   });
                   Navigator.pop(ctx);
                 },
@@ -602,7 +632,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
     );
   }
 
-  Future<void> _exportIncomePdf() async {
+  Future<void> _exportIncomePdf(BuildContext context) async {
     final pdf = pw.Document();
     final items = List<Map<String, dynamic>>.from(_incomes);
     pw.Widget? headerImage;
@@ -629,14 +659,14 @@ class _TransactionsPageState extends State<TransactionsPage> {
           children.add(pw.SizedBox(height: 12));
 
           if (items.isEmpty) {
-            children.add(pw.Center(child: pw.Text('No income records to export.')));
+            children.add(pw.Center(child: pw.Text('No income records')));
           } else {
             children.add(
                 pw.Container(
                   decoration: pw.BoxDecoration(border: pw.Border.all(color: PdfColors.grey400, width: 0.8)),
                   padding: const pw.EdgeInsets.all(6),
-                  child: pw.Table.fromTextArray(
-                    headers: ['Date', 'Source', 'Qty', 'Price', 'Total', 'Notes'],
+                  child: pw.TableHelper.fromTextArray(
+                    headers: ['Date', 'Source', 'Quantity', 'Price per litre', 'Total', 'Notes'],
                     data: items.map((e) {
                       final date = DateTime.tryParse(e['date'] ?? '') ?? DateTime.now();
                       final dateStr = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
@@ -675,7 +705,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
     await Printing.sharePdf(bytes: bytes, filename: 'income_${DateTime.now().toIso8601String()}.pdf');
   }
 
-  Future<void> _exportExpensePdf() async {
+  Future<void> _exportExpensePdf(BuildContext context) async {
     final pdf = pw.Document();
     final items = List<Map<String, dynamic>>.from(_expenses);
     pw.Widget? headerImage;
@@ -703,13 +733,13 @@ class _TransactionsPageState extends State<TransactionsPage> {
           children.add(pw.SizedBox(height: 12));
 
           if (items.isEmpty) {
-            children.add(pw.Center(child: pw.Text('No expense records to export.')));
+            children.add(pw.Center(child: pw.Text('No expense records')));
           } else {
             children.add(
               pw.Container(
                 decoration: pw.BoxDecoration(border: pw.Border.all(color: PdfColors.grey400, width: 0.8)),
                 padding: const pw.EdgeInsets.all(6),
-                child: pw.Table.fromTextArray(
+                child: pw.TableHelper.fromTextArray(
                   headers: ['Date', 'Name', 'Amount', 'Notes'],
                   data: items.map((e) {
                     final date = DateTime.tryParse(e['date'] ?? '') ?? DateTime.now();
@@ -737,6 +767,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -751,40 +782,40 @@ class _TransactionsPageState extends State<TransactionsPage> {
             size: 24,
           ),
         ),
-            title: const Text(
-              'Transactions',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
+        title: Text(
+          loc.transactions,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () => _showSearchDialog(context),
+            icon: const Icon(
+              Icons.search,
+              color: Colors.white,
+              size: 24,
             ),
-            actions: [
-              IconButton(
-                onPressed: _showSearchDialog,
-                icon: const Icon(
-                  Icons.search,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-              IconButton(
-                onPressed: _showFilterDialog,
-                icon: const Icon(
-                  Icons.filter_list,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-              IconButton(
-                onPressed: _showMoreOptionsMenu,
-                icon: const Icon(
-                  Icons.more_vert,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-            ],
+          ),
+          IconButton(
+            onPressed: () => _showFilterDialog(context),
+            icon: const Icon(
+              Icons.filter_list,
+              color: Colors.white,
+              size: 24,
+            ),
+          ),
+          IconButton(
+            onPressed: () => _showMoreOptionsMenu(context),
+            icon: const Icon(
+              Icons.more_vert,
+              color: Colors.white,
+              size: 24,
+            ),
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: Container(
@@ -821,7 +852,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                         ),
                       ),
                       child: Text(
-                        'Income',
+                        loc.income,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -847,7 +878,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                             : Colors.white,
                       ),
                       child: Text(
-                        'Expenses',
+                        loc.expenses,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -869,7 +900,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   children: [
                     // Content
                     Expanded(
-                      child: _buildFilteredListView(),
+                      child: _buildFilteredListView(context),
                     ),
 
                     // Add Button
@@ -878,28 +909,30 @@ class _TransactionsPageState extends State<TransactionsPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: ElevatedButton(
-                          onPressed: () {
-                            () async {
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (ctx) => _selectedTab == 0
-                                      ? NewIncomePage()
-                                      : NewExpensePage(),
-                                ),
-                              );
-                              if (result != null && result is Map<String, dynamic>) {
-                                if (result['kind'] == 'income') {
-                                  setState(() => _incomes.add(result));
-                                  await _saveIncomes();
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Income saved')));
-                                } else {
-                                  setState(() => _expenses.add(result));
-                                  await _saveExpenses();
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Expense saved')));
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (ctx) => _selectedTab == 0
+                                    ? const NewIncomePage()
+                                    : const NewExpensePage(),
+                              ),
+                            );
+                            if (result != null && result is Map<String, dynamic>) {
+                              if (result['kind'] == 'income') {
+                                setState(() => _incomes.add(result));
+                                await _saveIncomes();
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(loc.income_saved)));
+                                }
+                              } else {
+                                setState(() => _expenses.add(result));
+                                await _saveExpenses();
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(loc.expense_saved)));
                                 }
                               }
-                            }();
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFFA726),
@@ -919,7 +952,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                               const Icon(Icons.add, size: 20),
                               const SizedBox(width: 8),
                               Text(
-                                _selectedTab == 0 ? 'Income' : 'Expense',
+                                _selectedTab == 0 ? loc.add_income : loc.add_expense,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -943,7 +976,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
 
 class NewIncomePage extends StatefulWidget {
   final Map<String, dynamic>? initialData;
-  NewIncomePage({super.key, this.initialData});
+  const NewIncomePage({super.key, this.initialData});
 
   @override
   State<NewIncomePage> createState() => _NewIncomePageState();
@@ -959,12 +992,37 @@ class _NewIncomePageState extends State<NewIncomePage> {
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _otherSourceController = TextEditingController();
 
-  final List<String> _incomeTypes = [
-    'Milk Sale',
-    'Goat Sale',
-    'Category Income',
-    'Other (specify)',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with existing data if editing
+    final data = widget.initialData;
+    if (data != null) {
+      if (data['date'] != null) {
+        try {
+          _incomeDate = DateTime.parse(data['date']);
+        } catch (_) {}
+      }
+      final t = data['type']?.toString();
+      if (t != null) {
+        _selectedIncomeType = t;
+      }
+      _quantityController.text = data['quantity']?.toString() ?? '';
+      _priceController.text = data['price']?.toString() ?? '';
+      _amountController.text = data['amount']?.toString() ?? '';
+      _receiptController.text = data['receipt']?.toString() ?? '';
+      _notesController.text = data['notes']?.toString() ?? '';
+      
+      // Check if it's an "other" type
+      if (_selectedIncomeType != null && 
+          _selectedIncomeType != 'Milk Sale' && 
+          _selectedIncomeType != 'Goat Sale' && 
+          _selectedIncomeType != 'Category Income') {
+        _otherSourceController.text = _selectedIncomeType!;
+        _selectedIncomeType = 'Other (specify)';
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -977,54 +1035,35 @@ class _NewIncomePageState extends State<NewIncomePage> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    final data = widget.initialData;
-    if (data != null) {
-      if (data['date'] != null) {
-        try {
-          _incomeDate = DateTime.parse(data['date']);
-        } catch (_) {}
-      }
-      final t = data['type']?.toString();
-      if (t != null && _incomeTypes.contains(t)) {
-        _selectedIncomeType = t;
-      } else if (t != null) {
-        _selectedIncomeType = 'Other (specify)';
-        _otherSourceController.text = t;
-      }
-      _quantityController.text = data['quantity']?.toString() ?? '';
-      _priceController.text = data['price']?.toString() ?? '';
-      _amountController.text = data['amount']?.toString() ?? '';
-      _receiptController.text = data['receipt']?.toString() ?? '';
-      _notesController.text = data['notes']?.toString() ?? '';
+  Widget _buildIncomeTypeForm(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    // Get income types from localization
+    final milkSale = loc.milk_sale;
+    final goatSale = loc.goat_sale;
+    final categoryIncome = loc.category_income;
+    final otherSpecify = loc.other_specify;
+    
+    if (_selectedIncomeType == milkSale) {
+      return _buildMilkSaleForm(context);
+    } else if (_selectedIncomeType == goatSale) {
+      return _buildGoatSaleForm(context);
+    } else if (_selectedIncomeType == categoryIncome) {
+      return _buildCategoryIncomeForm(context);
+    } else if (_selectedIncomeType == otherSpecify) {
+      return _buildOtherIncomeForm(context);
     }
+    return Container();
   }
 
-  Widget _buildIncomeTypeForm() {
-    switch (_selectedIncomeType) {
-      case 'Milk Sale':
-        return _buildMilkSaleForm();
-      case 'Goat Sale':
-        return _buildGoatSaleForm();
-      case 'Category Income':
-        return _buildCategoryIncomeForm();
-      case 'Other (specify)':
-        return _buildOtherIncomeForm();
-      default:
-        return Container();
-    }
-  }
-
-  Widget _buildMilkSaleForm() {
+  Widget _buildMilkSaleForm(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
-        const Text(
-          'Milk quantity sold .*',
-          style: TextStyle(
+        Text(
+          '${loc.milk_quantity_sold} .*',
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -1033,16 +1072,16 @@ class _NewIncomePageState extends State<NewIncomePage> {
         TextField(
           controller: _quantityController,
           decoration: InputDecoration(
-            hintText: 'Enter milk quantity',
+            hintText: loc.enter_milk_quantity,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
           ),
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 16),
-        const Text(
-          'Selling price per litre/unit. *',
-          style: TextStyle(
+        Text(
+          '${loc.selling_price_per_litre} . *',
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -1051,7 +1090,7 @@ class _NewIncomePageState extends State<NewIncomePage> {
         TextField(
           controller: _priceController,
           decoration: InputDecoration(
-            hintText: 'Enter price per litre',
+            hintText: loc.enter_price_per_litre,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
           ),
@@ -1066,9 +1105,9 @@ class _NewIncomePageState extends State<NewIncomePage> {
           },
         ),
         const SizedBox(height: 16),
-        const Text(
-          'How much did you earn? *',
-          style: TextStyle(
+        Text(
+          '${loc.how_much_did_you_earn} . *',
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -1088,7 +1127,8 @@ class _NewIncomePageState extends State<NewIncomePage> {
     );
   }
 
-  Widget _buildGoatSaleForm() {
+  Widget _buildGoatSaleForm(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1100,18 +1140,18 @@ class _NewIncomePageState extends State<NewIncomePage> {
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.orange.shade200),
           ),
-          child: const Text(
-            'Please go to the record of the goat sold and archive it with a reason \'Sold\' and an income record will be created automatically!',
-            style: TextStyle(
+          child: Text(
+            loc.please_go_to_record,
+            style: const TextStyle(
               fontSize: 14,
               color: Colors.orange,
             ),
           ),
         ),
         const SizedBox(height: 16),
-        const Text(
-          'How much did you earn? *',
-          style: TextStyle(
+        Text(
+          '${loc.how_much_did_you_earn} . *',
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -1130,14 +1170,15 @@ class _NewIncomePageState extends State<NewIncomePage> {
     );
   }
 
-  Widget _buildCategoryIncomeForm() {
+  Widget _buildCategoryIncomeForm(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
-        const Text(
-          'Quantity of items. *',
-          style: TextStyle(
+        Text(
+          '${loc.quantity_of_items} .*',
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -1146,16 +1187,16 @@ class _NewIncomePageState extends State<NewIncomePage> {
         TextField(
           controller: _quantityController,
           decoration: InputDecoration(
-            hintText: '1',
+            hintText: loc.enter_quantity,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
           ),
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 16),
-        const Text(
-          'How much did you earn? *',
-          style: TextStyle(
+        Text(
+          '${loc.how_much_did_you_earn} . *',
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -1174,14 +1215,15 @@ class _NewIncomePageState extends State<NewIncomePage> {
     );
   }
 
-  Widget _buildOtherIncomeForm() {
+  Widget _buildOtherIncomeForm(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
-        const Text(
-          'Please specify the source of income.',
-          style: TextStyle(
+        Text(
+          loc.please_specify_source,
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -1190,15 +1232,15 @@ class _NewIncomePageState extends State<NewIncomePage> {
         TextField(
           controller: _otherSourceController,
           decoration: InputDecoration(
-            hintText: 'Specify income source',
+            hintText: loc.specify_income_source,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
           ),
         ),
         const SizedBox(height: 16),
-        const Text(
-          'How much did you earn? *',
-          style: TextStyle(
+        Text(
+          '${loc.how_much_did_you_earn} . *',
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -1217,11 +1259,22 @@ class _NewIncomePageState extends State<NewIncomePage> {
     );
   }
 
+  List<String> _getIncomeTypes(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return [
+      loc.milk_sale,
+      loc.goat_sale,
+      loc.category_income,
+      loc.other_specify,
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Income'),
+        title: Text(loc.new_income),
         backgroundColor: const Color(0xFF4CAF50),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -1233,43 +1286,43 @@ class _NewIncomePageState extends State<NewIncomePage> {
             onPressed: () {
               if (_incomeDate == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please select a date')),
+                  SnackBar(content: Text(loc.please_select_date)),
                 );
                 return;
               }
               if (_selectedIncomeType == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please select income type')),
+                  SnackBar(content: Text(loc.please_select_income_type)),
                 );
                 return;
               }
               if (_amountController.text.trim().isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please enter amount')),
+                  SnackBar(content: Text(loc.please_enter_amount)),
                 );
                 return;
               }
-              if (_selectedIncomeType == 'Milk Sale' && 
+              if (_selectedIncomeType == loc.milk_sale && 
                   (_quantityController.text.isEmpty || _priceController.text.isEmpty)) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please enter quantity and price')),
+                  SnackBar(content: Text(loc.please_enter_quantity_price)),
                 );
                 return;
               }
-              if (_selectedIncomeType == 'Category Income' && _quantityController.text.isEmpty) {
+              if (_selectedIncomeType == loc.category_income && _quantityController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please enter quantity')),
+                  SnackBar(content: Text(loc.please_enter_quantity)),
                 );
                 return;
               }
-              if (_selectedIncomeType == 'Other (specify)' && _otherSourceController.text.isEmpty) {
+              if (_selectedIncomeType == loc.other_specify && _otherSourceController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please specify income source')),
+                  SnackBar(content: Text(loc.please_specify_income_source)),
                 );
                 return;
               }
 
-              final typeValue = _selectedIncomeType == 'Other (specify)'
+              final typeValue = _selectedIncomeType == loc.other_specify
                   ? _otherSourceController.text.trim()
                   : _selectedIncomeType;
 
@@ -1277,8 +1330,8 @@ class _NewIncomePageState extends State<NewIncomePage> {
                 'kind': 'income',
                 'date': _incomeDate!.toIso8601String(),
                 'type': typeValue,
-                'quantity': _selectedIncomeType == 'Milk Sale' || _selectedIncomeType == 'Category Income' ? _quantityController.text.trim() : null,
-                'price': _selectedIncomeType == 'Milk Sale' ? _priceController.text.trim() : null,
+                'quantity': _selectedIncomeType == loc.milk_sale || _selectedIncomeType == loc.category_income ? _quantityController.text.trim() : null,
+                'price': _selectedIncomeType == loc.milk_sale ? _priceController.text.trim() : null,
                 'amount': _amountController.text.trim(),
                 'receipt': _receiptController.text.trim(),
                 'notes': _notesController.text.trim(),
@@ -1319,7 +1372,7 @@ class _NewIncomePageState extends State<NewIncomePage> {
                     child: Text(
                       _incomeDate != null
                           ? '${_incomeDate!.day}/${_incomeDate!.month}/${_incomeDate!.year}'
-                          : 'Date of Income . *',
+                          : '${loc.date_of_income} . *',
                       style: TextStyle(
                         color: _incomeDate != null ? Colors.black87 : Colors.grey.shade600,
                         fontSize: 16,
@@ -1335,19 +1388,20 @@ class _NewIncomePageState extends State<NewIncomePage> {
           // Select Income Type
           GestureDetector(
             onTap: () async {
+              final incomeTypes = _getIncomeTypes(context);
               final selected = await showDialog<String>(
                 context: context,
                 builder: (ctx) {
                   return AlertDialog(
-                    title: const Text('Select income type'),
+                    title: Text(loc.select_income_type),
                     content: SizedBox(
                       width: double.maxFinite,
                       height: 250,
                       child: ListView.separated(
-                        itemCount: _incomeTypes.length,
+                        itemCount: incomeTypes.length,
                         separatorBuilder: (_, __) => const Divider(height: 1),
                         itemBuilder: (context, index) {
-                          final type = _incomeTypes[index];
+                          final type = incomeTypes[index];
                           return ListTile(
                             title: Text(type),
                             onTap: () => Navigator.pop(ctx, type),
@@ -1376,7 +1430,7 @@ class _NewIncomePageState extends State<NewIncomePage> {
                 children: [
                   Expanded(
                     child: Text(
-                      _selectedIncomeType ?? '- Select income type -',
+                      _selectedIncomeType ?? '- ${loc.select_income_type} -',
                       style: TextStyle(
                         color: _selectedIncomeType != null ? Colors.black87 : Colors.orange.shade700,
                         fontSize: 16,
@@ -1390,17 +1444,17 @@ class _NewIncomePageState extends State<NewIncomePage> {
             ),
           ),
 
-          if (_selectedIncomeType != null) _buildIncomeTypeForm(),
+          if (_selectedIncomeType != null) _buildIncomeTypeForm(context),
 
           const SizedBox(height: 16),
 
-          if (_selectedIncomeType != 'Goat Sale')
+          if (_selectedIncomeType != loc.goat_sale)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Receipt no. (optional)',
-                  style: TextStyle(
+                Text(
+                  loc.receipt_no_optional,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -1409,7 +1463,7 @@ class _NewIncomePageState extends State<NewIncomePage> {
                 TextField(
                   controller: _receiptController,
                   decoration: InputDecoration(
-                    hintText: 'Enter receipt number',
+                    hintText: loc.enter_receipt_number,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                     contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
                   ),
@@ -1418,9 +1472,9 @@ class _NewIncomePageState extends State<NewIncomePage> {
               ],
             ),
 
-          const Text(
-            'Write some notes ...',
-            style: TextStyle(
+          Text(
+            loc.write_some_notes,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -1429,7 +1483,7 @@ class _NewIncomePageState extends State<NewIncomePage> {
           TextField(
             controller: _notesController,
             decoration: InputDecoration(
-              hintText: 'Enter your notes here...',
+              hintText: loc.enter_your_notes,
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
               contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
             ),
@@ -1443,7 +1497,7 @@ class _NewIncomePageState extends State<NewIncomePage> {
 
 class NewExpensePage extends StatefulWidget {
   final Map<String, dynamic>? initialData;
-  NewExpensePage({super.key, this.initialData});
+  const NewExpensePage({super.key, this.initialData});
 
   @override
   State<NewExpensePage> createState() => _NewExpensePageState();
@@ -1458,14 +1512,32 @@ class _NewExpensePageState extends State<NewExpensePage> {
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _otherExpenseController = TextEditingController();
 
-  final List<String> _topExpenseOptions = [
-    'Category Expense',
-    'Other (specify)',
-  ];
-
-  // Example categories - you can replace these with persisted categories later
   final List<String> _expenseCategories = ['milk type'];
   String? _selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with existing data if editing
+    final data = widget.initialData;
+    if (data != null) {
+      if (data['date'] != null) {
+        try {
+          _expenseDate = DateTime.parse(data['date']);
+        } catch (_) {}
+      }
+      // If category exists, preselect Category Expense
+      if (data['category'] != null) {
+        _selectedCategory = data['category']?.toString();
+        _quantityController.text = data['quantity']?.toString() ?? '';
+      } else if (data['type'] != null) {
+        _otherExpenseController.text = data['type']?.toString() ?? '';
+      }
+      _amountController.text = data['amount']?.toString() ?? '';
+      _receiptController.text = data['receipt']?.toString() ?? '';
+      _notesController.text = data['notes']?.toString() ?? '';
+    }
+  }
 
   @override
   void dispose() {
@@ -1477,36 +1549,20 @@ class _NewExpensePageState extends State<NewExpensePage> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    final data = widget.initialData;
-    if (data != null) {
-      if (data['date'] != null) {
-        try {
-          _expenseDate = DateTime.parse(data['date']);
-        } catch (_) {}
-      }
-      // If category exists, preselect Category Expense
-      if (data['category'] != null) {
-        _selectedExpenseType = 'Category Expense';
-        _selectedCategory = data['category']?.toString();
-        _quantityController.text = data['quantity']?.toString() ?? '';
-      } else if (data['type'] != null) {
-        _selectedExpenseType = 'Other (specify)';
-        _otherExpenseController.text = data['type']?.toString() ?? '';
-      }
-      _amountController.text = data['amount']?.toString() ?? '';
-      _receiptController.text = data['receipt']?.toString() ?? '';
-      _notesController.text = data['notes']?.toString() ?? '';
-    }
+  List<String> _getExpenseTypes(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return [
+      loc.category_expense,
+      loc.other_expense,
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Expense'),
+        title: Text(loc.new_expense),
         backgroundColor: const Color(0xFF4CAF50),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -1518,53 +1574,53 @@ class _NewExpensePageState extends State<NewExpensePage> {
             onPressed: () {
               if (_expenseDate == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please select a date')),
+                  SnackBar(content: Text(loc.please_select_date)),
                 );
                 return;
               }
               if (_selectedExpenseType == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please select expense type')),
+                  SnackBar(content: Text(loc.please_select_expense_type)),
                 );
                 return;
               }
-              if (_selectedExpenseType == 'Other (specify)' && _otherExpenseController.text.trim().isEmpty) {
+              if (_selectedExpenseType == loc.other_expense && _otherExpenseController.text.trim().isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please enter name of expense')),
+                  SnackBar(content: Text(loc.please_enter_name_of_expense)),
                 );
                 return;
               }
-              if (_selectedExpenseType == 'Category Expense' && _selectedCategory == null) {
+              if (_selectedExpenseType == loc.category_expense && _selectedCategory == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please select a category')),
+                  SnackBar(content: Text(loc.please_select_category)),
                 );
                 return;
               }
-              if (_selectedExpenseType == 'Category Expense' && _quantityController.text.trim().isEmpty) {
+              if (_selectedExpenseType == loc.category_expense && _quantityController.text.trim().isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please enter quantity')),
+                  SnackBar(content: Text(loc.please_enter_quantity)),
                 );
                 return;
               }
               if (_amountController.text.trim().isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please enter amount')),
+                  SnackBar(content: Text(loc.please_enter_amount)),
                 );
                 return;
               }
 
-              final typeValue = _selectedExpenseType == 'Other (specify)'
+              final typeValue = _selectedExpenseType == loc.other_expense
                   ? _otherExpenseController.text.trim()
-                  : (_selectedExpenseType == 'Category Expense'
-                      ? (_selectedCategory ?? 'Category Expense')
+                  : (_selectedExpenseType == loc.category_expense
+                      ? (_selectedCategory ?? loc.category_expense)
                       : _selectedExpenseType);
 
               final expense = <String, dynamic>{
                 'kind': 'expense',
                 'date': _expenseDate!.toIso8601String(),
                 'type': typeValue,
-                'category': _selectedExpenseType == 'Category Expense' ? _selectedCategory : null,
-                'quantity': _selectedExpenseType == 'Category Expense' ? _quantityController.text.trim() : null,
+                'category': _selectedExpenseType == loc.category_expense ? _selectedCategory : null,
+                'quantity': _selectedExpenseType == loc.category_expense ? _quantityController.text.trim() : null,
                 'amount': _amountController.text.trim(),
                 'receipt': _receiptController.text.trim(),
                 'notes': _notesController.text.trim(),
@@ -1615,7 +1671,7 @@ class _NewExpensePageState extends State<NewExpensePage> {
                     child: Text(
                       _expenseDate != null
                           ? '${_expenseDate!.day}/${_expenseDate!.month}/${_expenseDate!.year}'
-                          : 'Date of expense. *',
+                          : '${loc.date_of_expense} . *',
                       style: TextStyle(
                         color: _expenseDate != null ? Colors.black87 : Colors.grey.shade600,
                         fontSize: 16,
@@ -1631,22 +1687,23 @@ class _NewExpensePageState extends State<NewExpensePage> {
           // Select Expense Type
           GestureDetector(
             onTap: () async {
+              final expenseTypes = _getExpenseTypes(context);
               // First dialog: choose Category Expense or Other
               final topSelected = await showDialog<String>(
                 context: context,
                 builder: (ctx) {
                   return AlertDialog(
-                    title: const Text('Select expense type'),
+                    title: Text(loc.select_expense_type),
                     content: SizedBox(
                       width: double.maxFinite,
                       height: 160,
                       child: ListView.separated(
-                        itemCount: _topExpenseOptions.length,
+                        itemCount: expenseTypes.length,
                         separatorBuilder: (_, __) => const Divider(height: 1),
                         itemBuilder: (context, index) {
-                          final opt = _topExpenseOptions[index];
+                          final opt = expenseTypes[index];
                           return ListTile(
-                            title: Text(opt == '- Select expense type -' ? opt : opt),
+                            title: Text(opt),
                             onTap: () => Navigator.pop(ctx, opt),
                           );
                         },
@@ -1658,19 +1715,16 @@ class _NewExpensePageState extends State<NewExpensePage> {
 
               if (topSelected == null) return;
 
-              // If user picked the header, ignore
-              if (topSelected == '- Select expense type -') return;
-
-              if (topSelected == 'Category Expense') {
+              if (topSelected == loc.category_expense) {
                 // Set the selected type to Category Expense and show inline category selector
                 setState(() {
-                  _selectedExpenseType = 'Category Expense';
+                  _selectedExpenseType = loc.category_expense;
                   _selectedCategory ??= (_expenseCategories.isNotEmpty ? _expenseCategories.first : null);
                 });
                 _otherExpenseController.clear();
-              } else if (topSelected == 'Other (specify)') {
+              } else if (topSelected == loc.other_expense) {
                 // Show the inline 'other' field instead of navigating to a new page
-                setState(() => _selectedExpenseType = 'Other (specify)');
+                setState(() => _selectedExpenseType = loc.other_expense);
                 // leave _otherExpenseController for user input
               }
             },
@@ -1684,7 +1738,7 @@ class _NewExpensePageState extends State<NewExpensePage> {
                 children: [
                   Expanded(
                     child: Text(
-                      _selectedExpenseType ?? '- Select expense type -',
+                      _selectedExpenseType ?? '- ${loc.select_expense_type} -',
                       style: TextStyle(
                         color: _selectedExpenseType != null ? Colors.black87 : Colors.orange.shade700,
                         fontSize: 16,
@@ -1699,7 +1753,7 @@ class _NewExpensePageState extends State<NewExpensePage> {
           ),
 
           // If Category Expense is selected, show a second dropdown for categories + add button
-          if (_selectedExpenseType == 'Category Expense') ...[
+          if (_selectedExpenseType == loc.category_expense) ...[
             const SizedBox(height: 16),
             Row(
               children: [
@@ -1710,7 +1764,7 @@ class _NewExpensePageState extends State<NewExpensePage> {
                         context: context,
                         builder: (ctx) {
                           return AlertDialog(
-                            title: const Text('Select category'),
+                            title: Text(loc.select_category),
                             content: SizedBox(
                               width: double.maxFinite,
                               height: 250,
@@ -1741,7 +1795,7 @@ class _NewExpensePageState extends State<NewExpensePage> {
                         children: [
                           Expanded(
                             child: Text(
-                              _selectedCategory ?? '- Select category -',
+                              _selectedCategory ?? '- ${loc.select_category} -',
                               style: TextStyle(
                                 color: _selectedCategory != null ? Colors.black87 : Colors.green.shade700,
                                 fontSize: 16,
@@ -1772,19 +1826,22 @@ class _NewExpensePageState extends State<NewExpensePage> {
                         builder: (ctx) {
                           final controller = TextEditingController();
                           return AlertDialog(
-                            title: const Text('Add category'),
+                            title: Text(loc.add_category),
                             content: TextField(
                               controller: controller,
-                              decoration: const InputDecoration(hintText: 'Category name'),
+                              decoration: InputDecoration(hintText: loc.category_name),
                             ),
                             actions: [
-                              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx), 
+                                child: Text(loc.cancel)
+                              ),
                               ElevatedButton(
                                 onPressed: () {
                                   final text = controller.text.trim();
                                   if (text.isNotEmpty) Navigator.pop(ctx, text);
                                 },
-                                child: const Text('Add'),
+                                child: Text(loc.add),
                               ),
                             ],
                           );
@@ -1802,9 +1859,9 @@ class _NewExpensePageState extends State<NewExpensePage> {
               ],
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Quantity of items. *',
-              style: TextStyle(
+            Text(
+              '${loc.quantity_of_items} . *',
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -1813,19 +1870,19 @@ class _NewExpensePageState extends State<NewExpensePage> {
             TextField(
               controller: _quantityController,
               decoration: InputDecoration(
-                hintText: '1',
+                hintText: loc.enter_quantity,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
               ),
               keyboardType: TextInputType.number,
             ),
           ],
-          if (_selectedExpenseType == 'Other (specify)') ...[
+          if (_selectedExpenseType == loc.other_expense) ...[
             const SizedBox(height: 16),
             TextField(
               controller: _otherExpenseController,
               decoration: InputDecoration(
-                hintText: 'Name of expense . *',
+                hintText: '${loc.name_of_expense} . *',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
               ),
@@ -1838,7 +1895,7 @@ class _NewExpensePageState extends State<NewExpensePage> {
           TextField(
             controller: _amountController,
             decoration: InputDecoration(
-              hintText: 'How much did you spend? . *',
+              hintText: '${loc.how_much_did_you_spend} . *',
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
               contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
             ),
@@ -1851,7 +1908,7 @@ class _NewExpensePageState extends State<NewExpensePage> {
           TextField(
             controller: _receiptController,
             decoration: InputDecoration(
-              hintText: 'Receipt no. (optional)',
+              hintText: loc.receipt_no_optional,
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
               contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
             ),
@@ -1859,9 +1916,9 @@ class _NewExpensePageState extends State<NewExpensePage> {
 
           const SizedBox(height: 16),
 
-          const Text(
-            'Write some notes ...',
-            style: TextStyle(
+          Text(
+            loc.write_some_notes,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -1870,7 +1927,7 @@ class _NewExpensePageState extends State<NewExpensePage> {
           TextField(
             controller: _notesController,
             decoration: InputDecoration(
-              hintText: 'Enter your notes here...',
+              hintText: loc.enter_your_notes,
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
               contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
             ),

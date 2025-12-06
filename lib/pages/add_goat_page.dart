@@ -25,11 +25,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
   String? selectedGroup;
   String? selectedObtained;
 
-  final List<String> breeds = ['Alpine', 'Boer', 'Kiko', 'Nubian'];
-  final List<String> genders = ['Male', 'Female'];
-  final List<String> goatStages = ['Kid', 'Wether', 'Buckling', 'Buck'];
-  final List<String> obtained = ['Born on Farm', 'Purchased', 'Gift', 'Other'];
-
   @override
   void dispose() {
     tagController.dispose();
@@ -60,7 +55,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: Text(
-                      AppLocalizations.of(context)!.breedOptional,
+                    AppLocalizations.of(context)!.breedOptional,
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
@@ -127,7 +122,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
                         ),
                       ),
                       // Breed options
-                      ...breeds.map((breed) {
+                      ..._getBreeds().map((breed) {
                         return InkWell(
                           onTap: () {
                             setState(() {
@@ -169,9 +164,9 @@ class _AddGoatPageState extends State<AddGoatPage> {
                             horizontal: 20,
                             vertical: 16,
                           ),
-                          child: const Text(
-                            'Create new breed...',
-                            style: TextStyle(
+                          child: Text(
+                            AppLocalizations.of(context)!.createNewBreed,
+                            style: const TextStyle(
                               fontSize: 18,
                               color: Color(0xFF424242),
                             ),
@@ -191,7 +186,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        'CLOSE',
+                        AppLocalizations.of(context)!.close.toUpperCase(),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -223,11 +218,11 @@ class _AddGoatPageState extends State<AddGoatPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Dialog Title
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Text(
-                    'Select Gender. *',
-                    style: TextStyle(
+                    AppLocalizations.of(context)!.selectGenderRequired,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF424242),
@@ -236,7 +231,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
                 ),
                 const Divider(height: 1),
                 // Gender options
-                ...genders.map((gender) {
+                ..._getGenders().map((gender) {
                   return InkWell(
                     onTap: () {
                       setState(() {
@@ -299,7 +294,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: TextField(
                     decoration: InputDecoration(
-                      hintText: 'Search...',
+                      hintText: AppLocalizations.of(context)!.searchHint,
                       prefixIcon: const Icon(Icons.search, color: Colors.grey),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -343,9 +338,9 @@ class _AddGoatPageState extends State<AddGoatPage> {
                               ),
                             ),
                           ),
-                          child: const Text(
-                            'Group (optional)',
-                            style: TextStyle(
+                          child: Text(
+                            AppLocalizations.of(context)!.groupOptional2,
+                            style: const TextStyle(
                               fontSize: 18,
                               color: Color(0xFF424242),
                             ),
@@ -363,9 +358,9 @@ class _AddGoatPageState extends State<AddGoatPage> {
                             horizontal: 20,
                             vertical: 16,
                           ),
-                          child: const Text(
-                            'Create new group...',
-                            style: TextStyle(
+                          child: Text(
+                            AppLocalizations.of(context)!.createNewGroup,
+                            style: const TextStyle(
                               fontSize: 18,
                               color: Color(0xFF424242),
                             ),
@@ -385,7 +380,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        'CLOSE',
+                        AppLocalizations.of(context)!.close.toUpperCase(),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -417,11 +412,11 @@ class _AddGoatPageState extends State<AddGoatPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Dialog Title
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Text(
-                    'Select how the goat was obtained. *',
-                    style: TextStyle(
+                    AppLocalizations.of(context)!.selectObtainedRequired,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF424242),
@@ -430,7 +425,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
                 ),
                 const Divider(height: 1),
                 // Obtained options
-                ...obtained.map((option) {
+                ..._getObtainedOptions().map((option) {
                   return InkWell(
                     onTap: () {
                       setState(() {
@@ -476,11 +471,11 @@ class _AddGoatPageState extends State<AddGoatPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Dialog Title
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Text(
-                    '- Select goat stage -',
-                    style: TextStyle(
+                    AppLocalizations.of(context)!.selectGoatStage,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF424242),
@@ -489,7 +484,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
                 ),
                 const Divider(height: 1),
                 // Goat stage options
-                ...goatStages.map((stage) {
+                ..._getGoatStages().map((stage) {
                   return InkWell(
                     onTap: () {
                       setState(() {
@@ -521,6 +516,41 @@ class _AddGoatPageState extends State<AddGoatPage> {
     );
   }
 
+  // Helper methods to get localized lists
+  List<String> _getBreeds() {
+    return [
+      AppLocalizations.of(context)!.alpine,
+      AppLocalizations.of(context)!.boer,
+      AppLocalizations.of(context)!.kiko,
+      AppLocalizations.of(context)!.nubian,
+    ];
+  }
+
+  List<String> _getGenders() {
+    return [
+      AppLocalizations.of(context)!.male,
+      AppLocalizations.of(context)!.female,
+    ];
+  }
+
+  List<String> _getGoatStages() {
+    return [
+      AppLocalizations.of(context)!.kid,
+      AppLocalizations.of(context)!.wether,
+      AppLocalizations.of(context)!.buckling,
+      AppLocalizations.of(context)!.buck,
+    ];
+  }
+
+  List<String> _getObtainedOptions() {
+    return [
+      AppLocalizations.of(context)!.bornOnFarm,
+      AppLocalizations.of(context)!.purchased,
+      AppLocalizations.of(context)!.gift,
+      AppLocalizations.of(context)!.other,
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -533,9 +563,9 @@ class _AddGoatPageState extends State<AddGoatPage> {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
-          'New Goat',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.newGoat,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 22,
             fontWeight: FontWeight.w500,
@@ -548,8 +578,8 @@ class _AddGoatPageState extends State<AddGoatPage> {
               // Validate required fields
               if (tagController.text.isEmpty || selectedGender == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Please fill in all required fields'),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!.fillRequiredFields),
                     backgroundColor: Colors.red,
                   ),
                 );
@@ -599,7 +629,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // ...existing code...
               // Breed dropdown (optional)
               InkWell(
                 onTap: _showBreedPicker,
@@ -635,7 +664,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
               // Tag no. *
               _buildTextField(
                 controller: tagController,
-                label: 'Tag no. *',
+                label: AppLocalizations.of(context)!.tagNoRequired,
                 borderColor: const Color(0xFFFFA726),
               ),
               const SizedBox(height: 16),
@@ -643,7 +672,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
               // Name
               _buildTextField(
                 controller: nameController,
-                label: 'Name.',
+                label: AppLocalizations.of(context)!.nameLabel,
                 borderColor: const Color(0xFF4CAF50),
               ),
               const SizedBox(height: 16),
@@ -697,7 +726,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              selectedGoatStage ?? '- Select goat stage -',
+                              selectedGoatStage ?? AppLocalizations.of(context)!.selectGoatStage,
                               style: TextStyle(
                                 fontSize: 16,
                                 color: selectedGoatStage == null ? Colors.black87 : Colors.black87,
@@ -720,7 +749,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
               // Date of birth
               _buildTextField(
                 controller: dobController,
-                label: 'Date of birth.',
+                label: AppLocalizations.of(context)!.dateOfBirthLabel,
                 borderColor: Colors.grey,
                 isDate: true,
               ),
@@ -729,7 +758,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
               // Date of entry on the farm
               _buildTextField(
                 controller: entryDateController,
-                label: 'Date of entry on the farm.',
+                label: AppLocalizations.of(context)!.dateOfEntryLabel,
                 borderColor: Colors.grey,
                 isDate: true,
               ),
@@ -738,7 +767,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
               // Weight
               _buildTextField(
                 controller: weightController,
-                label: 'Weight.',
+                label: AppLocalizations.of(context)!.weightLabel,
                 borderColor: Colors.grey,
                 keyboardType: TextInputType.number,
               ),
@@ -758,7 +787,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        selectedGroup ?? AppLocalizations.of(context)!.groupOptional,
+                        selectedGroup ?? AppLocalizations.of(context)!.groupOptional2,
                         style: TextStyle(
                           fontSize: 16,
                           color: selectedGroup == null ? Colors.black87 : Colors.black87,
@@ -820,7 +849,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
               // Mother's tag no.
               _buildTextField(
                 controller: motherTagController,
-                label: "Mother's tag no.",
+                label: AppLocalizations.of(context)!.motherTagLabel,
                 borderColor: Colors.grey,
               ),
               const SizedBox(height: 16),
@@ -828,7 +857,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
               // Father's tag no.
               _buildTextField(
                 controller: fatherTagController,
-                label: "Father's tag no.",
+                label: AppLocalizations.of(context)!.fatherTagLabel,
                 borderColor: Colors.grey,
               ),
               const SizedBox(height: 16),
@@ -836,7 +865,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
               // Notes
               _buildTextField(
                 controller: notesController,
-                label: 'Write some notes ...',
+                label: AppLocalizations.of(context)!.notesLabel,
                 borderColor: Colors.grey,
                 maxLines: 4,
               ),

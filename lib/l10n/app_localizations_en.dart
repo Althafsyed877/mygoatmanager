@@ -111,7 +111,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchHint => 'Search...';
 
   @override
-  String get close => 'Close';
+  String get close => 'CLOSE';
 
   @override
   String get allBreeds => 'All Breeds';
@@ -156,25 +156,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nameLabel => 'Name:';
 
   @override
-  String get dobLabel => 'D.O.B:';
+  String get dobLabel => 'D.O.B';
 
   @override
-  String get ageLabel => 'Age:';
+  String get ageLabel => 'Age';
 
   @override
   String get genderLabel => 'Gender:';
 
   @override
-  String get weightLabel => 'Weight:';
+  String get weightLabel => 'Weight';
 
   @override
-  String get stageLabel => 'Stage:';
+  String get stageLabel => 'Stage';
 
   @override
-  String get breedLabel => 'Breed:';
+  String get breedLabel => 'Breed';
 
   @override
-  String get groupLabel => 'Group:';
+  String get groupLabel => 'Group';
 
   @override
   String get joinedOn => 'Joined On:';
@@ -192,7 +192,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fatherLabel => 'Father:';
 
   @override
-  String get notesLabel => 'Notes:';
+  String get notesLabel => 'Write some notes ...';
 
   @override
   String get tapToUpload => 'Tap to upload a picture...';
@@ -238,7 +238,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'No goats have been registered for the selected filters as of yet!';
 
   @override
-  String get selectGroup => 'Select group ..';
+  String get selectGroup => 'Select Group';
 
   @override
   String get addGoat => 'Add';
@@ -331,6 +331,81 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goatUpdated => 'Goat updated successfully!';
 
   @override
+  String get kid => 'Kid';
+
+  @override
+  String get wether => 'Wether';
+
+  @override
+  String get buckling => 'Buckling';
+
+  @override
+  String get buck => 'Buck';
+
+  @override
+  String get alpine => 'Alpine';
+
+  @override
+  String get boer => 'Boer';
+
+  @override
+  String get kiko => 'Kiko';
+
+  @override
+  String get nubian => 'Nubian';
+
+  @override
+  String get days => 'days';
+
+  @override
+  String get goatsFilename => 'goats';
+
+  @override
+  String get gift => 'Gift';
+
+  @override
+  String get selectGenderRequired => 'Select Gender *';
+
+  @override
+  String get selectGoatStage => '- Select goat stage -';
+
+  @override
+  String get selectObtainedRequired => 'Select how the goat was obtained *';
+
+  @override
+  String get tagNoRequired => 'Tag no. *';
+
+  @override
+  String get dateOfBirthLabel => 'Date of birth.';
+
+  @override
+  String get dateOfEntryLabel => 'Date of entry on the farm.';
+
+  @override
+  String get fillRequiredFields => 'Please fill in all required fields';
+
+  @override
+  String get setFarmLogo => 'Set farm\'s logo under app settings!';
+
+  @override
+  String get setFarmName => 'Set farm name under app settings!';
+
+  @override
+  String get setFarmLocation => 'Set farm location under app settings!';
+
+  @override
+  String get tagLabel => 'Tag.';
+
+  @override
+  String get goat => 'goat';
+
+  @override
+  String get allGroups => 'All Groups';
+
+  @override
+  String get groupOptional2 => 'Group (optional)';
+
+  @override
   String get filterByPeriod => 'Filter by Period';
 
   @override
@@ -411,7 +486,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get all => 'All';
 
   @override
-  String get to => 'to';
+  String get to => 'To:';
 
   @override
   String get searchEventsHint => 'Search events...';
@@ -491,7 +566,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchGoatHint => 'Search goat...';
 
   @override
-  String get noGoatsFound => 'No goats found';
+  String get noGoatsFound => 'No goats found. Please add goats first';
 
   @override
   String get medicineLabel => 'Medicine:';
@@ -570,4 +645,443 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get other => 'Other';
+
+  @override
+  String get income => 'Income';
+
+  @override
+  String get expenses => 'Expenses';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get filter => 'Filter';
+
+  @override
+  String get more_options => 'More Options';
+
+  @override
+  String get search_transactions => 'Search Transactions';
+
+  @override
+  String get search_by_description => 'Search by description, amount...';
+
+  @override
+  String get filter_by_date => 'Filter by Date';
+
+  @override
+  String get custom_date_range => 'Custom Date Range';
+
+  @override
+  String get custom_range => 'Custom Range';
+
+  @override
+  String get no_income_to_display =>
+      'There is no income to display\nfor the selected date range.';
+
+  @override
+  String get no_expenses_to_display =>
+      'There are no expenses to display\nfor the selected date range.';
+
+  @override
+  String get export_pdf => 'Export Pdf';
+
+  @override
+  String get income_type => 'Income type';
+
+  @override
+  String get expense_type => 'Expense type';
+
+  @override
+  String get filter_by_income_type => 'Filter by Income Type';
+
+  @override
+  String get filter_by_expense_type => 'Filter by Expense Type';
+
+  @override
+  String get all_types => 'All Types';
+
+  @override
+  String get edit_view_record => 'Edit / View record';
+
+  @override
+  String get record_deleted => 'Record deleted';
+
+  @override
+  String get income_updated => 'Income updated';
+
+  @override
+  String get expense_updated => 'Expense updated';
+
+  @override
+  String get income_saved => 'Income saved';
+
+  @override
+  String get expense_saved => 'Expense saved';
+
+  @override
+  String get add_income => 'Add Income';
+
+  @override
+  String get add_expense => 'Add Expense';
+
+  @override
+  String get date_of_income => 'Date of Income';
+
+  @override
+  String get select_income_type => 'Select income type';
+
+  @override
+  String get milk_sale => 'Milk Sale';
+
+  @override
+  String get goat_sale => 'Goat Sale';
+
+  @override
+  String get category_income => 'Category Income';
+
+  @override
+  String get other_specify => 'Other (specify)';
+
+  @override
+  String get category_expense => 'Category Expense';
+
+  @override
+  String get other_expense => 'Other (specify)';
+
+  @override
+  String get milk_quantity_sold => 'Milk quantity sold';
+
+  @override
+  String get selling_price_per_litre => 'Selling price per litre/unit';
+
+  @override
+  String get how_much_did_you_earn => 'How much did you earn?';
+
+  @override
+  String get please_go_to_record =>
+      'Please go to the record of the goat sold and archive it with a reason \'Sold\' and an income record will be created automatically!';
+
+  @override
+  String get quantity_of_items => 'Quantity of items';
+
+  @override
+  String get please_specify_source => 'Please specify the source of income';
+
+  @override
+  String get specify_income_source => 'Specify income source';
+
+  @override
+  String get receipt_no_optional => 'Receipt no. (optional)';
+
+  @override
+  String get write_some_notes => 'Write some notes ...';
+
+  @override
+  String get enter_receipt_number => 'Enter receipt number';
+
+  @override
+  String get enter_your_notes => 'Enter your notes here...';
+
+  @override
+  String get new_income => 'New Income';
+
+  @override
+  String get new_expense => 'New Expense';
+
+  @override
+  String get please_select_date => 'Please select a date';
+
+  @override
+  String get please_select_income_type => 'Please select income type';
+
+  @override
+  String get please_enter_amount => 'Please enter amount';
+
+  @override
+  String get please_enter_quantity_price => 'Please enter quantity and price';
+
+  @override
+  String get please_enter_quantity => 'Please enter quantity';
+
+  @override
+  String get please_specify_income_source => 'Please specify income source';
+
+  @override
+  String get date_of_expense => 'Date of expense';
+
+  @override
+  String get select_expense_type => 'Select expense type';
+
+  @override
+  String get please_select_expense_type => 'Please select expense type';
+
+  @override
+  String get please_enter_name_of_expense => 'Please enter name of expense';
+
+  @override
+  String get please_select_category => 'Please select a category';
+
+  @override
+  String get how_much_did_you_spend => 'How much did you spend?';
+
+  @override
+  String get name_of_expense => 'Name of expense';
+
+  @override
+  String get select_category => 'Select category';
+
+  @override
+  String get add_category => 'Add category';
+
+  @override
+  String get category_name => 'Category name';
+
+  @override
+  String get enter_milk_quantity => 'Enter milk quantity';
+
+  @override
+  String get enter_price_per_litre => 'Enter price per litre';
+
+  @override
+  String get enter_quantity => 'Enter quantity';
+
+  @override
+  String get enter_amount => 'Enter amount';
+
+  @override
+  String get income_records => 'Income Records';
+
+  @override
+  String get expense_records => 'Expense Records';
+
+  @override
+  String get no_income_records => 'No income records to export';
+
+  @override
+  String get no_expense_records => 'No expense records to export';
+
+  @override
+  String get incomeCategories => 'Income Categories';
+
+  @override
+  String get expenseCategories => 'Expense Categories';
+
+  @override
+  String get goatBreeds => 'Goat Breeds';
+
+  @override
+  String get goatGroups => 'Goat Groups';
+
+  @override
+  String get newCategory => 'New Category';
+
+  @override
+  String get enterName => 'Enter name ...';
+
+  @override
+  String get searchCategories => 'Search categories...';
+
+  @override
+  String get noIncomeCategoriesAdded =>
+      'No income categories have been added as of yet!';
+
+  @override
+  String get noResultsFound => 'No results found';
+
+  @override
+  String get editCategory => 'Edit Category';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get recordSuccessfullyUpdated => 'Record successfully updated';
+
+  @override
+  String get noExpenseCategoriesAdded =>
+      'No expense categories have been added as of yet!';
+
+  @override
+  String get newBreed => 'New Breed';
+
+  @override
+  String get enterBreedName => 'Enter breed name...';
+
+  @override
+  String get searchBreeds => 'Search breeds...';
+
+  @override
+  String get noGoatBreedsAdded => 'No goat breeds have been added yet!';
+
+  @override
+  String get editBreed => 'Edit Breed';
+
+  @override
+  String goatsCount(Object count) {
+    return '($count) Goats';
+  }
+
+  @override
+  String get newGroup => 'New Group';
+
+  @override
+  String get enterGroupName => 'Enter group name...';
+
+  @override
+  String get searchGroups => 'Search groups...';
+
+  @override
+  String get noGoatGroupsRegistered =>
+      'No goat groups currently registered as of yet!';
+
+  @override
+  String get editGroup => 'Edit Group';
+
+  @override
+  String get transactionsReport => 'Transactions';
+
+  @override
+  String get milkReport => 'Milk Report';
+
+  @override
+  String get goatsReport => 'GOATS REPORT';
+
+  @override
+  String get eventsReport => 'Events Report';
+
+  @override
+  String get breedingReport => 'Breeding Report';
+
+  @override
+  String get pregnanciesReport => 'Pregnancies Report';
+
+  @override
+  String get weightReport => 'Weight Report';
+
+  @override
+  String get stageTrackingReport => 'Stage Tracking Report';
+
+  @override
+  String get stageTracking => 'Stage Tracking';
+
+  @override
+  String get updateSelected => 'Update Selected';
+
+  @override
+  String get animalsNeedStageUpdate => 'Animals that might need stage update.';
+
+  @override
+  String get wethersNotListed =>
+      'Wethers and animals without birth dates are not listed!';
+
+  @override
+  String get allCaughtUp => 'All caught up!';
+
+  @override
+  String get noGoatsNeedStageUpdates =>
+      'No goats need stage updates at this time.';
+
+  @override
+  String get doe => 'Doe';
+
+  @override
+  String get updateStages => 'Update Stages';
+
+  @override
+  String updateGoatsQuestion(Object count) {
+    return 'Update $count goats from Kid to next stage?';
+  }
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String updatedGoatsSuccessfully(Object count) {
+    return 'Updated $count goats successfully!';
+  }
+
+  @override
+  String daysSinceBirth(Object days) {
+    return '$days days';
+  }
+
+  @override
+  String get breed => 'Breed';
+
+  @override
+  String get group => 'Group';
+
+  @override
+  String get source => 'Source';
+
+  @override
+  String get stagesSummary => 'STAGES SUMMARY';
+
+  @override
+  String get stage => 'Stage';
+
+  @override
+  String get count => 'Count';
+
+  @override
+  String get genderSummary => 'GENDER SUMMARY';
+
+  @override
+  String get gender => 'Gender';
+
+  @override
+  String get male => 'Male';
+
+  @override
+  String get female => 'Female';
+
+  @override
+  String get does => 'Does';
+
+  @override
+  String get doelings => 'Doelings';
+
+  @override
+  String get bucks => 'Bucks';
+
+  @override
+  String get bucklings => 'Bucklings';
+
+  @override
+  String get wethers => 'Wethers';
+
+  @override
+  String get kids => 'Kids';
+
+  @override
+  String get allSources => 'All Sources';
+
+  @override
+  String get bornOnFarm => 'Born on farm';
+
+  @override
+  String get purchased => 'Purchased';
+
+  @override
+  String get milk => 'milk';
+
+  @override
+  String get noGoatsDataToExport => 'No goats data to export';
+
+  @override
+  String get failedToExportPdf => 'Failed to export PDF';
+
+  @override
+  String get filterBySource => 'Filter by Source';
+
+  @override
+  String get goatsTotal => 'Goats Total.';
+
+  @override
+  String get goatsByStage => 'Goats by stage.';
+
+  @override
+  String get goatsByGender => 'Goats by gender.';
 }
