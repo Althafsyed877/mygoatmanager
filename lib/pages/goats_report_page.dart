@@ -1,11 +1,13 @@
 import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart' as pdf;
-import 'dart:typed_data';
 import 'package:printing/printing.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../models/goat.dart';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
 
@@ -24,23 +26,31 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
   String selectedSource = 'All Sources';
   bool _isLoading = true;
 
-  List<String> stages = [];
-  List<String> breeds = [];
-  List<String> groups = [];
-  List<String> sources = [];
-
   @override
   void initState() {
     super.initState();
     _loadGoats();
   }
 
-  void _updateLocalizedLists(BuildContext context) {
+  // Getter methods for localized lists
+  List<String> _getStages(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    stages = [loc.does, loc.doelings, loc.bucks, loc.bucklings, loc.wethers, loc.kids];
-    breeds = [loc.allBreeds, 'Alpine', 'Boer', 'Kiko', 'Nubian'];
-    groups = [loc.allGroups, loc.milk];
-    sources = [loc.allSources, loc.bornOnFarm, loc.purchased, loc.other];
+    return [loc.does, loc.doelings, loc.bucks, loc.bucklings, loc.wethers, loc.kids];
+  }
+
+  List<String> _getBreeds(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return [loc.allBreeds, 'Alpine', 'Boer', 'Kiko', 'Nubian'];
+  }
+
+  List<String> _getGroups(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return [loc.allGroups, loc.milk];
+  }
+
+  List<String> _getSources(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return [loc.allSources, loc.bornOnFarm, loc.purchased, loc.other];
   }
 
   Future<void> _loadGoats() async {
@@ -85,20 +95,31 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
   }
 
   void _applyFilters() {
-    final loc = AppLocalizations.of(context)!;
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return;
+    
     List<Goat> filtered = List.from(_goats);
 
-    if (selectedBreed != loc.allBreeds) {
-      filtered = filtered.where((goat) => goat.breed == selectedBreed).toList();
+    // Convert selectedBreed to English if it's "All Breeds"
+    final englishAllBreeds = 'All Breeds';
+    final currentBreed = selectedBreed == loc.allBreeds ? englishAllBreeds : selectedBreed;
+    
+    if (currentBreed != englishAllBreeds) {
+      filtered = filtered.where((goat) => goat.breed == currentBreed).toList();
     }
 
-    if (selectedGroup != loc.allGroups) {
-      filtered = filtered.where((goat) => goat.group == selectedGroup).toList();
+    // Convert selectedGroup to English if it's "All Groups"
+    final englishAllGroups = 'All Groups';
+    final currentGroup = selectedGroup == loc.allGroups ? englishAllGroups : selectedGroup;
+    
+    if (currentGroup != englishAllGroups) {
+      filtered = filtered.where((goat) => goat.group == currentGroup).toList();
     }
 
+    // Handle source filtering
     if (selectedSource != loc.allSources) {
       filtered = filtered.where((goat) {
-        final obtained = goat.obtained?.toLowerCase() ?? '';
+        final obtained = (goat.obtained ?? '').toLowerCase();
         if (selectedSource == loc.bornOnFarm) return obtained.contains('born');
         if (selectedSource == loc.purchased) return obtained.contains('purchased');
         if (selectedSource == loc.other) return obtained.contains('other') || obtained.contains('gift');
@@ -112,47 +133,79 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
   }
 
   String _getCorrectedStage(Goat goat) {
-    final gender = goat.gender?.toLowerCase() ?? '';
-    final stage = goat.goatStage?.toLowerCase() ?? '';
+    final gender = (goat.gender ?? '').toLowerCase();
+    final stage = (goat.goatStage ?? '').toLowerCase();
     
-    final loc = AppLocalizations.of(context)!;
-    final stageList = [loc.does.toLowerCase(), loc.doelings.toLowerCase(), 
-                      loc.bucks.toLowerCase(), loc.bucklings.toLowerCase(), 
-                      loc.wethers.toLowerCase(), loc.kids.toLowerCase()];
-    
-    if (stageList.contains(stage)) {
-      return stage;
-    }
-    
+    // Handle English stage names that might be stored in the database
     if (gender == 'male') {
       switch (stage) {
-        case 'kid': return loc.kids.toLowerCase();
-        case 'buckling': return loc.bucklings.toLowerCase();
-        case 'buck': return loc.bucks.toLowerCase();
-        case 'wether': return loc.wethers.toLowerCase();
-        default: return loc.kids.toLowerCase();
+        case 'kid':
+        case 'kids':
+          return 'kids';
+        case 'buckling':
+        case 'bucklings':
+          return 'bucklings';
+        case 'buck':
+        case 'bucks':
+          return 'bucks';
+        case 'wether':
+        case 'wethers':
+          return 'wethers';
+        default:
+          return 'kids';
       }
     } else if (gender == 'female') {
       switch (stage) {
-        case 'kid': return loc.kids.toLowerCase();
-        case 'doeling': return loc.doelings.toLowerCase();
-        case 'doe': return loc.does.toLowerCase();
-        default: return loc.kids.toLowerCase();
+        case 'kid':
+        case 'kids':
+          return 'kids';
+        case 'doeling':
+        case 'doelings':
+          return 'doelings';
+        case 'doe':
+        case 'does':
+          return 'does';
+        default:
+          return 'kids';
       }
     }
     
-    return loc.kids.toLowerCase();
+    return 'kids';
   }
 
-  int _countStage(String stage) {
+  int _countStage(BuildContext context, String stage) {
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return 0;
+    
+    // Map localized stage names to their English equivalents
+    final Map<String, String> stageMapping = {
+      loc.does.toLowerCase(): 'does',
+      loc.doelings.toLowerCase(): 'doelings',
+      loc.bucks.toLowerCase(): 'bucks',
+      loc.bucklings.toLowerCase(): 'bucklings',
+      loc.wethers.toLowerCase(): 'wethers',
+      loc.kids.toLowerCase(): 'kids',
+    };
+    
+    // Get the English equivalent of the localized stage
+    final englishStage = stageMapping[stage.toLowerCase()];
+    
+    if (englishStage == null) {
+      return 0;
+    }
+    
     return _filteredGoats.where((g) {
       final correctedStage = _getCorrectedStage(g);
-      return correctedStage == stage.toLowerCase();
+      // Compare with English stage name (what's stored in _getCorrectedStage)
+      return correctedStage == englishStage;
     }).length;
   }
 
   Future<void> _exportGoatsPdf() async {
-    final loc = AppLocalizations.of(context)!;
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return;
+    
+    final stages = _getStages(context);
     
     try {
       // Check if there's data to export
@@ -178,24 +231,27 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
       final now = DateTime.now();
       final dateStr = '${now.month}/${now.day}/${now.year} ${now.hour}:${now.minute.toString().padLeft(2, '0')}';
 
-      final stageRows = stages.map((s) => [s, _countStage(s).toString()]);
+      // Use context-aware stage counting
+      final stageRows = stages.map((s) => [s, _countStage(context, s).toString()]);
+      
       final male = _filteredGoats.where((g) => (g.gender ?? '').toLowerCase() == 'male').length;
       final female = _filteredGoats.where((g) => (g.gender ?? '').toLowerCase() == 'female').length;
 
       final maleKids = _filteredGoats.where((g) => 
-        _getCorrectedStage(g) == loc.kids.toLowerCase() && 
+        _getCorrectedStage(g) == 'kids' && 
         (g.gender ?? '').toLowerCase() == 'male'
       ).length;
       
       final femaleKids = _filteredGoats.where((g) => 
-        _getCorrectedStage(g) == loc.kids.toLowerCase() && 
+        _getCorrectedStage(g) == 'kids' && 
         (g.gender ?? '').toLowerCase() == 'female'
       ).length;
 
+      // FIX: Changed 'context' parameter name to 'pdfContext' to avoid conflict
       doc.addPage(
         pw.Page(
           pageFormat: pdf.PdfPageFormat.a4,
-          build: (pw.Context context) {
+          build: (pw.Context pdfContext) {
             return pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
@@ -344,7 +400,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                   ],
                 ),
 
-                if (_countStage(loc.kids) > 0) ...[
+                if (_countStage(context, loc.kids) > 0) ...[
                   pw.SizedBox(height: 15),
                   pw.Container(
                     padding: const pw.EdgeInsets.all(8),
@@ -389,7 +445,10 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
   }
 
   void _showFilterDialog() {
-    final loc = AppLocalizations.of(context)!;
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return;
+    
+    final sources = _getSources(context);
     
     showDialog(
       context: context,
@@ -522,7 +581,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                           : BorderSide(color: Colors.grey.shade200),
                     ),
                     color: currentSelection == option 
-                        ? Colors.teal.withOpacity(0.1)
+                        ? Colors.teal.withAlpha(25) // 10% opacity equivalent
                         : Colors.transparent,
                   ),
                   child: Row(
@@ -559,7 +618,10 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
   }
 
   void _showGroupPicker() {
-    final loc = AppLocalizations.of(context)!;
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return;
+    
+    final groups = _getGroups(context);
     
     showDialog(
       context: context,
@@ -606,10 +668,11 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: groups.length,
                     itemBuilder: (context, index) {
+                      final group = groups[index];
                       return InkWell(
                         onTap: () {
                           setState(() {
-                            selectedGroup = groups[index];
+                            selectedGroup = group;
                           });
                           _applyFilters();
                           Navigator.pop(context);
@@ -622,27 +685,27 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                                   ? BorderSide.none
                                   : BorderSide(color: Colors.grey.shade200),
                             ),
-                            color: selectedGroup == groups[index]
-                                ? Colors.teal.withOpacity(0.1)
+                            color: selectedGroup == group
+                                ? Colors.teal.withAlpha(25) // 10% opacity equivalent
                                 : Colors.transparent,
                           ),
                           child: Row(
                             children: [
                               Expanded(
                                 child: Text(
-                                  groups[index],
+                                  group,
                                   style: TextStyle(
                                     fontSize: 18,
-                                    color: selectedGroup == groups[index]
+                                    color: selectedGroup == group
                                         ? Colors.teal[700]
                                         : Colors.black87,
-                                    fontWeight: selectedGroup == groups[index]
+                                    fontWeight: selectedGroup == group
                                         ? FontWeight.w600
                                         : FontWeight.normal,
                                   ),
                                 ),
                               ),
-                              if (selectedGroup == groups[index])
+                              if (selectedGroup == group)
                                 Icon(
                                   Icons.check,
                                   color: Colors.teal[700],
@@ -692,22 +755,35 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
 
   @override
   Widget build(BuildContext context) {
-    _updateLocalizedLists(context);
-    final loc = AppLocalizations.of(context)!;
+    final loc = AppLocalizations.of(context);
+    if (loc == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    
+    final stages = _getStages(context);
+    final breeds = _getBreeds(context);
     
     final total = _filteredGoats.length;
     final maleCount = _filteredGoats.where((g) => (g.gender ?? '').toLowerCase() == 'male').length;
     final femaleCount = _filteredGoats.where((g) => (g.gender ?? '').toLowerCase() == 'female').length;
 
     final maleKids = _filteredGoats.where((g) => 
-      _getCorrectedStage(g) == loc.kids.toLowerCase() && 
+      _getCorrectedStage(g) == 'kids' && 
       (g.gender ?? '').toLowerCase() == 'male'
     ).length;
     
     final femaleKids = _filteredGoats.where((g) => 
-      _getCorrectedStage(g) == loc.kids.toLowerCase() && 
+      _getCorrectedStage(g) == 'kids' && 
       (g.gender ?? '').toLowerCase() == 'female'
     ).length;
+
+    // FIX: Calculate kids count directly
+    final kidsCountDirect = _filteredGoats.where((g) {
+      final stage = _getCorrectedStage(g);
+      return stage == 'kids';
+    }).length;
 
     final malePercentage = total > 0 ? maleCount / total : 0.0;
     final femalePercentage = total > 0 ? femaleCount / total : 0.0;
@@ -734,13 +810,9 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                 });
                 _applyFilters();
               },
-              itemBuilder: (BuildContext context) => [
-                PopupMenuItem(value: loc.allBreeds, child: Text(loc.allBreeds)),
-                const PopupMenuItem(value: 'Alpine', child: Text('Alpine')),
-                const PopupMenuItem(value: 'Boer', child: Text('Boer')),
-                const PopupMenuItem(value: 'Kiko', child: Text('Kiko')),
-                const PopupMenuItem(value: 'Nubian', child: Text('Nubian')),
-              ],
+              itemBuilder: (BuildContext context) => breeds.map((breed) => 
+                PopupMenuItem(value: breed, child: Text(breed))
+              ).toList(),
               icon: const Icon(Icons.arrow_drop_down, color: Colors.white, size: 24),
               offset: const Offset(0, 50),
             ),
@@ -855,7 +927,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
                             // Stages List
                             Column(
                               children: stages.map((stage) {
-                                final count = _countStage(stage);
+                                final count = _countStage(context, stage);
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 12),
                                   child: Row(
@@ -884,8 +956,8 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
 
                             const SizedBox(height: 16),
                             
-                            // Kids Details
-                            if (_countStage(loc.kids) > 0) ...[
+                            // Kids Details - FIXED syntax error
+                            if (kidsCountDirect > 0) ...[
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
@@ -1019,13 +1091,16 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
 
                             const SizedBox(height: 16),
 
-                            // Gender Indicators
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _buildGenderIndicator(loc.male, maleCount, const Color(0xFF4CAF50)),
-                                _buildGenderIndicator(loc.female, femaleCount, const Color(0xFFFFA726)),
-                              ],
+                            // Gender Indicators - FIXED: Actually call this method
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  _buildGenderIndicator(loc.male, maleCount, const Color(0xFF4CAF50)),
+                                  _buildGenderIndicator(loc.female, femaleCount, const Color(0xFFFFA726)),
+                                ],
+                              ),
                             ),
                           ],
                         ),
