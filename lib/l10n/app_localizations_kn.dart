@@ -93,7 +93,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get legal => 'ಕಾನೂನು';
 
   @override
-  String get privacyPolicy => 'ಗೌಪ್ಯತಾ ನೀತಿ';
+  String get privacyPolicy => 'ಗೌಪ್ಯತಾ ನೀತಿಗೆ';
 
   @override
   String get noNewNotifications => 'ಹೊಸ ಅಧಿಸೂಚನೆಗಳಿಲ್ಲ';
@@ -103,6 +103,87 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get dataSyncedSuccessfully => 'ಡೇಟಾ ಯಶಸ್ವಿಯಾಗಿ ಸಿಂಕ್ ಆಯಿತು';
+
+  @override
+  String get welcomeToGoatManager => 'ಆಡು ಮ್ಯಾನೇಜರ್‌ಗೆ ಸ್ವಾಗತ';
+
+  @override
+  String get manageYourFarmEfficiently =>
+      'ನಮ್ಮ ಸಾಧನಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಫಾರ್ಮ್ ಅನ್ನು ಪರಿಣಾಮಕಾರಿಯಾಗಿ ನಿರ್ವಹಿಸಿ';
+
+  @override
+  String get login => 'ಲಾಗಿನ್';
+
+  @override
+  String get signup => 'ಸೈನ್ ಅಪ್';
+
+  @override
+  String get emailAddress => 'ಇಮೇಲ್ ವಿಳಾಸ';
+
+  @override
+  String get password => 'ಪಾಸ್‌ವರ್ಡ್';
+
+  @override
+  String get rememberMe => 'ನನ್ನನ್ನು ನೆನಪಿಡಿ';
+
+  @override
+  String get forgotPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?';
+
+  @override
+  String get fullName => 'ಪೂರ್ಣ ಹೆಸರು';
+
+  @override
+  String get phoneNumber => 'ಫೋನ್ ನಂಬರ್';
+
+  @override
+  String get confirmPassword => 'ಪಾಸ್‌ವರ್ಡ್ ದೃಢೀಕರಿಸಿ';
+
+  @override
+  String get createAccount => 'ಖಾತೆ ರಚಿಸಿ';
+
+  @override
+  String get orContinueWith => 'ಅಥವಾ ಮುಂದುವರಿಸಿ';
+
+  @override
+  String get bySigningUpYouAgree => 'ಸೈನ್ ಅಪ್ ಮಾಡುವ ಮೂಲಕ, ನೀವು ನಮ್ಮ';
+
+  @override
+  String get termsOfService => 'ಸೇವಾ ನಿಯಮಗಳು';
+
+  @override
+  String get and => 'ಮತ್ತು';
+
+  @override
+  String get pleaseFillAllFields => 'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಫೀಲ್ಡ್‌ಗಳನ್ನು ಪೂರಿಸಿ';
+
+  @override
+  String get passwordsDoNotMatch => 'ಪಾಸ್‌ವರ್ಡ್‌ಗಳು ಹೊಂದಿಕೆಯಾಗುವುದಿಲ್ಲ';
+
+  @override
+  String get passwordMustBeAtLeast6Characters =>
+      'ಪಾಸ್‌ವರ್ಡ್ ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳಾಗಿರಬೇಕು';
+
+  @override
+  String get pleaseEnterEmail => 'ದಯವಿಟ್ಟು ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ';
+
+  @override
+  String get resetLinkSentTo => 'ರೀಸೆಟ್ ಲಿಂಕ್ ಕಳುಹಿಸಲಾಗಿದೆ';
+
+  @override
+  String get signingInWith => 'ಇದರೊಂದಿಗೆ ಸೈನ್ ಇನ್ ಆಗುತ್ತಿದೆ';
+
+  @override
+  String get loginSuccessful => 'ಲಾಗಿನ್ ಯಶಸ್ವಿಯಾಗಿದೆ!';
+
+  @override
+  String get accountCreatedSuccessfully => 'ಖಾತೆ ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ!';
+
+  @override
+  String get enterEmailToReset =>
+      'ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಲು ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ';
+
+  @override
+  String get resetPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ';
 
   @override
   String get selectBreed => 'ಕುಲ ಆಯ್ಕೆಮಾಡಿ ..';

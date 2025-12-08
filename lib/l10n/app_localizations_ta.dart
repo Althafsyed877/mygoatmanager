@@ -94,7 +94,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get legal => 'சட்டப்பூர்வ';
 
   @override
-  String get privacyPolicy => 'தனியுரிமைக் கொள்கை';
+  String get privacyPolicy => 'தனியுரிமைக் கொள்கையை';
 
   @override
   String get noNewNotifications => 'புதிய அறிவிப்புகள் இல்லை';
@@ -104,6 +104,89 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get dataSyncedSuccessfully => 'தரவு வெற்றிகரமாக ஒத்திசைக்கப்பட்டது';
+
+  @override
+  String get welcomeToGoatManager => 'ஆடு மேலாளருக்கு வரவேற்கிறோம்';
+
+  @override
+  String get manageYourFarmEfficiently =>
+      'எங்கள் கருவிகளுடன் உங்கள் பண்ணையை திறமையாக நிர்வகிக்கவும்';
+
+  @override
+  String get login => 'உள்நுழைக';
+
+  @override
+  String get signup => 'பதிவு செய்க';
+
+  @override
+  String get emailAddress => 'மின்னஞ்சல் முகவரி';
+
+  @override
+  String get password => 'கடவுச்சொல்';
+
+  @override
+  String get rememberMe => 'என்னை நினைவில் கொள்ளுங்கள்';
+
+  @override
+  String get forgotPassword => 'கடவுச்சொல் மறந்துவிட்டதா?';
+
+  @override
+  String get fullName => 'முழு பெயர்';
+
+  @override
+  String get phoneNumber => 'தொலைபேசி எண்';
+
+  @override
+  String get confirmPassword => 'கடவுச்சொல்லை உறுதிப்படுத்துக';
+
+  @override
+  String get createAccount => 'கணக்கை உருவாக்கவும்';
+
+  @override
+  String get orContinueWith => 'அல்லது தொடரவும்';
+
+  @override
+  String get bySigningUpYouAgree => 'பதிவு செய்வதன் மூலம், நீங்கள் எங்கள்';
+
+  @override
+  String get termsOfService => 'சேவை விதிமுறைகளை';
+
+  @override
+  String get and => 'மற்றும்';
+
+  @override
+  String get pleaseFillAllFields =>
+      'தயவு செய்து அனைத்து புலங்களையும் நிரப்பவும்';
+
+  @override
+  String get passwordsDoNotMatch => 'கடவுச்சொற்கள் பொருந்தவில்லை';
+
+  @override
+  String get passwordMustBeAtLeast6Characters =>
+      'கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்';
+
+  @override
+  String get pleaseEnterEmail => 'உங்கள் மின்னஞ்சல் முகவரியை உள்ளிடவும்';
+
+  @override
+  String get resetLinkSentTo => 'மீட்டமைப்பு இணைப்பு அனுப்பப்பட்டது';
+
+  @override
+  String get signingInWith => 'இதனுடன் உள்நுழைகிறது';
+
+  @override
+  String get loginSuccessful => 'உள்நுழைவு வெற்றிகரமாக உள்ளது!';
+
+  @override
+  String get accountCreatedSuccessfully =>
+      'கணக்கு வெற்றிகரமாக உருவாக்கப்பட்டது!';
+
+  @override
+  String get enterEmailToReset =>
+      'உங்கள் கடவுச்சொல்லை மீட்டமைக்க உங்கள் மின்னஞ்சல் முகவரியை உள்ளிடவும்';
+
+  @override
+  String get resetPassword => 'கடவுச்சொல்லை மீட்டமைக்கவும்';
 
   @override
   String get selectBreed => 'இனத்தைத் தேர்ந்தெடுக்கவும் ..';

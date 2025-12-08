@@ -296,6 +296,162 @@ abstract class AppLocalizations {
   /// **'Data Synced Successfully'**
   String get dataSyncedSuccessfully;
 
+  /// No description provided for @welcomeToGoatManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Goat Manager'**
+  String get welcomeToGoatManager;
+
+  /// No description provided for @manageYourFarmEfficiently.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your farm efficiently with our tools'**
+  String get manageYourFarmEfficiently;
+
+  /// No description provided for @login.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// No description provided for @signup.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get signup;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get emailAddress;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @rememberMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember me'**
+  String get rememberMe;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgotPassword;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmPassword;
+
+  /// No description provided for @createAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get createAccount;
+
+  /// No description provided for @orContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Or continue with'**
+  String get orContinueWith;
+
+  /// No description provided for @bySigningUpYouAgree.
+  ///
+  /// In en, this message translates to:
+  /// **'By signing up, you agree to our'**
+  String get bySigningUpYouAgree;
+
+  /// No description provided for @termsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
+
+  /// No description provided for @and.
+  ///
+  /// In en, this message translates to:
+  /// **'and'**
+  String get and;
+
+  /// No description provided for @pleaseFillAllFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill all fields'**
+  String get pleaseFillAllFields;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @passwordMustBeAtLeast6Characters.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordMustBeAtLeast6Characters;
+
+  /// No description provided for @pleaseEnterEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email address'**
+  String get pleaseEnterEmail;
+
+  /// No description provided for @resetLinkSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset link sent to'**
+  String get resetLinkSentTo;
+
+  /// No description provided for @signingInWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in with'**
+  String get signingInWith;
+
+  /// No description provided for @loginSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Login successful!'**
+  String get loginSuccessful;
+
+  /// No description provided for @accountCreatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created successfully!'**
+  String get accountCreatedSuccessfully;
+
+  /// No description provided for @enterEmailToReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address to reset your password'**
+  String get enterEmailToReset;
+
+  /// No description provided for @resetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPassword;
+
   /// No description provided for @selectBreed.
   ///
   /// In en, this message translates to:

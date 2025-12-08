@@ -1,0 +1,1087 @@
+import 'package:flutter/material.dart';
+import 'package:mygoatmanager/l10n/app_localizations.dart';
+
+class AuthPage extends StatefulWidget {
+  const AuthPage({super.key});
+
+  @override
+  State<AuthPage> createState() => _AuthPageState();
+}
+
+class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+  bool _rememberMe = false;
+
+  // Form controllers
+  final _loginEmailController = TextEditingController();
+  final _loginPasswordController = TextEditingController();
+  final _signupNameController = TextEditingController();
+  final _signupEmailController = TextEditingController();
+  final _signupPhoneController = TextEditingController();
+  final _signupPasswordController = TextEditingController();
+  final _signupConfirmPasswordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _loginEmailController.dispose();
+    _loginPasswordController.dispose();
+    _signupNameController.dispose();
+    _signupEmailController.dispose();
+    _signupPhoneController.dispose();
+    _signupPasswordController.dispose();
+    _signupConfirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+    final padding = mediaQuery.padding;
+
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)],
+          ),
+        ),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final availableHeight = constraints.maxHeight;
+              final availableWidth = constraints.maxWidth;
+
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: availableHeight,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      children: [
+                        // Header with goat image
+                        _buildHeader(context, availableWidth, availableHeight),
+                        
+                        // Main card
+                        Expanded(
+                          child: _buildAuthCard(context, availableWidth, availableHeight),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, double availableWidth, double availableHeight) {
+    // Calculate responsive values
+    final isSmallPhone = availableWidth < 360;
+    final isLargePhone = availableWidth >= 360 && availableWidth < 600;
+    final isTablet = availableWidth >= 600;
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: availableWidth * 0.05,
+        vertical: availableHeight * 0.02,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Goat Image
+          Container(
+            width: isSmallPhone 
+                ? availableWidth * 0.25
+                : isLargePhone 
+                  ? availableWidth * 0.22
+                  : availableWidth * 0.20,
+            height: isSmallPhone
+                ? availableWidth * 0.25
+                : isLargePhone
+                  ? availableWidth * 0.22
+                  : availableWidth * 0.20,
+            padding: EdgeInsets.all(isSmallPhone ? 8 : 12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(isSmallPhone ? 50 : 60),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: isSmallPhone ? 2 : 3,
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(isSmallPhone ? 45 : 50),
+              ),
+              child: Center(
+                child: Image.asset(
+                  'assets/images/goat.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(
+                      Icons.pets,
+                      color: Colors.white,
+                      size: isSmallPhone ? availableWidth * 0.15 : availableWidth * 0.12,
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+          
+          SizedBox(height: availableHeight * 0.02),
+          
+          // Title
+          Text(
+            AppLocalizations.of(context)!.welcomeToGoatManager,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: isSmallPhone 
+                  ? availableWidth * 0.055
+                  : isLargePhone
+                    ? availableWidth * 0.05
+                    : availableWidth * 0.045,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+          ),
+          
+          SizedBox(height: availableHeight * 0.01),
+          
+          // Subtitle
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: isSmallPhone ? 10 : 20),
+            child: Text(
+              AppLocalizations.of(context)!.manageYourFarmEfficiently,
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.9),
+                fontSize: isSmallPhone 
+                    ? availableWidth * 0.035
+                    : isLargePhone
+                      ? availableWidth * 0.032
+                      : availableWidth * 0.028,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAuthCard(BuildContext context, double availableWidth, double availableHeight) {
+    // Calculate responsive values
+    final isSmallPhone = availableWidth < 360;
+    final isLargePhone = availableWidth >= 360 && availableWidth < 600;
+    final isTablet = availableWidth >= 600;
+
+    final cardMargin = isSmallPhone 
+        ? availableWidth * 0.03
+        : isLargePhone
+          ? availableWidth * 0.04
+          : availableWidth * 0.05;
+          
+    final cardPadding = isSmallPhone
+        ? availableWidth * 0.04
+        : isLargePhone
+          ? availableWidth * 0.045
+          : availableWidth * 0.05;
+
+    return Container(
+      margin: EdgeInsets.all(cardMargin),
+      padding: EdgeInsets.all(cardPadding),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(isSmallPhone ? 16 : 20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: isSmallPhone ? 10 : 15,
+            spreadRadius: isSmallPhone ? 2 : 3,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Tab Bar
+          Container(
+            height: isSmallPhone ? 40 : 45,
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              indicator: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)],
+                ),
+                borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+              ),
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.grey[700],
+              labelStyle: TextStyle(
+                fontSize: isSmallPhone 
+                    ? availableWidth * 0.038
+                    : availableWidth * 0.04,
+                fontWeight: FontWeight.w600,
+              ),
+              unselectedLabelStyle: TextStyle(
+                fontSize: isSmallPhone 
+                    ? availableWidth * 0.038
+                    : availableWidth * 0.04,
+              ),
+              tabs: [
+                Tab(text: AppLocalizations.of(context)!.login),
+                Tab(text: AppLocalizations.of(context)!.signup),
+              ],
+            ),
+          ),
+          
+          SizedBox(height: availableHeight * 0.02),
+
+          // Tab Bar View with fixed height
+          SizedBox(
+            height: isSmallPhone 
+                ? availableHeight * 0.40
+                : isLargePhone
+                  ? availableHeight * 0.45
+                  : availableHeight * 0.50,
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildLoginForm(context, availableWidth, availableHeight),
+                _buildSignupForm(context, availableWidth, availableHeight),
+              ],
+            ),
+          ),
+
+          // Or continue with
+          SizedBox(height: availableHeight * 0.015),
+          _buildDividerWithText(
+            context,
+            AppLocalizations.of(context)!.orContinueWith,
+            availableWidth,
+          ),
+          SizedBox(height: availableHeight * 0.015),
+
+          // Social Login Buttons
+          _buildSocialLoginButtons(context, availableWidth),
+
+          // Terms and Privacy (for signup)
+          if (_tabController.index == 1)
+            Padding(
+              padding: EdgeInsets.only(top: availableHeight * 0.015),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: availableWidth * 0.05),
+                    child: Text(
+                      AppLocalizations.of(context)!.bySigningUpYouAgree,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: isSmallPhone 
+                            ? availableWidth * 0.028
+                            : availableWidth * 0.03,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                    ),
+                  ),
+                  SizedBox(height: availableHeight * 0.008),
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 2,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          // Navigate to Terms of Service
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)!.termsOfService,
+                          style: TextStyle(
+                            color: const Color(0xFF4CAF50),
+                            fontSize: isSmallPhone 
+                                ? availableWidth * 0.028
+                                : availableWidth * 0.03,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        AppLocalizations.of(context)!.and,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: isSmallPhone 
+                              ? availableWidth * 0.028
+                              : availableWidth * 0.03,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          // Navigate to Privacy Policy
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)!.privacyPolicy,
+                          style: TextStyle(
+                            color: const Color(0xFF4CAF50),
+                            fontSize: isSmallPhone 
+                                ? availableWidth * 0.028
+                                : availableWidth * 0.03,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoginForm(BuildContext context, double availableWidth, double availableHeight) {
+    final isSmallPhone = availableWidth < 360;
+    
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.all(availableWidth * 0.02),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: availableHeight * 0.35,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Email Field
+            _buildTextField(
+              controller: _loginEmailController,
+              label: AppLocalizations.of(context)!.emailAddress,
+              icon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+              screenWidth: availableWidth,
+            ),
+            SizedBox(height: availableHeight * 0.015),
+
+            // Password Field
+            _buildPasswordField(
+              controller: _loginPasswordController,
+              label: AppLocalizations.of(context)!.password,
+              isVisible: _isPasswordVisible,
+              onToggleVisibility: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+              screenWidth: availableWidth,
+            ),
+            SizedBox(height: availableHeight * 0.015),
+
+            // Remember Me & Forgot Password
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Remember Me
+                Row(
+                  children: [
+                    SizedBox(
+                      width: isSmallPhone ? 20 : 24,
+                      height: isSmallPhone ? 20 : 24,
+                      child: Checkbox(
+                        value: _rememberMe,
+                        onChanged: (value) {
+                          setState(() {
+                            _rememberMe = value ?? false;
+                          });
+                        },
+                        activeColor: const Color(0xFF4CAF50),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                    SizedBox(width: isSmallPhone ? 4 : 6),
+                    Text(
+                      AppLocalizations.of(context)!.rememberMe,
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: isSmallPhone 
+                            ? availableWidth * 0.032
+                            : availableWidth * 0.035,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Forgot Password
+                TextButton(
+                  onPressed: () {
+                    _showForgotPasswordDialog(context, availableWidth);
+                  },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.forgotPassword,
+                    style: TextStyle(
+                      color: const Color(0xFF4CAF50),
+                      fontSize: isSmallPhone 
+                          ? availableWidth * 0.032
+                          : availableWidth * 0.035,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: availableHeight * 0.02),
+
+            // Login Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4CAF50),
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    vertical: isSmallPhone 
+                        ? availableHeight * 0.018
+                        : availableHeight * 0.02,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
+                  ),
+                  elevation: 3,
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.login,
+                  style: TextStyle(
+                    fontSize: isSmallPhone 
+                        ? availableWidth * 0.038
+                        : availableWidth * 0.04,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSignupForm(BuildContext context, double availableWidth, double availableHeight) {
+    final isSmallPhone = availableWidth < 360;
+    
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.all(availableWidth * 0.02),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: availableHeight * 0.35,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Full Name
+            _buildTextField(
+              controller: _signupNameController,
+              label: AppLocalizations.of(context)!.fullName,
+              icon: Icons.person_outline,
+              screenWidth: availableWidth,
+            ),
+            SizedBox(height: availableHeight * 0.015),
+
+            // Email
+            _buildTextField(
+              controller: _signupEmailController,
+              label: AppLocalizations.of(context)!.emailAddress,
+              icon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+              screenWidth: availableWidth,
+            ),
+            SizedBox(height: availableHeight * 0.015),
+
+            // Phone Number
+            _buildTextField(
+              controller: _signupPhoneController,
+              label: AppLocalizations.of(context)!.phoneNumber,
+              icon: Icons.phone_outlined,
+              keyboardType: TextInputType.phone,
+              screenWidth: availableWidth,
+            ),
+            SizedBox(height: availableHeight * 0.015),
+
+            // Password
+            _buildPasswordField(
+              controller: _signupPasswordController,
+              label: AppLocalizations.of(context)!.password,
+              isVisible: _isPasswordVisible,
+              onToggleVisibility: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+              screenWidth: availableWidth,
+            ),
+            SizedBox(height: availableHeight * 0.015),
+
+            // Confirm Password
+            _buildPasswordField(
+              controller: _signupConfirmPasswordController,
+              label: AppLocalizations.of(context)!.confirmPassword,
+              isVisible: _isConfirmPasswordVisible,
+              onToggleVisibility: () {
+                setState(() {
+                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                });
+              },
+              screenWidth: availableWidth,
+            ),
+            SizedBox(height: availableHeight * 0.02),
+
+            // Sign Up Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _signup,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4CAF50),
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    vertical: isSmallPhone 
+                        ? availableHeight * 0.018
+                        : availableHeight * 0.02,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
+                  ),
+                  elevation: 3,
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.createAccount,
+                  style: TextStyle(
+                    fontSize: isSmallPhone 
+                        ? availableWidth * 0.038
+                        : availableWidth * 0.04,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType keyboardType = TextInputType.text,
+    required double screenWidth,
+  }) {
+    final isSmallPhone = screenWidth < 360;
+    
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(
+          color: Colors.grey[600],
+          fontSize: isSmallPhone ? screenWidth * 0.032 : screenWidth * 0.035,
+        ),
+        prefixIcon: Icon(
+          icon,
+          color: const Color(0xFF4CAF50),
+          size: isSmallPhone ? 20 : 22,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+          borderSide: const BorderSide(color: Color(0xFF4CAF50), width: 1.5),
+        ),
+        filled: true,
+        fillColor: Colors.grey[50],
+        contentPadding: EdgeInsets.symmetric(
+          vertical: isSmallPhone ? screenWidth * 0.03 : screenWidth * 0.035,
+          horizontal: screenWidth * 0.04,
+        ),
+        isDense: true,
+      ),
+      style: TextStyle(
+        fontSize: isSmallPhone ? screenWidth * 0.036 : screenWidth * 0.038,
+        color: Colors.grey[800],
+      ),
+    );
+  }
+
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String label,
+    required bool isVisible,
+    required VoidCallback onToggleVisibility,
+    required double screenWidth,
+  }) {
+    final isSmallPhone = screenWidth < 360;
+    
+    return TextFormField(
+      controller: controller,
+      obscureText: !isVisible,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(
+          color: Colors.grey[600],
+          fontSize: isSmallPhone ? screenWidth * 0.032 : screenWidth * 0.035,
+        ),
+        prefixIcon: Icon(
+          Icons.lock_outline,
+          color: const Color(0xFF4CAF50),
+          size: isSmallPhone ? 20 : 22,
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(
+            isVisible ? Icons.visibility_off : Icons.visibility,
+            color: Colors.grey[500],
+            size: isSmallPhone ? 18 : 20,
+          ),
+          onPressed: onToggleVisibility,
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+          borderSide: const BorderSide(color: Color(0xFF4CAF50), width: 1.5),
+        ),
+        filled: true,
+        fillColor: Colors.grey[50],
+        contentPadding: EdgeInsets.symmetric(
+          vertical: isSmallPhone ? screenWidth * 0.03 : screenWidth * 0.035,
+          horizontal: screenWidth * 0.04,
+        ),
+        isDense: true,
+      ),
+      style: TextStyle(
+        fontSize: isSmallPhone ? screenWidth * 0.036 : screenWidth * 0.038,
+        color: Colors.grey[800],
+      ),
+    );
+  }
+
+  Widget _buildDividerWithText(BuildContext context, String text, double screenWidth) {
+    final isSmallPhone = screenWidth < 360;
+    
+    return Row(
+      children: [
+        Expanded(
+          child: Divider(
+            color: Colors.grey[300],
+            thickness: 1,
+            height: 1,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: isSmallPhone ? 8 : 12),
+          child: Text(
+            text,
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: isSmallPhone ? screenWidth * 0.03 : screenWidth * 0.032,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Divider(
+            color: Colors.grey[300],
+            thickness: 1,
+            height: 1,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSocialLoginButtons(BuildContext context, double screenWidth) {
+    final isSmallPhone = screenWidth < 360;
+    
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Google
+        _buildSocialButton(
+          icon: Icons.g_mobiledata,
+          color: const Color(0xFFDB4437),
+          onPressed: () => _socialLogin('Google'),
+          screenWidth: screenWidth,
+          isSmallPhone: isSmallPhone,
+        ),
+        SizedBox(width: screenWidth * 0.04),
+        
+        // Facebook
+        _buildSocialButton(
+          icon: Icons.facebook,
+          color: const Color(0xFF4267B2),
+          onPressed: () => _socialLogin('Facebook'),
+          screenWidth: screenWidth,
+          isSmallPhone: isSmallPhone,
+        ),
+        SizedBox(width: screenWidth * 0.04),
+        
+        // Apple
+        _buildSocialButton(
+          icon: Icons.apple,
+          color: Colors.black,
+          onPressed: () => _socialLogin('Apple'),
+          screenWidth: screenWidth,
+          isSmallPhone: isSmallPhone,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSocialButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+    required double screenWidth,
+    required bool isSmallPhone,
+  }) {
+    return Container(
+      width: isSmallPhone ? screenWidth * 0.10 : screenWidth * 0.12,
+      height: isSmallPhone ? screenWidth * 0.10 : screenWidth * 0.12,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(isSmallPhone ? screenWidth * 0.05 : screenWidth * 0.06),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: IconButton(
+        icon: Icon(
+          icon,
+          color: color,
+          size: isSmallPhone ? screenWidth * 0.05 : screenWidth * 0.06,
+        ),
+        onPressed: onPressed,
+        padding: EdgeInsets.zero,
+      ),
+    );
+  }
+
+  void _showForgotPasswordDialog(BuildContext context, double screenWidth) {
+    final emailController = TextEditingController();
+    final isSmallPhone = screenWidth < 360;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(isSmallPhone ? 16 : 20),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(isSmallPhone ? 16 : 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.forgotPassword,
+                  style: TextStyle(
+                    color: const Color(0xFF4CAF50),
+                    fontSize: isSmallPhone ? screenWidth * 0.045 : screenWidth * 0.05,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: screenWidth * 0.03),
+                Text(
+                  AppLocalizations.of(context)!.enterEmailToReset,
+                  style: TextStyle(
+                    fontSize: isSmallPhone ? screenWidth * 0.032 : screenWidth * 0.035,
+                    color: Colors.grey[600],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: screenWidth * 0.03),
+                TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.emailAddress,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+                    ),
+                    prefixIcon: const Icon(Icons.email_outlined),
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: isSmallPhone ? screenWidth * 0.03 : screenWidth * 0.035,
+                      horizontal: screenWidth * 0.03,
+                    ),
+                  ),
+                ),
+                SizedBox(height: screenWidth * 0.04),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.grey),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: isSmallPhone ? screenWidth * 0.025 : screenWidth * 0.03,
+                          ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: isSmallPhone ? screenWidth * 0.035 : screenWidth * 0.038,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: screenWidth * 0.03),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _resetPassword(emailController.text);
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4CAF50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: isSmallPhone ? screenWidth * 0.025 : screenWidth * 0.03,
+                          ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.resetPassword,
+                          style: TextStyle(
+                            fontSize: isSmallPhone ? screenWidth * 0.035 : screenWidth * 0.038,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _login() async {
+    final email = _loginEmailController.text.trim();
+    final password = _loginPasswordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      _showSnackBar(
+        AppLocalizations.of(context)!.pleaseFillAllFields,
+        Colors.orange,
+      );
+      return;
+    }
+
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
+        ),
+      ),
+    );
+
+    // Simulate API call
+    await Future.delayed(const Duration(seconds: 2));
+
+    Navigator.pop(context); // Remove loading dialog
+
+    // For demo, simulate successful login
+    _showSnackBar(
+      AppLocalizations.of(context)!.loginSuccessful,
+      const Color(0xFF4CAF50),
+    );
+
+    // Navigate back to home (in real app, you'd navigate to dashboard)
+    Navigator.pop(context);
+  }
+
+  Future<void> _signup() async {
+    final name = _signupNameController.text.trim();
+    final email = _signupEmailController.text.trim();
+    final phone = _signupPhoneController.text.trim();
+    final password = _signupPasswordController.text;
+    final confirmPassword = _signupConfirmPasswordController.text;
+
+    // Validation
+    if (name.isEmpty ||
+        email.isEmpty ||
+        phone.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
+      _showSnackBar(
+        AppLocalizations.of(context)!.pleaseFillAllFields,
+        Colors.orange,
+      );
+      return;
+    }
+
+    if (password != confirmPassword) {
+      _showSnackBar(
+        AppLocalizations.of(context)!.passwordsDoNotMatch,
+        Colors.red,
+      );
+      return;
+    }
+
+    if (password.length < 6) {
+      _showSnackBar(
+        AppLocalizations.of(context)!.passwordMustBeAtLeast6Characters,
+        Colors.red,
+      );
+      return;
+    }
+
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
+        ),
+      ),
+    );
+
+    // Simulate API call
+    await Future.delayed(const Duration(seconds: 2));
+
+    Navigator.pop(context); // Remove loading dialog
+
+    // For demo, simulate successful signup
+    _showSnackBar(
+      AppLocalizations.of(context)!.accountCreatedSuccessfully,
+      const Color(0xFF4CAF50),
+    );
+
+    // Switch to login tab
+    _tabController.animateTo(0);
+    _clearSignupFields();
+  }
+
+  void _resetPassword(String email) {
+    if (email.isEmpty) {
+      _showSnackBar(
+        AppLocalizations.of(context)!.pleaseEnterEmail,
+        Colors.orange,
+      );
+      return;
+    }
+
+    // Show success message
+    _showSnackBar(
+      '${AppLocalizations.of(context)!.resetLinkSentTo} $email',
+      const Color(0xFF4CAF50),
+    );
+  }
+
+  void _socialLogin(String platform) {
+    _showSnackBar(
+      '${AppLocalizations.of(context)!.signingInWith} $platform',
+      Colors.blue,
+    );
+    
+    // Simulate social login
+    Future.delayed(const Duration(seconds: 2), () {
+      _showSnackBar(
+        AppLocalizations.of(context)!.loginSuccessful,
+        const Color(0xFF4CAF50),
+      );
+      Navigator.pop(context);
+    });
+  }
+
+  void _clearSignupFields() {
+    _signupNameController.clear();
+    _signupEmailController.clear();
+    _signupPhoneController.clear();
+    _signupPasswordController.clear();
+    _signupConfirmPasswordController.clear();
+    setState(() {
+      _isPasswordVisible = false;
+      _isConfirmPasswordVisible = false;
+    });
+  }
+
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
+  }
+}

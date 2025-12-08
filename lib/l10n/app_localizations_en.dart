@@ -105,6 +105,87 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dataSyncedSuccessfully => 'Data Synced Successfully';
 
   @override
+  String get welcomeToGoatManager => 'Welcome to Goat Manager';
+
+  @override
+  String get manageYourFarmEfficiently =>
+      'Manage your farm efficiently with our tools';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get signup => 'Sign Up';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get rememberMe => 'Remember me';
+
+  @override
+  String get forgotPassword => 'Forgot Password?';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get confirmPassword => 'Confirm Password';
+
+  @override
+  String get createAccount => 'Create Account';
+
+  @override
+  String get orContinueWith => 'Or continue with';
+
+  @override
+  String get bySigningUpYouAgree => 'By signing up, you agree to our';
+
+  @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get and => 'and';
+
+  @override
+  String get pleaseFillAllFields => 'Please fill all fields';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get passwordMustBeAtLeast6Characters =>
+      'Password must be at least 6 characters';
+
+  @override
+  String get pleaseEnterEmail => 'Please enter your email address';
+
+  @override
+  String get resetLinkSentTo => 'Reset link sent to';
+
+  @override
+  String get signingInWith => 'Signing in with';
+
+  @override
+  String get loginSuccessful => 'Login successful!';
+
+  @override
+  String get accountCreatedSuccessfully => 'Account created successfully!';
+
+  @override
+  String get enterEmailToReset =>
+      'Enter your email address to reset your password';
+
+  @override
+  String get resetPassword => 'Reset Password';
+
+  @override
   String get selectBreed => 'Select breed ..';
 
   @override

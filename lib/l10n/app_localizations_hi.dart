@@ -105,6 +105,87 @@ class AppLocalizationsHi extends AppLocalizations {
   String get dataSyncedSuccessfully => 'डेटा सफलतापूर्वक सिंक हो गया';
 
   @override
+  String get welcomeToGoatManager => 'गोट मैनेजर में आपका स्वागत है';
+
+  @override
+  String get manageYourFarmEfficiently =>
+      'हमारे टूल्स के साथ अपने फार्म को कुशलतापूर्वक प्रबंधित करें';
+
+  @override
+  String get login => 'लॉगिन';
+
+  @override
+  String get signup => 'साइन अप';
+
+  @override
+  String get emailAddress => 'ईमेल पता';
+
+  @override
+  String get password => 'पासवर्ड';
+
+  @override
+  String get rememberMe => 'मुझे याद रखें';
+
+  @override
+  String get forgotPassword => 'पासवर्ड भूल गए?';
+
+  @override
+  String get fullName => 'पूरा नाम';
+
+  @override
+  String get phoneNumber => 'फोन नंबर';
+
+  @override
+  String get confirmPassword => 'पासवर्ड की पुष्टि करें';
+
+  @override
+  String get createAccount => 'अकाउंट बनाएं';
+
+  @override
+  String get orContinueWith => 'या जारी रखें';
+
+  @override
+  String get bySigningUpYouAgree => 'साइन अप करके, आप हमारी';
+
+  @override
+  String get termsOfService => 'सेवा की शर्तें';
+
+  @override
+  String get and => 'और';
+
+  @override
+  String get pleaseFillAllFields => 'कृपया सभी फ़ील्ड भरें';
+
+  @override
+  String get passwordsDoNotMatch => 'पासवर्ड मेल नहीं खा रहे हैं';
+
+  @override
+  String get passwordMustBeAtLeast6Characters =>
+      'पासवर्ड कम से कम 6 वर्णों का होना चाहिए';
+
+  @override
+  String get pleaseEnterEmail => 'कृपया अपना ईमेल पता दर्ज करें';
+
+  @override
+  String get resetLinkSentTo => 'रीसेट लिंक भेजा गया';
+
+  @override
+  String get signingInWith => 'इसके साथ लॉगिन हो रहा है';
+
+  @override
+  String get loginSuccessful => 'लॉगिन सफल!';
+
+  @override
+  String get accountCreatedSuccessfully => 'अकाउंट सफलतापूर्वक बन गया!';
+
+  @override
+  String get enterEmailToReset =>
+      'अपना पासवर्ड रीसेट करने के लिए अपना ईमेल पता दर्ज करें';
+
+  @override
+  String get resetPassword => 'पासवर्ड रीसेट करें';
+
+  @override
   String get selectBreed => 'नस्ल चुनें ..';
 
   @override

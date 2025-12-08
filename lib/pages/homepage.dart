@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
+import 'package:mygoatmanager/pages/auth_page.dart';
 import 'package:mygoatmanager/pages/events_page.dart';
 import 'package:mygoatmanager/pages/farm_setup_page.dart';
 import 'package:mygoatmanager/pages/reports_page.dart';
 import 'package:mygoatmanager/pages/transactions_page.dart';
-import 'goats_page.dart';
-import 'milk_records_page.dart';
+import 'package:mygoatmanager/pages/goats_page.dart';
+import 'package:mygoatmanager/pages/milk_records_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Homepage extends StatefulWidget {
@@ -227,6 +228,16 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
     );
   }
 
+  // Method to navigate to auth page
+  void _navigateToAuthPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AuthPage(),
+      ),
+    );
+  }
+
   // Method to show language selector
   void _showLanguageSelector() {
     showModalBottomSheet(
@@ -321,7 +332,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                         languageData['nativeName']!,
                         style: TextStyle(
                           fontSize: 14,
-                          color: isSelected ? const Color(0xFF4CAF50).withValues(alpha: 0.8) : Colors.grey[600],
+                          color: isSelected ? const Color(0xFF4CAF50).withOpacity(0.8) : Colors.grey[600],
                         ),
                       ),
                     ],
@@ -373,7 +384,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
     );
   }
 
-  // Method to change language - UPDATED
+  // Method to change language
   void _changeLanguage(String languageName, String languageCode) async {
     // Save language preference
     final prefs = await SharedPreferences.getInstance();
@@ -388,7 +399,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
     // Create a Locale object
     final newLocale = Locale(languageCode);
     
-    // Notify parent to change locale - THIS IS THE KEY CHANGE
+    // Notify parent to change locale
     if (widget.onLocaleChanged != null) {
       widget.onLocaleChanged!(newLocale);
     }
@@ -555,6 +566,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                     ),
                     onTap: () {
                       Navigator.pop(context);
+                      _navigateToAuthPage();
                     },
                   ),
                 ],
@@ -574,6 +586,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 isLargePhone: isLargePhone,
                 onTap: () {
                   Navigator.pop(context);
+                  _navigateToAuthPage();
                 },
               ),
               _buildDrawerItem(
@@ -583,6 +596,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 isLargePhone: isLargePhone,
                 onTap: () {
                   Navigator.pop(context);
+                  _navigateToAuthPage();
                 },
               ),
             ],
@@ -600,6 +614,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 isLargePhone: isLargePhone,
                 onTap: () {
                   Navigator.pop(context);
+                  _showComingSoonSnackbar();
                 },
               ),
               _buildDrawerItem(
@@ -609,6 +624,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 isLargePhone: isLargePhone,
                 onTap: () {
                   Navigator.pop(context);
+                  _showComingSoonSnackbar();
                 },
               ),
               _buildDrawerItem(
@@ -618,6 +634,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 isLargePhone: isLargePhone,
                 onTap: () {
                   Navigator.pop(context);
+                  _showComingSoonSnackbar();
                 },
               ),
               _buildDrawerItem(
@@ -627,6 +644,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 isLargePhone: isLargePhone,
                 onTap: () {
                   Navigator.pop(context);
+                  _showComingSoonSnackbar();
                 },
               ),
             ],
@@ -644,6 +662,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 isLargePhone: isLargePhone,
                 onTap: () {
                   Navigator.pop(context);
+                  _showComingSoonSnackbar();
                 },
               ),
               _buildDrawerItem(
@@ -653,6 +672,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 isLargePhone: isLargePhone,
                 onTap: () {
                   Navigator.pop(context);
+                  _showComingSoonSnackbar();
                 },
               ),
             ],
@@ -692,6 +712,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 isLargePhone: isLargePhone,
                 onTap: () {
                   Navigator.pop(context);
+                  _showComingSoonSnackbar();
                 },
               ),
             ],
@@ -845,18 +866,64 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
   void _showNotifications() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) {
         return Container(
           padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                AppLocalizations.of(context)!.notifications,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
               const SizedBox(height: 16),
-              Text(AppLocalizations.of(context)!.noNewNotifications),
+              Text(
+                AppLocalizations.of(context)!.notifications,
+                style: const TextStyle(
+                  fontSize: 20, 
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF424242),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Icon(
+                Icons.notifications_none,
+                size: 60,
+                color: Colors.grey[400],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)!.noNewNotifications,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4CAF50),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                ),
+                child: const Text('OK'),
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         );
@@ -867,8 +934,27 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
   void _syncData() async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context)!.syncingData),
+        content: Row(
+          children: [
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                AppLocalizations.of(context)!.syncingData,
+                style: const TextStyle(fontSize: 14),
+              ),
+            ),
+          ],
+        ),
         duration: const Duration(seconds: 2),
+        backgroundColor: const Color(0xFF4CAF50),
       ),
     );
     
@@ -876,8 +962,24 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context)!.dataSyncedSuccessfully),
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.white, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                AppLocalizations.of(context)!.dataSyncedSuccessfully,
+                style: const TextStyle(fontSize: 14),
+              ),
+            ),
+          ],
+        ),
         backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
     );
   }
@@ -885,8 +987,16 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
   void _shareApp() {
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Share app functionality coming soon!'),
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.share, color: Colors.white),
+            const SizedBox(width: 8),
+            const Text('Share app functionality coming soon!'),
+          ],
+        ),
+        backgroundColor: const Color(0xFF4CAF50),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -894,8 +1004,32 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
   void _rateApp() {
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Rate app functionality coming soon!'),
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.star, color: Colors.white),
+            const SizedBox(width: 8),
+            const Text('Rate app functionality coming soon!'),
+          ],
+        ),
+        backgroundColor: const Color(0xFF4CAF50),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _showComingSoonSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.info_outline, color: Colors.white),
+            const SizedBox(width: 8),
+            const Text('Feature coming soon!'),
+          ],
+        ),
+        backgroundColor: const Color(0xFF4CAF50),
+        duration: const Duration(seconds: 2),
       ),
     );
   }

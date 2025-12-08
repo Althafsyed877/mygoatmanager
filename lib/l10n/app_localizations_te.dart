@@ -93,7 +93,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get legal => 'చట్టపరమైన';
 
   @override
-  String get privacyPolicy => 'గోప్యతా విధానం';
+  String get privacyPolicy => 'గోప్యతా విధానాన్ని';
 
   @override
   String get noNewNotifications => 'కొత్త నోటిఫికేషన్లు లేవు';
@@ -103,6 +103,87 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get dataSyncedSuccessfully => 'డేటా విజయవంతంగా సమకాలీకరించబడింది';
+
+  @override
+  String get welcomeToGoatManager => 'గోట్ మేనేజర్‌కు స్వాగతం';
+
+  @override
+  String get manageYourFarmEfficiently =>
+      'మా పనిముట్లతో మీ ఫార్మ్‌ను సమర్థవంతంగా నిర్వహించండి';
+
+  @override
+  String get login => 'లాగిన్';
+
+  @override
+  String get signup => 'నమోదు చేసుకోండి';
+
+  @override
+  String get emailAddress => 'ఇమెయిల్ చిరునామా';
+
+  @override
+  String get password => 'పాస్వర్డ్';
+
+  @override
+  String get rememberMe => 'నన్ను గుర్తుంచుకోండి';
+
+  @override
+  String get forgotPassword => 'పాస్వర్డ్ మర్చిపోయారా?';
+
+  @override
+  String get fullName => 'పూర్తి పేరు';
+
+  @override
+  String get phoneNumber => 'ఫోన్ నంబర్';
+
+  @override
+  String get confirmPassword => 'పాస్వర్డ్ నిర్ధారించండి';
+
+  @override
+  String get createAccount => 'ఖాతా సృష్టించండి';
+
+  @override
+  String get orContinueWith => 'లేదా కొనసాగించండి';
+
+  @override
+  String get bySigningUpYouAgree => 'సైన్ అప్ చేయడం ద్వారా, మీరు మా';
+
+  @override
+  String get termsOfService => 'సేవా నిబంధనలు';
+
+  @override
+  String get and => 'మరియు';
+
+  @override
+  String get pleaseFillAllFields => 'దయచేసి అన్ని ఫీల్డ్‌లను పూరించండి';
+
+  @override
+  String get passwordsDoNotMatch => 'పాస్వర్డ్లు సరిపోలడం లేదు';
+
+  @override
+  String get passwordMustBeAtLeast6Characters =>
+      'పాస్వర్డ్ కనీసం 6 అక్షరాలుగా ఉండాలి';
+
+  @override
+  String get pleaseEnterEmail => 'దయచేసి మీ ఇమెయిల్ చిరునామాను నమోదు చేయండి';
+
+  @override
+  String get resetLinkSentTo => 'రీసెట్ లింక్ పంపబడింది';
+
+  @override
+  String get signingInWith => 'దీనితో సైన్ ఇన్ చేస్తోంది';
+
+  @override
+  String get loginSuccessful => 'లాగిన్ విజయవంతమైంది!';
+
+  @override
+  String get accountCreatedSuccessfully => 'ఖాతా విజయవంతంగా సృష్టించబడింది!';
+
+  @override
+  String get enterEmailToReset =>
+      'మీ పాస్వర్డ్ రీసెట్ చేయడానికి మీ ఇమెయిల్ చిరునామాను నమోదు చేయండి';
+
+  @override
+  String get resetPassword => 'పాస్వర్డ్ రీసెట్ చేయండి';
 
   @override
   String get selectBreed => 'ప్రజాతి ఎంచుకోండి ..';
