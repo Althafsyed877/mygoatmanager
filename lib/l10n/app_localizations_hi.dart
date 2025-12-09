@@ -27,19 +27,19 @@ class AppLocalizationsHi extends AppLocalizations {
   String get delete => 'हटाएं';
 
   @override
-  String get languageChangedTo => 'भाषा बदल गई है';
+  String get languageChangedTo => 'भाषा बदल गई';
 
   @override
-  String get goats => 'बकरियां';
+  String get goats => 'बकरियाँ';
 
   @override
-  String get milkRecords => 'दूध के रिकॉर्ड';
+  String get milkRecords => 'दूध रिकॉर्ड';
 
   @override
   String get events => 'घटनाएं';
 
   @override
-  String get transactions => 'लेनदेन';
+  String get transactions => 'लेन-देन';
 
   @override
   String get farmSetup => 'फार्म सेटअप';
@@ -51,13 +51,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get createYourFarmAccount => 'अपना फार्म खाता बनाएं';
 
   @override
-  String get loginOrCreateAccount => 'लॉगिन करें या खाता बनाएं';
+  String get loginOrCreateAccount => 'लॉगिन या खाता बनाएं';
 
   @override
   String get upgradeAndAccount => 'अपग्रेड और खाता';
 
   @override
-  String get appAndFarmTools => 'ऐप और फार्म उपकरण';
+  String get appAndFarmTools => 'एप और फार्म टूल्स';
 
   @override
   String get settings => 'सेटिंग्स';
@@ -72,7 +72,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get farmingKnowledge => 'कृषि ज्ञान';
 
   @override
-  String get helpAndSupport => 'सहायता और समर्थन';
+  String get helpAndSupport => 'मदद और समर्थन';
 
   @override
   String get howToUseThisApp => 'इस ऐप का उपयोग कैसे करें';
@@ -96,7 +96,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get privacyPolicy => 'गोपनीयता नीति';
 
   @override
-  String get noNewNotifications => 'कोई नई सूचनाएं नहीं';
+  String get noNewNotifications => 'कोई नई सूचना नहीं';
 
   @override
   String get syncingData => 'डेटा सिंक हो रहा है';
@@ -139,7 +139,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get confirmPassword => 'पासवर्ड की पुष्टि करें';
 
   @override
-  String get createAccount => 'अकाउंट बनाएं';
+  String get createAccount => 'खाता बनाएं';
 
   @override
   String get orContinueWith => 'या जारी रखें';
@@ -148,7 +148,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get bySigningUpYouAgree => 'साइन अप करके, आप हमारी';
 
   @override
-  String get termsOfService => 'सेवा की शर्तें';
+  String get termsOfService => 'सेवा की शर्तों से';
 
   @override
   String get and => 'और';
@@ -157,26 +157,26 @@ class AppLocalizationsHi extends AppLocalizations {
   String get pleaseFillAllFields => 'कृपया सभी फ़ील्ड भरें';
 
   @override
-  String get passwordsDoNotMatch => 'पासवर्ड मेल नहीं खा रहे हैं';
+  String get passwordsDoNotMatch => 'पासवर्ड मेल नहीं खा रहे';
 
   @override
   String get passwordMustBeAtLeast6Characters =>
-      'पासवर्ड कम से कम 6 वर्णों का होना चाहिए';
+      'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए';
 
   @override
   String get pleaseEnterEmail => 'कृपया अपना ईमेल पता दर्ज करें';
 
   @override
-  String get resetLinkSentTo => 'रीसेट लिंक भेजा गया';
+  String get resetLinkSentTo => 'रीसेट लिंक भेज दिया गया';
 
   @override
-  String get signingInWith => 'इसके साथ लॉगिन हो रहा है';
+  String get signingInWith => 'लॉगिन हो रहा है';
 
   @override
   String get loginSuccessful => 'लॉगिन सफल!';
 
   @override
-  String get accountCreatedSuccessfully => 'अकाउंट सफलतापूर्वक बन गया!';
+  String get accountCreatedSuccessfully => 'खाता सफलतापूर्वक बन गया!';
 
   @override
   String get enterEmailToReset =>
@@ -213,7 +213,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get chooseFromGallery => 'गैलरी से चुनें';
 
   @override
-  String get imageSelected => 'छवि सफलतापूर्वक चयनित हुई!';
+  String get imageSelected => 'छवि सफलतापूर्वक चुनी गई!';
 
   @override
   String get removePhoto => 'फोटो हटाएं';
@@ -228,10 +228,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get generalDetails => 'सामान्य विवरण';
 
   @override
-  String get tagNo => 'टैग नंबर:';
+  String get tagNo => 'टैग नं:';
 
   @override
-  String get tagNoLabel => 'टैग नंबर:';
+  String get tagNoLabel => 'टैग नं:';
 
   @override
   String get nameLabel => 'नाम:';
@@ -240,7 +240,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get dobLabel => 'जन्म तिथि';
 
   @override
-  String get ageLabel => 'उम्र';
+  String get ageLabel => 'आयु';
 
   @override
   String get genderLabel => 'लिंग:';
@@ -249,7 +249,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get weightLabel => 'वजन';
 
   @override
-  String get stageLabel => 'अवस्था';
+  String get stageLabel => 'चरण';
 
   @override
   String get breedLabel => 'नस्ल';
@@ -267,13 +267,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get sourceLabel => 'स्रोत:';
 
   @override
-  String get motherLabel => 'मां:';
+  String get motherLabel => 'माँ:';
 
   @override
   String get fatherLabel => 'पिता:';
 
   @override
-  String get notesLabel => 'कुछ नोट्स लिखें ...';
+  String get notesLabel => 'नोट्स:';
 
   @override
   String get tapToUpload => 'चित्र अपलोड करने के लिए टैप करें...';
@@ -282,42 +282,42 @@ class AppLocalizationsHi extends AppLocalizations {
   String get changePicture => 'चित्र बदलें...';
 
   @override
-  String get goatsOffspring => 'बकरी की संतान';
+  String get goatsOffspring => 'बकरी का संतान';
 
   @override
-  String get goatOffspring => 'बकरी की संतान';
+  String get goatOffspring => 'बकरी का संतान';
 
   @override
   String get noEventsYet => 'अभी तक कोई घटना नहीं';
 
   @override
-  String get eventsForThisGoat => 'इस बकरी की घटनाएं यहां दिखाई देंगी';
+  String get eventsForThisGoat => 'इस बकरी की घटनाएं यहाँ दिखाई देंगी';
 
   @override
-  String get eventsPlaceholder => 'इस बकरी की घटनाएं यहां दिखाई देंगी';
+  String get eventsPlaceholder => 'इस बकरी की घटनाएं यहाँ दिखाई देंगी';
 
   @override
   String get searchTagOrName => 'टैग या नाम खोजें...';
 
   @override
-  String get goatsTitle => 'बकरियां';
+  String get goatsTitle => 'बकरियाँ';
 
   @override
   String get noGoatsAvailableToPreview =>
-      'पूर्वावलोकन के लिए कोई बकरियां उपलब्ध नहीं';
+      'पूर्वावलोकन के लिए कोई बकरी उपलब्ध नहीं';
 
   @override
   String get exportPdf => 'PDF निर्यात करें';
 
   @override
-  String get filterBy => 'फिल्टर करें';
+  String get filterBy => 'द्वारा फ़िल्टर करें';
 
   @override
   String get sortByAge => 'आयु के अनुसार क्रमबद्ध करें';
 
   @override
   String get noGoatsRegistered =>
-      'चयनित फिल्टर के लिए अभी तक कोई बकरियां पंजीकृत नहीं की गई हैं!';
+      'चयनित फ़िल्टर के लिए अभी तक कोई बकरी पंजीकृत नहीं हुई है!';
 
   @override
   String get selectGroup => 'समूह चुनें';
@@ -365,7 +365,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get pleaseSelectAllRequired => 'कृपया सभी आवश्यक फ़ील्ड चुनें';
 
   @override
-  String get tagNoLabel2 => 'टैग नंबर. *';
+  String get tagNoLabel2 => 'टैग नं. *';
 
   @override
   String get nameLabel2 => 'नाम.';
@@ -377,7 +377,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get dateOfBirth => 'जन्म तिथि.';
 
   @override
-  String get dateOfEntry => 'फार्म में प्रवेश की तिथि.';
+  String get dateOfEntry => 'फार्म में प्रवेश तिथि.';
 
   @override
   String get weightLabel2 => 'वजन.';
@@ -392,10 +392,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get selectObtained => 'चुनें कि बकरी कैसे प्राप्त हुई. *';
 
   @override
-  String get motherTagLabel => 'माता का टैग नंबर';
+  String get motherTagLabel => 'माँ का टैग नं.';
 
   @override
-  String get fatherTagLabel => 'पिता का टैग नंबर';
+  String get fatherTagLabel => 'पिता का टैग नं.';
 
   @override
   String get notesPlaceholder => 'कुछ नोट्स लिखें ...';
@@ -416,22 +416,22 @@ class AppLocalizationsHi extends AppLocalizations {
   String get kid => 'बच्चा';
 
   @override
-  String get wether => 'नपुंसक';
+  String get wether => 'बधिया';
 
   @override
   String get buckling => 'नर बच्चा';
 
   @override
-  String get buck => 'नर बकरी';
+  String get buck => 'नर';
 
   @override
   String get alpine => 'अल्पाइन';
 
   @override
-  String get boer => 'बोअर';
+  String get boer => 'बोयर';
 
   @override
-  String get kiko => 'किको';
+  String get kiko => 'कीको';
 
   @override
   String get nubian => 'न्यूबियन';
@@ -449,19 +449,19 @@ class AppLocalizationsHi extends AppLocalizations {
   String get selectGenderRequired => 'लिंग चुनें *';
 
   @override
-  String get selectGoatStage => '- बकरी की अवस्था चुनें -';
+  String get selectGoatStage => '- बकरी चरण चुनें -';
 
   @override
   String get selectObtainedRequired => 'चुनें कि बकरी कैसे प्राप्त हुई *';
 
   @override
-  String get tagNoRequired => 'टैग नंबर *';
+  String get tagNoRequired => 'टैग नं. *';
 
   @override
-  String get dateOfBirthLabel => 'जन्म तिथि';
+  String get dateOfBirthLabel => 'जन्म तिथि.';
 
   @override
-  String get dateOfEntryLabel => 'फार्म में प्रवेश की तारीख';
+  String get dateOfEntryLabel => 'फार्म में प्रवेश तिथि.';
 
   @override
   String get fillRequiredFields => 'कृपया सभी आवश्यक फ़ील्ड भरें';
@@ -470,13 +470,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get setFarmLogo => 'ऐप सेटिंग्स में फार्म का लोगो सेट करें!';
 
   @override
-  String get setFarmName => 'ऐप सेटिंग्स में फार्म का नाम सेट करें!';
+  String get setFarmName => 'ऐप सेटिंग्स में फार्म नाम सेट करें!';
 
   @override
-  String get setFarmLocation => 'ऐप सेटिंग्स में फार्म का स्थान सेट करें!';
+  String get setFarmLocation => 'ऐप सेटिंग्स में फार्म स्थान सेट करें!';
 
   @override
-  String get tagLabel => 'टैग';
+  String get tagLabel => 'टैग.';
 
   @override
   String get goat => 'बकरी';
@@ -485,17 +485,17 @@ class AppLocalizationsHi extends AppLocalizations {
   String get allGroups => 'सभी समूह';
 
   @override
-  String get groupOptional2 => 'समूह (वैकल्पिक)';
+  String get groupOptional2 => 'Group (optional)';
 
   @override
-  String get filterByPeriod => 'अवधि के अनुसार फिल्टर करें';
+  String get filterByPeriod => 'अवधि द्वारा फ़िल्टर करें';
 
   @override
-  String get filterByMilkType => 'दूध के प्रकार के अनुसार फिल्टर करें';
+  String get filterByMilkType => 'दूध प्रकार द्वारा फ़िल्टर करें';
 
   @override
   String get noMilkRecordsDisplay =>
-      'चयनित तिथि सीमा के लिए प्रदर्शित करने के लिए कोई दूध रिकॉर्ड नहीं हैं.';
+      'चयनित तिथि सीमा के लिए प्रदर्शित करने के लिए कोई दूध रिकॉर्ड नहीं है।';
 
   @override
   String get farm => 'फार्म';
@@ -510,7 +510,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get notes => 'नोट्स';
 
   @override
-  String get filterByDateRange => 'तिथि सीमा के अनुसार फिल्टर करें';
+  String get filterByDateRange => 'तिथि सीमा द्वारा फ़िल्टर करें';
 
   @override
   String get startDate => 'प्रारंभ तिथि';
@@ -522,7 +522,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get apply => 'लागू करें';
 
   @override
-  String get milkType => 'दूध का प्रकार';
+  String get milkType => 'दूध प्रकार';
 
   @override
   String get allTypes => 'सभी प्रकार';
@@ -534,22 +534,22 @@ class AppLocalizationsHi extends AppLocalizations {
   String get individualGoat => 'व्यक्तिगत बकरी';
 
   @override
-  String get generated => 'जनरेट किया गया';
+  String get generated => 'उत्पन्न';
 
   @override
-  String get noRecordsToExport => 'निर्यात करने के लिए कोई रिकॉर्ड नहीं.';
+  String get noRecordsToExport => 'निर्यात के लिए कोई रिकॉर्ड नहीं।';
 
   @override
-  String get date => 'तारीख';
+  String get date => 'तिथि';
 
   @override
   String get available => 'उपलब्ध';
 
   @override
-  String get selectMilkType => '- दूध का प्रकार चुनें -';
+  String get selectMilkType => '- दूध प्रकार चुनें -';
 
   @override
-  String get editViewRecord => 'संपादित करें/देखें रिकॉर्ड';
+  String get editViewRecord => 'रिकॉर्ड संपादित करें/देखें';
 
   @override
   String get deleteRecord => 'रिकॉर्ड हटाएं';
@@ -568,7 +568,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get all => 'सभी';
 
   @override
-  String get to => 'से:';
+  String get to => 'से';
 
   @override
   String get searchEventsHint => 'घटनाएं खोजें...';
@@ -580,7 +580,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get mass => 'सामूहिक';
 
   @override
-  String get filterByDate => 'तिथि के अनुसार फिल्टर करें';
+  String get filterByDate => 'तिथि द्वारा फ़िल्टर करें';
 
   @override
   String get customDateRange => 'कस्टम तिथि सीमा';
@@ -598,7 +598,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get yesterday => 'कल';
 
   @override
-  String get lastWeek => 'पिछला सप्ताह';
+  String get lastWeek => 'पिछले सप्ताह';
 
   @override
   String get currentMonth => 'वर्तमान माह';
@@ -607,10 +607,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get lastMonth => 'पिछला माह';
 
   @override
-  String get filterByEventType => 'घटना प्रकार के अनुसार फिल्टर करें';
+  String get filterByEventType => 'घटना प्रकार द्वारा फ़िल्टर करें';
 
   @override
-  String get treated => 'उपचार किया गया';
+  String get treated => 'इलाज किया गया';
 
   @override
   String get weighed => 'वजन किया गया';
@@ -622,10 +622,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get castrated => 'बधिया किया गया';
 
   @override
-  String get vaccinated => 'टीकाकरण किया गया';
+  String get vaccinated => 'टीका लगाया गया';
 
   @override
-  String get deworming => 'कृमिनाशक दिया गया';
+  String get deworming => 'कीड़े मारने की दवा दी गई';
 
   @override
   String get hoofTrimming => 'खुर काटा गया';
@@ -635,11 +635,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get noIndividualEvents =>
-      'चयनित तिथि सीमा के लिए प्रदर्शित करने के लिए कोई व्यक्तिगत घटनाएं नहीं हैं.';
+      'चयनित तिथि सीमा के लिए प्रदर्शित करने के लिए कोई व्यक्तिगत घटनाएं नहीं हैं।';
 
   @override
   String get noMassEvents =>
-      'चयनित तिथि सीमा के लिए प्रदर्शित करने के लिए कोई सामूहिक घटनाएं नहीं हैं.';
+      'चयनित तिथि सीमा के लिए प्रदर्शित करने के लिए कोई सामूहिक घटनाएं नहीं हैं।';
 
   @override
   String get selectGoatToContinue => 'जारी रखने के लिए बकरी चुनें...';
@@ -648,7 +648,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get searchGoatHint => 'बकरी खोजें...';
 
   @override
-  String get noGoatsFound => 'कोई बकरी नहीं मिली। कृपया पहले बकरियाँ जोड़ें।';
+  String get noGoatsFound => 'कोई बकरी नहीं मिली';
 
   @override
   String get medicineLabel => 'दवा:';
@@ -660,13 +660,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get symptomsLabel => 'लक्षण:';
 
   @override
-  String get treatedByLabel => 'उपचार किया गया:';
+  String get treatedByLabel => 'इलाज करने वाला:';
 
   @override
   String get weighedLabel => 'वजन:';
 
   @override
-  String get eventNameLabel => 'घटना का नाम:';
+  String get eventNameLabel => 'घटना नाम:';
 
   @override
   String get editEvent => 'घटना संपादित करें';
@@ -714,13 +714,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get pleaseSelectEventType => 'कृपया घटना प्रकार चुनें';
 
   @override
-  String get pleaseEnterEventName => 'कृपया घटना का नाम दर्ज करें';
+  String get pleaseEnterEventName => 'कृपया घटना नाम दर्ज करें';
 
   @override
-  String get eventsRecords => 'घटनाओं के रिकॉर्ड';
+  String get eventsRecords => 'घटना रिकॉर्ड';
 
   @override
-  String get noEventsToDisplay => 'प्रदर्शित करने के लिए कोई घटनाएं नहीं.';
+  String get noEventsToDisplay => 'प्रदर्शित करने के लिए कोई घटना नहीं।';
 
   @override
   String get massEvent => 'सामूहिक घटना';
@@ -744,7 +744,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get more_options => 'अधिक विकल्प';
 
   @override
-  String get search_transactions => 'लेनदेन खोजें';
+  String get search_transactions => 'लेन-देन खोजें';
 
   @override
   String get search_by_description => 'विवरण, राशि द्वारा खोजें...';
@@ -785,16 +785,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get all_types => 'सभी प्रकार';
 
   @override
-  String get edit_view_record => 'रिकॉर्ड संपादित / देखें';
+  String get edit_view_record => 'रिकॉर्ड संपादित करें / देखें';
 
   @override
-  String get record_deleted => 'रिकॉर्ड हटाया गया';
+  String get record_deleted => 'रिकॉर्ड हटा दिया गया';
 
   @override
-  String get income_updated => 'आय अपडेट की गई';
+  String get income_updated => 'आय अपडेट हुई';
 
   @override
-  String get expense_updated => 'व्यय अपडेट किया गया';
+  String get expense_updated => 'व्यय अपडेट हुआ';
 
   @override
   String get income_saved => 'आय सहेजी गई';
@@ -809,7 +809,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get add_expense => 'व्यय जोड़ें';
 
   @override
-  String get date_of_income => 'आय की तिथि';
+  String get date_of_income => 'आय तिथि';
 
   @override
   String get select_income_type => 'आय प्रकार चुनें';
@@ -833,29 +833,29 @@ class AppLocalizationsHi extends AppLocalizations {
   String get other_expense => 'अन्य (निर्दिष्ट करें)';
 
   @override
-  String get milk_quantity_sold => 'बेचा गया दूध मात्रा';
+  String get milk_quantity_sold => 'बिके हुए दूध की मात्रा';
 
   @override
-  String get selling_price_per_litre => 'प्रति लीटर विक्रय मूल्य';
+  String get selling_price_per_litre => 'प्रति लीटर/यूनिट बिक्री मूल्य';
 
   @override
   String get how_much_did_you_earn => 'आपने कितना कमाया?';
 
   @override
   String get please_go_to_record =>
-      'कृपया बेची गई बकरी के रिकॉर्ड पर जाएं और \'बेचा गया\' कारण के साथ संग्रहीत करें और एक आय रिकॉर्ड स्वचालित रूप से बनाया जाएगा!';
+      'कृपया बिकी हुई बकरी के रिकॉर्ड पर जाएं और उसे \'बिक गई\' कारण से आर्काइव करें, एक आय रिकॉर्ड स्वचालित रूप से बन जाएगा!';
 
   @override
   String get quantity_of_items => 'वस्तुओं की मात्रा';
 
   @override
-  String get please_specify_source => 'कृपया आय स्रोत निर्दिष्ट करें';
+  String get please_specify_source => 'कृपया आय का स्रोत निर्दिष्ट करें';
 
   @override
   String get specify_income_source => 'आय स्रोत निर्दिष्ट करें';
 
   @override
-  String get receipt_no_optional => 'रसीद नंबर (वैकल्पिक)';
+  String get receipt_no_optional => 'रसीद नं. (वैकल्पिक)';
 
   @override
   String get write_some_notes => 'कुछ नोट्स लिखें ...';
@@ -864,7 +864,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get enter_receipt_number => 'रसीद नंबर दर्ज करें';
 
   @override
-  String get enter_your_notes => 'अपने नोट्स यहां दर्ज करें...';
+  String get enter_your_notes => 'अपने नोट्स यहाँ दर्ज करें...';
 
   @override
   String get new_income => 'नई आय';
@@ -891,7 +891,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get please_specify_income_source => 'कृपया आय स्रोत निर्दिष्ट करें';
 
   @override
-  String get date_of_expense => 'व्यय की तिथि';
+  String get date_of_expense => 'व्यय तिथि';
 
   @override
   String get select_expense_type => 'व्यय प्रकार चुनें';
@@ -900,7 +900,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get please_select_expense_type => 'कृपया व्यय प्रकार चुनें';
 
   @override
-  String get please_enter_name_of_expense => 'कृपया व्यय का नाम दर्ज करें';
+  String get please_enter_name_of_expense => 'कृपया व्यय नाम दर्ज करें';
 
   @override
   String get please_select_category => 'कृपया श्रेणी चुनें';
@@ -909,7 +909,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get how_much_did_you_spend => 'आपने कितना खर्च किया?';
 
   @override
-  String get name_of_expense => 'व्यय का नाम';
+  String get name_of_expense => 'व्यय नाम';
 
   @override
   String get select_category => 'श्रेणी चुनें';
@@ -918,7 +918,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get add_category => 'श्रेणी जोड़ें';
 
   @override
-  String get category_name => 'श्रेणी का नाम';
+  String get category_name => 'श्रेणी नाम';
 
   @override
   String get enter_milk_quantity => 'दूध मात्रा दर्ज करें';
@@ -939,10 +939,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get expense_records => 'व्यय रिकॉर्ड';
 
   @override
-  String get no_income_records => 'निर्यात करने के लिए कोई आय रिकॉर्ड नहीं';
+  String get no_income_records => 'निर्यात के लिए कोई आय रिकॉर्ड नहीं';
 
   @override
-  String get no_expense_records => 'निर्यात करने के लिए कोई व्यय रिकॉर्ड नहीं';
+  String get no_expense_records => 'निर्यात के लिए कोई व्यय रिकॉर्ड नहीं';
 
   @override
   String get incomeCategories => 'आय श्रेणियाँ';
@@ -979,7 +979,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get save => 'सहेजें';
 
   @override
-  String get recordSuccessfullyUpdated => 'रिकॉर्ड सफलतापूर्वक अपडेट किया गया';
+  String get recordSuccessfullyUpdated => 'रिकॉर्ड सफलतापूर्वक अपडेट हुआ';
 
   @override
   String get noExpenseCategoriesAdded =>
@@ -989,7 +989,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get newBreed => 'नई नस्ल';
 
   @override
-  String get enterBreedName => 'नस्ल का नाम दर्ज करें...';
+  String get enterBreedName => 'नस्ल नाम दर्ज करें...';
 
   @override
   String get searchBreeds => 'नस्लें खोजें...';
@@ -1009,19 +1009,20 @@ class AppLocalizationsHi extends AppLocalizations {
   String get newGroup => 'नया समूह';
 
   @override
-  String get enterGroupName => 'समूह का नाम दर्ज करें...';
+  String get enterGroupName => 'समूह नाम दर्ज करें...';
 
   @override
   String get searchGroups => 'समूह खोजें...';
 
   @override
-  String get noGoatGroupsRegistered => 'अभी तक कोई बकरी समूह पंजीकृत नहीं है!';
+  String get noGoatGroupsRegistered =>
+      'वर्तमान में अभी तक कोई बकरी समूह पंजीकृत नहीं हुआ है!';
 
   @override
   String get editGroup => 'समूह संपादित करें';
 
   @override
-  String get transactionsReport => 'लेनदेन';
+  String get transactionsReport => 'लेन-देन';
 
   @override
   String get milkReport => 'दूध रिपोर्ट';
@@ -1030,13 +1031,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get goatsReport => 'बकरियों की रिपोर्ट';
 
   @override
-  String get eventsReport => 'इवेंट्स रिपोर्ट';
+  String get eventsReport => 'घटनाओं की रिपोर्ट';
 
   @override
   String get breedingReport => 'प्रजनन रिपोर्ट';
 
   @override
-  String get pregnanciesReport => 'गर्भावस्था रिपोर्ट';
+  String get pregnanciesReport => 'गर्भधारण रिपोर्ट';
 
   @override
   String get weightReport => 'वजन रिपोर्ट';
@@ -1045,35 +1046,35 @@ class AppLocalizationsHi extends AppLocalizations {
   String get stageTrackingReport => 'चरण ट्रैकिंग रिपोर्ट';
 
   @override
-  String get stageTracking => 'स्टेज ट्रैकिंग';
+  String get stageTracking => 'चरण ट्रैकिंग';
 
   @override
   String get updateSelected => 'चयनित अपडेट करें';
 
   @override
   String get animalsNeedStageUpdate =>
-      'जानवर जिन्हें स्टेज अपडेट की आवश्यकता हो सकती है।';
+      'जानवर जिन्हें चरण अपडेट की आवश्यकता हो सकती है।';
 
   @override
   String get wethersNotListed =>
-      'बधिया किए गए बकरे और बिना जन्मतिथि वाले जानवर सूचीबद्ध नहीं हैं!';
+      'बधिया और जन्म तिथि के बिना जानवर सूचीबद्ध नहीं हैं!';
 
   @override
-  String get allCaughtUp => 'सब कुछ अपडेट हो गया!';
+  String get allCaughtUp => 'सब कुछ अपडेट है!';
 
   @override
   String get noGoatsNeedStageUpdates =>
-      'इस समय बकरियों को स्टेज अपडेट की आवश्यकता नहीं है।';
+      'इस समय किसी बकरी को चरण अपडेट की आवश्यकता नहीं है।';
 
   @override
-  String get doe => 'मादा बकरी';
+  String get doe => 'मादा';
 
   @override
-  String get updateStages => 'स्टेज अपडेट करें';
+  String get updateStages => 'चरण अपडेट करें';
 
   @override
   String updateGoatsQuestion(Object count) {
-    return '$count बकरियों को बच्चे से अगली स्टेज में अपडेट करें?';
+    return '$count बकरियों को बच्चे से अगले चरण में अपडेट करें?';
   }
 
   @override
@@ -1081,7 +1082,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String updatedGoatsSuccessfully(Object count) {
-    return '$count बकरियाँ सफलतापूर्वक अपडेट की गईं!';
+    return '$count बकरियाँ सफलतापूर्वक अपडेट हो गईं!';
   }
 
   @override
@@ -1090,19 +1091,19 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get breed => 'नस्ल';
+  String get breed => 'Breed';
 
   @override
-  String get group => 'समूह';
+  String get group => 'Group';
 
   @override
   String get source => 'स्रोत';
 
   @override
-  String get stagesSummary => 'स्टेज सारांश';
+  String get stagesSummary => 'चरण सारांश';
 
   @override
-  String get stage => 'स्टेज';
+  String get stage => 'चरण';
 
   @override
   String get count => 'गिनती';
@@ -1114,25 +1115,25 @@ class AppLocalizationsHi extends AppLocalizations {
   String get gender => 'लिंग';
 
   @override
-  String get male => 'नर';
+  String get male => 'पुरुष';
 
   @override
-  String get female => 'मादा';
+  String get female => 'महिला';
 
   @override
-  String get does => 'मादा बकरियाँ';
+  String get does => 'मादाएं';
 
   @override
-  String get doelings => 'मादा बकरी के बच्चे';
+  String get doelings => 'युवा मादाएं';
 
   @override
-  String get bucks => 'नर बकरियाँ';
+  String get bucks => 'नर';
 
   @override
-  String get bucklings => 'नर बकरी के बच्चे';
+  String get bucklings => 'युवा नर';
 
   @override
-  String get wethers => 'बधिया किए गए बकरे';
+  String get wethers => 'बधिया';
 
   @override
   String get kids => 'बच्चे';
@@ -1141,20 +1142,19 @@ class AppLocalizationsHi extends AppLocalizations {
   String get allSources => 'सभी स्रोत';
 
   @override
-  String get bornOnFarm => 'खेत में पैदा हुई';
+  String get bornOnFarm => 'फार्म पर पैदा हुए';
 
   @override
-  String get purchased => 'खरीदी गई';
+  String get purchased => 'खरीदे गए';
 
   @override
   String get milk => 'दूध';
 
   @override
-  String get noGoatsDataToExport =>
-      'निर्यात करने के लिए बकरियों का डेटा नहीं है';
+  String get noGoatsDataToExport => 'निर्यात के लिए कोई बकरी डेटा नहीं';
 
   @override
-  String get failedToExportPdf => 'PDF निर्यात करने में विफल';
+  String get failedToExportPdf => 'PDF निर्यात विफल';
 
   @override
   String get filterBySource => 'स्रोत द्वारा फ़िल्टर करें';
@@ -1163,7 +1163,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get goatsTotal => 'बकरियाँ कुल.';
 
   @override
-  String get goatsByStage => 'स्टेज के अनुसार बकरियाँ.';
+  String get goatsByStage => 'चरण के अनुसार बकरियाँ.';
 
   @override
   String get goatsByGender => 'लिंग के अनुसार बकरियाँ.';
@@ -1178,13 +1178,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get totalMilkProduced => 'कुल दूध उत्पादन.';
 
   @override
-  String get totalForKidsUsed => 'बच्चों के लिए/उपयोग किया गया कुल.';
+  String get totalForKidsUsed => 'बच्चों/उपयोग के लिए कुल.';
 
   @override
-  String get mostProductiveGoat => 'सबसे अधिक उत्पादक बकरी.';
+  String get mostProductiveGoat => 'सबसे उत्पादक बकरी.';
 
   @override
-  String get leastProductiveGoat => 'सबसे कम उत्पादक बकरी.';
+  String get leastProductiveGoat => 'कम से कम उत्पादक बकरी.';
 
   @override
   String get records => 'रिकॉर्ड';
@@ -1208,7 +1208,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get editRecords => 'रिकॉर्ड संपादित करें';
 
   @override
-  String get customRange => 'कस्टम रेंज';
+  String get customRange => 'कस्टम सीमा';
 
   @override
   String get selectDateRange => 'तिथि सीमा चुनें';
@@ -1259,19 +1259,94 @@ class AppLocalizationsHi extends AppLocalizations {
   String get previousMonth => 'पिछला माह';
 
   @override
-  String get exportPDF => 'PDF निर्यात';
+  String get exportPDF => 'PDF निर्यात करें';
 
   @override
   String get pdfExportConfirmation =>
       'क्या आप चयनित अवधि के लिए PDF रिपोर्ट जनरेट करना चाहते हैं?';
 
   @override
-  String get pdfGenerating => 'PDF रिपोर्ट जनरेट की जा रही है...';
+  String get pdfGenerating => 'PDF रिपोर्ट जनरेट हो रही है...';
 
   @override
   String get generate => 'जनरेट करें';
 
   @override
   String get noDataToExport =>
-      'चयनित अवधि के लिए निर्यात करने के लिए कोई डेटा नहीं है';
+      'चयनित अवधि के लिए निर्यात करने के लिए कोई डेटा नहीं';
+
+  @override
+  String get individualEvents => 'व्यक्तिगत घटनाएं';
+
+  @override
+  String get massEvents => 'सामूहिक घटनाएं';
+
+  @override
+  String get archives => 'आर्काइव';
+
+  @override
+  String get totalAllEvents => 'सभी घटनाएं';
+
+  @override
+  String get soldGoats => 'बिकी हुई बकरियां';
+
+  @override
+  String get deadGoats => 'मृत बकरियां';
+
+  @override
+  String get lostGoats => 'खोई हुई बकरियां';
+
+  @override
+  String get otherArchived => 'अन्य आर्काइव किए गए';
+
+  @override
+  String get othersArchived => 'अन्य आर्काइव किए गए';
+
+  @override
+  String get sold => 'बिक गई';
+
+  @override
+  String get dead => 'मृत';
+
+  @override
+  String get lost => 'खो गई';
+
+  @override
+  String get allArchivedGoats => 'सभी आर्काइव की गई बकरियां';
+
+  @override
+  String get noArchivedGoatsFound => 'कोई आर्काइव की गई बकरियां नहीं मिलीं';
+
+  @override
+  String get unknownBreed => 'अज्ञात नस्ल';
+
+  @override
+  String get restoredSuccessfully => 'सफलतापूर्वक बहाल किया गया';
+
+  @override
+  String get givesBirth => 'बच्चे दिए';
+
+  @override
+  String get dryOff => 'दूध सूख गया';
+
+  @override
+  String get breeding => 'प्रजनन';
+
+  @override
+  String get pregnant => 'गर्भवती';
+
+  @override
+  String get aborted => 'गर्भपात हुआ';
+
+  @override
+  String get tagging => 'टैगिंग';
+
+  @override
+  String get archived => 'आर्काइव किया गया';
+
+  @override
+  String get totalEvents => 'कुल घटनाएं';
+
+  @override
+  String get reason => 'कारण';
 }

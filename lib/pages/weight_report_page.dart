@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mygoatmanager/l10n/app_localizations.dart';
 
 class WeightReportPage extends StatefulWidget {
   const WeightReportPage({super.key});

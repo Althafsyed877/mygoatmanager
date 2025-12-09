@@ -1271,4 +1271,79 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noDataToExport => 'No data to export for selected period';
+
+  @override
+  String get individualEvents => 'Individual events';
+
+  @override
+  String get massEvents => 'Mass events';
+
+  @override
+  String get archives => 'Archives';
+
+  @override
+  String get totalAllEvents => 'Total All Events';
+
+  @override
+  String get soldGoats => 'Sold Goats';
+
+  @override
+  String get deadGoats => 'Dead Goats';
+
+  @override
+  String get lostGoats => 'Lost Goats';
+
+  @override
+  String get otherArchived => 'Other Archived';
+
+  @override
+  String get othersArchived => 'Others archived';
+
+  @override
+  String get sold => 'Sold';
+
+  @override
+  String get dead => 'Dead';
+
+  @override
+  String get lost => 'Lost';
+
+  @override
+  String get allArchivedGoats => 'All Archived Goats';
+
+  @override
+  String get noArchivedGoatsFound => 'No archived goats found';
+
+  @override
+  String get unknownBreed => 'Unknown breed';
+
+  @override
+  String get restoredSuccessfully => 'restored successfully';
+
+  @override
+  String get givesBirth => 'Gives Birth';
+
+  @override
+  String get dryOff => 'Dry off';
+
+  @override
+  String get breeding => 'Breeding';
+
+  @override
+  String get pregnant => 'Pregnant';
+
+  @override
+  String get aborted => 'Aborted';
+
+  @override
+  String get tagging => 'Tagging';
+
+  @override
+  String get archived => 'Archived';
+
+  @override
+  String get totalEvents => 'Total Events';
+
+  @override
+  String get reason => 'Reason';
 }

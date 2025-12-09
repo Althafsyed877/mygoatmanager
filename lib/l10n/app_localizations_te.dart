@@ -12,19 +12,19 @@ class AppLocalizationsTe extends AppLocalizations {
   String get appTitle => 'నా మేకల మేనేజర్';
 
   @override
-  String get selectLanguage => 'భాష ఎంచుకోండి';
+  String get selectLanguage => 'భాషను ఎంచుకోండి';
 
   @override
   String get notifications => 'నోటిఫికేషన్లు';
 
   @override
-  String get syncData => 'డేటా సమకాలీకరించు';
+  String get syncData => 'డేటా సింక్ చేయండి';
 
   @override
   String get cancel => 'రద్దు చేయండి';
 
   @override
-  String get delete => 'తొలగించు';
+  String get delete => 'తొలగించండి';
 
   @override
   String get languageChangedTo => 'భాష మార్చబడింది';
@@ -42,28 +42,28 @@ class AppLocalizationsTe extends AppLocalizations {
   String get transactions => 'లావాదేవీలు';
 
   @override
-  String get farmSetup => 'ఫారం సెటప్';
+  String get farmSetup => 'ఫార్మ్ సెటప్';
 
   @override
-  String get reports => 'నివేదికలు';
+  String get reports => 'రిపోర్ట్లు';
 
   @override
-  String get createYourFarmAccount => 'మీ ఫారం ఖాతా సృష్టించండి';
+  String get createYourFarmAccount => 'మీ ఫార్మ్ ఖాతాను సృష్టించండి';
 
   @override
-  String get loginOrCreateAccount => 'లాగిన్ చేయండి లేదా ఖాతా సృష్టించండి';
+  String get loginOrCreateAccount => 'లాగిన్ లేదా ఖాతా సృష్టించండి';
 
   @override
   String get upgradeAndAccount => 'అప్గ్రేడ్ మరియు ఖాతా';
 
   @override
-  String get appAndFarmTools => 'యాప్ మరియు ఫారం సాధనాలు';
+  String get appAndFarmTools => 'యాప్ మరియు ఫార్మ్ సాధనాలు';
 
   @override
   String get settings => 'సెట్టింగ్లు';
 
   @override
-  String get farmNotes => 'ఫారం నోట్స్';
+  String get farmNotes => 'ఫార్మ్ నోట్స్';
 
   @override
   String get seeAllOurApps => 'మా అన్ని యాప్లను చూడండి';
@@ -78,10 +78,10 @@ class AppLocalizationsTe extends AppLocalizations {
   String get howToUseThisApp => 'ఈ యాప్ను ఎలా ఉపయోగించాలి';
 
   @override
-  String get contactOurTeam => 'మా టీంను సంప్రదించండి';
+  String get contactOurTeam => 'మా టీమ్ని సంప్రదించండి';
 
   @override
-  String get shareAndRecommend => 'షేర్ చేయండి మరియు సిఫారసు చేయండి';
+  String get shareAndRecommend => 'షేర్ చేయండి మరియు సిఫార్సు చేయండి';
 
   @override
   String get shareAppWithFriends => 'స్నేహితులతో యాప్ను షేర్ చేయండి';
@@ -90,32 +90,32 @@ class AppLocalizationsTe extends AppLocalizations {
   String get rateAppInPlayStore => 'ప్లే స్టోర్లో యాప్ను రేట్ చేయండి';
 
   @override
-  String get legal => 'చట్టపరమైన';
+  String get legal => 'చట్టపరమైన';
 
   @override
-  String get privacyPolicy => 'గోప్యతా విధానాన్ని';
+  String get privacyPolicy => 'గోప్యతా విధానం';
 
   @override
   String get noNewNotifications => 'కొత్త నోటిఫికేషన్లు లేవు';
 
   @override
-  String get syncingData => 'డేటా సమకాలీకరిస్తోంది';
+  String get syncingData => 'డేటా సింక్ చేస్తోంది';
 
   @override
-  String get dataSyncedSuccessfully => 'డేటా విజయవంతంగా సమకాలీకరించబడింది';
+  String get dataSyncedSuccessfully => 'డేటా విజయవంతంగా సింక్ చేయబడింది';
 
   @override
-  String get welcomeToGoatManager => 'గోట్ మేనేజర్‌కు స్వాగతం';
+  String get welcomeToGoatManager => 'గోట్ మేనేజర్కు స్వాగతం';
 
   @override
   String get manageYourFarmEfficiently =>
-      'మా పనిముట్లతో మీ ఫార్మ్‌ను సమర్థవంతంగా నిర్వహించండి';
+      'మా సాధనాలతో మీ ఫార్మ్ను సమర్థవంతంగా నిర్వహించండి';
 
   @override
   String get login => 'లాగిన్';
 
   @override
-  String get signup => 'నమోదు చేసుకోండి';
+  String get signup => 'సైన్ అప్';
 
   @override
   String get emailAddress => 'ఇమెయిల్ చిరునామా';
@@ -124,7 +124,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get password => 'పాస్వర్డ్';
 
   @override
-  String get rememberMe => 'నన్ను గుర్తుంచుకోండి';
+  String get rememberMe => 'నన్ను గుర్తుంచుకో';
 
   @override
   String get forgotPassword => 'పాస్వర్డ్ మర్చిపోయారా?';
@@ -148,20 +148,20 @@ class AppLocalizationsTe extends AppLocalizations {
   String get bySigningUpYouAgree => 'సైన్ అప్ చేయడం ద్వారా, మీరు మా';
 
   @override
-  String get termsOfService => 'సేవా నిబంధనలు';
+  String get termsOfService => 'సేవా నిబంధనలకు';
 
   @override
   String get and => 'మరియు';
 
   @override
-  String get pleaseFillAllFields => 'దయచేసి అన్ని ఫీల్డ్‌లను పూరించండి';
+  String get pleaseFillAllFields => 'దయచేసి అన్ని ఫీల్డ్లను పూరించండి';
 
   @override
   String get passwordsDoNotMatch => 'పాస్వర్డ్లు సరిపోలడం లేదు';
 
   @override
   String get passwordMustBeAtLeast6Characters =>
-      'పాస్వర్డ్ కనీసం 6 అక్షరాలుగా ఉండాలి';
+      'పాస్వర్డ్ కనీసం 6 అక్షరాలు ఉండాలి';
 
   @override
   String get pleaseEnterEmail => 'దయచేసి మీ ఇమెయిల్ చిరునామాను నమోదు చేయండి';
@@ -170,7 +170,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get resetLinkSentTo => 'రీసెట్ లింక్ పంపబడింది';
 
   @override
-  String get signingInWith => 'దీనితో సైన్ ఇన్ చేస్తోంది';
+  String get signingInWith => 'సైన్ ఇన్ చేస్తోంది';
 
   @override
   String get loginSuccessful => 'లాగిన్ విజయవంతమైంది!';
@@ -180,25 +180,25 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get enterEmailToReset =>
-      'మీ పాస్వర్డ్ రీసెట్ చేయడానికి మీ ఇమెయిల్ చిరునామాను నమోదు చేయండి';
+      'మీ పాస్వర్డ్ను రీసెట్ చేయడానికి మీ ఇమెయిల్ చిరునామాను నమోదు చేయండి';
 
   @override
   String get resetPassword => 'పాస్వర్డ్ రీసెట్ చేయండి';
 
   @override
-  String get selectBreed => 'ప్రజాతి ఎంచుకోండి ..';
+  String get selectBreed => 'జాతిని ఎంచుకోండి ..';
 
   @override
   String get searchHint => 'వెతకండి...';
 
   @override
-  String get close => 'మూసివేయండి';
+  String get close => 'మూసివేయి';
 
   @override
   String get allBreeds => 'అన్ని జాతులు';
 
   @override
-  String get breedOptional => 'ప్రజాతి (ఐచ్ఛికం)';
+  String get breedOptional => 'జాతి (ఐచ్ఛికం)';
 
   @override
   String get clear => 'క్లియర్';
@@ -213,10 +213,10 @@ class AppLocalizationsTe extends AppLocalizations {
   String get chooseFromGallery => 'గ్యాలరీ నుండి ఎంచుకోండి';
 
   @override
-  String get imageSelected => 'చిత్రం విజయవంతంగా ఎంపిక చేయబడింది!';
+  String get imageSelected => 'చిత్రం విజయవంతంగా ఎంచుకోబడింది!';
 
   @override
-  String get removePhoto => 'ఫోటో తీసివేయండి';
+  String get removePhoto => 'ఫోటోను తీసివేయండి';
 
   @override
   String get photoRemoved => 'ఫోటో తీసివేయబడింది';
@@ -237,7 +237,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get nameLabel => 'పేరు:';
 
   @override
-  String get dobLabel => 'పుట్టిన తేది';
+  String get dobLabel => 'పుట్టిన తేదీ';
 
   @override
   String get ageLabel => 'వయస్సు';
@@ -273,13 +273,13 @@ class AppLocalizationsTe extends AppLocalizations {
   String get fatherLabel => 'తండ్రి:';
 
   @override
-  String get notesLabel => 'కొన్ని నోట్స్ రాయండి ...';
+  String get notesLabel => 'గమనికలు:';
 
   @override
-  String get tapToUpload => 'చిత్రం అప్లోడ్ చేయడానికి ట్యాప్ చేయండి...';
+  String get tapToUpload => 'చిత్రాన్ని అప్లోడ్ చేయడానికి టాప్ చేయండి...';
 
   @override
-  String get changePicture => 'చిత్రం మార్చండి...';
+  String get changePicture => 'చిత్రాన్ని మార్చండి...';
 
   @override
   String get goatsOffspring => 'మేక సంతానం';
@@ -299,19 +299,19 @@ class AppLocalizationsTe extends AppLocalizations {
       'ఈ మేకకు సంబంధించిన ఈవెంట్లు ఇక్కడ కనిపిస్తాయి';
 
   @override
-  String get searchTagOrName => 'ట్యాగ్ లేదా పేరు వెతకండి...';
+  String get searchTagOrName => 'ట్యాగ్ లేదా పేరును వెతకండి...';
 
   @override
   String get goatsTitle => 'మేకలు';
 
   @override
-  String get noGoatsAvailableToPreview => 'ప్రివ్యూ చేయడానికి మేకలు లేవు';
+  String get noGoatsAvailableToPreview => 'ప్రివ్యూకు మేకలు లేవు';
 
   @override
-  String get exportPdf => 'PDF ఎగుమతి';
+  String get exportPdf => 'PDF ఎగుమతి చేయండి';
 
   @override
-  String get filterBy => 'ఫిల్టర్ చేయండి';
+  String get filterBy => 'ద్వారా ఫిల్టర్ చేయండి';
 
   @override
   String get sortByAge => 'వయస్సు ప్రకారం క్రమబద్ధీకరించండి';
@@ -321,10 +321,10 @@ class AppLocalizationsTe extends AppLocalizations {
       'ఎంచుకున్న ఫిల్టర్ల కోసం ఇంకా మేకలు నమోదు చేయబడలేదు!';
 
   @override
-  String get selectGroup => 'సమూహాన్ని ఎంచుకోండి';
+  String get selectGroup => 'గ్రూప్ను ఎంచుకోండి';
 
   @override
-  String get addGoat => 'చేర్చు';
+  String get addGoat => 'జోడించు';
 
   @override
   String get viewRecord => 'రికార్డ్ చూడండి';
@@ -333,7 +333,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get editRecord => 'రికార్డ్ సవరించండి';
 
   @override
-  String get addEvent => 'ఈవెంట్ చేర్చండి';
+  String get addEvent => 'ఈవెంట్ జోడించండి';
 
   @override
   String get deleteGoatTitle => 'మేకను తొలగించండి';
@@ -348,7 +348,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get goatsListPdf => 'మేకల జాబితా';
 
   @override
-  String get breedLabel2 => 'ప్రజాతి:';
+  String get breedLabel2 => 'జాతి:';
 
   @override
   String get groupLabel2 => 'గ్రూప్:';
@@ -373,13 +373,13 @@ class AppLocalizationsTe extends AppLocalizations {
   String get nameLabel2 => 'పేరు.';
 
   @override
-  String get selectGender => 'లింగం ఎంచుకోండి. *';
+  String get selectGender => 'లింగాన్ని ఎంచుకోండి. *';
 
   @override
   String get dateOfBirth => 'పుట్టిన తేదీ.';
 
   @override
-  String get dateOfEntry => 'ఫారంలో చేరిన తేదీ.';
+  String get dateOfEntry => 'ఫార్మ్లో చేరిన తేదీ.';
 
   @override
   String get weightLabel2 => 'బరువు.';
@@ -394,19 +394,19 @@ class AppLocalizationsTe extends AppLocalizations {
   String get selectObtained => 'మేక ఎలా పొందబడిందో ఎంచుకోండి. *';
 
   @override
-  String get motherTagLabel => 'తల్లి ట్యాగ్ నం';
+  String get motherTagLabel => 'తల్లి ట్యాగ్ నం.';
 
   @override
-  String get fatherTagLabel => 'తండ్రి ట్యాగ్ నం';
+  String get fatherTagLabel => 'తండ్రి ట్యాగ్ నం.';
 
   @override
-  String get notesPlaceholder => 'కొన్ని నోట్స్ వ్రాయండి ...';
+  String get notesPlaceholder => 'కొన్ని గమనికలు వ్రాయండి ...';
 
   @override
-  String get createNewBreed => 'కొత్త ప్రజాతి సృష్టించండి...';
+  String get createNewBreed => 'కొత్త జాతిని సృష్టించండి...';
 
   @override
-  String get createNewGroup => 'కొత్త గ్రూప్ సృష్టించండి...';
+  String get createNewGroup => 'కొత్త గ్రూప్ను సృష్టించండి...';
 
   @override
   String get goatCreated => 'మేక విజయవంతంగా సృష్టించబడింది!';
@@ -418,13 +418,13 @@ class AppLocalizationsTe extends AppLocalizations {
   String get kid => 'పిల్ల';
 
   @override
-  String get wether => 'నపుంసకం';
+  String get wether => 'వెదర్';
 
   @override
-  String get buckling => 'మగ పిల్ల';
+  String get buckling => 'బక్లింగ్';
 
   @override
-  String get buck => 'మగ మేక';
+  String get buck => 'బక్';
 
   @override
   String get alpine => 'ఆల్పైన్';
@@ -448,22 +448,22 @@ class AppLocalizationsTe extends AppLocalizations {
   String get gift => 'బహుమతి';
 
   @override
-  String get selectGenderRequired => 'లింగం ఎంచుకోండి *';
+  String get selectGenderRequired => 'లింగాన్ని ఎంచుకోండి *';
 
   @override
-  String get selectGoatStage => '- మేక దశ ఎంచుకోండి -';
+  String get selectGoatStage => '- మేక దశను ఎంచుకోండి -';
 
   @override
   String get selectObtainedRequired => 'మేక ఎలా పొందబడిందో ఎంచుకోండి *';
 
   @override
-  String get tagNoRequired => 'ట్యాగ్ నం *';
+  String get tagNoRequired => 'ట్యాగ్ నం. *';
 
   @override
-  String get dateOfBirthLabel => 'పుట్టిన తేది';
+  String get dateOfBirthLabel => 'పుట్టిన తేదీ.';
 
   @override
-  String get dateOfEntryLabel => 'ఫార్మ్లో ప్రవేశ తేది';
+  String get dateOfEntryLabel => 'ఫార్మ్లో చేరిన తేదీ.';
 
   @override
   String get fillRequiredFields => 'దయచేసి అన్ని అవసరమైన ఫీల్డ్లను పూరించండి';
@@ -475,32 +475,33 @@ class AppLocalizationsTe extends AppLocalizations {
   String get setFarmName => 'యాప్ సెట్టింగ్లలో ఫార్మ్ పేరు సెట్ చేయండి!';
 
   @override
-  String get setFarmLocation => 'యాప్ సెట్టింగ్లలో ఫార్మ్ స్థానం సెట్ చేయండి!';
+  String get setFarmLocation =>
+      'యాప్ సెట్టింగ్లలో ఫార్మ్ స్థానాన్ని సెట్ చేయండి!';
 
   @override
-  String get tagLabel => 'ట్యాగ్';
+  String get tagLabel => 'ట్యాగ్.';
 
   @override
   String get goat => 'మేక';
 
   @override
-  String get allGroups => 'అన్ని సమూహాలు';
+  String get allGroups => 'అన్ని గ్రూపులు';
 
   @override
-  String get groupOptional2 => 'గ్రూప్ (ఐచ్ఛికం)';
+  String get groupOptional2 => 'Group (optional)';
 
   @override
-  String get filterByPeriod => 'కాలానుగుణంగా ఫిల్టర్ చేయండి';
+  String get filterByPeriod => 'కాలం ద్వారా ఫిల్టర్ చేయండి';
 
   @override
-  String get filterByMilkType => 'పాలు రకం ప్రకారం ఫిల్టర్ చేయండి';
+  String get filterByMilkType => 'పాలు రకం ద్వారా ఫిల్టర్ చేయండి';
 
   @override
   String get noMilkRecordsDisplay =>
-      'ఎంచుకున్న తేదీ శ్రేణికి ప్రదర్శించడానికి పాలు రికార్డ్లు లేవు.';
+      'ఎంచుకున్న తేదీ పరిధికి ప్రదర్శించడానికి పాలు రికార్డులు లేవు.';
 
   @override
-  String get farm => 'ఫారం';
+  String get farm => 'ఫార్మ్';
 
   @override
   String get total => 'మొత్తం';
@@ -509,10 +510,10 @@ class AppLocalizationsTe extends AppLocalizations {
   String get used => 'ఉపయోగించబడింది';
 
   @override
-  String get notes => 'నోట్స్';
+  String get notes => 'గమనికలు';
 
   @override
-  String get filterByDateRange => 'తేదీ శ్రేణి ప్రకారం ఫిల్టర్ చేయండి';
+  String get filterByDateRange => 'తేదీ పరిధి ద్వారా ఫిల్టర్ చేయండి';
 
   @override
   String get startDate => 'ప్రారంభ తేదీ';
@@ -521,7 +522,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get endDate => 'ముగింపు తేదీ';
 
   @override
-  String get apply => 'అప్లై చేయండి';
+  String get apply => 'వర్తింపజేయండి';
 
   @override
   String get milkType => 'పాలు రకం';
@@ -530,28 +531,28 @@ class AppLocalizationsTe extends AppLocalizations {
   String get allTypes => 'అన్ని రకాలు';
 
   @override
-  String get wholeFarm => 'మొత్తం ఫారం';
+  String get wholeFarm => 'మొత్తం ఫార్మ్';
 
   @override
   String get individualGoat => 'వ్యక్తిగత మేక';
 
   @override
-  String get generated => 'సృష్టించబడింది';
+  String get generated => 'జనరేట్ చేయబడింది';
 
   @override
-  String get noRecordsToExport => 'ఎక్స్పోర్ట్ చేయడానికి రికార్డ్లు లేవు.';
+  String get noRecordsToExport => 'ఎగుమతి చేయడానికి రికార్డులు లేవు.';
 
   @override
   String get date => 'తేదీ';
 
   @override
-  String get available => 'అందుబాటులో';
+  String get available => 'అందుబాటులో ఉంది';
 
   @override
-  String get selectMilkType => '- పాలు రకం ఎంచుకోండి -';
+  String get selectMilkType => '- పాలు రకాన్ని ఎంచుకోండి -';
 
   @override
-  String get editViewRecord => 'సవరించు/చూడండి రికార్డ్';
+  String get editViewRecord => 'రికార్డ్ సవరించండి/చూడండి';
 
   @override
   String get deleteRecord => 'రికార్డ్ తొలగించండి';
@@ -564,16 +565,16 @@ class AppLocalizationsTe extends AppLocalizations {
   String get recordDeleted => 'రికార్డ్ విజయవంతంగా తొలగించబడింది';
 
   @override
-  String get add => 'చేర్చు';
+  String get add => 'జోడించు';
 
   @override
-  String get all => 'అన్ని';
+  String get all => 'అన్నీ';
 
   @override
-  String get to => 'వరకు:';
+  String get to => 'కు';
 
   @override
-  String get searchEventsHint => 'ఈవెంట్లు వెతకండి...';
+  String get searchEventsHint => 'ఈవెంట్లను వెతకండి...';
 
   @override
   String get individual => 'వ్యక్తిగత';
@@ -582,10 +583,10 @@ class AppLocalizationsTe extends AppLocalizations {
   String get mass => 'సామూహిక';
 
   @override
-  String get filterByDate => 'తేదీ ప్రకారం ఫిల్టర్ చేయండి';
+  String get filterByDate => 'తేదీ ద్వారా ఫిల్టర్ చేయండి';
 
   @override
-  String get customDateRange => 'కస్టమ్ తేదీ శ్రేణి';
+  String get customDateRange => 'కస్టమ్ తేదీ పరిధి';
 
   @override
   String get from => 'నుండి:';
@@ -594,7 +595,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get selectDate => 'తేదీ ఎంచుకోండి';
 
   @override
-  String get today => 'ఈ రోజు';
+  String get today => 'ఈరోజు';
 
   @override
   String get yesterday => 'నిన్న';
@@ -609,25 +610,25 @@ class AppLocalizationsTe extends AppLocalizations {
   String get lastMonth => 'గత నెల';
 
   @override
-  String get filterByEventType => 'ఈవెంట్ రకం ప్రకారం ఫిల్టర్ చేయండి';
+  String get filterByEventType => 'ఈవెంట్ రకం ద్వారా ఫిల్టర్ చేయండి';
 
   @override
   String get treated => 'చికిత్స చేయబడింది';
 
   @override
-  String get weighed => 'బరువు కొలవబడింది';
+  String get weighed => 'భారం కొలిచారు';
 
   @override
-  String get weaned => 'పాలతోణచి';
+  String get weaned => 'పాలతెగ వేయబడింది';
 
   @override
-  String get castrated => 'వంట చేయబడింది';
+  String get castrated => 'బంధనం చేయబడింది';
 
   @override
-  String get vaccinated => 'వ్యాక్సినేషన్ చేయబడింది';
+  String get vaccinated => 'తీవ్రవ్యాధి టీకా';
 
   @override
-  String get deworming => 'పురుగు మందు ఇవ్వడం';
+  String get deworming => 'పురుగుమందు ఇవ్వబడింది';
 
   @override
   String get hoofTrimming => 'గిట్టలు కత్తిరించడం';
@@ -637,11 +638,11 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get noIndividualEvents =>
-      'ఎంచుకున్న తేదీ శ్రేణికి ప్రదర్శించడానికి వ్యక్తిగత ఈవెంట్లు లేవు.';
+      'ఎంచుకున్న తేదీ పరిధికి ప్రదర్శించడానికి వ్యక్తిగత ఈవెంట్లు లేవు.';
 
   @override
   String get noMassEvents =>
-      'ఎంచుకున్న తేదీ శ్రేణికి ప్రదర్శించడానికి సామూహిక ఈవెంట్లు లేవు.';
+      'ఎంచుకున్న తేదీ పరిధికి ప్రదర్శించడానికి సామూహిక ఈవెంట్లు లేవు.';
 
   @override
   String get selectGoatToContinue => 'కొనసాగించడానికి మేకను ఎంచుకోండి...';
@@ -650,19 +651,19 @@ class AppLocalizationsTe extends AppLocalizations {
   String get searchGoatHint => 'మేకను వెతకండి...';
 
   @override
-  String get noGoatsFound => 'మేకలు కనుగొనబడలేదు. ముందుగా మేకలను జోడించండి';
+  String get noGoatsFound => 'మేకలు కనుగొనబడలేదు';
 
   @override
   String get medicineLabel => 'మందు:';
 
   @override
-  String get diagnosisLabel => 'డయాగ్నోసిస్:';
+  String get diagnosisLabel => 'నిర్ధారణ:';
 
   @override
   String get symptomsLabel => 'లక్షణాలు:';
 
   @override
-  String get treatedByLabel => 'చికిత్స చేసిన వ్యక్తి:';
+  String get treatedByLabel => 'చికిత్స చేసినవారు:';
 
   @override
   String get weighedLabel => 'బరువు:';
@@ -686,13 +687,13 @@ class AppLocalizationsTe extends AppLocalizations {
   String get eventDateRequired => 'ఈవెంట్ తేదీ. *';
 
   @override
-  String get selectEventTypeRequired => 'ఈవెంట్ రకం ఎంచుకోండి. *';
+  String get selectEventTypeRequired => 'ఈవెంట్ రకాన్ని ఎంచుకోండి. *';
 
   @override
-  String get symptomsRequired => 'అనారోగ్యం కోసం లక్షణాలు. *';
+  String get symptomsRequired => 'రోగానికి లక్షణాలు. *';
 
   @override
-  String get diagnosisRequired => 'డయాగ్నోసిస్. *';
+  String get diagnosisRequired => 'నిర్ధారణ. *';
 
   @override
   String get technicianRequired => 'టెక్నీషియన్ పేరు. *';
@@ -701,13 +702,13 @@ class AppLocalizationsTe extends AppLocalizations {
   String get medicineGivenRequired => 'ఏ మందు ఇవ్వబడింది? *';
 
   @override
-  String get weighedResultRequired => 'బరువు కొలత ఫలితం. *';
+  String get weighedResultRequired => 'బరువు ఫలితం. *';
 
   @override
   String get eventNameRequired => 'ఈవెంట్ పేరు. *';
 
   @override
-  String get writeNotes => 'కొన్ని నోట్స్ వ్రాయండి ...';
+  String get writeNotes => 'కొన్ని గమనికలు వ్రాయండి ...';
 
   @override
   String get pleaseSelectEventDate => 'దయచేసి ఈవెంట్ తేదీని ఎంచుకోండి';
@@ -719,7 +720,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get pleaseEnterEventName => 'దయచేసి ఈవెంట్ పేరును నమోదు చేయండి';
 
   @override
-  String get eventsRecords => 'ఈవెంట్ల రికార్డులు';
+  String get eventsRecords => 'ఈవెంట్ రికార్డులు';
 
   @override
   String get noEventsToDisplay => 'ప్రదర్శించడానికి ఈవెంట్లు లేవు.';
@@ -746,7 +747,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get more_options => 'మరిన్ని ఎంపికలు';
 
   @override
-  String get search_transactions => 'లావాదేవీలు వెతకండి';
+  String get search_transactions => 'లావాదేవీలను వెతకండి';
 
   @override
   String get search_by_description => 'వివరణ, మొత్తం ద్వారా వెతకండి...';
@@ -814,7 +815,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get date_of_income => 'ఆదాయం తేదీ';
 
   @override
-  String get select_income_type => 'ఆదాయ రకం ఎంచుకోండి';
+  String get select_income_type => 'ఆదాయ రకాన్ని ఎంచుకోండి';
 
   @override
   String get milk_sale => 'పాలు అమ్మకం';
@@ -826,32 +827,32 @@ class AppLocalizationsTe extends AppLocalizations {
   String get category_income => 'వర్గం ఆదాయం';
 
   @override
-  String get other_specify => 'ఇతర (ప్రత్యేకంగా చెప్పండి)';
+  String get other_specify => 'ఇతర (ప్రత్యేకంగా పేర్కొనండి)';
 
   @override
   String get category_expense => 'వర్గం ఖర్చు';
 
   @override
-  String get other_expense => 'ఇతర (ప్రత్యేకంగా చెప్పండి)';
+  String get other_expense => 'ఇతర (ప్రత్యేకంగా పేర్కొనండి)';
 
   @override
-  String get milk_quantity_sold => 'అమ్మబడిన పాల పరిమాణం';
+  String get milk_quantity_sold => 'అమ్మబడిన పాలు పరిమాణం';
 
   @override
-  String get selling_price_per_litre => 'లీటరుకు అమ్మకం ధర';
+  String get selling_price_per_litre => 'లీటరు/యూనిట్కు అమ్మకం ధర';
 
   @override
   String get how_much_did_you_earn => 'మీరు ఎంత సంపాదించారు?';
 
   @override
   String get please_go_to_record =>
-      'దయచేసి అమ్మబడిన మేక రికార్డ్కి వెళ్లి \'అమ్మబడింది\' అనే కారణంతో ఆర్చైవ్ చేయండి మరియు ఆదాయ రికార్డ్ స్వయంచాలకంగా సృష్టించబడుతుంది!';
+      'దయచేసి అమ్మబడిన మేక రికార్డుకు వెళ్లి, \'విక్రయించబడింది\' కారణంతో ఆర్కైవ్ చేయండి మరియు ఆదాయ రికార్డ్ స్వయంచాలకంగా సృష్టించబడుతుంది!';
 
   @override
   String get quantity_of_items => 'వస్తువుల పరిమాణం';
 
   @override
-  String get please_specify_source => 'దయచేసి ఆదాయ మూలాన్ని పేర్కొనండి';
+  String get please_specify_source => 'దయచేసి ఆదాయం యొక్క మూలాన్ని పేర్కొనండి';
 
   @override
   String get specify_income_source => 'ఆదాయ మూలాన్ని పేర్కొనండి';
@@ -863,10 +864,10 @@ class AppLocalizationsTe extends AppLocalizations {
   String get write_some_notes => 'కొన్ని గమనికలు వ్రాయండి ...';
 
   @override
-  String get enter_receipt_number => 'రసీదు నంబర్ నమోదు చేయండి';
+  String get enter_receipt_number => 'రసీదు నంబర్ను నమోదు చేయండి';
 
   @override
-  String get enter_your_notes => 'మీ గమనికలు ఇక్కడ నమోదు చేయండి...';
+  String get enter_your_notes => 'మీ గమనికలను ఇక్కడ నమోదు చేయండి...';
 
   @override
   String get new_income => 'కొత్త ఆదాయం';
@@ -881,14 +882,14 @@ class AppLocalizationsTe extends AppLocalizations {
   String get please_select_income_type => 'దయచేసి ఆదాయ రకాన్ని ఎంచుకోండి';
 
   @override
-  String get please_enter_amount => 'దయచేసి మొత్తం నమోదు చేయండి';
+  String get please_enter_amount => 'దయచేసి మొత్తాన్ని నమోదు చేయండి';
 
   @override
   String get please_enter_quantity_price =>
-      'దయచేసి పరిమాణం మరియు ధర నమోదు చేయండి';
+      'దయచేసి పరిమాణం మరియు ధరను నమోదు చేయండి';
 
   @override
-  String get please_enter_quantity => 'దయచేసి పరిమాణం నమోదు చేయండి';
+  String get please_enter_quantity => 'దయచేసి పరిమాణాన్ని నమోదు చేయండి';
 
   @override
   String get please_specify_income_source => 'దయచేసి ఆదాయ మూలాన్ని పేర్కొనండి';
@@ -897,43 +898,43 @@ class AppLocalizationsTe extends AppLocalizations {
   String get date_of_expense => 'ఖర్చు తేదీ';
 
   @override
-  String get select_expense_type => 'ఖర్చు రకం ఎంచుకోండి';
+  String get select_expense_type => 'ఖర్చు రకాన్ని ఎంచుకోండి';
 
   @override
   String get please_select_expense_type => 'దయచేసి ఖర్చు రకాన్ని ఎంచుకోండి';
 
   @override
-  String get please_enter_name_of_expense => 'దయచేసి ఖర్చు పేరు నమోదు చేయండి';
+  String get please_enter_name_of_expense => 'దయచేసి ఖర్చు పేరును నమోదు చేయండి';
 
   @override
   String get please_select_category => 'దయచేసి వర్గాన్ని ఎంచుకోండి';
 
   @override
-  String get how_much_did_you_spend => 'మీరు ఎంత ఖర్చు చేసారు?';
+  String get how_much_did_you_spend => 'మీరు ఎంత ఖర్చు చేశారు?';
 
   @override
   String get name_of_expense => 'ఖర్చు పేరు';
 
   @override
-  String get select_category => 'వర్గం ఎంచుకోండి';
+  String get select_category => 'వర్గాన్ని ఎంచుకోండి';
 
   @override
-  String get add_category => 'వర్గం జోడించండి';
+  String get add_category => 'వర్గాన్ని జోడించండి';
 
   @override
   String get category_name => 'వర్గం పేరు';
 
   @override
-  String get enter_milk_quantity => 'పాల పరిమాణం నమోదు చేయండి';
+  String get enter_milk_quantity => 'పాలు పరిమాణాన్ని నమోదు చేయండి';
 
   @override
-  String get enter_price_per_litre => 'లీటరుకు ధర నమోదు చేయండి';
+  String get enter_price_per_litre => 'లీటరుకు ధరను నమోదు చేయండి';
 
   @override
-  String get enter_quantity => 'పరిమాణం నమోదు చేయండి';
+  String get enter_quantity => 'పరిమాణాన్ని నమోదు చేయండి';
 
   @override
-  String get enter_amount => 'మొత్తం నమోదు చేయండి';
+  String get enter_amount => 'మొత్తాన్ని నమోదు చేయండి';
 
   @override
   String get income_records => 'ఆదాయ రికార్డులు';
@@ -954,10 +955,10 @@ class AppLocalizationsTe extends AppLocalizations {
   String get expenseCategories => 'ఖర్చు వర్గాలు';
 
   @override
-  String get goatBreeds => 'మేకల జాతులు';
+  String get goatBreeds => 'మేక జాతులు';
 
   @override
-  String get goatGroups => 'మేకల గుంపులు';
+  String get goatGroups => 'మేక గ్రూపులు';
 
   @override
   String get newCategory => 'కొత్త వర్గం';
@@ -966,13 +967,13 @@ class AppLocalizationsTe extends AppLocalizations {
   String get enterName => 'పేరును నమోదు చేయండి ...';
 
   @override
-  String get searchCategories => 'వర్గాలను శోధించండి...';
+  String get searchCategories => 'వర్గాలను వెతకండి...';
 
   @override
-  String get noIncomeCategoriesAdded => 'ఇంతవరకు ఏ ఆదాయ వర్గాలు జోడించబడలేదు!';
+  String get noIncomeCategoriesAdded => 'ఇంకా ఆదాయ వర్గాలు జోడించబడలేదు!';
 
   @override
-  String get noResultsFound => 'ఫలితాలు లభించలేదు';
+  String get noResultsFound => 'ఫలితాలు కనుగొనబడలేదు';
 
   @override
   String get editCategory => 'వర్గాన్ని సవరించండి';
@@ -984,8 +985,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get recordSuccessfullyUpdated => 'రికార్డ్ విజయవంతంగా నవీకరించబడింది';
 
   @override
-  String get noExpenseCategoriesAdded =>
-      'ఇంతవరకు ఏ ఖర్చు వర్గాలు జోడించబడలేదు!';
+  String get noExpenseCategoriesAdded => 'ఇంకా ఖర్చు వర్గాలు జోడించబడలేదు!';
 
   @override
   String get newBreed => 'కొత్త జాతి';
@@ -994,10 +994,10 @@ class AppLocalizationsTe extends AppLocalizations {
   String get enterBreedName => 'జాతి పేరును నమోదు చేయండి...';
 
   @override
-  String get searchBreeds => 'జాతులను శోధించండి...';
+  String get searchBreeds => 'జాతులను వెతకండి...';
 
   @override
-  String get noGoatBreedsAdded => 'ఇంతవరకు ఏ మేకల జాతులు జోడించబడలేదు!';
+  String get noGoatBreedsAdded => 'ఇంకా మేక జాతులు జోడించబడలేదు!';
 
   @override
   String get editBreed => 'జాతిని సవరించండి';
@@ -1008,70 +1008,70 @@ class AppLocalizationsTe extends AppLocalizations {
   }
 
   @override
-  String get newGroup => 'కొత్త గుంపు';
+  String get newGroup => 'కొత్త గ్రూప్';
 
   @override
-  String get enterGroupName => 'గుంపు పేరును నమోదు చేయండి...';
+  String get enterGroupName => 'గ్రూప్ పేరును నమోదు చేయండి...';
 
   @override
-  String get searchGroups => 'గుంపులను శోధించండి...';
+  String get searchGroups => 'గ్రూపులను వెతకండి...';
 
   @override
   String get noGoatGroupsRegistered =>
-      'ఇంతవరకు ఏ మేకల గుంపులు నమోదు చేయబడలేదు!';
+      'ప్రస్తుతం ఇంకా మేక గ్రూపులు నమోదు చేయబడలేదు!';
 
   @override
-  String get editGroup => 'గుంపును సవరించండి';
+  String get editGroup => 'గ్రూప్ను సవరించండి';
 
   @override
   String get transactionsReport => 'లావాదేవీలు';
 
   @override
-  String get milkReport => 'పాల నివేదిక';
+  String get milkReport => 'పాలు రిపోర్ట్';
 
   @override
-  String get goatsReport => 'మేకలు నివేదిక';
+  String get goatsReport => 'మేకల రిపోర్ట్';
 
   @override
-  String get eventsReport => 'సంఘటనల నివేదిక';
+  String get eventsReport => 'ఈవెంట్లు రిపోర్ట్';
 
   @override
-  String get breedingReport => 'ప్రజనన నివేదిక';
+  String get breedingReport => 'ప్రజనన రిపోర్ట్';
 
   @override
-  String get pregnanciesReport => 'గర్భాలు నివేదిక';
+  String get pregnanciesReport => 'గర్భధారణ రిపోర్ట్';
 
   @override
-  String get weightReport => 'బరువు నివేదిక';
+  String get weightReport => 'బరువు రిపోర్ట్';
 
   @override
-  String get stageTrackingReport => 'దశా ట్రాకింగ్ నివేదిక';
+  String get stageTrackingReport => 'దశ ట్రాకింగ్ రిపోర్ట్';
 
   @override
   String get stageTracking => 'దశ ట్రాకింగ్';
 
   @override
-  String get updateSelected => 'ఎంచుకున్నవి నవీకరించు';
+  String get updateSelected => 'ఎంచుకున్నవి నవీకరించండి';
 
   @override
-  String get animalsNeedStageUpdate => 'దశ నవీకరణ అవసరమయ్యే జంతువులు.';
+  String get animalsNeedStageUpdate => 'దశ నవీకరణ అవసరం ఉన్న జంతువులు.';
 
   @override
   String get wethersNotListed =>
-      'అయస్ మేకలు మరియు పుట్టిన తేదీలు లేని జంతువులు జాబితాలో లేవు!';
+      'వెదర్లు మరియు పుట్టిన తేదీలు లేని జంతువులు జాబితాలో లేవు!';
 
   @override
   String get allCaughtUp => 'అన్నీ పూర్తయ్యాయి!';
 
   @override
   String get noGoatsNeedStageUpdates =>
-      'ప్రస్తుతానికి మేకలకు దశ నవీకరణలు అవసరం లేదు.';
+      'ప్రస్తుతం మేకలకు దశ నవీకరణలు అవసరం లేదు.';
 
   @override
-  String get doe => 'ఆడ మేక';
+  String get doe => 'డో';
 
   @override
-  String get updateStages => 'దశలు నవీకరించు';
+  String get updateStages => 'దశలను నవీకరించండి';
 
   @override
   String updateGoatsQuestion(Object count) {
@@ -1092,10 +1092,10 @@ class AppLocalizationsTe extends AppLocalizations {
   }
 
   @override
-  String get breed => 'జాతి';
+  String get breed => 'Breed';
 
   @override
-  String get group => 'సమూహం';
+  String get group => 'Group';
 
   @override
   String get source => 'మూలం';
@@ -1116,25 +1116,25 @@ class AppLocalizationsTe extends AppLocalizations {
   String get gender => 'లింగం';
 
   @override
-  String get male => 'మగ';
+  String get male => 'పురుషుడు';
 
   @override
-  String get female => 'ఆడ';
+  String get female => 'స్త్రీ';
 
   @override
-  String get does => 'ఆడ మేకలు';
+  String get does => 'డోలు';
 
   @override
-  String get doelings => 'ఆడ మేక పిల్లలు';
+  String get doelings => 'డోలింగ్స్';
 
   @override
-  String get bucks => 'మగ మేకలు';
+  String get bucks => 'బక్స్';
 
   @override
-  String get bucklings => 'మగ మేక పిల్లలు';
+  String get bucklings => 'బక్లింగ్స్';
 
   @override
-  String get wethers => 'అయస్ మేకలు';
+  String get wethers => 'వెదర్లు';
 
   @override
   String get kids => 'పిల్లలు';
@@ -1143,10 +1143,10 @@ class AppLocalizationsTe extends AppLocalizations {
   String get allSources => 'అన్ని మూలాలు';
 
   @override
-  String get bornOnFarm => 'ఫారమ్‌లో పుట్టినవి';
+  String get bornOnFarm => 'ఫార్మ్లో పుట్టినవి';
 
   @override
-  String get purchased => 'కొనుగోలు చేసినవి';
+  String get purchased => 'కొనుగోలు చేయబడినవి';
 
   @override
   String get milk => 'పాలు';
@@ -1161,7 +1161,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get filterBySource => 'మూలం ద్వారా ఫిల్టర్ చేయండి';
 
   @override
-  String get goatsTotal => 'మేకలు మొత్తం.';
+  String get goatsTotal => 'మేకల మొత్తం.';
 
   @override
   String get goatsByStage => 'దశ ప్రకారం మేకలు.';
@@ -1170,13 +1170,13 @@ class AppLocalizationsTe extends AppLocalizations {
   String get goatsByGender => 'లింగం ప్రకారం మేకలు.';
 
   @override
-  String get milkSummary => 'పాల సంగ్రహం.';
+  String get milkSummary => 'పాలు సారాంశం.';
 
   @override
-  String get dailyMilkAverage => 'రోజువారీ పాల సగటు.';
+  String get dailyMilkAverage => 'రోజువారీ పాలు సగటు.';
 
   @override
-  String get totalMilkProduced => 'మొత్తం పాల ఉత్పత్తి.';
+  String get totalMilkProduced => 'మొత్తం పాలు ఉత్పత్తి.';
 
   @override
   String get totalForKidsUsed => 'పిల్లలకు/ఉపయోగించిన మొత్తం.';
@@ -1185,7 +1185,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get mostProductiveGoat => 'అత్యంత ఉత్పాదక మేక.';
 
   @override
-  String get leastProductiveGoat => 'తక్కువ ఉత్పాదక మేక.';
+  String get leastProductiveGoat => 'కనిష్ట ఉత్పాదక మేక.';
 
   @override
   String get records => 'రికార్డులు';
@@ -1194,25 +1194,25 @@ class AppLocalizationsTe extends AppLocalizations {
   String get day => 'రోజు';
 
   @override
-  String get produced => 'ఉత్పత్తి';
+  String get produced => 'ఉత్పత్తి చేయబడింది';
 
   @override
-  String get notAvailable => 'లభ్యం కాదు';
+  String get notAvailable => 'అందుబాటులో లేదు';
 
   @override
-  String get noRecordsFound => 'ఎంచుకున్న కాలంలో రికార్డులు లేవు';
+  String get noRecordsFound => 'ఎంచుకున్న కాలానికి రికార్డులు కనుగొనబడలేదు';
 
   @override
   String get viewDetails => 'వివరాలు చూడండి';
 
   @override
-  String get editRecords => 'రికార్డులు సవరించండి';
+  String get editRecords => 'రికార్డ్లను సవరించండి';
 
   @override
-  String get customRange => 'ఇష్టపడిన కాలం';
+  String get customRange => 'కస్టమ్ పరిధి';
 
   @override
-  String get selectDateRange => 'తేదీ కాలాన్ని ఎంచుకోండి';
+  String get selectDateRange => 'తేదీ పరిధిని ఎంచుకోండి';
 
   @override
   String get january => 'జనవరి';
@@ -1254,17 +1254,17 @@ class AppLocalizationsTe extends AppLocalizations {
   String get confirm => 'నిర్ధారించండి';
 
   @override
-  String get invalidDateRange => 'చెల్లని తేదీ కాలం';
+  String get invalidDateRange => 'చెల్లని తేదీ పరిధి';
 
   @override
   String get previousMonth => 'గత నెల';
 
   @override
-  String get exportPDF => 'PDF ఎగుమతి';
+  String get exportPDF => 'PDF ఎగుమతి చేయండి';
 
   @override
   String get pdfExportConfirmation =>
-      'ఎంచుకున్న కాలానికి PDF రిపోర్ట్ జనరేట్ చేయాలనుకుంటున్నారా?';
+      'మీరు ఎంచుకున్న కాలానికి PDF రిపోర్ట్ను జనరేట్ చేయాలనుకుంటున్నారా?';
 
   @override
   String get pdfGenerating => 'PDF రిపోర్ట్ జనరేట్ చేస్తోంది...';
@@ -1274,4 +1274,79 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get noDataToExport => 'ఎంచుకున్న కాలానికి ఎగుమతి చేయడానికి డేటా లేదు';
+
+  @override
+  String get individualEvents => 'వ్యక్తిగత ఈవెంట్లు';
+
+  @override
+  String get massEvents => 'సామూహిక ఈవెంట్లు';
+
+  @override
+  String get archives => 'ఆర్కైవ్స్';
+
+  @override
+  String get totalAllEvents => 'మొత్తం అన్ని ఈవెంట్లు';
+
+  @override
+  String get soldGoats => 'విక్రయించబడిన మేకలు';
+
+  @override
+  String get deadGoats => 'మరణించిన మేకలు';
+
+  @override
+  String get lostGoats => 'కోల్పోయిన మేకలు';
+
+  @override
+  String get otherArchived => 'ఇతర ఆర్కైవ్ చేయబడినవి';
+
+  @override
+  String get othersArchived => 'ఇతర ఆర్కైవ్ చేయబడినవి';
+
+  @override
+  String get sold => 'విక్రయించబడింది';
+
+  @override
+  String get dead => 'మరణించింది';
+
+  @override
+  String get lost => 'కోల్పోయింది';
+
+  @override
+  String get allArchivedGoats => 'అన్ని ఆర్కైవ్ చేయబడిన మేకలు';
+
+  @override
+  String get noArchivedGoatsFound => 'ఆర్కైవ్ చేయబడిన మేకలు లేవు';
+
+  @override
+  String get unknownBreed => 'తెలియని జాతి';
+
+  @override
+  String get restoredSuccessfully => 'విజయవంతంగా పునరుద్ధరించబడింది';
+
+  @override
+  String get givesBirth => 'పిల్లలు కన్నది';
+
+  @override
+  String get dryOff => 'పాల ఆరిపోయింది';
+
+  @override
+  String get breeding => 'ప్రజననం';
+
+  @override
+  String get pregnant => 'గర్భిణి';
+
+  @override
+  String get aborted => 'గర్భస్రావం';
+
+  @override
+  String get tagging => 'ట్యాగింగ్';
+
+  @override
+  String get archived => 'ఆర్కైవ్ చేయబడింది';
+
+  @override
+  String get totalEvents => 'మొత్తం ఈవెంట్లు';
+
+  @override
+  String get reason => 'కారణం';
 }

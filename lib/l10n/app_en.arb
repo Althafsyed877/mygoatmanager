@@ -253,7 +253,7 @@
   "noEventsToDisplay": "No events to display.",
   "massEvent": "Mass Event",
   "other": "Other",
-   "income": "Income",
+  "income": "Income",
   "expenses": "Expenses",
   "search": "Search",
   "filter": "Filter",
@@ -349,7 +349,7 @@
   "searchGroups": "Search groups...",
   "noGoatGroupsRegistered": "No goat groups currently registered as of yet!",
   "editGroup": "Edit Group",
-   "reports": "Reports",
+  "reports": "Reports",
   "transactionsReport": "Transactions",
   "milkReport": "Milk Report",
   "goatsReport": "Goats Report",
@@ -448,18 +448,40 @@
   "save": "Save",
   "invalidDateRange": "Invalid date range",
 
- "today": "Today",
- "currentMonth": "Current Month",
- "previousMonth": "Previous Month",
- "exportPDF": "Export PDF",
- "pdfExportConfirmation": "Do you want to generate PDF report for the selected period?",
- "pdfGenerating": "Generating PDF report...",
- "generate": "Generate",
- "noDataToExport": "No data to export for selected period"
+  "today": "Today",
+  "currentMonth": "Current Month",
+  "previousMonth": "Previous Month",
+  "exportPDF": "Export PDF",
+  "pdfExportConfirmation": "Do you want to generate PDF report for the selected period?",
+  "pdfGenerating": "Generating PDF report...",
+  "generate": "Generate",
+  "noDataToExport": "No data to export for selected period",
+  
+  "individualEvents": "Individual events",
+  "massEvents": "Mass events",
+  "archives": "Archives",
+  "totalAllEvents": "Total All Events",
+  "soldGoats": "Sold Goats",
+  "deadGoats": "Dead Goats",
+  "lostGoats": "Lost Goats",
+  "otherArchived": "Other Archived",
+  "othersArchived": "Others archived",
+  "sold": "Sold",
+  "dead": "Dead",
+  "lost": "Lost",
+  "allArchivedGoats": "All Archived Goats",
+  "noArchivedGoatsFound": "No archived goats found",
+  "unknownBreed": "Unknown breed",
+  "restoredSuccessfully": "restored successfully",
+  
+  "givesBirth": "Gives Birth",
+  "dryOff": "Dry off",
+  "breeding": "Breeding",
+  "pregnant": "Pregnant",
+  "aborted": "Aborted",
+  "tagging": "Tagging",
 
+  "archived": "Archived",
+  "totalEvents": "Total Events",
+  "reason": "Reason"
 }
- 
- 
-
-
-

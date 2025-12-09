@@ -25,30 +25,10 @@ class _EventsReportPageState extends State<EventsReportPage> {
   int _otherArchivedCount = 0;
   
   // Individual event types - MUST MATCH AddEventPage exactly
-  final List<String> _individualEventTypes = [
-    'Treated',
-    'Weighed',  // Changed from 'Weighted' to 'Weighed'
-    'Weaned',
-    'Gives Birth',
-    'Dry off',
-    'Breeding',
-    'Pregnant',
-    'Aborted',
-    'Castrated',
-    'Vaccinated',
-    'Deworming',
-  ];
+  List<String> _individualEventTypes = [];
   
   // Mass event types
-  final List<String> _massEventTypes = [
-    'Vaccination',
-    'Herd spraying',
-    'Deworming',
-    'Treatment',
-    'Hoof Trimming',
-    'Tagging',
-    'Others',
-  ];
+  List<String> _massEventTypes = [];
 
   @override
   void initState() {
@@ -59,8 +39,42 @@ class _EventsReportPageState extends State<EventsReportPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Initialize localized strings
+    _initializeLocalizedStrings();
     // Reload when page becomes visible
     _loadData();
+  }
+
+  void _initializeLocalizedStrings() {
+    final loc = AppLocalizations.of(context)!;
+    
+    // Individual event types - localized
+    _individualEventTypes = [
+      loc.treated,
+      loc.weighed,
+      loc.weaned,
+      loc.givesBirth,
+      loc.dryOff,
+      loc.breeding,
+      loc.pregnant,
+      loc.aborted,
+      loc.castrated,
+      loc.vaccinated,
+      loc.deworming,
+    ];
+    
+    // Mass event types - localized
+    _massEventTypes = [
+      loc.treated,
+      loc.weighed,
+      loc.weaned,
+      loc.castrated,
+      loc.vaccinated,
+      loc.deworming,
+      loc.hoofTrimming,
+      loc.tagging,
+      loc.other,
+    ];
   }
 
   Future<void> _loadData() async {
@@ -184,6 +198,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
 
   // Show archive details
   void _showArchiveDetails(BuildContext context, String title, String reason) async {
+    final loc = AppLocalizations.of(context)!;
     final archives = await ArchiveService.getArchivedGoats(reason);
     
     showDialog(
@@ -197,7 +212,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
             child: archives.isEmpty
                 ? Center(
                     child: Text(
-                      'No ${title.toLowerCase()} found',
+                      loc.noArchivedGoatsFound,
                       style: TextStyle(color: Colors.grey.shade600),
                     ),
                   )
@@ -212,14 +227,14 @@ class _EventsReportPageState extends State<EventsReportPage> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${archive.breed ?? "Unknown breed"} • ${archive.gender}'),
-                              Text('Archived: ${_formatDate(archive.archiveDate)}'),
+                              Text('${archive.breed ?? loc.unknownBreed} • ${archive.gender}'),
+                              Text('${loc.archived}: ${_formatDate(archive.archiveDate)}'),
                               if (archive.notes != null && archive.notes!.isNotEmpty)
-                                Text('Notes: ${archive.notes}'),
+                                Text('${loc.notes}: ${archive.notes}'),
                             ],
                           ),
                           trailing: IconButton(
-                            icon: const Icon(Icons.restore, color: Colors.green),
+                            icon: Icon(Icons.restore, color: Colors.green),
                             onPressed: () async {
                               final restoredGoat = await ArchiveService.restoreGoat(archive.tagNo);
                               if (restoredGoat != null) {
@@ -236,7 +251,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('${archive.tagNo} restored successfully'),
+                                      content: Text('${archive.tagNo} ${loc.restoredSuccessfully}'),
                                       backgroundColor: const Color(0xFF4CAF50),
                                     ),
                                   );
@@ -253,7 +268,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Close'),
+              child: Text(loc.close),
             ),
           ],
         );
@@ -273,18 +288,18 @@ class _EventsReportPageState extends State<EventsReportPage> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: const Icon(Icons.calendar_month),
+            icon: Icon(Icons.calendar_month),
             onPressed: () => _selectMonth(context),
           ),
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             onPressed: () {
               print('=== MANUAL REFRESH TRIGGERED ===');
               _loadData();
             },
           ),
           IconButton(
-            icon: const Icon(Icons.archive),
+            icon: Icon(Icons.archive),
             onPressed: () => _showAllArchives(context),
           ),
         ],
@@ -304,7 +319,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Events Report',
+                      loc.eventsReport,
                       style: theme.textTheme.headlineSmall?.copyWith(
                         color: const Color(0xFF2E7D32),
                         fontWeight: FontWeight.bold,
@@ -313,10 +328,10 @@ class _EventsReportPageState extends State<EventsReportPage> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                        Icon(Icons.calendar_today, size: 16, color: Colors.grey),
                         const SizedBox(width: 8),
                         Text(
-                          'Current Month',
+                          loc.currentMonth,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -332,7 +347,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Total Events: ${_monthEvents.length}',
+                      '${loc.totalEvents}: ${_monthEvents.length}',
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF4CAF50),
@@ -340,7 +355,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                     ),
                     // Debug info
                     Text(
-                      'Total All Events: ${_events.length}',
+                      '${loc.totalAllEvents}: ${_events.length}',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: Colors.grey,
                       ),
@@ -353,7 +368,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
             const SizedBox(height: 24),
             
             // Individual Events Section
-            _buildSectionHeader('Individual events'),
+            _buildSectionHeader(loc.individualEvents),
             Card(
               elevation: 2,
               child: Padding(
@@ -375,7 +390,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
             const SizedBox(height: 32),
             
             // Mass Events Section
-            _buildSectionHeader('Mass events'),
+            _buildSectionHeader(loc.massEvents),
             Card(
               elevation: 2,
               child: Padding(
@@ -397,7 +412,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
             const SizedBox(height: 32),
             
             // Archives Section
-            _buildSectionHeader('Archives'),
+            _buildSectionHeader(loc.archives),
             Card(
               elevation: 2,
               child: Padding(
@@ -406,9 +421,9 @@ class _EventsReportPageState extends State<EventsReportPage> {
                   children: [
                     // Sold goats - clickable
                     InkWell(
-                      onTap: () => _showArchiveDetails(context, 'Sold Goats', 'sold'),
+                      onTap: () => _showArchiveDetails(context, loc.soldGoats, 'sold'),
                       child: _buildArchiveItem(
-                        title: 'Sold goats',
+                        title: loc.soldGoats,
                         count: _soldGoatsCount,
                         icon: Icons.sell,
                         color: Colors.orange,
@@ -417,9 +432,9 @@ class _EventsReportPageState extends State<EventsReportPage> {
                     const Divider(),
                     // Dead goats - clickable
                     InkWell(
-                      onTap: () => _showArchiveDetails(context, 'Dead Goats', 'dead'),
+                      onTap: () => _showArchiveDetails(context, loc.deadGoats, 'dead'),
                       child: _buildArchiveItem(
-                        title: 'Dead goats',
+                        title: loc.deadGoats,
                         count: _deadGoatsCount,
                         icon: Icons.cancel,
                         color: Colors.red,
@@ -428,9 +443,9 @@ class _EventsReportPageState extends State<EventsReportPage> {
                     const Divider(),
                     // Lost goats - clickable
                     InkWell(
-                      onTap: () => _showArchiveDetails(context, 'Lost Goats', 'lost'),
+                      onTap: () => _showArchiveDetails(context, loc.lostGoats, 'lost'),
                       child: _buildArchiveItem(
-                        title: 'Lost goats',
+                        title: loc.lostGoats,
                         count: _lostGoatsCount,
                         icon: Icons.location_off,
                         color: Colors.blue,
@@ -439,9 +454,9 @@ class _EventsReportPageState extends State<EventsReportPage> {
                     const Divider(),
                     // Other archived - clickable
                     InkWell(
-                      onTap: () => _showArchiveDetails(context, 'Other Archived', 'other'),
+                      onTap: () => _showArchiveDetails(context, loc.otherArchived, 'other'),
                       child: _buildArchiveItem(
-                        title: 'Others archived',
+                        title: loc.othersArchived,
                         count: _otherArchivedCount,
                         icon: Icons.archive,
                         color: Colors.purple,
@@ -462,7 +477,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
           print('Total events in memory: ${_events.length}');
           print('Current month: ${_selectedMonth.month}/${_selectedMonth.year}');
           print('Month events: ${_monthEvents.length}');
-          print('Weighed events count: ${_getIndividualEventCount("Weighed")}');
+          print('Weighed events count: ${_getIndividualEventCount(loc.weighed)}');
           print('All event types:');
           for (var type in _individualEventTypes) {
             print('  $type: ${_getIndividualEventCount(type)}');
@@ -470,7 +485,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
           print('==================');
         },
         backgroundColor: Colors.blue,
-        child: const Icon(Icons.bug_report),
+        child: Icon(Icons.bug_report),
       ),
     );
   }
@@ -610,50 +625,51 @@ class _EventsReportPageState extends State<EventsReportPage> {
 
   // Helper methods to get icons and colors for events
   IconData _getEventIcon(String eventType) {
-    switch (eventType) {
-      case 'Treated': return Icons.healing;
-      case 'Weighed': return Icons.scale;
-      case 'Weaned': return Icons.child_care;
-      case 'Gives Birth': return Icons.family_restroom;
-      case 'Dry off': return Icons.water_drop;
-      case 'Breeding': return Icons.favorite;
-      case 'Pregnant': return Icons.pregnant_woman;
-      case 'Aborted': return Icons.cancel;
-      case 'Castrated': return Icons.cut;
-      case 'Vaccinated': return Icons.medical_services;
-      case 'Deworming': return Icons.bug_report;
-      default: return Icons.event;
-    }
+    final loc = AppLocalizations.of(context)!;
+    
+    if (eventType == loc.treated) return Icons.healing;
+    if (eventType == loc.weighed) return Icons.scale;
+    if (eventType == loc.weaned) return Icons.child_care;
+    if (eventType == loc.givesBirth) return Icons.family_restroom;
+    if (eventType == loc.dryOff) return Icons.water_drop;
+    if (eventType == loc.breeding) return Icons.favorite;
+    if (eventType == loc.pregnant) return Icons.pregnant_woman;
+    if (eventType == loc.aborted) return Icons.cancel;
+    if (eventType == loc.castrated) return Icons.cut;
+    if (eventType == loc.vaccinated) return Icons.medical_services;
+    if (eventType == loc.deworming) return Icons.bug_report;
+    return Icons.event;
   }
 
   Color _getEventColor(String eventType) {
-    switch (eventType) {
-      case 'Treated': return Colors.red;
-      case 'Weighed': return Colors.teal;
-      case 'Weaned': return Colors.orange;
-      case 'Gives Birth': return Colors.pink;
-      case 'Dry off': return Colors.blue;
-      case 'Breeding': return Colors.purple;
-      case 'Pregnant': return Colors.pinkAccent;
-      case 'Aborted': return Colors.redAccent;
-      case 'Castrated': return Colors.brown;
-      case 'Vaccinated': return Colors.green;
-      case 'Deworming': return Colors.deepOrange;
-      default: return Colors.grey;
-    }
+    final loc = AppLocalizations.of(context)!;
+    
+    if (eventType == loc.treated) return Colors.red;
+    if (eventType == loc.weighed) return Colors.teal;
+    if (eventType == loc.weaned) return Colors.orange;
+    if (eventType == loc.givesBirth) return Colors.pink;
+    if (eventType == loc.dryOff) return Colors.blue;
+    if (eventType == loc.breeding) return Colors.purple;
+    if (eventType == loc.pregnant) return Colors.pinkAccent;
+    if (eventType == loc.aborted) return Colors.redAccent;
+    if (eventType == loc.castrated) return Colors.brown;
+    if (eventType == loc.vaccinated) return Colors.green;
+    if (eventType == loc.deworming) return Colors.deepOrange;
+    return Colors.grey;
   }
 
   Color _getMassEventColor(String eventType) {
-    switch (eventType) {
-      case 'Vaccination': return Colors.green;
-      case 'Herd spraying': return Colors.blue;
-      case 'Deworming': return Colors.deepOrange;
-      case 'Treatment': return Colors.red;
-      case 'Hoof Trimming': return Colors.brown;
-      case 'Tagging': return Colors.purple;
-      case 'Others': return Colors.grey;
-      default: return Colors.grey;
-    }
+    final loc = AppLocalizations.of(context)!;
+    
+    if (eventType == loc.treated) return Colors.green;
+    if (eventType == loc.weighed) return Colors.blue;
+    if (eventType == loc.weaned) return Colors.deepOrange;
+    if (eventType == loc.castrated) return Colors.red;
+    if (eventType == loc.vaccinated) return Colors.pinkAccent;
+    if (eventType == loc.deworming) return Colors.brown;
+    if (eventType == loc.hoofTrimming) return Colors.purple;
+    if (eventType == loc.other) return Colors.grey;
+    return Colors.grey;
   }
 
   Future<void> _selectMonth(BuildContext context) async {
@@ -676,20 +692,21 @@ class _EventsReportPageState extends State<EventsReportPage> {
 
   // Function to show all archives
   void _showAllArchives(BuildContext context) async {
+    final loc = AppLocalizations.of(context)!;
     final archives = await ArchiveService.getAllArchives();
     
     showDialog(
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          title: const Text('All Archived Goats'),
+          title: Text(loc.allArchivedGoats),
           content: SizedBox(
             width: double.maxFinite,
             height: 400,
             child: archives.isEmpty
                 ? Center(
                     child: Text(
-                      'No archived goats found',
+                      loc.noArchivedGoatsFound,
                       style: TextStyle(color: Colors.grey.shade600),
                     ),
                   )
@@ -708,14 +725,14 @@ class _EventsReportPageState extends State<EventsReportPage> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Reason: ${archive.reason}'),
-                              Text('Date: ${_formatDate(archive.archiveDate)}'),
+                              Text('${loc.reason}: ${_getArchiveReasonText(archive.reason, loc)}'),
+                              Text('${loc.date}: ${_formatDate(archive.archiveDate)}'),
                               if (archive.notes != null && archive.notes!.isNotEmpty)
-                                Text('Notes: ${archive.notes}'),
+                                Text('${loc.notes}: ${archive.notes}'),
                             ],
                           ),
                           trailing: IconButton(
-                            icon: const Icon(Icons.restore, color: Colors.green),
+                            icon: Icon(Icons.restore, color: Colors.green),
                             onPressed: () async {
                               final restoredGoat = await ArchiveService.restoreGoat(archive.tagNo);
                               if (restoredGoat != null) {
@@ -732,7 +749,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('${archive.tagNo} restored successfully'),
+                                      content: Text('${archive.tagNo} ${loc.restoredSuccessfully}'),
                                       backgroundColor: const Color(0xFF4CAF50),
                                     ),
                                   );
@@ -750,7 +767,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Close'),
+              child: Text(loc.close),
             ),
           ],
         );
@@ -759,21 +776,24 @@ class _EventsReportPageState extends State<EventsReportPage> {
   }
 
   IconData _getArchiveIcon(String reason) {
-    switch (reason) {
-      case 'sold': return Icons.sell;
-      case 'dead': return Icons.cancel;
-      case 'lost': return Icons.location_off;
-      default: return Icons.archive;
-    }
+    if (reason == 'sold') return Icons.sell;
+    if (reason == 'dead') return Icons.cancel;
+    if (reason == 'lost') return Icons.location_off;
+    return Icons.archive;
   }
 
   Color _getArchiveColor(String reason) {
-    switch (reason) {
-      case 'sold': return Colors.orange;
-      case 'dead': return Colors.red;
-      case 'lost': return Colors.blue;
-      default: return Colors.purple;
-    }
+    if (reason == 'sold') return Colors.orange;
+    if (reason == 'dead') return Colors.red;
+    if (reason == 'lost') return Colors.blue;
+    return Colors.purple;
+  }
+
+  String _getArchiveReasonText(String reason, AppLocalizations loc) {
+    if (reason == 'sold') return loc.sold;
+    if (reason == 'dead') return loc.dead;
+    if (reason == 'lost') return loc.lost;
+    return loc.other;
   }
 }
 

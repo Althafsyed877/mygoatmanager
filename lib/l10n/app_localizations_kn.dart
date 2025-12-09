@@ -21,7 +21,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get syncData => 'ಡೇಟಾ ಸಿಂಕ್ ಮಾಡಿ';
 
   @override
-  String get cancel => 'ರದ್ದುಮಾಡಿ';
+  String get cancel => 'ರದ್ದು ಮಾಡಿ';
 
   @override
   String get delete => 'ಅಳಿಸಿ';
@@ -33,25 +33,25 @@ class AppLocalizationsKn extends AppLocalizations {
   String get goats => 'ಮೇಕೆಗಳು';
 
   @override
-  String get milkRecords => 'ಹಾಲಿನ ದಾಖಲೆಗಳು';
+  String get milkRecords => 'ಹಾಲು ದಾಖಲೆಗಳು';
 
   @override
-  String get events => 'ಘಟನೆಗಳು';
+  String get events => 'ಈವೆಂಟ್ಗಳು';
 
   @override
-  String get transactions => 'ಹಣಕಾಸಿನ ದಾಖಲೆಗಳು';
+  String get transactions => 'ವಹಿವಾಟುಗಳು';
 
   @override
   String get farmSetup => 'ಫಾರ್ಮ್ ಸೆಟಪ್';
 
   @override
-  String get reports => 'ವರದಿಗಳು';
+  String get reports => 'ರಿಪೋರ್ಟ್ಗಳು';
 
   @override
   String get createYourFarmAccount => 'ನಿಮ್ಮ ಫಾರ್ಮ್ ಖಾತೆಯನ್ನು ರಚಿಸಿ';
 
   @override
-  String get loginOrCreateAccount => 'ಲಾಗಿನ್ ಮಾಡಿ ಅಥವಾ ಖಾತೆ ರಚಿಸಿ';
+  String get loginOrCreateAccount => 'ಲಾಗಿನ್ ಅಥವಾ ಖಾತೆ ರಚಿಸಿ';
 
   @override
   String get upgradeAndAccount => 'ಅಪ್ಗ್ರೇಡ್ ಮತ್ತು ಖಾತೆ';
@@ -60,7 +60,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get appAndFarmTools => 'ಆಪ್ ಮತ್ತು ಫಾರ್ಮ್ ಟೂಲ್ಸ್';
 
   @override
-  String get settings => 'ಸೆಟ್ಟಿಂಗ್ಗಳು';
+  String get settings => 'ಸೆಟ್ಟಿಂಗ್ಸ್';
 
   @override
   String get farmNotes => 'ಫಾರ್ಮ್ ನೋಟ್ಸ್';
@@ -78,7 +78,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get howToUseThisApp => 'ಈ ಆಪ್ ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು';
 
   @override
-  String get contactOurTeam => 'ನಮ್ಮ ಟೀಮ್ ಸಂಪರ್ಕಿಸಿ';
+  String get contactOurTeam => 'ನಮ್ಮ ತಂಡವನ್ನು ಸಂಪರ್ಕಿಸಿ';
 
   @override
   String get shareAndRecommend => 'ಹಂಚಿಕೊಳ್ಳಿ ಮತ್ತು ಶಿಫಾರಸು ಮಾಡಿ';
@@ -87,16 +87,16 @@ class AppLocalizationsKn extends AppLocalizations {
   String get shareAppWithFriends => 'ಸ್ನೇಹಿತರೊಂದಿಗೆ ಆಪ್ ಹಂಚಿಕೊಳ್ಳಿ';
 
   @override
-  String get rateAppInPlayStore => 'ಪ್ಲೇ ಸ್ಟೋರ್‌ನಲ್ಲಿ ಆಪ್ ಅನ್ನು ರೇಟ್ ಮಾಡಿ';
+  String get rateAppInPlayStore => 'ಪ್ಲೇ ಸ್ಟೋರ್ನಲ್ಲಿ ಆಪ್ ಅನ್ನು ರೇಟ್ ಮಾಡಿ';
 
   @override
-  String get legal => 'ಕಾನೂನು';
+  String get legal => 'ಕಾನೂನುಬದ್ಧ';
 
   @override
-  String get privacyPolicy => 'ಗೌಪ್ಯತಾ ನೀತಿಗೆ';
+  String get privacyPolicy => 'ಗೌಪ್ಯತಾ ನೀತಿ';
 
   @override
-  String get noNewNotifications => 'ಹೊಸ ಅಧಿಸೂಚನೆಗಳಿಲ್ಲ';
+  String get noNewNotifications => 'ಹೊಸ ಅಧಿಸೂಚನೆಗಳು ಇಲ್ಲ';
 
   @override
   String get syncingData => 'ಡೇಟಾ ಸಿಂಕ್ ಆಗುತ್ತಿದೆ';
@@ -105,11 +105,11 @@ class AppLocalizationsKn extends AppLocalizations {
   String get dataSyncedSuccessfully => 'ಡೇಟಾ ಯಶಸ್ವಿಯಾಗಿ ಸಿಂಕ್ ಆಯಿತು';
 
   @override
-  String get welcomeToGoatManager => 'ಆಡು ಮ್ಯಾನೇಜರ್‌ಗೆ ಸ್ವಾಗತ';
+  String get welcomeToGoatManager => 'ಗೋಟ್ ಮ್ಯಾನೇಜರ್ಗೆ ಸ್ವಾಗತ';
 
   @override
   String get manageYourFarmEfficiently =>
-      'ನಮ್ಮ ಸಾಧನಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಫಾರ್ಮ್ ಅನ್ನು ಪರಿಣಾಮಕಾರಿಯಾಗಿ ನಿರ್ವಹಿಸಿ';
+      'ನಮ್ಮ ಟೂಲ್ಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಫಾರ್ಮ್ ಅನ್ನು ಕಾರ್ಯಕ್ಷಮವಾಗಿ ನಿರ್ವಹಿಸಿ';
 
   @override
   String get login => 'ಲಾಗಿನ್';
@@ -121,13 +121,13 @@ class AppLocalizationsKn extends AppLocalizations {
   String get emailAddress => 'ಇಮೇಲ್ ವಿಳಾಸ';
 
   @override
-  String get password => 'ಪಾಸ್‌ವರ್ಡ್';
+  String get password => 'ಪಾಸ್ವರ್ಡ್';
 
   @override
   String get rememberMe => 'ನನ್ನನ್ನು ನೆನಪಿಡಿ';
 
   @override
-  String get forgotPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?';
+  String get forgotPassword => 'ಪಾಸ್ವರ್ಡ್ ಮರೆತಿರುವಿರಾ?';
 
   @override
   String get fullName => 'ಪೂರ್ಣ ಹೆಸರು';
@@ -136,7 +136,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get phoneNumber => 'ಫೋನ್ ನಂಬರ್';
 
   @override
-  String get confirmPassword => 'ಪಾಸ್‌ವರ್ಡ್ ದೃಢೀಕರಿಸಿ';
+  String get confirmPassword => 'ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಿಸಿ';
 
   @override
   String get createAccount => 'ಖಾತೆ ರಚಿಸಿ';
@@ -148,20 +148,20 @@ class AppLocalizationsKn extends AppLocalizations {
   String get bySigningUpYouAgree => 'ಸೈನ್ ಅಪ್ ಮಾಡುವ ಮೂಲಕ, ನೀವು ನಮ್ಮ';
 
   @override
-  String get termsOfService => 'ಸೇವಾ ನಿಯಮಗಳು';
+  String get termsOfService => 'ಸೇವಾ ನಿಬಂಧನೆಗಳನ್ನು';
 
   @override
   String get and => 'ಮತ್ತು';
 
   @override
-  String get pleaseFillAllFields => 'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಫೀಲ್ಡ್‌ಗಳನ್ನು ಪೂರಿಸಿ';
+  String get pleaseFillAllFields => 'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಫೀಲ್ಡ್ಗಳನ್ನು ತುಂಬಿಸಿ';
 
   @override
-  String get passwordsDoNotMatch => 'ಪಾಸ್‌ವರ್ಡ್‌ಗಳು ಹೊಂದಿಕೆಯಾಗುವುದಿಲ್ಲ';
+  String get passwordsDoNotMatch => 'ಪಾಸ್ವರ್ಡ್ಗಳು ಹೊಂದಿಕೆಯಾಗುವುದಿಲ್ಲ';
 
   @override
   String get passwordMustBeAtLeast6Characters =>
-      'ಪಾಸ್‌ವರ್ಡ್ ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳಾಗಿರಬೇಕು';
+      'ಪಾಸ್ವರ್ಡ್ ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳನ್ನು ಹೊಂದಿರಬೇಕು';
 
   @override
   String get pleaseEnterEmail => 'ದಯವಿಟ್ಟು ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ';
@@ -170,7 +170,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get resetLinkSentTo => 'ರೀಸೆಟ್ ಲಿಂಕ್ ಕಳುಹಿಸಲಾಗಿದೆ';
 
   @override
-  String get signingInWith => 'ಇದರೊಂದಿಗೆ ಸೈನ್ ಇನ್ ಆಗುತ್ತಿದೆ';
+  String get signingInWith => 'ಲಾಗಿನ್ ಆಗುತ್ತಿದೆ';
 
   @override
   String get loginSuccessful => 'ಲಾಗಿನ್ ಯಶಸ್ವಿಯಾಗಿದೆ!';
@@ -180,13 +180,13 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get enterEmailToReset =>
-      'ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಲು ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ';
+      'ನಿಮ್ಮ ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಲು ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ';
 
   @override
-  String get resetPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ';
+  String get resetPassword => 'ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ';
 
   @override
-  String get selectBreed => 'ಕುಲ ಆಯ್ಕೆಮಾಡಿ ..';
+  String get selectBreed => 'ಬ್ರೀಡ್ ಆಯ್ಕೆಮಾಡಿ ..';
 
   @override
   String get searchHint => 'ಹುಡುಕಿ...';
@@ -195,19 +195,19 @@ class AppLocalizationsKn extends AppLocalizations {
   String get close => 'ಮುಚ್ಚಿ';
 
   @override
-  String get allBreeds => 'ಎಲ್ಲಾ ಜಾತಿಗಳು';
+  String get allBreeds => 'ಎಲ್ಲಾ ಬ್ರೀಡ್ಗಳು';
 
   @override
-  String get breedOptional => 'ಕುಲ (ಐಚ್ಛಿಕ)';
+  String get breedOptional => 'ಬ್ರೀಡ್ (ಐಚ್ಛಿಕ)';
 
   @override
-  String get clear => 'ಸ್ಪಷ್ಟ';
+  String get clear => 'ತೆರವುಗೊಳಿಸಿ';
 
   @override
-  String get takePhoto => 'ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ';
+  String get takePhoto => 'ಫೋಟೋ ತೆಗೆಯಿರಿ';
 
   @override
-  String get photoCaptured => 'ಫೋಟೋ ಯಶಸ್ವಿಯಾಗಿ ತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ!';
+  String get photoCaptured => 'ಫೋಟೋ ಯಶಸ್ವಿಯಾಗಿ ತೆಗೆಯಲಾಗಿದೆ!';
 
   @override
   String get chooseFromGallery => 'ಗ್ಯಾಲರಿಯಿಂದ ಆಯ್ಕೆಮಾಡಿ';
@@ -228,16 +228,16 @@ class AppLocalizationsKn extends AppLocalizations {
   String get generalDetails => 'ಸಾಮಾನ್ಯ ವಿವರಗಳು';
 
   @override
-  String get tagNo => 'ಟ್ಯಾಗ್ ನಂಬರ್:';
+  String get tagNo => 'ಟ್ಯಾಗ್ ನಂ:';
 
   @override
-  String get tagNoLabel => 'ಟ್ಯಾಗ್ ನಂಬರ್:';
+  String get tagNoLabel => 'ಟ್ಯಾಗ್ ನಂ:';
 
   @override
   String get nameLabel => 'ಹೆಸರು:';
 
   @override
-  String get dobLabel => 'ಜ.ದಿ';
+  String get dobLabel => 'ಜನ್ಮ ದಿನಾಂಕ';
 
   @override
   String get ageLabel => 'ವಯಸ್ಸು';
@@ -252,10 +252,10 @@ class AppLocalizationsKn extends AppLocalizations {
   String get stageLabel => 'ಹಂತ';
 
   @override
-  String get breedLabel => 'ಜಾತಿ';
+  String get breedLabel => 'ಬ್ರೀಡ್';
 
   @override
-  String get groupLabel => 'ಗುಂಪು';
+  String get groupLabel => 'ಗ್ರೂಪ್';
 
   @override
   String get joinedOn => 'ಸೇರಿದ ದಿನಾಂಕ:';
@@ -273,7 +273,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get fatherLabel => 'ತಂದೆ:';
 
   @override
-  String get notesLabel => 'ಕೆಲವು ಟಿಪ್ಪಣಿಗಳನ್ನು ಬರೆಯಿರಿ ...';
+  String get notesLabel => 'ನೋಟ್ಸ್:';
 
   @override
   String get tapToUpload => 'ಚಿತ್ರ ಅಪ್ಲೋಡ್ ಮಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ...';
@@ -288,13 +288,13 @@ class AppLocalizationsKn extends AppLocalizations {
   String get goatOffspring => 'ಮೇಕೆಯ ಮರಿಗಳು';
 
   @override
-  String get noEventsYet => 'ಇನ್ನೂ ಘಟನೆಗಳಿಲ್ಲ';
+  String get noEventsYet => 'ಇನ್ನೂ ಈವೆಂಟ್ಗಳು ಇಲ್ಲ';
 
   @override
-  String get eventsForThisGoat => 'ಈ ಮೇಕೆಯ ಘಟನೆಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ';
+  String get eventsForThisGoat => 'ಈ ಮೇಕೆಗಾಗಿನ ಈವೆಂಟ್ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ';
 
   @override
-  String get eventsPlaceholder => 'ಈ ಮೇಕೆಯ ಘಟನೆಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ';
+  String get eventsPlaceholder => 'ಈ ಮೇಕೆಗಾಗಿನ ಈವೆಂಟ್ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ';
 
   @override
   String get searchTagOrName => 'ಟ್ಯಾಗ್ ಅಥವಾ ಹೆಸರು ಹುಡುಕಿ...';
@@ -303,53 +303,53 @@ class AppLocalizationsKn extends AppLocalizations {
   String get goatsTitle => 'ಮೇಕೆಗಳು';
 
   @override
-  String get noGoatsAvailableToPreview => 'ಪೂರ್ವವೀಕ್ಷಣೆಗೆ ಮೇಕೆಗಳು ಲಭ್ಯವಿಲ್ಲ';
+  String get noGoatsAvailableToPreview => 'ಪ್ರಿವ್ಯೂಗೆ ಮೇಕೆಗಳು ಲಭ್ಯವಿಲ್ಲ';
 
   @override
   String get exportPdf => 'PDF ರಫ್ತು ಮಾಡಿ';
 
   @override
-  String get filterBy => 'ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filterBy => 'ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
   String get sortByAge => 'ವಯಸ್ಸಿನ ಪ್ರಕಾರ ವಿಂಗಡಿಸಿ';
 
   @override
   String get noGoatsRegistered =>
-      'ಆಯ್ಕೆಮಾಡಿದ ಫಿಲ್ಟರ್‌ಗಳಿಗೆ ಇನ್ನೂ ಮೇಕೆಗಳು ನೋಂದಾಯಿಸಲಾಗಿಲ್ಲ!';
+      'ಆಯ್ಕೆಮಾಡಿದ ಫಿಲ್ಟರ್ಗಳಿಗೆ ಇನ್ನೂ ಮೇಕೆಗಳು ನೋಂದಾಯಿಸಲ್ಪಡಿಲ್ಲ!';
 
   @override
-  String get selectGroup => 'ಗುಂಪು ಆಯ್ಕೆಮಾಡಿ';
+  String get selectGroup => 'ಗ್ರೂಪ್ ಆಯ್ಕೆಮಾಡಿ';
 
   @override
   String get addGoat => 'ಸೇರಿಸಿ';
 
   @override
-  String get viewRecord => 'ದಾಖಲೆ ವೀಕ್ಷಿಸಿ';
+  String get viewRecord => 'ರೆಕಾರ್ಡ್ ನೋಡಿ';
 
   @override
-  String get editRecord => 'ದಾಖಲೆ ಸಂಪಾದಿಸಿ';
+  String get editRecord => 'ರೆಕಾರ್ಡ್ ಸಂಪಾದಿಸಿ';
 
   @override
-  String get addEvent => 'ಘಟನೆ ಸೇರಿಸಿ';
+  String get addEvent => 'ಈವೆಂಟ್ ಸೇರಿಸಿ';
 
   @override
   String get deleteGoatTitle => 'ಮೇಕೆ ಅಳಿಸಿ';
 
   @override
-  String get deleteGoatConfirm => 'ಮೇಕೆಯನ್ನು ಅಳಿಸಲು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ';
+  String get deleteGoatConfirm => 'ನೀವು ಖಚಿತವಾಗಿ ಮೇಕೆ ಅಳಿಸಲು ಬಯಸುವಿರಾ';
 
   @override
-  String get deleteGoatDeleted => 'ಮೇಕೆ ಅಳಿಸಲಾಗಿದೆ';
+  String get deleteGoatDeleted => 'ಮೇಕೆ ಅಳಿಸಲ್ಪಟ್ಟಿದೆ';
 
   @override
   String get goatsListPdf => 'ಮೇಕೆಗಳ ಪಟ್ಟಿ';
 
   @override
-  String get breedLabel2 => 'ಕುಲ:';
+  String get breedLabel2 => 'ಬ್ರೀಡ್:';
 
   @override
-  String get groupLabel2 => 'ಗುಂಪು:';
+  String get groupLabel2 => 'ಗ್ರೂಪ್:';
 
   @override
   String get dateLabel => 'ದಿನಾಂಕ:';
@@ -362,10 +362,10 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get pleaseSelectAllRequired =>
-      'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಅಗತ್ಯವಿರುವ ಫೀಲ್ಡ್‌ಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ';
+      'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಅಗತ್ಯ ಫೀಲ್ಡ್ಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ';
 
   @override
-  String get tagNoLabel2 => 'ಟ್ಯಾಗ್ ನಂಬರ್. *';
+  String get tagNoLabel2 => 'ಟ್ಯಾಗ್ ನಂ. *';
 
   @override
   String get nameLabel2 => 'ಹೆಸರು.';
@@ -374,55 +374,55 @@ class AppLocalizationsKn extends AppLocalizations {
   String get selectGender => 'ಲಿಂಗ ಆಯ್ಕೆಮಾಡಿ. *';
 
   @override
-  String get dateOfBirth => 'ಹುಟ್ಟಿದ ದಿನಾಂಕ.';
+  String get dateOfBirth => 'ಜನ್ಮ ದಿನಾಂಕ.';
 
   @override
-  String get dateOfEntry => 'ಫಾರ್ಮ್‌ನಲ್ಲಿ ಸೇರಿದ ದಿನಾಂಕ.';
+  String get dateOfEntry => 'ಫಾರ್ಮ್ನಲ್ಲಿ ಸೇರಿದ ದಿನಾಂಕ.';
 
   @override
   String get weightLabel2 => 'ತೂಕ.';
 
   @override
-  String get groupOptional => 'ಗುಂಪು (ಐಚ್ಛಿಕ)';
+  String get groupOptional => 'ಗ್ರೂಪ್ (ಐಚ್ಛಿಕ)';
 
   @override
-  String get breedOptional2 => 'ಜಾತಿ (ಐಚ್ಛಿಕ)';
+  String get breedOptional2 => 'ಬ್ರೀಡ್ (ಐಚ್ಛಿಕ)';
 
   @override
-  String get selectObtained => 'ಮೇಕೆ ಹೇಗೆ ಪಡೆಯಲಾಯಿತು ಎಂದು ಆಯ್ಕೆಮಾಡಿ. *';
+  String get selectObtained => 'ಮೇಕೆ ಹೇಗೆ ಪಡೆಯಲ್ಪಟ್ಟಿತು ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ. *';
 
   @override
-  String get motherTagLabel => 'ತಾಯಿಯ ಟ್ಯಾಗ್ ಸಂಖ್ಯೆ';
+  String get motherTagLabel => 'ತಾಯಿಯ ಟ್ಯಾಗ್ ನಂ.';
 
   @override
-  String get fatherTagLabel => 'ತಂದೆಯ ಟ್ಯಾಗ್ ಸಂಖ್ಯೆ';
+  String get fatherTagLabel => 'ತಂದೆಯ ಟ್ಯಾಗ್ ನಂ.';
 
   @override
-  String get notesPlaceholder => 'ಕೆಲವು ಟಿಪ್ಪಣಿಗಳನ್ನು ಬರೆಯಿರಿ ...';
+  String get notesPlaceholder => 'ಕೆಲವು ನೋಟ್ಸ್ ಬರೆಯಿರಿ ...';
 
   @override
-  String get createNewBreed => 'ಹೊಸ ಕುಲ ರಚಿಸಿ...';
+  String get createNewBreed => 'ಹೊಸ ಬ್ರೀಡ್ ರಚಿಸಿ...';
 
   @override
-  String get createNewGroup => 'ಹೊಸ ಗುಂಪು ರಚಿಸಿ...';
+  String get createNewGroup => 'ಹೊಸ ಗ್ರೂಪ್ ರಚಿಸಿ...';
 
   @override
-  String get goatCreated => 'ಮೇಕೆ ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ!';
+  String get goatCreated => 'ಮೇಕೆ ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲ್ಪಟ್ಟಿದೆ!';
 
   @override
-  String get goatUpdated => 'ಮೇಕೆ ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ!';
+  String get goatUpdated => 'ಮೇಕೆ ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲ್ಪಟ್ಟಿದೆ!';
 
   @override
   String get kid => 'ಮರಿ';
 
   @override
-  String get wether => 'ಮೊಟ್ಟೆ ಆಡು';
+  String get wether => 'ವೆದರ್';
 
   @override
-  String get buckling => 'ಗಂಡು ಮರಿ';
+  String get buckling => 'ಬಕ್ಲಿಂಗ್';
 
   @override
-  String get buck => 'ಗಂಡು ಮೇಕೆ';
+  String get buck => 'ಬಕ್';
 
   @override
   String get alpine => 'ಆಲ್ಪೈನ್';
@@ -431,7 +431,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get boer => 'ಬೋಯರ್';
 
   @override
-  String get kiko => 'ಕಿಕೊ';
+  String get kiko => 'ಕಿಕೋ';
 
   @override
   String get nubian => 'ನ್ಯೂಬಿಯನ್';
@@ -443,63 +443,61 @@ class AppLocalizationsKn extends AppLocalizations {
   String get goatsFilename => 'ಮೇಕೆಗಳು';
 
   @override
-  String get gift => 'ಉಡುಗೊರೆ';
+  String get gift => 'ಉಪಹಾರ';
 
   @override
-  String get selectGenderRequired => 'ಲಿಂಗವನ್ನು ಆಯ್ಕೆಮಾಡಿ *';
+  String get selectGenderRequired => 'ಲಿಂಗ ಆಯ್ಕೆಮಾಡಿ *';
 
   @override
   String get selectGoatStage => '- ಮೇಕೆಯ ಹಂತವನ್ನು ಆಯ್ಕೆಮಾಡಿ -';
 
   @override
   String get selectObtainedRequired =>
-      'ಮೇಕೆ ಹೇಗೆ ಪಡೆಯಲಾಯಿತು ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ *';
+      'ಮೇಕೆ ಹೇಗೆ ಪಡೆಯಲ್ಪಟ್ಟಿತು ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ *';
 
   @override
-  String get tagNoRequired => 'ಟ್ಯಾಗ್ ಸಂಖ್ಯೆ *';
+  String get tagNoRequired => 'ಟ್ಯಾಗ್ ನಂ. *';
 
   @override
-  String get dateOfBirthLabel => 'ಜನ್ಮ ದಿನಾಂಕ';
+  String get dateOfBirthLabel => 'ಜನ್ಮ ದಿನಾಂಕ.';
 
   @override
-  String get dateOfEntryLabel => 'ತೋಟಕ್ಕೆ ಪ್ರವೇಶಿಸಿದ ದಿನಾಂಕ';
+  String get dateOfEntryLabel => 'ಫಾರ್ಮ್ನಲ್ಲಿ ಸೇರಿದ ದಿನಾಂಕ.';
 
   @override
-  String get fillRequiredFields => 'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಅಗತ್ಯ ಕ್ಷೇತ್ರಗಳನ್ನು ಪೂರೈಸಿ';
+  String get fillRequiredFields => 'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಅಗತ್ಯ ಫೀಲ್ಡ್ಗಳನ್ನು ತುಂಬಿಸಿ';
 
   @override
-  String get setFarmLogo =>
-      'ಅಪ್ಲಿಕೇಶನ್ ಸೆಟ್ಟಿಂಗ್ಗಳ ಅಡಿಯಲ್ಲಿ ಫಾರ್ಮ್ ಲೋಗೋವನ್ನು ಹೊಂದಿಸಿ!';
+  String get setFarmLogo => 'ಆಪ್ ಸೆಟ್ಟಿಂಗ್ಸ್ನಲ್ಲಿ ಫಾರ್ಮ್ ಲೋಗೋವನ್ನು ಹೊಂದಿಸಿ!';
 
   @override
-  String get setFarmName =>
-      'ಅಪ್ಲಿಕೇಶನ್ ಸೆಟ್ಟಿಂಗ್ಗಳ ಅಡಿಯಲ್ಲಿ ಫಾರ್ಮ್ ಹೆಸರನ್ನು ಹೊಂದಿಸಿ!';
+  String get setFarmName => 'ಆಪ್ ಸೆಟ್ಟಿಂಗ್ಸ್ನಲ್ಲಿ ಫಾರ್ಮ್ ಹೆಸರನ್ನು ಹೊಂದಿಸಿ!';
 
   @override
   String get setFarmLocation =>
-      'ಅಪ್ಲಿಕೇಶನ್ ಸೆಟ್ಟಿಂಗ್ಗಳ ಅಡಿಯಲ್ಲಿ ಫಾರ್ಮ್ ಸ್ಥಳವನ್ನು ಹೊಂದಿಸಿ!';
+      'ಆಪ್ ಸೆಟ್ಟಿಂಗ್ಸ್ನಲ್ಲಿ ಫಾರ್ಮ್ ಸ್ಥಳವನ್ನು ಹೊಂದಿಸಿ!';
 
   @override
-  String get tagLabel => 'ಟ್ಯಾಗ್';
+  String get tagLabel => 'ಟ್ಯಾಗ್.';
 
   @override
   String get goat => 'ಮೇಕೆ';
 
   @override
-  String get allGroups => 'ಎಲ್ಲಾ ಗುಂಪುಗಳು';
+  String get allGroups => 'ಎಲ್ಲಾ ಗ್ರೂಪ್ಗಳು';
 
   @override
-  String get groupOptional2 => 'ಗುಂಪು (ಐಚ್ಛಿಕ)';
+  String get groupOptional2 => 'Group (optional)';
 
   @override
-  String get filterByPeriod => 'ಕಾಲಾವಧಿಯ ಪ್ರಕಾರ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filterByPeriod => 'ಅವಧಿಯ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
-  String get filterByMilkType => 'ಹಾಲಿನ ಪ್ರಕಾರದ ಪ್ರಕಾರ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filterByMilkType => 'ಹಾಲು ಪ್ರಕಾರದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
   String get noMilkRecordsDisplay =>
-      'ಆಯ್ಕೆಮಾಡಿದ ದಿನಾಂಕ ಶ್ರೇಣಿಗೆ ಪ್ರದರ್ಶಿಸಲು ಹಾಲಿನ ದಾಖಲೆಗಳಿಲ್ಲ.';
+      'ಆಯ್ಕೆಮಾಡಿದ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಗೆ ಪ್ರದರ್ಶಿಸಲು ಹಾಲು ದಾಖಲೆಗಳು ಇಲ್ಲ.';
 
   @override
   String get farm => 'ಫಾರ್ಮ್';
@@ -511,22 +509,22 @@ class AppLocalizationsKn extends AppLocalizations {
   String get used => 'ಬಳಸಲಾಗಿದೆ';
 
   @override
-  String get notes => 'ಟಿಪ್ಪಣಿಗಳು';
+  String get notes => 'ನೋಟ್ಸ್';
 
   @override
-  String get filterByDateRange => 'ದಿನಾಂಕ ಶ್ರೇಣಿಯ ಪ್ರಕಾರ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filterByDateRange => 'ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
-  String get startDate => 'ಆರಂಭ ದಿನಾಂಕ';
+  String get startDate => 'ಪ್ರಾರಂಭ ದಿನಾಂಕ';
 
   @override
-  String get endDate => 'ಕೊನೆಯ ದಿನಾಂಕ';
+  String get endDate => 'ಅಂತ್ಯ ದಿನಾಂಕ';
 
   @override
   String get apply => 'ಅನ್ವಯಿಸಿ';
 
   @override
-  String get milkType => 'ಹಾಲಿನ ಪ್ರಕಾರ';
+  String get milkType => 'ಹಾಲು ಪ್ರಕಾರ';
 
   @override
   String get allTypes => 'ಎಲ್ಲಾ ಪ್ರಕಾರಗಳು';
@@ -535,13 +533,13 @@ class AppLocalizationsKn extends AppLocalizations {
   String get wholeFarm => 'ಸಂಪೂರ್ಣ ಫಾರ್ಮ್';
 
   @override
-  String get individualGoat => 'ವ್ಯಕ್ತಿಗತ ಮೇಕೆ';
+  String get individualGoat => 'ವೈಯಕ್ತಿಕ ಮೇಕೆ';
 
   @override
-  String get generated => 'ರಚಿಸಲಾಗಿದೆ';
+  String get generated => 'ಉತ್ಪಾದಿಸಲಾಗಿದೆ';
 
   @override
-  String get noRecordsToExport => 'ರಫ್ತು ಮಾಡಲು ದಾಖಲೆಗಳಿಲ್ಲ.';
+  String get noRecordsToExport => 'ರಫ್ತು ಮಾಡಲು ದಾಖಲೆಗಳು ಇಲ್ಲ.';
 
   @override
   String get date => 'ದಿನಾಂಕ';
@@ -550,20 +548,20 @@ class AppLocalizationsKn extends AppLocalizations {
   String get available => 'ಲಭ್ಯವಿದೆ';
 
   @override
-  String get selectMilkType => '- ಹಾಲಿನ ಪ್ರಕಾರ ಆಯ್ಕೆಮಾಡಿ -';
+  String get selectMilkType => '- ಹಾಲು ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ -';
 
   @override
-  String get editViewRecord => 'ಸಂಪಾದಿಸಿ/ನೋಡಿ ದಾಖಲೆ';
+  String get editViewRecord => 'ರೆಕಾರ್ಡ್ ಸಂಪಾದಿಸಿ/ನೋಡಿ';
 
   @override
-  String get deleteRecord => 'ದಾಖಲೆ ಅಳಿಸಿ';
+  String get deleteRecord => 'ರೆಕಾರ್ಡ್ ಅಳಿಸಿ';
 
   @override
   String get deleteRecordConfirmation =>
-      'ಈ ದಾಖಲೆಯನ್ನು ಅಳಿಸಲು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?';
+      'ನೀವು ಖಚಿತವಾಗಿ ಈ ರೆಕಾರ್ಡ್ ಅಳಿಸಲು ಬಯಸುವಿರಾ?';
 
   @override
-  String get recordDeleted => 'ದಾಖಲೆ ಯಶಸ್ವಿಯಾಗಿ ಅಳಿಸಲಾಗಿದೆ';
+  String get recordDeleted => 'ರೆಕಾರ್ಡ್ ಯಶಸ್ವಿಯಾಗಿ ಅಳಿಸಲ್ಪಟ್ಟಿದೆ';
 
   @override
   String get add => 'ಸೇರಿಸಿ';
@@ -572,22 +570,22 @@ class AppLocalizationsKn extends AppLocalizations {
   String get all => 'ಎಲ್ಲಾ';
 
   @override
-  String get to => 'ವರೆಗೆ:';
+  String get to => 'ಗೆ';
 
   @override
-  String get searchEventsHint => 'ಘಟನೆಗಳನ್ನು ಹುಡುಕಿ...';
+  String get searchEventsHint => 'ಈವೆಂಟ್ಗಳನ್ನು ಹುಡುಕಿ...';
 
   @override
-  String get individual => 'ವ್ಯಕ್ತಿಗತ';
+  String get individual => 'ವೈಯಕ್ತಿಕ';
 
   @override
   String get mass => 'ಸಮೂಹ';
 
   @override
-  String get filterByDate => 'ದಿನಾಂಕದ ಪ್ರಕಾರ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filterByDate => 'ದಿನಾಂಕದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
-  String get customDateRange => 'ಕಸ್ಟಮ್ ದಿನಾಂಕ ಶ್ರೇಣಿ';
+  String get customDateRange => 'ಕಸ್ಟಮ್ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ';
 
   @override
   String get from => 'ನಿಂದ:';
@@ -611,124 +609,123 @@ class AppLocalizationsKn extends AppLocalizations {
   String get lastMonth => 'ಕಳೆದ ತಿಂಗಳು';
 
   @override
-  String get filterByEventType => 'ಘಟನೆ ಪ್ರಕಾರದ ಪ್ರಕಾರ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filterByEventType => 'ಈವೆಂಟ್ ಪ್ರಕಾರದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
-  String get treated => 'ಚಿಕಿತ್ಸೆ ಮಾಡಲಾಗಿದೆ';
+  String get treated => 'ಚಿಕಿತ್ಸೆ ನೀಡಲಾಗಿದೆ';
 
   @override
   String get weighed => 'ತೂಕ ಮಾಡಲಾಗಿದೆ';
 
   @override
-  String get weaned => 'ಹಾಲು ತೊರೆಸಲಾಗಿದೆ';
+  String get weaned => 'ಹಾಲು ತೆಗೆಯಲಾಗಿದೆ';
 
   @override
-  String get castrated => 'ಪುರುಷತ್ವ ಹರಣ ಮಾಡಲಾಗಿದೆ';
+  String get castrated => 'ಕಸ್ತೂರಿ ಮಾಡಲಾಗಿದೆ';
 
   @override
-  String get vaccinated => 'ಲಸಿಕೆ ಹಾಕಲಾಗಿದೆ';
+  String get vaccinated => 'ತಡೆಗಟ್ಟುವ ಟೀಕೆ';
 
   @override
-  String get deworming => 'ಕ್ರಿಮಿನಾಶಕ ನೀಡಲಾಗಿದೆ';
+  String get deworming => 'ಹುಳುಮದ್ದು ನೀಡಲಾಗಿದೆ';
 
   @override
   String get hoofTrimming => 'ಗೊರಸು ಕತ್ತರಿಸಲಾಗಿದೆ';
 
   @override
-  String get eventType => 'ಘಟನೆ ಪ್ರಕಾರ';
+  String get eventType => 'ಈವೆಂಟ್ ಪ್ರಕಾರ';
 
   @override
   String get noIndividualEvents =>
-      'ಆಯ್ಕೆಮಾಡಿದ ದಿನಾಂಕ ಶ್ರೇಣಿಗೆ ಪ್ರದರ್ಶಿಸಲು ವ್ಯಕ್ತಿಗತ ಘಟನೆಗಳಿಲ್ಲ.';
+      'ಆಯ್ಕೆಮಾಡಿದ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಗೆ ಪ್ರದರ್ಶಿಸಲು ವೈಯಕ್ತಿಕ ಈವೆಂಟ್ಗಳು ಇಲ್ಲ.';
 
   @override
   String get noMassEvents =>
-      'ಆಯ್ಕೆಮಾಡಿದ ದಿನಾಂಕ ಶ್ರೇಣಿಗೆ ಪ್ರದರ್ಶಿಸಲು ಸಮೂಹ ಘಟನೆಗಳಿಲ್ಲ.';
+      'ಆಯ್ಕೆಮಾಡಿದ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಗೆ ಪ್ರದರ್ಶಿಸಲು ಸಮೂಹ ಈವೆಂಟ್ಗಳು ಇಲ್ಲ.';
 
   @override
-  String get selectGoatToContinue => 'ಮುಂದುವರೆಯಲು ಮೇಕೆ ಆಯ್ಕೆಮಾಡಿ...';
+  String get selectGoatToContinue => 'ಮುಂದುವರೆಯಲು ಮೇಕೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ...';
 
   @override
-  String get searchGoatHint => 'ಮೇಕೆ ಹುಡುಕಿ...';
+  String get searchGoatHint => 'ಮೇಕೆಯನ್ನು ಹುಡುಕಿ...';
 
   @override
-  String get noGoatsFound =>
-      'ಮೇಕೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ಮೊದಲು ಮೇಕೆಗಳನ್ನು ಸೇರಿಸಿ';
+  String get noGoatsFound => 'ಮೇಕೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
 
   @override
   String get medicineLabel => 'ಮದ್ದು:';
 
   @override
-  String get diagnosisLabel => 'ರೋಗ ನಿರ್ಣಯ:';
+  String get diagnosisLabel => 'ರೋಗನಿರ್ಣಯ:';
 
   @override
   String get symptomsLabel => 'ಲಕ್ಷಣಗಳು:';
 
   @override
-  String get treatedByLabel => 'ಚಿಕಿತ್ಸೆ ಮಾಡಿದವರು:';
+  String get treatedByLabel => 'ಚಿಕಿತ್ಸೆ ನೀಡಿದವರು:';
 
   @override
   String get weighedLabel => 'ತೂಕ:';
 
   @override
-  String get eventNameLabel => 'ಘಟನೆಯ ಹೆಸರು:';
+  String get eventNameLabel => 'ಈವೆಂಟ್ ಹೆಸರು:';
 
   @override
-  String get editEvent => 'ಘಟನೆ ಸಂಪಾದಿಸಿ';
+  String get editEvent => 'ಈವೆಂಟ್ ಸಂಪಾದಿಸಿ';
 
   @override
-  String get viewGoat => 'ಮೇಕೆ ವೀಕ್ಷಿಸಿ';
+  String get viewGoat => 'ಮೇಕೆ ನೋಡಿ';
 
   @override
-  String get newMassEvent => 'ಹೊಸ ಸಮೂಹ ಘಟನೆ';
+  String get newMassEvent => 'ಹೊಸ ಸಮೂಹ ಈವೆಂಟ್';
 
   @override
-  String get newEvent => 'ಹೊಸ ಘಟನೆ';
+  String get newEvent => 'ಹೊಸ ಈವೆಂಟ್';
 
   @override
-  String get eventDateRequired => 'ಘಟನೆ ದಿನಾಂಕ. *';
+  String get eventDateRequired => 'ಈವೆಂಟ್ ದಿನಾಂಕ. *';
 
   @override
-  String get selectEventTypeRequired => 'ಘಟನೆ ಪ್ರಕಾರ ಆಯ್ಕೆಮಾಡಿ. *';
+  String get selectEventTypeRequired => 'ಈವೆಂಟ್ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ. *';
 
   @override
-  String get symptomsRequired => 'ಅನಾರೋಗ್ಯಕ್ಕೆ ಲಕ್ಷಣಗಳು. *';
+  String get symptomsRequired => 'ರೋಗಕ್ಕೆ ಲಕ್ಷಣಗಳು. *';
 
   @override
-  String get diagnosisRequired => 'ರೋಗ ನಿರ್ಣಯ. *';
+  String get diagnosisRequired => 'ರೋಗನಿರ್ಣಯ. *';
 
   @override
-  String get technicianRequired => 'ತಾಂತ್ರಿಕರ ಹೆಸರು. *';
+  String get technicianRequired => 'ತಂತ್ರಜ್ಞನ ಹೆಸರು. *';
 
   @override
-  String get medicineGivenRequired => 'ಯಾವ ಮದ್ದು ನೀಡಲಾಯಿತು? *';
+  String get medicineGivenRequired => 'ಯಾವ ಮದ್ದು ನೀಡಲಾಗಿದೆ? *';
 
   @override
   String get weighedResultRequired => 'ತೂಕ ಫಲಿತಾಂಶ. *';
 
   @override
-  String get eventNameRequired => 'ಘಟನೆಯ ಹೆಸರು. *';
+  String get eventNameRequired => 'ಈವೆಂಟ್ ಹೆಸರು. *';
 
   @override
-  String get writeNotes => 'ಕೆಲವು ಟಿಪ್ಪಣಿಗಳನ್ನು ಬರೆಯಿರಿ ...';
+  String get writeNotes => 'ಕೆಲವು ನೋಟ್ಸ್ ಬರೆಯಿರಿ ...';
 
   @override
-  String get pleaseSelectEventDate => 'ದಯವಿಟ್ಟು ಘಟನೆ ದಿನಾಂಕ ಆಯ್ಕೆಮಾಡಿ';
+  String get pleaseSelectEventDate => 'ದಯವಿಟ್ಟು ಈವೆಂಟ್ ದಿನಾಂಕವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
 
   @override
-  String get pleaseSelectEventType => 'ದಯವಿಟ್ಟು ಘಟನೆ ಪ್ರಕಾರ ಆಯ್ಕೆಮಾಡಿ';
+  String get pleaseSelectEventType => 'ದಯವಿಟ್ಟು ಈವೆಂಟ್ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
 
   @override
-  String get pleaseEnterEventName => 'ದಯವಿಟ್ಟು ಘಟನೆಯ ಹೆಸರು ನಮೂದಿಸಿ';
+  String get pleaseEnterEventName => 'ದಯವಿಟ್ಟು ಈವೆಂಟ್ ಹೆಸರನ್ನು ನಮೂದಿಸಿ';
 
   @override
-  String get eventsRecords => 'ಘಟನೆಗಳ ದಾಖಲೆಗಳು';
+  String get eventsRecords => 'ಈವೆಂಟ್ ದಾಖಲೆಗಳು';
 
   @override
-  String get noEventsToDisplay => 'ಪ್ರದರ್ಶಿಸಲು ಘಟನೆಗಳಿಲ್ಲ.';
+  String get noEventsToDisplay => 'ಪ್ರದರ್ಶಿಸಲು ಈವೆಂಟ್ಗಳು ಇಲ್ಲ.';
 
   @override
-  String get massEvent => 'ಸಮೂಹ ಘಟನೆ';
+  String get massEvent => 'ಸಮೂಹ ಈವೆಂಟ್';
 
   @override
   String get other => 'ಇತರೆ';
@@ -749,13 +746,13 @@ class AppLocalizationsKn extends AppLocalizations {
   String get more_options => 'ಹೆಚ್ಚಿನ ಆಯ್ಕೆಗಳು';
 
   @override
-  String get search_transactions => 'ಲಾವಾದೇವಿಗಳನ್ನು ಹುಡುಕಿ';
+  String get search_transactions => 'ವಹಿವಾಟುಗಳನ್ನು ಹುಡುಕಿ';
 
   @override
-  String get search_by_description => 'ವಿವರಣೆ, ಮೊತ್ತದಿಂದ ಹುಡುಕಿ...';
+  String get search_by_description => 'ವಿವರಣೆ, ಮೊತ್ತದ ಮೂಲಕ ಹುಡುಕಿ...';
 
   @override
-  String get filter_by_date => 'ದಿನಾಂಕದಿಂದ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filter_by_date => 'ದಿನಾಂಕದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
   String get custom_date_range => 'ಕಸ್ಟಮ್ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ';
@@ -765,11 +762,11 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get no_income_to_display =>
-      'ಆಯ್ದ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಗೆ ಪ್ರದರ್ಶಿಸಲು ಆದಾಯವಿಲ್ಲ.';
+      'ಆಯ್ಕೆಮಾಡಿದ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಗೆ ಪ್ರದರ್ಶಿಸಲು ಆದಾಯ ಇಲ್ಲ.';
 
   @override
   String get no_expenses_to_display =>
-      'ಆಯ್ದ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಗೆ ಪ್ರದರ್ಶಿಸಲು ಖರ್ಚುಗಳಿಲ್ಲ.';
+      'ಆಯ್ಕೆಮಾಡಿದ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಗೆ ಪ್ರದರ್ಶಿಸಲು ಖರ್ಚುಗಳು ಇಲ್ಲ.';
 
   @override
   String get export_pdf => 'PDF ರಫ್ತು ಮಾಡಿ';
@@ -781,31 +778,31 @@ class AppLocalizationsKn extends AppLocalizations {
   String get expense_type => 'ಖರ್ಚು ಪ್ರಕಾರ';
 
   @override
-  String get filter_by_income_type => 'ಆದಾಯ ಪ್ರಕಾರದಿಂದ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filter_by_income_type => 'ಆದಾಯ ಪ್ರಕಾರದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
-  String get filter_by_expense_type => 'ಖರ್ಚು ಪ್ರಕಾರದಿಂದ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filter_by_expense_type => 'ಖರ್ಚು ಪ್ರಕಾರದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
   String get all_types => 'ಎಲ್ಲಾ ಪ್ರಕಾರಗಳು';
 
   @override
-  String get edit_view_record => 'ರೆಕಾರ್ಡ್ ಸಂಪಾದಿಸಿ / ವೀಕ್ಷಿಸಿ';
+  String get edit_view_record => 'ರೆಕಾರ್ಡ್ ಸಂಪಾದಿಸಿ / ನೋಡಿ';
 
   @override
-  String get record_deleted => 'ರೆಕಾರ್ಡ್ ಅಳಿಸಲಾಗಿದೆ';
+  String get record_deleted => 'ರೆಕಾರ್ಡ್ ಅಳಿಸಲ್ಪಟ್ಟಿದೆ';
 
   @override
-  String get income_updated => 'ಆದಾಯ ನವೀಕರಿಸಲಾಗಿದೆ';
+  String get income_updated => 'ಆದಾಯ ನವೀಕರಿಸಲ್ಪಟ್ಟಿದೆ';
 
   @override
-  String get expense_updated => 'ಖರ್ಚು ನವೀಕರಿಸಲಾಗಿದೆ';
+  String get expense_updated => 'ಖರ್ಚು ನವೀಕರಿಸಲ್ಪಟ್ಟಿದೆ';
 
   @override
-  String get income_saved => 'ಆದಾಯ ಉಳಿಸಲಾಗಿದೆ';
+  String get income_saved => 'ಆದಾಯ ಸೇವ್ ಆಯಿತು';
 
   @override
-  String get expense_saved => 'ಖರ್ಚು ಉಳಿಸಲಾಗಿದೆ';
+  String get expense_saved => 'ಖರ್ಚು ಸೇವ್ ಆಯಿತು';
 
   @override
   String get add_income => 'ಆದಾಯ ಸೇರಿಸಿ';
@@ -817,7 +814,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get date_of_income => 'ಆದಾಯ ದಿನಾಂಕ';
 
   @override
-  String get select_income_type => 'ಆದಾಯ ಪ್ರಕಾರ ಆರಿಸಿ';
+  String get select_income_type => 'ಆದಾಯ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
 
   @override
   String get milk_sale => 'ಹಾಲು ಮಾರಾಟ';
@@ -841,20 +838,20 @@ class AppLocalizationsKn extends AppLocalizations {
   String get milk_quantity_sold => 'ಮಾರಾಟವಾದ ಹಾಲಿನ ಪ್ರಮಾಣ';
 
   @override
-  String get selling_price_per_litre => 'ಲೀಟರ್ಗೆ ಮಾರಾಟ ಬೆಲೆ';
+  String get selling_price_per_litre => 'ಲೀಟರ್/ಯೂನಿಟ್ಗೆ ಮಾರಾಟ ಬೆಲೆ';
 
   @override
   String get how_much_did_you_earn => 'ನೀವು ಎಷ್ಟು ಸಂಪಾದಿಸಿದಿರಿ?';
 
   @override
   String get please_go_to_record =>
-      'ದಯವಿಟ್ಟು ಮಾರಾಟವಾದ ಮೇಕೆಯ ರೆಕಾರ್ಡ್ಗೆ ಹೋಗಿ \'ಮಾರಾಟ\' ಎಂದು ಕಾರಣ ನೀಡಿ ಸಂಗ್ರಹಿಸಿ ಮತ್ತು ಆದಾಯ ರೆಕಾರ್ಡ್ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ರಚನೆಯಾಗುತ್ತದೆ!';
+      'ದಯವಿಟ್ಟು ಮಾರಾಟವಾದ ಮೇಕೆಯ ರೆಕಾರ್ಡ್ಗೆ ಹೋಗಿ, \'ಮಾರಾಟವಾಯಿತು\' ಕಾರಣದೊಂದಿಗೆ ಆರ್ಕೈವ್ ಮಾಡಿ, ಆದಾಯ ರೆಕಾರ್ಡ್ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ರಚಿಸಲ್ಪಡುತ್ತದೆ!';
 
   @override
   String get quantity_of_items => 'ವಸ್ತುಗಳ ಪ್ರಮಾಣ';
 
   @override
-  String get please_specify_source => 'ದಯವಿಟ್ಟು ಆದಾಯ ಮೂಲವನ್ನು ನಿರ್ದಿಷ್ಟಪಡಿಸಿ';
+  String get please_specify_source => 'ದಯವಿಟ್ಟು ಆದಾಯದ ಮೂಲವನ್ನು ನಿರ್ದಿಷ್ಟಪಡಿಸಿ';
 
   @override
   String get specify_income_source => 'ಆದಾಯ ಮೂಲವನ್ನು ನಿರ್ದಿಷ್ಟಪಡಿಸಿ';
@@ -863,13 +860,13 @@ class AppLocalizationsKn extends AppLocalizations {
   String get receipt_no_optional => 'ರಸೀದಿ ನಂ. (ಐಚ್ಛಿಕ)';
 
   @override
-  String get write_some_notes => 'ಕೆಲವು ಟಿಪ್ಪಣಿಗಳನ್ನು ಬರೆಯಿರಿ ...';
+  String get write_some_notes => 'ಕೆಲವು ನೋಟ್ಸ್ ಬರೆಯಿರಿ ...';
 
   @override
-  String get enter_receipt_number => 'ರಸೀದಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ';
+  String get enter_receipt_number => 'ರಸೀದಿ ನಂಬರ್ ನಮೂದಿಸಿ';
 
   @override
-  String get enter_your_notes => 'ನಿಮ್ಮ ಟಿಪ್ಪಣಿಗಳನ್ನು ಇಲ್ಲಿ ನಮೂದಿಸಿ...';
+  String get enter_your_notes => 'ನಿಮ್ಮ ನೋಟ್ಸ್ ಇಲ್ಲಿ ನಮೂದಿಸಿ...';
 
   @override
   String get new_income => 'ಹೊಸ ಆದಾಯ';
@@ -878,10 +875,10 @@ class AppLocalizationsKn extends AppLocalizations {
   String get new_expense => 'ಹೊಸ ಖರ್ಚು';
 
   @override
-  String get please_select_date => 'ದಯವಿಟ್ಟು ದಿನಾಂಕವನ್ನು ಆರಿಸಿ';
+  String get please_select_date => 'ದಯವಿಟ್ಟು ದಿನಾಂಕವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
 
   @override
-  String get please_select_income_type => 'ದಯವಿಟ್ಟು ಆದಾಯ ಪ್ರಕಾರವನ್ನು ಆರಿಸಿ';
+  String get please_select_income_type => 'ದಯವಿಟ್ಟು ಆದಾಯ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
 
   @override
   String get please_enter_amount => 'ದಯವಿಟ್ಟು ಮೊತ್ತವನ್ನು ನಮೂದಿಸಿ';
@@ -901,16 +898,17 @@ class AppLocalizationsKn extends AppLocalizations {
   String get date_of_expense => 'ಖರ್ಚು ದಿನಾಂಕ';
 
   @override
-  String get select_expense_type => 'ಖರ್ಚು ಪ್ರಕಾರ ಆರಿಸಿ';
+  String get select_expense_type => 'ಖರ್ಚು ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
 
   @override
-  String get please_select_expense_type => 'ದಯವಿಟ್ಟು ಖರ್ಚು ಪ್ರಕಾರವನ್ನು ಆರಿಸಿ';
+  String get please_select_expense_type =>
+      'ದಯವಿಟ್ಟು ಖರ್ಚು ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
 
   @override
   String get please_enter_name_of_expense => 'ದಯವಿಟ್ಟು ಖರ್ಚಿನ ಹೆಸರನ್ನು ನಮೂದಿಸಿ';
 
   @override
-  String get please_select_category => 'ದಯವಿಟ್ಟು ವರ್ಗವನ್ನು ಆರಿಸಿ';
+  String get please_select_category => 'ದಯವಿಟ್ಟು ವರ್ಗವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
 
   @override
   String get how_much_did_you_spend => 'ನೀವು ಎಷ್ಟು ಖರ್ಚು ಮಾಡಿದಿರಿ?';
@@ -919,10 +917,10 @@ class AppLocalizationsKn extends AppLocalizations {
   String get name_of_expense => 'ಖರ್ಚಿನ ಹೆಸರು';
 
   @override
-  String get select_category => 'ವರ್ಗ ಆರಿಸಿ';
+  String get select_category => 'ವರ್ಗವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
 
   @override
-  String get add_category => 'ವರ್ಗ ಸೇರಿಸಿ';
+  String get add_category => 'ವರ್ಗವನ್ನು ಸೇರಿಸಿ';
 
   @override
   String get category_name => 'ವರ್ಗದ ಹೆಸರು';
@@ -946,10 +944,10 @@ class AppLocalizationsKn extends AppLocalizations {
   String get expense_records => 'ಖರ್ಚು ದಾಖಲೆಗಳು';
 
   @override
-  String get no_income_records => 'ರಫ್ತು ಮಾಡಲು ಆದಾಯ ದಾಖಲೆಗಳಿಲ್ಲ';
+  String get no_income_records => 'ರಫ್ತು ಮಾಡಲು ಆದಾಯ ದಾಖಲೆಗಳು ಇಲ್ಲ';
 
   @override
-  String get no_expense_records => 'ರಫ್ತು ಮಾಡಲು ಖರ್ಚು ದಾಖಲೆಗಳಿಲ್ಲ';
+  String get no_expense_records => 'ರಫ್ತು ಮಾಡಲು ಖರ್ಚು ದಾಖಲೆಗಳು ಇಲ್ಲ';
 
   @override
   String get incomeCategories => 'ಆದಾಯ ವರ್ಗಗಳು';
@@ -958,55 +956,53 @@ class AppLocalizationsKn extends AppLocalizations {
   String get expenseCategories => 'ಖರ್ಚು ವರ್ಗಗಳು';
 
   @override
-  String get goatBreeds => 'ಮೇಕೆ ತಳಿಗಳು';
+  String get goatBreeds => 'ಮೇಕೆ ಬ್ರೀಡ್ಗಳು';
 
   @override
-  String get goatGroups => 'ಮೇಕೆ ಗುಂಪುಗಳು';
+  String get goatGroups => 'ಮೇಕೆ ಗ್ರೂಪ್ಗಳು';
 
   @override
   String get newCategory => 'ಹೊಸ ವರ್ಗ';
 
   @override
-  String get enterName => 'ಹೆಸರನ್ನು ನಮೂದಿಸಿ ...';
+  String get enterName => 'ಹೆಸರು ನಮೂದಿಸಿ ...';
 
   @override
   String get searchCategories => 'ವರ್ಗಗಳನ್ನು ಹುಡುಕಿ...';
 
   @override
-  String get noIncomeCategoriesAdded =>
-      'ಇಲ್ಲಿಯವರೆಗೆ ಯಾವುದೇ ಆದಾಯ ವರ್ಗಗಳು ಸೇರಿಸಲ್ಪಡಲಿಲ್ಲ!';
+  String get noIncomeCategoriesAdded => 'ಇನ್ನೂ ಆದಾಯ ವರ್ಗಗಳು ಸೇರಿಸಲ್ಪಡಿಲ್ಲ!';
 
   @override
-  String get noResultsFound => 'ಯಾವುದೇ ಫಲಿತಾಂಶಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+  String get noResultsFound => 'ಫಲಿತಾಂಶಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
 
   @override
   String get editCategory => 'ವರ್ಗವನ್ನು ಸಂಪಾದಿಸಿ';
 
   @override
-  String get save => 'ಉಳಿಸಿ';
+  String get save => 'ಸೇವ್ ಮಾಡಿ';
 
   @override
-  String get recordSuccessfullyUpdated => 'ರೆಕಾರ್ಡ್ ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ';
+  String get recordSuccessfullyUpdated =>
+      'ರೆಕಾರ್ಡ್ ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲ್ಪಟ್ಟಿದೆ';
 
   @override
-  String get noExpenseCategoriesAdded =>
-      'ಇಲ್ಲಿಯವರೆಗೆ ಯಾವುದೇ ಖರ್ಚು ವರ್ಗಗಳು ಸೇರಿಸಲ್ಪಡಲಿಲ್ಲ!';
+  String get noExpenseCategoriesAdded => 'ಇನ್ನೂ ಖರ್ಚು ವರ್ಗಗಳು ಸೇರಿಸಲ್ಪಡಿಲ್ಲ!';
 
   @override
-  String get newBreed => 'ಹೊಸ ತಳಿ';
+  String get newBreed => 'ಹೊಸ ಬ್ರೀಡ್';
 
   @override
-  String get enterBreedName => 'ತಳಿ ಹೆಸರನ್ನು ನಮೂದಿಸಿ...';
+  String get enterBreedName => 'ಬ್ರೀಡ್ ಹೆಸರು ನಮೂದಿಸಿ...';
 
   @override
-  String get searchBreeds => 'ತಳಿಗಳನ್ನು ಹುಡುಕಿ...';
+  String get searchBreeds => 'ಬ್ರೀಡ್ಗಳನ್ನು ಹುಡುಕಿ...';
 
   @override
-  String get noGoatBreedsAdded =>
-      'ಇಲ್ಲಿಯವರೆಗೆ ಯಾವುದೇ ಮೇಕೆ ತಳಿಗಳು ಸೇರಿಸಲ್ಪಡಲಿಲ್ಲ!';
+  String get noGoatBreedsAdded => 'ಇನ್ನೂ ಮೇಕೆ ಬ್ರೀಡ್ಗಳು ಸೇರಿಸಲ್ಪಡಿಲ್ಲ!';
 
   @override
-  String get editBreed => 'ತಳಿಯನ್ನು ಸಂಪಾದಿಸಿ';
+  String get editBreed => 'ಬ್ರೀಡ್ ಸಂಪಾದಿಸಿ';
 
   @override
   String goatsCount(Object count) {
@@ -1014,44 +1010,44 @@ class AppLocalizationsKn extends AppLocalizations {
   }
 
   @override
-  String get newGroup => 'ಹೊಸ ಗುಂಪು';
+  String get newGroup => 'ಹೊಸ ಗ್ರೂಪ್';
 
   @override
-  String get enterGroupName => 'ಗುಂಪಿನ ಹೆಸರನ್ನು ನಮೂದಿಸಿ...';
+  String get enterGroupName => 'ಗ್ರೂಪ್ ಹೆಸರು ನಮೂದಿಸಿ...';
 
   @override
-  String get searchGroups => 'ಗುಂಪುಗಳನ್ನು ಹುಡುಕಿ...';
+  String get searchGroups => 'ಗ್ರೂಪ್ಗಳನ್ನು ಹುಡುಕಿ...';
 
   @override
   String get noGoatGroupsRegistered =>
-      'ಇಲ್ಲಿಯವರೆಗೆ ಯಾವುದೇ ಮೇಕೆ ಗುಂಪುಗಳು ನೋಂದಾಯಿಸಲ್ಪಡಲಿಲ್ಲ!';
+      'ಪ್ರಸ್ತುತ ಇನ್ನೂ ಮೇಕೆ ಗ್ರೂಪ್ಗಳು ನೋಂದಾಯಿಸಲ್ಪಡಿಲ್ಲ!';
 
   @override
-  String get editGroup => 'ಗುಂಪನ್ನು ಸಂಪಾದಿಸಿ';
+  String get editGroup => 'ಗ್ರೂಪ್ ಸಂಪಾದಿಸಿ';
 
   @override
-  String get transactionsReport => 'ಲಾವಾದೇವಿಗಳು';
+  String get transactionsReport => 'ವಹಿವಾಟುಗಳು';
 
   @override
-  String get milkReport => 'ಹಾಲು ವರದಿ';
+  String get milkReport => 'ಹಾಲು ರಿಪೋರ್ಟ್';
 
   @override
-  String get goatsReport => 'ಮೇಕೆಗಳ ವರದಿ';
+  String get goatsReport => 'ಮೇಕೆಗಳ ರಿಪೋರ್ಟ್';
 
   @override
-  String get eventsReport => 'ಘಟನೆಗಳ ವರದಿ';
+  String get eventsReport => 'ಈವೆಂಟ್ಗಳ ರಿಪೋರ್ಟ್';
 
   @override
-  String get breedingReport => 'ಸಂತಾನೋತ್ಪತ್ತಿ ವರದಿ';
+  String get breedingReport => 'ಸಂತಾನೋತ್ಪತ್ತಿ ರಿಪೋರ್ಟ್';
 
   @override
-  String get pregnanciesReport => 'ಗರ್ಭಧಾರಣೆ ವರದಿ';
+  String get pregnanciesReport => 'ಗರ್ಭಧಾರಣೆ ರಿಪೋರ್ಟ್';
 
   @override
-  String get weightReport => 'ತೂಕ ವರದಿ';
+  String get weightReport => 'ತೂಕ ರಿಪೋರ್ಟ್';
 
   @override
-  String get stageTrackingReport => 'ಹಂತ ಟ್ರ್ಯಾಕಿಂಗ್ ವರದಿ';
+  String get stageTrackingReport => 'ಹಂತ ಟ್ರ್ಯಾಕಿಂಗ್ ರಿಪೋರ್ಟ್';
 
   @override
   String get stageTracking => 'ಹಂತ ಟ್ರ್ಯಾಕಿಂಗ್';
@@ -1064,14 +1060,14 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get wethersNotListed =>
-      'ನಪುಂಸಕ ಮೇಕೆಗಳು ಮತ್ತು ಜನ್ಮ ದಿನಾಂಕ ಇಲ್ಲದ ಪ್ರಾಣಿಗಳನ್ನು ಪಟ್ಟಿಮಾಡಿಲ್ಲ!';
+      'ವೆದರ್ಗಳು ಮತ್ತು ಜನ್ಮ ದಿನಾಂಕ ಇಲ್ಲದ ಪ್ರಾಣಿಗಳು ಪಟ್ಟಿಮಾಡಲ್ಪಟ್ಟಿಲ್ಲ!';
 
   @override
-  String get allCaughtUp => 'ಎಲ್ಲವೂ ಪೂರ್ಣಗೊಂಡಿದೆ!';
+  String get allCaughtUp => 'ಎಲ್ಲವೂ ನವೀಕರಿಸಲ್ಪಟ್ಟಿವೆ!';
 
   @override
   String get noGoatsNeedStageUpdates =>
-      'ಪ್ರಸ್ತುತ ಮೇಕೆಗಳಿಗೆ ಹಂತ ನವೀಕರಣಗಳು ಅಗತ್ಯವಿಲ್ಲ.';
+      'ಈ ಸಮಯದಲ್ಲಿ ಯಾವುದೇ ಮೇಕೆಗಳಿಗೆ ಹಂತ ನವೀಕರಣಗಳ ಅಗತ್ಯವಿಲ್ಲ.';
 
   @override
   String get doe => 'ಹೆಣ್ಣು ಮೇಕೆ';
@@ -1081,7 +1077,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String updateGoatsQuestion(Object count) {
-    return '$count ಮೇಕೆಗಳನ್ನು ಮರಿಮೇಕೆಯಿಂದ ಮುಂದಿನ ಹಂತಕ್ಕೆ ನವೀಕರಿಸಬೇಕೆ?';
+    return '$count ಮೇಕೆಗಳನ್ನು ಮರಿಯಿಂದ ಮುಂದಿನ ಹಂತಕ್ಕೆ ನವೀಕರಿಸಬೇಕೆ?';
   }
 
   @override
@@ -1089,7 +1085,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String updatedGoatsSuccessfully(Object count) {
-    return '$count ಮೇಕೆಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ!';
+    return '$count ಮೇಕೆಗಳು ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲ್ಪಟ್ಟಿವೆ!';
   }
 
   @override
@@ -1098,10 +1094,10 @@ class AppLocalizationsKn extends AppLocalizations {
   }
 
   @override
-  String get breed => 'ಜಾತಿ';
+  String get breed => 'Breed';
 
   @override
-  String get group => 'ಗುಂಪು';
+  String get group => 'Group';
 
   @override
   String get source => 'ಮೂಲ';
@@ -1122,25 +1118,25 @@ class AppLocalizationsKn extends AppLocalizations {
   String get gender => 'ಲಿಂಗ';
 
   @override
-  String get male => 'ಗಂಡು';
+  String get male => 'ಪುರುಷ';
 
   @override
-  String get female => 'ಹೆಣ್ಣು';
+  String get female => 'ಸ್ತ್ರೀ';
 
   @override
   String get does => 'ಹೆಣ್ಣು ಮೇಕೆಗಳು';
 
   @override
-  String get doelings => 'ಹೆಣ್ಣು ಮೇಕೆ ಮರಿಗಳು';
+  String get doelings => 'ಯುವ ಹೆಣ್ಣು ಮೇಕೆಗಳು';
 
   @override
-  String get bucks => 'ಗಂಡು ಮೇಕೆಗಳು';
+  String get bucks => 'ಪುರುಷ ಮೇಕೆಗಳು';
 
   @override
-  String get bucklings => 'ಗಂಡು ಮೇಕೆ ಮರಿಗಳು';
+  String get bucklings => 'ಯುವ ಪುರುಷ ಮೇಕೆಗಳು';
 
   @override
-  String get wethers => 'ನಪುಂಸಕ ಮೇಕೆಗಳು';
+  String get wethers => 'ವೆದರ್ಗಳು';
 
   @override
   String get kids => 'ಮರಿಗಳು';
@@ -1149,10 +1145,10 @@ class AppLocalizationsKn extends AppLocalizations {
   String get allSources => 'ಎಲ್ಲಾ ಮೂಲಗಳು';
 
   @override
-  String get bornOnFarm => 'ಹೊಲದಲ್ಲಿ ಜನಿಸಿದವು';
+  String get bornOnFarm => 'ಫಾರ್ಮ್ನಲ್ಲಿ ಜನಿಸಿದವು';
 
   @override
-  String get purchased => 'ಖರೀದಿಸಿದವು';
+  String get purchased => 'ಖರೀದಿಸಲ್ಪಟ್ಟವು';
 
   @override
   String get milk => 'ಹಾಲು';
@@ -1164,7 +1160,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get failedToExportPdf => 'PDF ರಫ್ತು ವಿಫಲವಾಗಿದೆ';
 
   @override
-  String get filterBySource => 'ಮೂಲದಿಂದ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filterBySource => 'ಮೂಲದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
   String get goatsTotal => 'ಮೇಕೆಗಳು ಒಟ್ಟು.';
@@ -1185,7 +1181,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get totalMilkProduced => 'ಒಟ್ಟು ಹಾಲು ಉತ್ಪಾದನೆ.';
 
   @override
-  String get totalForKidsUsed => 'ಮಕ್ಕಳಿಗೆ/ಬಳಸಿದ ಒಟ್ಟು.';
+  String get totalForKidsUsed => 'ಮರಿಗಳಿಗೆ/ಬಳಸಿದ ಒಟ್ಟು.';
 
   @override
   String get mostProductiveGoat => 'ಹೆಚ್ಚು ಉತ್ಪಾದಕ ಮೇಕೆ.';
@@ -1194,7 +1190,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get leastProductiveGoat => 'ಕಡಿಮೆ ಉತ್ಪಾದಕ ಮೇಕೆ.';
 
   @override
-  String get records => 'ರೆಕಾರ್ಡ್ಗಳು';
+  String get records => 'ದಾಖಲೆಗಳು';
 
   @override
   String get day => 'ದಿನ';
@@ -1206,13 +1202,13 @@ class AppLocalizationsKn extends AppLocalizations {
   String get notAvailable => 'ಲಭ್ಯವಿಲ್ಲ';
 
   @override
-  String get noRecordsFound => 'ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ ರೆಕಾರ್ಡ್ಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+  String get noRecordsFound => 'ಆಯ್ಕೆಮಾಡಿದ ಅವಧಿಗೆ ದಾಖಲೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
 
   @override
-  String get viewDetails => 'ವಿವರಗಳನ್ನು ವೀಕ್ಷಿಸಿ';
+  String get viewDetails => 'ವಿವರಗಳನ್ನು ನೋಡಿ';
 
   @override
-  String get editRecords => 'ರೆಕಾರ್ಡ್ಗಳನ್ನು ಸಂಪಾದಿಸಿ';
+  String get editRecords => 'ದಾಖಲೆಗಳನ್ನು ಸಂಪಾದಿಸಿ';
 
   @override
   String get customRange => 'ಕಸ್ಟಮ್ ವ್ಯಾಪ್ತಿ';
@@ -1266,18 +1262,93 @@ class AppLocalizationsKn extends AppLocalizations {
   String get previousMonth => 'ಹಿಂದಿನ ತಿಂಗಳು';
 
   @override
-  String get exportPDF => 'PDF ರಫ್ತು';
+  String get exportPDF => 'PDF ರಫ್ತು ಮಾಡಿ';
 
   @override
   String get pdfExportConfirmation =>
-      'ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ PDF ವರದಿಯನ್ನು ರಚಿಸಲು ಬಯಸುತ್ತೀರಾ?';
+      'ನೀವು ಆಯ್ಕೆಮಾಡಿದ ಅವಧಿಗೆ PDF ರಿಪೋರ್ಟ್ ಉತ್ಪಾದಿಸಲು ಬಯಸುವಿರಾ?';
 
   @override
-  String get pdfGenerating => 'PDF ವರದಿಯನ್ನು ರಚಿಸಲಾಗುತ್ತಿದೆ...';
+  String get pdfGenerating => 'PDF ರಿಪೋರ್ಟ್ ಉತ್ಪಾದಿಸಲಾಗುತ್ತಿದೆ...';
 
   @override
-  String get generate => 'ರಚಿಸಿ';
+  String get generate => 'ಉತ್ಪಾದಿಸಿ';
 
   @override
-  String get noDataToExport => 'ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ ರಫ್ತು ಮಾಡಲು ಡೇಟಾ ಇಲ್ಲ';
+  String get noDataToExport => 'ಆಯ್ಕೆಮಾಡಿದ ಅವಧಿಗೆ ರಫ್ತು ಮಾಡಲು ಡೇಟಾ ಇಲ್ಲ';
+
+  @override
+  String get individualEvents => 'ವೈಯಕ್ತಿಕ ಈವೆಂಟ್ಗಳು';
+
+  @override
+  String get massEvents => 'ಸಮೂಹ ಈವೆಂಟ್ಗಳು';
+
+  @override
+  String get archives => 'ಆರ್ಕೈವ್';
+
+  @override
+  String get totalAllEvents => 'ಎಲ್ಲಾ ಈವೆಂಟ್ಗಳು';
+
+  @override
+  String get soldGoats => 'ಮಾರಾಟವಾದ ಮೇಕೆಗಳು';
+
+  @override
+  String get deadGoats => 'ಸತ್ತ ಮೇಕೆಗಳು';
+
+  @override
+  String get lostGoats => 'ಕಳೆದುಹೋದ ಮೇಕೆಗಳು';
+
+  @override
+  String get otherArchived => 'ಇತರೆ ಆರ್ಕೈವ್ ಮಾಡಲಾಗಿದೆ';
+
+  @override
+  String get othersArchived => 'ಇತರೆ ಆರ್ಕೈವ್ ಮಾಡಲಾಗಿದೆ';
+
+  @override
+  String get sold => 'ಮಾರಾಟವಾಗಿದೆ';
+
+  @override
+  String get dead => 'ಸತ್ತ';
+
+  @override
+  String get lost => 'ಕಳೆದುಹೋದ';
+
+  @override
+  String get allArchivedGoats => 'ಎಲ್ಲಾ ಆರ್ಕೈವ್ ಮಾಡಲಾದ ಮೇಕೆಗಳು';
+
+  @override
+  String get noArchivedGoatsFound => 'ಆರ್ಕೈವ್ ಮಾಡಲಾದ ಮೇಕೆಗಳು ಯಾವುವೂ ಇಲ್ಲ';
+
+  @override
+  String get unknownBreed => 'ತಿಳಿದಿಲ್ಲದ ತಳಿ';
+
+  @override
+  String get restoredSuccessfully => 'ಯಶಸ್ವಿಯಾಗಿ ಪುನಃಸ್ಥಾಪಿಸಲಾಯಿತು';
+
+  @override
+  String get givesBirth => 'ಮರಿ ಹಾಕಿದೆ';
+
+  @override
+  String get dryOff => 'ಹಾಲು ಒಣಗಿದೆ';
+
+  @override
+  String get breeding => 'ಸಂತಾನೋತ್ಪತ್ತಿ';
+
+  @override
+  String get pregnant => 'ಗರ್ಭಿಣಿ';
+
+  @override
+  String get aborted => 'ಗರ್ಭಸ್ರಾವ';
+
+  @override
+  String get tagging => 'ಟ್ಯಾಗಿಂಗ್';
+
+  @override
+  String get archived => 'ಆರ್ಕೈವ್ ಮಾಡಲಾಗಿದೆ';
+
+  @override
+  String get totalEvents => 'ಒಟ್ಟು ಘಟನೆಗಳು';
+
+  @override
+  String get reason => 'ಕಾರಣ';
 }

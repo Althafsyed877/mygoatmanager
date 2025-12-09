@@ -18,13 +18,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get notifications => 'அறிவிப்புகள்';
 
   @override
-  String get syncData => 'தரவு ஒத்திசைக்கவும்';
+  String get syncData => 'தரவை ஒத்திசைக்கவும்';
 
   @override
   String get cancel => 'ரத்து செய்';
 
   @override
-  String get delete => 'அழி';
+  String get delete => 'நீக்கு';
 
   @override
   String get languageChangedTo => 'மொழி மாற்றப்பட்டது';
@@ -51,13 +51,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get createYourFarmAccount => 'உங்கள் பண்ணை கணக்கை உருவாக்கவும்';
 
   @override
-  String get loginOrCreateAccount => 'உள்நுழையவும் அல்லது கணக்கை உருவாக்கவும்';
+  String get loginOrCreateAccount => 'உள்நுழையவும் அல்லது கணக்கு உருவாக்கவும்';
 
   @override
   String get upgradeAndAccount => 'மேம்படுத்தல் மற்றும் கணக்கு';
 
   @override
-  String get appAndFarmTools => 'பயன்பாடு மற்றும் பண்ணை கருவிகள்';
+  String get appAndFarmTools => 'ஆப் மற்றும் பண்ணை கருவிகள்';
 
   @override
   String get settings => 'அமைப்புகள்';
@@ -66,7 +66,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get farmNotes => 'பண்ணை குறிப்புகள்';
 
   @override
-  String get seeAllOurApps => 'எங்கள் எல்லா பயன்பாடுகளையும் பார்க்கவும்';
+  String get seeAllOurApps => 'எங்கள் அனைத்து ஆப்ஸையும் பார்க்கவும்';
 
   @override
   String get farmingKnowledge => 'விவசாய அறிவு';
@@ -75,26 +75,27 @@ class AppLocalizationsTa extends AppLocalizations {
   String get helpAndSupport => 'உதவி மற்றும் ஆதரவு';
 
   @override
-  String get howToUseThisApp => 'இந்த பயன்பாட்டை எவ்வாறு பயன்படுத்துவது';
+  String get howToUseThisApp => 'இந்த ஆப்பை எப்படி பயன்படுத்துவது';
 
   @override
   String get contactOurTeam => 'எங்கள் குழுவைத் தொடர்பு கொள்ளவும்';
 
   @override
   String get shareAndRecommend =>
-      'பகிர்ந்து கொள்ளவும் மற்றும் பரிந்துரைக்கவும்';
+      'பகிர்ந்து கொள்ளுங்கள் மற்றும் பரிந்துரைக்கவும்';
 
   @override
-  String get shareAppWithFriends => 'நண்பர்களுடன் பயன்பாட்டைப் பகிரவும்';
+  String get shareAppWithFriends =>
+      'நண்பர்களுடன் ஆப்பைப் பகிர்ந்து கொள்ளுங்கள்';
 
   @override
-  String get rateAppInPlayStore => 'பிளே ஸ்டோரில் பயன்பாட்டை மதிப்பிடவும்';
+  String get rateAppInPlayStore => 'பிளே ஸ்டோரில் ஆப்பை மதிப்பிடவும்';
 
   @override
-  String get legal => 'சட்டப்பூர்வ';
+  String get legal => 'சட்டபூர்வமான';
 
   @override
-  String get privacyPolicy => 'தனியுரிமைக் கொள்கையை';
+  String get privacyPolicy => 'தனியுரிமைக் கொள்கை';
 
   @override
   String get noNewNotifications => 'புதிய அறிவிப்புகள் இல்லை';
@@ -113,10 +114,10 @@ class AppLocalizationsTa extends AppLocalizations {
       'எங்கள் கருவிகளுடன் உங்கள் பண்ணையை திறமையாக நிர்வகிக்கவும்';
 
   @override
-  String get login => 'உள்நுழைக';
+  String get login => 'உள்நுழையவும்';
 
   @override
-  String get signup => 'பதிவு செய்க';
+  String get signup => 'பதிவு செய்யவும்';
 
   @override
   String get emailAddress => 'மின்னஞ்சல் முகவரி';
@@ -131,13 +132,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get forgotPassword => 'கடவுச்சொல் மறந்துவிட்டதா?';
 
   @override
-  String get fullName => 'முழு பெயர்';
+  String get fullName => 'முழுப் பெயர்';
 
   @override
   String get phoneNumber => 'தொலைபேசி எண்';
 
   @override
-  String get confirmPassword => 'கடவுச்சொல்லை உறுதிப்படுத்துக';
+  String get confirmPassword => 'கடவுச்சொல்லை உறுதிப்படுத்தவும்';
 
   @override
   String get createAccount => 'கணக்கை உருவாக்கவும்';
@@ -166,16 +167,17 @@ class AppLocalizationsTa extends AppLocalizations {
       'கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்';
 
   @override
-  String get pleaseEnterEmail => 'உங்கள் மின்னஞ்சல் முகவரியை உள்ளிடவும்';
+  String get pleaseEnterEmail =>
+      'தயவு செய்து உங்கள் மின்னஞ்சல் முகவரியை உள்ளிடவும்';
 
   @override
   String get resetLinkSentTo => 'மீட்டமைப்பு இணைப்பு அனுப்பப்பட்டது';
 
   @override
-  String get signingInWith => 'இதனுடன் உள்நுழைகிறது';
+  String get signingInWith => 'உள்நுழைகிறது';
 
   @override
-  String get loginSuccessful => 'உள்நுழைவு வெற்றிகரமாக உள்ளது!';
+  String get loginSuccessful => 'உள்நுழைவு வெற்றிகரமானது!';
 
   @override
   String get accountCreatedSuccessfully =>
@@ -198,16 +200,16 @@ class AppLocalizationsTa extends AppLocalizations {
   String get close => 'மூடு';
 
   @override
-  String get allBreeds => 'எல்லா இனங்களும்';
+  String get allBreeds => 'அனைத்து இனங்கள்';
 
   @override
-  String get breedOptional => 'இனம் (விருப்பமானது)';
+  String get breedOptional => 'இனம் (விருப்பத்தேர்வு)';
 
   @override
-  String get clear => 'அழி';
+  String get clear => 'தெளிவாக்கு';
 
   @override
-  String get takePhoto => 'புகைப்படம் எடு';
+  String get takePhoto => 'புகைப்படம் எடுக்கவும்';
 
   @override
   String get photoCaptured => 'புகைப்படம் வெற்றிகரமாக எடுக்கப்பட்டது!';
@@ -240,7 +242,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get nameLabel => 'பெயர்:';
 
   @override
-  String get dobLabel => 'பி.தே';
+  String get dobLabel => 'பிறந்த தேதி';
 
   @override
   String get ageLabel => 'வயது';
@@ -276,10 +278,10 @@ class AppLocalizationsTa extends AppLocalizations {
   String get fatherLabel => 'தந்தை:';
 
   @override
-  String get notesLabel => 'சில குறிப்புகளை எழுதவும் ...';
+  String get notesLabel => 'குறிப்புகள்:';
 
   @override
-  String get tapToUpload => 'படம் பதிவேற்ற கிளிக் செய்யவும்...';
+  String get tapToUpload => 'படத்தை பதிவேற்ற தட்டவும்...';
 
   @override
   String get changePicture => 'படத்தை மாற்று...';
@@ -294,13 +296,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get noEventsYet => 'இன்னும் நிகழ்வுகள் இல்லை';
 
   @override
-  String get eventsForThisGoat => 'இந்த ஆட்டின் நிகழ்வுகள் இங்கே தோன்றும்';
+  String get eventsForThisGoat => 'இந்த ஆட்டிற்கான நிகழ்வுகள் இங்கே தோன்றும்';
 
   @override
-  String get eventsPlaceholder => 'இந்த ஆட்டின் நிகழ்வுகள் இங்கே தோன்றும்';
+  String get eventsPlaceholder => 'இந்த ஆட்டிற்கான நிகழ்வுகள் இங்கே தோன்றும்';
 
   @override
-  String get searchTagOrName => 'டேக் அல்லது பெயரைத் தேடு...';
+  String get searchTagOrName => 'டேக் அல்லது பெயரைத் தேடுங்கள்...';
 
   @override
   String get goatsTitle => 'ஆடுகள்';
@@ -309,42 +311,41 @@ class AppLocalizationsTa extends AppLocalizations {
   String get noGoatsAvailableToPreview => 'முன்னோட்டத்திற்கு ஆடுகள் இல்லை';
 
   @override
-  String get exportPdf => 'PDF ஏற்றுமதி';
+  String get exportPdf => 'PDF ஏற்றுமதி செய்யவும்';
 
   @override
-  String get filterBy => 'வடிகட்டு';
+  String get filterBy => 'மூலம் வடிகட்டவும்';
 
   @override
-  String get sortByAge => 'வயதின்படி வரிசைப்படுத்து';
+  String get sortByAge => 'வயதின்படி வரிசைப்படுத்தவும்';
 
   @override
   String get noGoatsRegistered =>
-      'தேர்ந்தெடுக்கப்பட்ட வடிப்பான்களுக்கு இன்னும் ஆடுகள் பதிவு செய்யப்படவில்லை!';
+      'தேர்ந்தெடுக்கப்பட்ட வடிகட்டிகளுக்கு இன்னும் ஆடுகள் பதிவு செய்யப்படவில்லை!';
 
   @override
   String get selectGroup => 'குழுவைத் தேர்ந்தெடுக்கவும்';
 
   @override
-  String get addGoat => 'சேர்';
+  String get addGoat => 'சேர்க்கவும்';
 
   @override
   String get viewRecord => 'பதிவைக் காண்க';
 
   @override
-  String get editRecord => 'பதிவைத் திருத்து';
+  String get editRecord => 'பதிவைத் திருத்தவும்';
 
   @override
-  String get addEvent => 'நிகழ்வைச் சேர்';
+  String get addEvent => 'நிகழ்வைச் சேர்க்கவும்';
 
   @override
-  String get deleteGoatTitle => 'ஆட்டை அழி';
+  String get deleteGoatTitle => 'ஆட்டை நீக்கு';
 
   @override
-  String get deleteGoatConfirm =>
-      'ஆட்டை அழிக்க விரும்புகிறீர்களா என உறுதிப்படுத்துக';
+  String get deleteGoatConfirm => 'ஆட்டை நிச்சயமாக நீக்க விரும்புகிறீர்களா';
 
   @override
-  String get deleteGoatDeleted => 'ஆடு அழிக்கப்பட்டது';
+  String get deleteGoatDeleted => 'ஆடு நீக்கப்பட்டது';
 
   @override
   String get goatsListPdf => 'ஆடுகளின் பட்டியல்';
@@ -387,29 +388,29 @@ class AppLocalizationsTa extends AppLocalizations {
   String get weightLabel2 => 'எடை.';
 
   @override
-  String get groupOptional => 'குழு (விருப்பமானது)';
+  String get groupOptional => 'குழு (விருப்பத்தேர்வு)';
 
   @override
-  String get breedOptional2 => 'இனம் (விருப்பம்)';
+  String get breedOptional2 => 'இனம் (விருப்பத்தேர்வு)';
 
   @override
   String get selectObtained =>
-      'ஆடு எவ்வாறு பெறப்பட்டது எனத் தேர்ந்தெடுக்கவும். *';
+      'ஆடு எவ்வாறு பெறப்பட்டது என்பதைத் தேர்ந்தெடுக்கவும். *';
 
   @override
-  String get motherTagLabel => 'தாயின் குறி எண்';
+  String get motherTagLabel => 'தாயின் டேக் எண்.';
 
   @override
-  String get fatherTagLabel => 'தந்தையின் குறி எண்';
+  String get fatherTagLabel => 'தந்தையின் டேக் எண்.';
 
   @override
-  String get notesPlaceholder => 'சில குறிப்புகளை எழுதுக ...';
+  String get notesPlaceholder => 'சில குறிப்புகளை எழுதுங்கள் ...';
 
   @override
-  String get createNewBreed => 'புதிய இனத்தை உருவாக்கு...';
+  String get createNewBreed => 'புதிய இனத்தை உருவாக்கவும்...';
 
   @override
-  String get createNewGroup => 'புதிய குழுவை உருவாக்கு...';
+  String get createNewGroup => 'புதிய குழுவை உருவாக்கவும்...';
 
   @override
   String get goatCreated => 'ஆடு வெற்றிகரமாக உருவாக்கப்பட்டது!';
@@ -418,16 +419,16 @@ class AppLocalizationsTa extends AppLocalizations {
   String get goatUpdated => 'ஆடு வெற்றிகரமாக புதுப்பிக்கப்பட்டது!';
 
   @override
-  String get kid => 'పిల్ల';
+  String get kid => 'குட்டி';
 
   @override
-  String get wether => 'నపుంసకం';
+  String get wether => 'வெதர்';
 
   @override
-  String get buckling => 'మగ పిల్ల';
+  String get buckling => 'பக்-இங்க்';
 
   @override
-  String get buck => 'ஆண் ஆடு';
+  String get buck => 'பக்';
 
   @override
   String get alpine => 'அல்பைன்';
@@ -458,48 +459,47 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get selectObtainedRequired =>
-      'ஆடு எப்படி பெறப்பட்டது என்பதைத் தேர்ந்தெடுக்கவும் *';
+      'ஆடு எவ்வாறு பெறப்பட்டது என்பதைத் தேர்ந்தெடுக்கவும் *';
 
   @override
-  String get tagNoRequired => 'குறி எண் *';
+  String get tagNoRequired => 'டேக் எண். *';
 
   @override
-  String get dateOfBirthLabel => 'பிறந்த தேதி';
+  String get dateOfBirthLabel => 'பிறந்த தேதி.';
 
   @override
-  String get dateOfEntryLabel => 'பண்ணையில் நுழைந்த தேதி';
+  String get dateOfEntryLabel => 'பண்ணையில் சேர்ந்த தேதி.';
 
   @override
   String get fillRequiredFields =>
       'தயவு செய்து அனைத்து தேவையான புலங்களையும் நிரப்பவும்';
 
   @override
-  String get setFarmLogo => 'பயன்பாட்டு அமைப்புகளில் பண்ணை லோகோவை அமைக்கவும்!';
+  String get setFarmLogo => 'ஆப் அமைப்புகளில் பண்ணை லோகோவை அமைக்கவும்!';
 
   @override
-  String get setFarmName => 'பயன்பாட்டு அமைப்புகளில் பண்ணை பெயரை அமைக்கவும்!';
+  String get setFarmName => 'ஆப் அமைப்புகளில் பண்ணை பெயரை அமைக்கவும்!';
 
   @override
-  String get setFarmLocation =>
-      'பயன்பாட்டு அமைப்புகளில் பண்ணை இடத்தை அமைக்கவும்!';
+  String get setFarmLocation => 'ஆப் அமைப்புகளில் பண்ணை இடத்தை அமைக்கவும்!';
 
   @override
-  String get tagLabel => 'குறி';
+  String get tagLabel => 'டேக்.';
 
   @override
   String get goat => 'ஆடு';
 
   @override
-  String get allGroups => 'எல்லா குழுக்களும்';
+  String get allGroups => 'அனைத்து குழுக்கள்';
 
   @override
-  String get groupOptional2 => 'குழு (விருப்பம்)';
+  String get groupOptional2 => 'Group (optional)';
 
   @override
-  String get filterByPeriod => 'காலப்பகுதியின்படி வடிகட்டு';
+  String get filterByPeriod => 'காலப்பகுதியால் வடிகட்டவும்';
 
   @override
-  String get filterByMilkType => 'பால் வகையின்படி வடிகட்டு';
+  String get filterByMilkType => 'பால் வகையால் வடிகட்டவும்';
 
   @override
   String get noMilkRecordsDisplay =>
@@ -518,7 +518,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get notes => 'குறிப்புகள்';
 
   @override
-  String get filterByDateRange => 'தேதி வரம்பின்படி வடிகட்டு';
+  String get filterByDateRange => 'தேதி வரம்பால் வடிகட்டவும்';
 
   @override
   String get startDate => 'தொடக்க தேதி';
@@ -539,7 +539,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get wholeFarm => 'முழு பண்ணை';
 
   @override
-  String get individualGoat => 'தனி ஆடு';
+  String get individualGoat => 'தனிப்பட்ட ஆடு';
 
   @override
   String get generated => 'உருவாக்கப்பட்டது';
@@ -557,40 +557,41 @@ class AppLocalizationsTa extends AppLocalizations {
   String get selectMilkType => '- பால் வகையைத் தேர்ந்தெடுக்கவும் -';
 
   @override
-  String get editViewRecord => 'திருத்து/பார்க்க பதிவு';
+  String get editViewRecord => 'பதிவைத் திருத்து/காண்க';
 
   @override
-  String get deleteRecord => 'பதிவை அழி';
+  String get deleteRecord => 'பதிவை நீக்கு';
 
   @override
-  String get deleteRecordConfirmation => 'இந்த பதிவை அழிக்க விரும்புகிறீர்களா?';
+  String get deleteRecordConfirmation =>
+      'இந்த பதிவை நிச்சயமாக நீக்க விரும்புகிறீர்களா?';
 
   @override
-  String get recordDeleted => 'பதிவு வெற்றிகரமாக அழிக்கப்பட்டது';
+  String get recordDeleted => 'பதிவு வெற்றிகரமாக நீக்கப்பட்டது';
 
   @override
-  String get add => 'சேர்';
+  String get add => 'சேர்க்கவும்';
 
   @override
   String get all => 'அனைத்தும்';
 
   @override
-  String get to => 'வரை:';
+  String get to => 'க்கு';
 
   @override
-  String get searchEventsHint => 'நிகழ்வுகளைத் தேடு...';
+  String get searchEventsHint => 'நிகழ்வுகளைத் தேடுங்கள்...';
 
   @override
-  String get individual => 'தனி';
+  String get individual => 'தனிப்பட்ட';
 
   @override
   String get mass => 'குழு';
 
   @override
-  String get filterByDate => 'தேதியின்படி வடிகட்டு';
+  String get filterByDate => 'தேதியால் வடிகட்டவும்';
 
   @override
-  String get customDateRange => 'தனிப்பயன் தேதி வரம்பு';
+  String get customDateRange => 'தனிபயன் தேதி வரம்பு';
 
   @override
   String get from => 'இருந்து:';
@@ -608,41 +609,41 @@ class AppLocalizationsTa extends AppLocalizations {
   String get lastWeek => 'கடந்த வாரம்';
 
   @override
-  String get currentMonth => 'நடப்பு மாதம்';
+  String get currentMonth => 'தற்போதைய மாதம்';
 
   @override
   String get lastMonth => 'கடந்த மாதம்';
 
   @override
-  String get filterByEventType => 'நிகழ்வு வகையின்படி வடிகட்டு';
+  String get filterByEventType => 'நிகழ்வு வகையால் வடிகட்டவும்';
 
   @override
-  String get treated => 'சிகிச்சையளிக்கப்பட்டது';
+  String get treated => 'சிகிச்சை அளிக்கப்பட்டது';
 
   @override
-  String get weighed => 'எடை போடப்பட்டது';
+  String get weighed => 'எடை கணக்கிடப்பட்டது';
 
   @override
-  String get weaned => 'பால் துண்டிக்கப்பட்டது';
+  String get weaned => 'பால் பிரிக்கப்பட்டது';
 
   @override
-  String get castrated => 'விதை களைந்தது';
+  String get castrated => 'விதைக்கட்டு';
 
   @override
-  String get vaccinated => 'தடுப்பூசி போடப்பட்டது';
+  String get vaccinated => 'தடுப்பூசி';
 
   @override
   String get deworming => 'புழு மருந்து கொடுக்கப்பட்டது';
 
   @override
-  String get hoofTrimming => 'குளம்பு வெட்டப்பட்டது';
+  String get hoofTrimming => 'குளம்பு வெட்டுதல்';
 
   @override
   String get eventType => 'நிகழ்வு வகை';
 
   @override
   String get noIndividualEvents =>
-      'தேர்ந்தெடுக்கப்பட்ட தேதி வரம்பிற்கு காண்பிக்க தனி நிகழ்வுகள் இல்லை.';
+      'தேர்ந்தெடுக்கப்பட்ட தேதி வரம்பிற்கு காண்பிக்க தனிப்பட்ட நிகழ்வுகள் இல்லை.';
 
   @override
   String get noMassEvents =>
@@ -652,32 +653,31 @@ class AppLocalizationsTa extends AppLocalizations {
   String get selectGoatToContinue => 'தொடர ஆட்டைத் தேர்ந்தெடுக்கவும்...';
 
   @override
-  String get searchGoatHint => 'ஆட்டைத் தேடு...';
+  String get searchGoatHint => 'ஆட்டைத் தேடுங்கள்...';
 
   @override
-  String get noGoatsFound =>
-      'ஆடுகள் கிடைக்கவில்லை. முதலில் ஆடுகளைச் சேர்க்கவும்';
+  String get noGoatsFound => 'ஆடுகள் கிடைக்கவில்லை';
 
   @override
   String get medicineLabel => 'மருந்து:';
 
   @override
-  String get diagnosisLabel => 'நோய் நாடல்:';
+  String get diagnosisLabel => 'நோய் நிலை:';
 
   @override
   String get symptomsLabel => 'அறிகுறிகள்:';
 
   @override
-  String get treatedByLabel => 'சிகிச்சையளித்தவர்:';
+  String get treatedByLabel => 'சிகிச்சை அளித்தவர்:';
 
   @override
   String get weighedLabel => 'எடை:';
 
   @override
-  String get eventNameLabel => 'நிகழ்வு பெயர்:';
+  String get eventNameLabel => 'நிகழ்வின் பெயர்:';
 
   @override
-  String get editEvent => 'நிகழ்வைத் திருத்து';
+  String get editEvent => 'நிகழ்வைத் திருத்தவும்';
 
   @override
   String get viewGoat => 'ஆட்டைக் காண்க';
@@ -698,22 +698,22 @@ class AppLocalizationsTa extends AppLocalizations {
   String get symptomsRequired => 'நோய்க்கான அறிகுறிகள். *';
 
   @override
-  String get diagnosisRequired => 'நோய் நாடல். *';
+  String get diagnosisRequired => 'நோய் நிலை. *';
 
   @override
-  String get technicianRequired => 'தொழில்நுட்ப வல்லுநர் பெயர். *';
+  String get technicianRequired => 'தொழில்நுட்பவியலாளரின் பெயர். *';
 
   @override
-  String get medicineGivenRequired => 'எந்த மருந்து கொடுக்கப்பட்டது? *';
+  String get medicineGivenRequired => 'என்ன மருந்து கொடுக்கப்பட்டது? *';
 
   @override
   String get weighedResultRequired => 'எடை முடிவு. *';
 
   @override
-  String get eventNameRequired => 'நிகழ்வு பெயர். *';
+  String get eventNameRequired => 'நிகழ்வின் பெயர். *';
 
   @override
-  String get writeNotes => 'சில குறிப்புகளை எழுதுக ...';
+  String get writeNotes => 'சில குறிப்புகளை எழுதுங்கள் ...';
 
   @override
   String get pleaseSelectEventDate =>
@@ -727,7 +727,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get pleaseEnterEventName => 'தயவு செய்து நிகழ்வு பெயரை உள்ளிடவும்';
 
   @override
-  String get eventsRecords => 'நிகழ்வுகளின் பதிவுகள்';
+  String get eventsRecords => 'நிகழ்வு பதிவுகள்';
 
   @override
   String get noEventsToDisplay => 'காண்பிக்க நிகழ்வுகள் இல்லை.';
@@ -739,7 +739,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get other => 'மற்றவை';
 
   @override
-  String get income => 'வருவாய்';
+  String get income => 'வருமானம்';
 
   @override
   String get expenses => 'செலவுகள்';
@@ -754,42 +754,42 @@ class AppLocalizationsTa extends AppLocalizations {
   String get more_options => 'மேலும் விருப்பங்கள்';
 
   @override
-  String get search_transactions => 'பரிவர்த்தனைகளை தேடுங்கள்';
+  String get search_transactions => 'பரிவர்த்தனைகளைத் தேடுங்கள்';
 
   @override
-  String get search_by_description => 'விளக்கம், தொகை மூலம் தேடு...';
+  String get search_by_description => 'விளக்கம், தொகை மூலம் தேடுங்கள்...';
 
   @override
-  String get filter_by_date => 'தேதியின்படி வடிகட்டு';
+  String get filter_by_date => 'தேதியால் வடிகட்டவும்';
 
   @override
-  String get custom_date_range => 'தனிப்பயன் தேதி வரம்பு';
+  String get custom_date_range => 'தனிபயன் தேதி வரம்பு';
 
   @override
-  String get custom_range => 'தனிப்பயன் வரம்பு';
+  String get custom_range => 'தனிபயன் வரம்பு';
 
   @override
   String get no_income_to_display =>
-      'தேர்ந்தெடுக்கப்பட்ட தேதி வரம்பிற்கு காண்பிக்க வருவாய் இல்லை.';
+      'தேர்ந்தெடுக்கப்பட்ட தேதி வரம்பிற்கு காண்பிக்க வருமானம் இல்லை.';
 
   @override
   String get no_expenses_to_display =>
       'தேர்ந்தெடுக்கப்பட்ட தேதி வரம்பிற்கு காண்பிக்க செலவுகள் இல்லை.';
 
   @override
-  String get export_pdf => 'PDF ஏற்றுமதி செய்யுங்கள்';
+  String get export_pdf => 'PDF ஏற்றுமதி செய்யவும்';
 
   @override
-  String get income_type => 'வருவாய் வகை';
+  String get income_type => 'வருமான வகை';
 
   @override
   String get expense_type => 'செலவு வகை';
 
   @override
-  String get filter_by_income_type => 'வருவாய் வகை மூலம் வடிகட்டு';
+  String get filter_by_income_type => 'வருமான வகையால் வடிகட்டவும்';
 
   @override
-  String get filter_by_expense_type => 'செலவு வகை மூலம் வடிகட்டு';
+  String get filter_by_expense_type => 'செலவு வகையால் வடிகட்டவும்';
 
   @override
   String get all_types => 'அனைத்து வகைகள்';
@@ -801,28 +801,28 @@ class AppLocalizationsTa extends AppLocalizations {
   String get record_deleted => 'பதிவு நீக்கப்பட்டது';
 
   @override
-  String get income_updated => 'வருவாய் புதுப்பிக்கப்பட்டது';
+  String get income_updated => 'வருமானம் புதுப்பிக்கப்பட்டது';
 
   @override
   String get expense_updated => 'செலவு புதுப்பிக்கப்பட்டது';
 
   @override
-  String get income_saved => 'வருவாய் சேமிக்கப்பட்டது';
+  String get income_saved => 'வருமானம் சேமிக்கப்பட்டது';
 
   @override
   String get expense_saved => 'செலவு சேமிக்கப்பட்டது';
 
   @override
-  String get add_income => 'வருவாய் சேர்க்க';
+  String get add_income => 'வருமானத்தைச் சேர்க்கவும்';
 
   @override
-  String get add_expense => 'செலவு சேர்க்க';
+  String get add_expense => 'செலவைச் சேர்க்கவும்';
 
   @override
-  String get date_of_income => 'வருவாய் தேதி';
+  String get date_of_income => 'வருமான தேதி';
 
   @override
-  String get select_income_type => 'வருவாய் வகையைத் தேர்ந்தெடுக்கவும்';
+  String get select_income_type => 'வருமான வகையைத் தேர்ந்தெடுக்கவும்';
 
   @override
   String get milk_sale => 'பால் விற்பனை';
@@ -831,13 +831,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get goat_sale => 'ஆடு விற்பனை';
 
   @override
-  String get category_income => 'வகை வருவாய்';
+  String get category_income => 'வகை வருமானம்';
 
   @override
   String get other_specify => 'மற்றவை (குறிப்பிடவும்)';
 
   @override
-  String get category_expense => 'வகைச் செலவு';
+  String get category_expense => 'வகை செலவு';
 
   @override
   String get other_expense => 'மற்றவை (குறிப்பிடவும்)';
@@ -846,27 +846,27 @@ class AppLocalizationsTa extends AppLocalizations {
   String get milk_quantity_sold => 'விற்கப்பட்ட பாலின் அளவு';
 
   @override
-  String get selling_price_per_litre => 'லிட்டருக்கு விற்பனை விலை';
+  String get selling_price_per_litre => 'லிட்டர்/யூனிட் விற்பனை விலை';
 
   @override
   String get how_much_did_you_earn => 'நீங்கள் எவ்வளவு சம்பாதித்தீர்கள்?';
 
   @override
   String get please_go_to_record =>
-      'தயவு செய்து விற்கப்பட்ட ஆட்டின் பதிவிற்குச் சென்று \'விற்கப்பட்டது\' என்ற காரணத்துடன் காப்பகப்படுத்துங்கள், ஒரு வருவாய் பதிவு தானாகவே உருவாக்கப்படும்!';
+      'தயவு செய்து விற்கப்பட்ட ஆட்டின் பதிவுக்குச் சென்று, \'விற்கப்பட்டது\' என்ற காரணத்துடன் ஆர்கைவ் செய்யவும், ஒரு வருமான பதிவு தானாகவே உருவாக்கப்படும்!';
 
   @override
   String get quantity_of_items => 'பொருட்களின் அளவு';
 
   @override
   String get please_specify_source =>
-      'தயவு செய்து வருவாய் மூலத்தைக் குறிப்பிடவும்';
+      'தயவு செய்து வருமானத்தின் மூலத்தைக் குறிப்பிடவும்';
 
   @override
-  String get specify_income_source => 'வருவாய் மூலத்தைக் குறிப்பிடவும்';
+  String get specify_income_source => 'வருமான மூலத்தைக் குறிப்பிடவும்';
 
   @override
-  String get receipt_no_optional => 'ரசீது எண் (விருப்பமானது)';
+  String get receipt_no_optional => 'ரசீது எண். (விருப்பத்தேர்வு)';
 
   @override
   String get write_some_notes => 'சில குறிப்புகளை எழுதுங்கள் ...';
@@ -878,7 +878,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get enter_your_notes => 'உங்கள் குறிப்புகளை இங்கே உள்ளிடவும்...';
 
   @override
-  String get new_income => 'புதிய வருவாய்';
+  String get new_income => 'புதிய வருமானம்';
 
   @override
   String get new_expense => 'புதிய செலவு';
@@ -888,7 +888,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get please_select_income_type =>
-      'தயவு செய்து வருவாய் வகையைத் தேர்ந்தெடுக்கவும்';
+      'தயவு செய்து வருமான வகையைத் தேர்ந்தெடுக்கவும்';
 
   @override
   String get please_enter_amount => 'தயவு செய்து தொகையை உள்ளிடவும்';
@@ -902,7 +902,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get please_specify_income_source =>
-      'தயவு செய்து வருவாய் மூலத்தைக் குறிப்பிடவும்';
+      'தயவு செய்து வருமான மூலத்தைக் குறிப்பிடவும்';
 
   @override
   String get date_of_expense => 'செலவு தேதி';
@@ -940,7 +940,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get enter_milk_quantity => 'பால் அளவை உள்ளிடவும்';
 
   @override
-  String get enter_price_per_litre => 'லிட்டருக்கு விலையை உள்ளிடவும்';
+  String get enter_price_per_litre => 'லிட்டருக்கான விலையை உள்ளிடவும்';
 
   @override
   String get enter_quantity => 'அளவை உள்ளிடவும்';
@@ -949,13 +949,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get enter_amount => 'தொகையை உள்ளிடவும்';
 
   @override
-  String get income_records => 'வருவாய் பதிவுகள்';
+  String get income_records => 'வருமான பதிவுகள்';
 
   @override
   String get expense_records => 'செலவு பதிவுகள்';
 
   @override
-  String get no_income_records => 'ஏற்றுமதி செய்ய வருவாய் பதிவுகள் இல்லை';
+  String get no_income_records => 'ஏற்றுமதி செய்ய வருமான பதிவுகள் இல்லை';
 
   @override
   String get no_expense_records => 'ஏற்றுமதி செய்ய செலவு பதிவுகள் இல்லை';
@@ -967,10 +967,10 @@ class AppLocalizationsTa extends AppLocalizations {
   String get expenseCategories => 'செலவு வகைகள்';
 
   @override
-  String get goatBreeds => 'வெள்ளாடு இனங்கள்';
+  String get goatBreeds => 'ஆடு இனங்கள்';
 
   @override
-  String get goatGroups => 'வெள்ளாடு குழுக்கள்';
+  String get goatGroups => 'ஆடு குழுக்கள்';
 
   @override
   String get newCategory => 'புதிய வகை';
@@ -979,20 +979,20 @@ class AppLocalizationsTa extends AppLocalizations {
   String get enterName => 'பெயரை உள்ளிடவும் ...';
 
   @override
-  String get searchCategories => 'வகைகளை தேடவும்...';
+  String get searchCategories => 'வகைகளைத் தேடுங்கள்...';
 
   @override
   String get noIncomeCategoriesAdded =>
-      'இதுவரை எந்த வருமான வகைகளும் சேர்க்கப்படவில்லை!';
+      'இன்னும் வருமான வகைகள் சேர்க்கப்படவில்லை!';
 
   @override
-  String get noResultsFound => 'முடிவுகள் எதுவும் கிடைக்கவில்லை';
+  String get noResultsFound => 'முடிவுகள் கிடைக்கவில்லை';
 
   @override
-  String get editCategory => 'வகையைத் திருத்து';
+  String get editCategory => 'வகையைத் திருத்தவும்';
 
   @override
-  String get save => 'சேமி';
+  String get save => 'சேமிக்கவும்';
 
   @override
   String get recordSuccessfullyUpdated =>
@@ -1000,44 +1000,43 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get noExpenseCategoriesAdded =>
-      'இதுவரை எந்த செலவு வகைகளும் சேர்க்கப்படவில்லை!';
+      'இன்னும் செலவு வகைகள் சேர்க்கப்படவில்லை!';
 
   @override
   String get newBreed => 'புதிய இனம்';
 
   @override
-  String get enterBreedName => 'இனப் பெயரை உள்ளிடவும்...';
+  String get enterBreedName => 'இனத்தின் பெயரை உள்ளிடவும்...';
 
   @override
-  String get searchBreeds => 'இனங்களைத் தேடு...';
+  String get searchBreeds => 'இனங்களைத் தேடுங்கள்...';
 
   @override
-  String get noGoatBreedsAdded =>
-      'இதுவரை எந்த வெள்ளாடு இனங்களும் சேர்க்கப்படவில்லை!';
+  String get noGoatBreedsAdded => 'இன்னும் ஆடு இனங்கள் சேர்க்கப்படவில்லை!';
 
   @override
-  String get editBreed => 'இனத்தைத் திருத்து';
+  String get editBreed => 'இனத்தைத் திருத்தவும்';
 
   @override
   String goatsCount(Object count) {
-    return '($count) வெள்ளாடுகள்';
+    return '($count) ஆடுகள்';
   }
 
   @override
   String get newGroup => 'புதிய குழு';
 
   @override
-  String get enterGroupName => 'குழுப் பெயரை உள்ளிடவும்...';
+  String get enterGroupName => 'குழுவின் பெயரை உள்ளிடவும்...';
 
   @override
-  String get searchGroups => 'குழுக்களைத் தேடு...';
+  String get searchGroups => 'குழுக்களைத் தேடுங்கள்...';
 
   @override
   String get noGoatGroupsRegistered =>
-      'இதுவரை எந்த வெள்ளாடு குழுக்களும் பதிவு செய்யப்படவில்லை!';
+      'தற்போது இன்னும் ஆடு குழுக்கள் பதிவு செய்யப்படவில்லை!';
 
   @override
-  String get editGroup => 'குழுவைத் திருத்து';
+  String get editGroup => 'குழுவைத் திருத்தவும்';
 
   @override
   String get transactionsReport => 'பரிவர்த்தனைகள்';
@@ -1046,7 +1045,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get milkReport => 'பால் அறிக்கை';
 
   @override
-  String get goatsReport => 'ஆடுகள் அறிக்கை';
+  String get goatsReport => 'ஆடுகளின் அறிக்கை';
 
   @override
   String get eventsReport => 'நிகழ்வுகள் அறிக்கை';
@@ -1067,32 +1066,32 @@ class AppLocalizationsTa extends AppLocalizations {
   String get stageTracking => 'நிலை கண்காணிப்பு';
 
   @override
-  String get updateSelected => 'தேர்ந்தெடுத்தவை புதுப்பிக்கவும்';
+  String get updateSelected => 'தேர்ந்தெடுக்கப்பட்டவற்றைப் புதுப்பிக்கவும்';
 
   @override
   String get animalsNeedStageUpdate =>
-      'நிலை புதுப்பிப்பு தேவைப்படும் விலங்குகள்.';
+      'நிலை புதுப்பித்தல் தேவைப்படும் விலங்குகள்.';
 
   @override
   String get wethersNotListed =>
-      'முட்டையிடப்பட்ட ஆடுகள் மற்றும் பிறந்த தேதி இல்லாத விலங்குகள் பட்டியலிடப்படவில்லை!';
+      'வெதர்கள் மற்றும் பிறந்த தேதி இல்லாத விலங்குகள் பட்டியலிடப்படவில்லை!';
 
   @override
-  String get allCaughtUp => 'அனைத்தும் முடிந்துவிட்டன!';
+  String get allCaughtUp => 'அனைத்தும் புதுப்பிக்கப்பட்டன!';
 
   @override
   String get noGoatsNeedStageUpdates =>
-      'தற்போது ஆடுகளுக்கு நிலை புதுப்பிப்புகள் தேவையில்லை.';
+      'இந்த நேரத்தில் எந்த ஆடுகளுக்கும் நிலை புதுப்பித்தல் தேவையில்லை.';
 
   @override
   String get doe => 'பெண் ஆடு';
 
   @override
-  String get updateStages => 'நிலைகள் புதுப்பிக்கவும்';
+  String get updateStages => 'நிலைகளைப் புதுப்பிக்கவும்';
 
   @override
   String updateGoatsQuestion(Object count) {
-    return '$count ஆடுகளை குட்டி நிலையிலிருந்து அடுத்த நிலைக்கு புதுப்பிக்க வேண்டுமா?';
+    return '$count ஆடுகளை குட்டியிலிருந்து அடுத்த நிலைக்கு புதுப்பிக்கவா?';
   }
 
   @override
@@ -1109,10 +1108,10 @@ class AppLocalizationsTa extends AppLocalizations {
   }
 
   @override
-  String get breed => 'இனம்';
+  String get breed => 'Breed';
 
   @override
-  String get group => 'குழு';
+  String get group => 'Group';
 
   @override
   String get source => 'மூலம்';
@@ -1142,22 +1141,22 @@ class AppLocalizationsTa extends AppLocalizations {
   String get does => 'பெண் ஆடுகள்';
 
   @override
-  String get doelings => 'பெண் ஆட்டுக்குட்டிகள்';
+  String get doelings => 'இளம் பெண் ஆடுகள்';
 
   @override
   String get bucks => 'ஆண் ஆடுகள்';
 
   @override
-  String get bucklings => 'ஆண் ஆட்டுக்குட்டிகள்';
+  String get bucklings => 'இளம் ஆண் ஆடுகள்';
 
   @override
-  String get wethers => 'முட்டையிடப்பட்ட ஆடுகள்';
+  String get wethers => 'வெதர்கள்';
 
   @override
   String get kids => 'குட்டிகள்';
 
   @override
-  String get allSources => 'எல்லா மூலங்களும்';
+  String get allSources => 'அனைத்து மூலங்கள்';
 
   @override
   String get bornOnFarm => 'பண்ணையில் பிறந்தவை';
@@ -1172,19 +1171,19 @@ class AppLocalizationsTa extends AppLocalizations {
   String get noGoatsDataToExport => 'ஏற்றுமதி செய்ய ஆடுகளின் தரவு இல்லை';
 
   @override
-  String get failedToExportPdf => 'PDF ஏற்றுமதி தோல்வியடைந்தது';
+  String get failedToExportPdf => 'PDF ஏற்றுமதி தோல்வியுற்றது';
 
   @override
-  String get filterBySource => 'மூலம் வடிகட்டு';
+  String get filterBySource => 'மூலத்தால் வடிகட்டவும்';
 
   @override
   String get goatsTotal => 'ஆடுகள் மொத்தம்.';
 
   @override
-  String get goatsByStage => 'நிலை மூலம் ஆடுகள்.';
+  String get goatsByStage => 'நிலைப்படி ஆடுகள்.';
 
   @override
-  String get goatsByGender => 'பாலினம் மூலம் ஆடுகள்.';
+  String get goatsByGender => 'பாலினப்படி ஆடுகள்.';
 
   @override
   String get milkSummary => 'பால் சுருக்கம்.';
@@ -1196,13 +1195,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get totalMilkProduced => 'மொத்த பால் உற்பத்தி.';
 
   @override
-  String get totalForKidsUsed => 'குழந்தைகளுக்கு/பயன்படுத்தப்பட்ட மொத்தம்.';
+  String get totalForKidsUsed => 'குட்டிகளுக்கு/பயன்படுத்திய மொத்தம்.';
 
   @override
-  String get mostProductiveGoat => 'அதிக உற்பத்தி ஆடு.';
+  String get mostProductiveGoat => 'மிகவும் உற்பத்தித் திறன் கொண்ட ஆடு.';
 
   @override
-  String get leastProductiveGoat => 'குறைந்த உற்பத்தி ஆடு.';
+  String get leastProductiveGoat => 'குறைந்த உற்பத்தித் திறன் கொண்ட ஆடு.';
 
   @override
   String get records => 'பதிவுகள்';
@@ -1211,23 +1210,23 @@ class AppLocalizationsTa extends AppLocalizations {
   String get day => 'நாள்';
 
   @override
-  String get produced => 'உற்பத்தி';
+  String get produced => 'உற்பத்தி செய்யப்பட்டது';
 
   @override
-  String get notAvailable => 'கிடைக்கவில்லை';
+  String get notAvailable => 'இல்லை';
 
   @override
   String get noRecordsFound =>
-      'தேர்ந்தெடுக்கப்பட்ட காலகட்டத்தில் பதிவுகள் இல்லை';
+      'தேர்ந்தெடுக்கப்பட்ட காலத்திற்கு பதிவுகள் கிடைக்கவில்லை';
 
   @override
-  String get viewDetails => 'விவரங்களைப் பார்க்கவும்';
+  String get viewDetails => 'விவரங்களைக் காண்க';
 
   @override
   String get editRecords => 'பதிவுகளைத் திருத்தவும்';
 
   @override
-  String get customRange => 'தனிப்பட்ட காலம்';
+  String get customRange => 'தனிபயன் வரம்பு';
 
   @override
   String get selectDateRange => 'தேதி வரம்பைத் தேர்ந்தெடுக்கவும்';
@@ -1269,7 +1268,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get december => 'டிசம்பர்';
 
   @override
-  String get confirm => 'உறுதிப்படுத்து';
+  String get confirm => 'உறுதிப்படுத்தவும்';
 
   @override
   String get invalidDateRange => 'தவறான தேதி வரம்பு';
@@ -1278,19 +1277,95 @@ class AppLocalizationsTa extends AppLocalizations {
   String get previousMonth => 'கடந்த மாதம்';
 
   @override
-  String get exportPDF => 'PDF ஏற்றுமதி';
+  String get exportPDF => 'PDF ஏற்றுமதி செய்யவும்';
 
   @override
   String get pdfExportConfirmation =>
-      'தேர்ந்தெடுக்கப்பட்ட காலகட்டத்திற்கான PDF அறிக்கையை உருவாக்க வேண்டுமா?';
+      'தேர்ந்தெடுக்கப்பட்ட காலத்திற்கு PDF அறிக்கையை உருவாக்க விரும்புகிறீர்களா?';
 
   @override
   String get pdfGenerating => 'PDF அறிக்கை உருவாக்கப்படுகிறது...';
 
   @override
-  String get generate => 'உருவாக்கு';
+  String get generate => 'உருவாக்கவும்';
 
   @override
   String get noDataToExport =>
-      'தேர்ந்தெடுக்கப்பட்ட காலகட்டத்திற்கு ஏற்றுமதி செய்ய தரவு இல்லை';
+      'தேர்ந்தெடுக்கப்பட்ட காலத்திற்கு ஏற்றுமதி செய்ய தரவு இல்லை';
+
+  @override
+  String get individualEvents => 'தனிப்பட்ட நிகழ்வுகள்';
+
+  @override
+  String get massEvents => 'குழு நிகழ்வுகள்';
+
+  @override
+  String get archives => 'காப்பகம்';
+
+  @override
+  String get totalAllEvents => 'அனைத்து நிகழ்வுகளும்';
+
+  @override
+  String get soldGoats => 'விற்கப்பட்ட ஆடுகள்';
+
+  @override
+  String get deadGoats => 'இறந்த ஆடுகள்';
+
+  @override
+  String get lostGoats => 'காணாமல் போன ஆடுகள்';
+
+  @override
+  String get otherArchived => 'மற்ற காப்பகப்படுத்தப்பட்டவை';
+
+  @override
+  String get othersArchived => 'மற்ற காப்பகப்படுத்தப்பட்டவை';
+
+  @override
+  String get sold => 'விற்பனை செய்யப்பட்டது';
+
+  @override
+  String get dead => 'இறந்தது';
+
+  @override
+  String get lost => 'காணாமல் போனது';
+
+  @override
+  String get allArchivedGoats => 'அனைத்து காப்பகப்படுத்தப்பட்ட ஆடுகள்';
+
+  @override
+  String get noArchivedGoatsFound =>
+      'காப்பகப்படுத்தப்பட்ட ஆடுகள் எதுவும் இல்லை';
+
+  @override
+  String get unknownBreed => 'அறியப்படாத இனம்';
+
+  @override
+  String get restoredSuccessfully => 'வெற்றிகரமாக மீட்டமைக்கப்பட்டது';
+
+  @override
+  String get givesBirth => 'குட்டி போட்டது';
+
+  @override
+  String get dryOff => 'பால் உலர்ந்துவிட்டது';
+
+  @override
+  String get breeding => 'இனப்பெருக்கம்';
+
+  @override
+  String get pregnant => 'கர்ப்பிணி';
+
+  @override
+  String get aborted => 'கருக்கலைப்பு';
+
+  @override
+  String get tagging => 'டேகிங்';
+
+  @override
+  String get archived => 'காப்பகப்படுத்தப்பட்டது';
+
+  @override
+  String get totalEvents => 'மொத்த நிகழ்வுகள்';
+
+  @override
+  String get reason => 'காரணம்';
 }

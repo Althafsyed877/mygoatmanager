@@ -1,0 +1,25 @@
+{
+  "hi": [
+    "groupOptional2",
+    "breed",
+    "group"
+  ],
+
+  "kn": [
+    "groupOptional2",
+    "breed",
+    "group"
+  ],
+
+  "ta": [
+    "groupOptional2",
+    "breed",
+    "group"
+  ],
+
+  "te": [
+    "groupOptional2",
+    "breed",
+    "group"
+  ]
+}

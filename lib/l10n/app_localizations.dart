@@ -2581,6 +2581,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No data to export for selected period'**
   String get noDataToExport;
+
+  /// No description provided for @individualEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Individual events'**
+  String get individualEvents;
+
+  /// No description provided for @massEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Mass events'**
+  String get massEvents;
+
+  /// No description provided for @archives.
+  ///
+  /// In en, this message translates to:
+  /// **'Archives'**
+  String get archives;
+
+  /// No description provided for @totalAllEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Total All Events'**
+  String get totalAllEvents;
+
+  /// No description provided for @soldGoats.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold Goats'**
+  String get soldGoats;
+
+  /// No description provided for @deadGoats.
+  ///
+  /// In en, this message translates to:
+  /// **'Dead Goats'**
+  String get deadGoats;
+
+  /// No description provided for @lostGoats.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost Goats'**
+  String get lostGoats;
+
+  /// No description provided for @otherArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Archived'**
+  String get otherArchived;
+
+  /// No description provided for @othersArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Others archived'**
+  String get othersArchived;
+
+  /// No description provided for @sold.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold'**
+  String get sold;
+
+  /// No description provided for @dead.
+  ///
+  /// In en, this message translates to:
+  /// **'Dead'**
+  String get dead;
+
+  /// No description provided for @lost.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost'**
+  String get lost;
+
+  /// No description provided for @allArchivedGoats.
+  ///
+  /// In en, this message translates to:
+  /// **'All Archived Goats'**
+  String get allArchivedGoats;
+
+  /// No description provided for @noArchivedGoatsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No archived goats found'**
+  String get noArchivedGoatsFound;
+
+  /// No description provided for @unknownBreed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown breed'**
+  String get unknownBreed;
+
+  /// No description provided for @restoredSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'restored successfully'**
+  String get restoredSuccessfully;
+
+  /// No description provided for @givesBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Gives Birth'**
+  String get givesBirth;
+
+  /// No description provided for @dryOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Dry off'**
+  String get dryOff;
+
+  /// No description provided for @breeding.
+  ///
+  /// In en, this message translates to:
+  /// **'Breeding'**
+  String get breeding;
+
+  /// No description provided for @pregnant.
+  ///
+  /// In en, this message translates to:
+  /// **'Pregnant'**
+  String get pregnant;
+
+  /// No description provided for @aborted.
+  ///
+  /// In en, this message translates to:
+  /// **'Aborted'**
+  String get aborted;
+
+  /// No description provided for @tagging.
+  ///
+  /// In en, this message translates to:
+  /// **'Tagging'**
+  String get tagging;
+
+  /// No description provided for @archived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get archived;
+
+  /// No description provided for @totalEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Events'**
+  String get totalEvents;
+
+  /// No description provided for @reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get reason;
 }
 
 class _AppLocalizationsDelegate
