@@ -3,12 +3,14 @@ import 'transactions_report_page.dart';
 import 'goats_report_page.dart';
 import 'pregnancies_page.dart';
 import 'stage_tracking_page.dart';
+import 'milk_report_page.dart'; 
+import 'events_report_page.dart'; 
+import 'breeding_report_page.dart'; 
+import 'weight_report_page.dart'; 
 import '../models/goat.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
-
-
 
 class ReportsPage extends StatelessWidget {
   const ReportsPage({super.key});
@@ -25,13 +27,13 @@ class ReportsPage extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 20, // Dynamic top padding
+              top: MediaQuery.of(context).padding.top + 20,
               bottom: 20,
               left: 16,
               right: 16,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFF4CAF50), // Exact green from screenshot
+              color: const Color(0xFF4CAF50), 
             ),
             child: Row(
               children: [
@@ -47,7 +49,7 @@ class ReportsPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 16),
-                // Title - Expanded to prevent overflow
+                // Title
                 Expanded(
                   child: Text(
                     loc.reports,
@@ -63,22 +65,19 @@ class ReportsPage extends StatelessWidget {
             ),
           ),
           
-          // Orange Line below header - NO SPACING AFTER
+          // Orange Line below header
           Container(
             height: 4,
             width: double.infinity,
-            color: const Color(0xFFFF9800), // Exact orange
+            color: const Color(0xFFFF9800),
           ),
           
-          // Main Content with 8 menu cards - DIRECTLY AFTER ORANGE LINE
+          // Main Content with 8 menu cards
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                // Calculate crossAxisCount based on screen width
                 final double screenWidth = constraints.maxWidth;
-                final int crossAxisCount = screenWidth < 400 ? 2 : 2; // Keep 2 columns for all sizes
-                
-                // Calculate spacing and card size dynamically
+                final int crossAxisCount = 2;
                 final double spacing = screenWidth < 350 ? 12 : 20;
                 final double aspectRatio = screenWidth < 350 ? 0.9 : 1.0;
                 
@@ -119,7 +118,7 @@ class ReportsPage extends StatelessWidget {
       ),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF4CAF50), // Exact green color for cards
+          color: const Color(0xFF4CAF50),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Material(
@@ -132,12 +131,28 @@ class ReportsPage extends StatelessWidget {
                 Navigator.push(context, MaterialPageRoute(builder: (ctx) => const TransactionsReportPage()));
                 return;
               }
+              if (title == loc.milkReport) {
+                Navigator.push(context, MaterialPageRoute(builder: (ctx) => const MilkReportPage()));
+                return;
+              }
               if (title == loc.goatsReport) {
                 Navigator.push(context, MaterialPageRoute(builder: (ctx) => const GoatsReportPage()));
                 return;
               }
+              if (title == loc.eventsReport) {
+                Navigator.push(context, MaterialPageRoute(builder: (ctx) => const EventsReportPage()));
+                return;
+              }
+              if (title == loc.breedingReport) {
+                Navigator.push(context, MaterialPageRoute(builder: (ctx) => const BreedingReportPage()));
+                return;
+              }
               if (title == loc.pregnanciesReport) {
                 Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PregnanciesPage()));
+                return;
+              }
+              if (title == loc.weightReport) {
+                Navigator.push(context, MaterialPageRoute(builder: (ctx) => const WeightReportPage()));
                 return;
               }
               if (title == loc.stageTrackingReport) {
@@ -148,11 +163,11 @@ class ReportsPage extends StatelessWidget {
               debugPrint('Tapped: $title');
             },
             child: Padding(
-              padding: const EdgeInsets.all(12.0), // Reduced padding for smaller screens
+              padding: const EdgeInsets.all(12.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // PNG Icon with original colors - Responsive size
+                  // PNG Icon with original colors
                   LayoutBuilder(
                     builder: (context, constraints) {
                       final double iconSize = constraints.maxWidth < 150 ? 50 : 70;
@@ -160,11 +175,11 @@ class ReportsPage extends StatelessWidget {
                         width: iconSize,
                         height: iconSize,
                         decoration: BoxDecoration(
-                          color: Colors.white, // White background for icon
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0), // Reduced padding
+                          padding: const EdgeInsets.all(8.0),
                           child: Image.asset(
                             iconPath,
                             fit: BoxFit.contain,
@@ -172,7 +187,7 @@ class ReportsPage extends StatelessWidget {
                               return Icon(
                                 Icons.error_outline,
                                 color: const Color(0xFF4CAF50),
-                                size: iconSize * 0.4, // Proportional size
+                                size: iconSize * 0.4,
                               );
                             },
                           ),
@@ -181,9 +196,9 @@ class ReportsPage extends StatelessWidget {
                     },
                   ),
                   
-                  const SizedBox(height: 8), // Reduced spacing
+                  const SizedBox(height: 8),
                   
-                  // Title with proper overflow handling
+                  // Title
                   Flexible(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 2.0),
@@ -191,8 +206,8 @@ class ReportsPage extends StatelessWidget {
                         title,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          color: Colors.white, // White text on green background
-                          fontSize: 14, // Slightly smaller font for small screens
+                          color: Colors.white,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
                         maxLines: 2,
@@ -217,7 +232,6 @@ class ReportsPage extends StatelessWidget {
     final String? goatsJson = prefs.getString('goats');
     
     if (goatsJson == null) {
-      // Show error if no goats found
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(loc.noGoatsFound),
@@ -230,7 +244,6 @@ class ReportsPage extends StatelessWidget {
     final List<dynamic> decodedList = jsonDecode(goatsJson);
     final List<Goat> goats = decodedList.map((item) => Goat.fromJson(item)).toList();
 
-    // FIXED: Now passing the required goats parameter
     Navigator.push(
       context,
       MaterialPageRoute(

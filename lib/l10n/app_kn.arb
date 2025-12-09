@@ -411,7 +411,53 @@
   "goatsByStage": "ಹಂತದ ಪ್ರಕಾರ ಮೇಕೆಗಳು.",
   "goatsByGender": "ಲಿಂಗದ ಪ್ರಕಾರ ಮೇಕೆಗಳು.",
   "exportPdf": "PDF ರಫ್ತು ಮಾಡಿ",
-  "filter": "ಫಿಲ್ಟರ್"
+  "filter": "ಫಿಲ್ಟರ್",
+  
+  "milkReport": "ಹಾಲು ವರದಿ",
+  "milkSummary": "ಹಾಲು ಸಾರಾಂಶ.",
+  "dailyMilkAverage": "ದೈನಂದಿನ ಹಾಲು ಸರಾಸರಿ.",
+  "totalMilkProduced": "ಒಟ್ಟು ಹಾಲು ಉತ್ಪಾದನೆ.",
+  "totalForKidsUsed": "ಮಕ್ಕಳಿಗೆ/ಬಳಸಿದ ಒಟ್ಟು.",
+  "mostProductiveGoat": "ಹೆಚ್ಚು ಉತ್ಪಾದಕ ಮೇಕೆ.",
+  "leastProductiveGoat": "ಕಡಿಮೆ ಉತ್ಪಾದಕ ಮೇಕೆ.",
+  "records": "ರೆಕಾರ್ಡ್ಗಳು",
+  "day": "ದಿನ",
+  "produced": "ಉತ್ಪಾದಿಸಲಾಗಿದೆ",
+  "used": "ಬಳಸಲಾಗಿದೆ",
+  "notAvailable": "ಲಭ್ಯವಿಲ್ಲ",
+  "noRecordsFound": "ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ ರೆಕಾರ್ಡ್ಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
+  "viewDetails": "ವಿವರಗಳನ್ನು ವೀಕ್ಷಿಸಿ",
+  "editRecords": "ರೆಕಾರ್ಡ್ಗಳನ್ನು ಸಂಪಾದಿಸಿ",
+  "customRange": "ಕಸ್ಟಮ್ ವ್ಯಾಪ್ತಿ",
+  "selectDateRange": "ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  
+  "january": "ಜನವರಿ",
+  "february": "ಫೆಬ್ರವರಿ",
+  "march": "ಮಾರ್ಚ್",
+  "april": "ಏಪ್ರಿಲ್",
+  "may": "ಮೇ",
+  "june": "ಜೂನ್",
+  "july": "ಜುಲೈ",
+  "august": "ಆಗಸ್ಟ್",
+  "september": "ಸೆಪ್ಟೆಂಬರ್",
+  "october": "ಅಕ್ಟೋಬರ್",
+  "november": "ನವೆಂಬರ್",
+  "december": "ಡಿಸೆಂಬರ್",
+  
+  "confirm": "ದೃಢೀಕರಿಸಿ",
+  "cancel": "ರದ್ದುಮಾಡಿ",
+  "save": "ಉಳಿಸಿ",
+  "invalidDateRange": "ಅಮಾನ್ಯ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ",
+  "today": "ಇಂದು",
+ "currentMonth": "ಪ್ರಸ್ತುತ ತಿಂಗಳು",
+ "previousMonth": "ಹಿಂದಿನ ತಿಂಗಳು",
+ "exportPDF": "PDF ರಫ್ತು",
+ "pdfExportConfirmation": "ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ PDF ವರದಿಯನ್ನು ರಚಿಸಲು ಬಯಸುತ್ತೀರಾ?",
+ "pdfGenerating": "PDF ವರದಿಯನ್ನು ರಚಿಸಲಾಗುತ್ತಿದೆ...",
+ "generate": "ರಚಿಸಿ",
+ "noDataToExport": "ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ ರಫ್ತು ಮಾಡಲು ಡೇಟಾ ಇಲ್ಲ"
+
 }
+
 
 

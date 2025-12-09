@@ -601,7 +601,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get lastWeek => 'पिछला सप्ताह';
 
   @override
-  String get currentMonth => 'चालू माह';
+  String get currentMonth => 'वर्तमान माह';
 
   @override
   String get lastMonth => 'पिछला माह';
@@ -1167,4 +1167,111 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get goatsByGender => 'लिंग के अनुसार बकरियाँ.';
+
+  @override
+  String get milkSummary => 'दूध सारांश.';
+
+  @override
+  String get dailyMilkAverage => 'दैनिक दूध औसत.';
+
+  @override
+  String get totalMilkProduced => 'कुल दूध उत्पादन.';
+
+  @override
+  String get totalForKidsUsed => 'बच्चों के लिए/उपयोग किया गया कुल.';
+
+  @override
+  String get mostProductiveGoat => 'सबसे अधिक उत्पादक बकरी.';
+
+  @override
+  String get leastProductiveGoat => 'सबसे कम उत्पादक बकरी.';
+
+  @override
+  String get records => 'रिकॉर्ड';
+
+  @override
+  String get day => 'दिन';
+
+  @override
+  String get produced => 'उत्पादित';
+
+  @override
+  String get notAvailable => 'उपलब्ध नहीं';
+
+  @override
+  String get noRecordsFound => 'चयनित अवधि के लिए कोई रिकॉर्ड नहीं मिला';
+
+  @override
+  String get viewDetails => 'विवरण देखें';
+
+  @override
+  String get editRecords => 'रिकॉर्ड संपादित करें';
+
+  @override
+  String get customRange => 'कस्टम रेंज';
+
+  @override
+  String get selectDateRange => 'तिथि सीमा चुनें';
+
+  @override
+  String get january => 'जनवरी';
+
+  @override
+  String get february => 'फरवरी';
+
+  @override
+  String get march => 'मार्च';
+
+  @override
+  String get april => 'अप्रैल';
+
+  @override
+  String get may => 'मई';
+
+  @override
+  String get june => 'जून';
+
+  @override
+  String get july => 'जुलाई';
+
+  @override
+  String get august => 'अगस्त';
+
+  @override
+  String get september => 'सितंबर';
+
+  @override
+  String get october => 'अक्टूबर';
+
+  @override
+  String get november => 'नवंबर';
+
+  @override
+  String get december => 'दिसंबर';
+
+  @override
+  String get confirm => 'पुष्टि करें';
+
+  @override
+  String get invalidDateRange => 'अमान्य तिथि सीमा';
+
+  @override
+  String get previousMonth => 'पिछला माह';
+
+  @override
+  String get exportPDF => 'PDF निर्यात';
+
+  @override
+  String get pdfExportConfirmation =>
+      'क्या आप चयनित अवधि के लिए PDF रिपोर्ट जनरेट करना चाहते हैं?';
+
+  @override
+  String get pdfGenerating => 'PDF रिपोर्ट जनरेट की जा रही है...';
+
+  @override
+  String get generate => 'जनरेट करें';
+
+  @override
+  String get noDataToExport =>
+      'चयनित अवधि के लिए निर्यात करने के लिए कोई डेटा नहीं है';
 }

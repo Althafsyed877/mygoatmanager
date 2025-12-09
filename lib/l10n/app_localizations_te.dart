@@ -21,7 +21,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get syncData => 'డేటా సమకాలీకరించు';
 
   @override
-  String get cancel => 'రద్దు చేయి';
+  String get cancel => 'రద్దు చేయండి';
 
   @override
   String get delete => 'తొలగించు';
@@ -1168,4 +1168,110 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get goatsByGender => 'లింగం ప్రకారం మేకలు.';
+
+  @override
+  String get milkSummary => 'పాల సంగ్రహం.';
+
+  @override
+  String get dailyMilkAverage => 'రోజువారీ పాల సగటు.';
+
+  @override
+  String get totalMilkProduced => 'మొత్తం పాల ఉత్పత్తి.';
+
+  @override
+  String get totalForKidsUsed => 'పిల్లలకు/ఉపయోగించిన మొత్తం.';
+
+  @override
+  String get mostProductiveGoat => 'అత్యంత ఉత్పాదక మేక.';
+
+  @override
+  String get leastProductiveGoat => 'తక్కువ ఉత్పాదక మేక.';
+
+  @override
+  String get records => 'రికార్డులు';
+
+  @override
+  String get day => 'రోజు';
+
+  @override
+  String get produced => 'ఉత్పత్తి';
+
+  @override
+  String get notAvailable => 'లభ్యం కాదు';
+
+  @override
+  String get noRecordsFound => 'ఎంచుకున్న కాలంలో రికార్డులు లేవు';
+
+  @override
+  String get viewDetails => 'వివరాలు చూడండి';
+
+  @override
+  String get editRecords => 'రికార్డులు సవరించండి';
+
+  @override
+  String get customRange => 'ఇష్టపడిన కాలం';
+
+  @override
+  String get selectDateRange => 'తేదీ కాలాన్ని ఎంచుకోండి';
+
+  @override
+  String get january => 'జనవరి';
+
+  @override
+  String get february => 'ఫిబ్రవరి';
+
+  @override
+  String get march => 'మార్చి';
+
+  @override
+  String get april => 'ఏప్రిల్';
+
+  @override
+  String get may => 'మే';
+
+  @override
+  String get june => 'జూన్';
+
+  @override
+  String get july => 'జూలై';
+
+  @override
+  String get august => 'ఆగస్టు';
+
+  @override
+  String get september => 'సెప్టెంబర్';
+
+  @override
+  String get october => 'అక్టోబర్';
+
+  @override
+  String get november => 'నవంబర్';
+
+  @override
+  String get december => 'డిసెంబర్';
+
+  @override
+  String get confirm => 'నిర్ధారించండి';
+
+  @override
+  String get invalidDateRange => 'చెల్లని తేదీ కాలం';
+
+  @override
+  String get previousMonth => 'గత నెల';
+
+  @override
+  String get exportPDF => 'PDF ఎగుమతి';
+
+  @override
+  String get pdfExportConfirmation =>
+      'ఎంచుకున్న కాలానికి PDF రిపోర్ట్ జనరేట్ చేయాలనుకుంటున్నారా?';
+
+  @override
+  String get pdfGenerating => 'PDF రిపోర్ట్ జనరేట్ చేస్తోంది...';
+
+  @override
+  String get generate => 'జనరేట్ చేయండి';
+
+  @override
+  String get noDataToExport => 'ఎంచుకున్న కాలానికి ఎగుమతి చేయడానికి డేటా లేదు';
 }

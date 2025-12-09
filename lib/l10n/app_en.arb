@@ -410,7 +410,56 @@
   "goatsByStage": "Goats by stage.",
   "goatsByGender": "Goats by gender.",
   "exportPdf": "Export PDF",
-  "filter": "Filter"
+  "filter": "Filter",
+  
+  "milkReport": "Milk Report",
+  "milkSummary": "Milk summary.",
+  "dailyMilkAverage": "Daily milk average.",
+  "totalMilkProduced": "Total milk produced.",
+  "totalForKidsUsed": "Total for kids/used.",
+  "mostProductiveGoat": "Most productive goat.",
+  "leastProductiveGoat": "Least productive goat.",
+  "records": "Records",
+  "day": "Day",
+  "produced": "Produced",
+  "used": "Used",
+  "notAvailable": "N/A",
+  "noRecordsFound": "No records found for selected period",
+  "viewDetails": "View Details",
+  "editRecords": "Edit Records",
+  "customRange": "Custom Range",
+  "selectDateRange": "Select Date Range",
+  
+  "january": "January",
+  "february": "February",
+  "march": "March",
+  "april": "April",
+  "may": "May",
+  "june": "June",
+  "july": "July",
+  "august": "August",
+  "september": "September",
+  "october": "October",
+  "november": "November",
+  "december": "December",
+  
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "save": "Save",
+  "invalidDateRange": "Invalid date range",
+
+ "today": "Today",
+ "currentMonth": "Current Month",
+ "previousMonth": "Previous Month",
+ "exportPDF": "Export PDF",
+ "pdfExportConfirmation": "Do you want to generate PDF report for the selected period?",
+ "pdfGenerating": "Generating PDF report...",
+ "generate": "Generate",
+ "noDataToExport": "No data to export for selected period"
+
 }
+ 
+ 
+
 
 

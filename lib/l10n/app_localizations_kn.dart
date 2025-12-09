@@ -508,7 +508,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get total => 'ಒಟ್ಟು';
 
   @override
-  String get used => 'ಬಳಸಿದ';
+  String get used => 'ಬಳಸಲಾಗಿದೆ';
 
   @override
   String get notes => 'ಟಿಪ್ಪಣಿಗಳು';
@@ -1174,4 +1174,110 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get goatsByGender => 'ಲಿಂಗದ ಪ್ರಕಾರ ಮೇಕೆಗಳು.';
+
+  @override
+  String get milkSummary => 'ಹಾಲು ಸಾರಾಂಶ.';
+
+  @override
+  String get dailyMilkAverage => 'ದೈನಂದಿನ ಹಾಲು ಸರಾಸರಿ.';
+
+  @override
+  String get totalMilkProduced => 'ಒಟ್ಟು ಹಾಲು ಉತ್ಪಾದನೆ.';
+
+  @override
+  String get totalForKidsUsed => 'ಮಕ್ಕಳಿಗೆ/ಬಳಸಿದ ಒಟ್ಟು.';
+
+  @override
+  String get mostProductiveGoat => 'ಹೆಚ್ಚು ಉತ್ಪಾದಕ ಮೇಕೆ.';
+
+  @override
+  String get leastProductiveGoat => 'ಕಡಿಮೆ ಉತ್ಪಾದಕ ಮೇಕೆ.';
+
+  @override
+  String get records => 'ರೆಕಾರ್ಡ್ಗಳು';
+
+  @override
+  String get day => 'ದಿನ';
+
+  @override
+  String get produced => 'ಉತ್ಪಾದಿಸಲಾಗಿದೆ';
+
+  @override
+  String get notAvailable => 'ಲಭ್ಯವಿಲ್ಲ';
+
+  @override
+  String get noRecordsFound => 'ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ ರೆಕಾರ್ಡ್ಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+
+  @override
+  String get viewDetails => 'ವಿವರಗಳನ್ನು ವೀಕ್ಷಿಸಿ';
+
+  @override
+  String get editRecords => 'ರೆಕಾರ್ಡ್ಗಳನ್ನು ಸಂಪಾದಿಸಿ';
+
+  @override
+  String get customRange => 'ಕಸ್ಟಮ್ ವ್ಯಾಪ್ತಿ';
+
+  @override
+  String get selectDateRange => 'ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get january => 'ಜನವರಿ';
+
+  @override
+  String get february => 'ಫೆಬ್ರವರಿ';
+
+  @override
+  String get march => 'ಮಾರ್ಚ್';
+
+  @override
+  String get april => 'ಏಪ್ರಿಲ್';
+
+  @override
+  String get may => 'ಮೇ';
+
+  @override
+  String get june => 'ಜೂನ್';
+
+  @override
+  String get july => 'ಜುಲೈ';
+
+  @override
+  String get august => 'ಆಗಸ್ಟ್';
+
+  @override
+  String get september => 'ಸೆಪ್ಟೆಂಬರ್';
+
+  @override
+  String get october => 'ಅಕ್ಟೋಬರ್';
+
+  @override
+  String get november => 'ನವೆಂಬರ್';
+
+  @override
+  String get december => 'ಡಿಸೆಂಬರ್';
+
+  @override
+  String get confirm => 'ದೃಢೀಕರಿಸಿ';
+
+  @override
+  String get invalidDateRange => 'ಅಮಾನ್ಯ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ';
+
+  @override
+  String get previousMonth => 'ಹಿಂದಿನ ತಿಂಗಳು';
+
+  @override
+  String get exportPDF => 'PDF ರಫ್ತು';
+
+  @override
+  String get pdfExportConfirmation =>
+      'ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ PDF ವರದಿಯನ್ನು ರಚಿಸಲು ಬಯಸುತ್ತೀರಾ?';
+
+  @override
+  String get pdfGenerating => 'PDF ವರದಿಯನ್ನು ರಚಿಸಲಾಗುತ್ತಿದೆ...';
+
+  @override
+  String get generate => 'ರಚಿಸಿ';
+
+  @override
+  String get noDataToExport => 'ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ ರಫ್ತು ಮಾಡಲು ಡೇಟಾ ಇಲ್ಲ';
 }

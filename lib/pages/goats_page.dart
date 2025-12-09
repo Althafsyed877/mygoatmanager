@@ -13,6 +13,7 @@ import 'view_goat_page.dart';
 import 'edit_goat_page.dart';
 import 'add_event_page.dart';
 import 'goat_preview_page.dart';
+import '../services/archive_service.dart'; // Add this import
 
 class GoatsPage extends StatefulWidget {
   const GoatsPage({super.key});
@@ -711,7 +712,7 @@ class _GoatsPageState extends State<GoatsPage> {
                     );
                     break;
                   case 'delete':
-                    _showDeleteDialog(goat);
+                    _showArchiveOrDeleteDialog(goat);
                     break;
                 }
               },
@@ -741,41 +742,220 @@ class _GoatsPageState extends State<GoatsPage> {
     );
   }
 
-  void _showDeleteDialog(Goat goat) {
+  // NEW: Archive or Delete Dialog
+  void _showArchiveOrDeleteDialog(Goat goat) {
+    final loc = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.deleteGoatTitle),
-          content: Text('${AppLocalizations.of(context)!.deleteGoatConfirm} ${goat.tagNo}?'),
+          title: const Text('Archive or Delete'),
+          content: Text('What would you like to do with ${goat.tagNo}?'),
           actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(loc.cancel),
+            ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
+                _showArchiveDialog(goat);
               },
-              child: Text(AppLocalizations.of(context)!.cancel),
+              child: const Text(
+                'Archive',
+                style: TextStyle(color: Colors.orange),
+              ),
             ),
             TextButton(
-              onPressed: () async {
-                setState(() {
-                  goats.removeWhere((g) => g.tagNo == goat.tagNo);
-                });
-                await _saveGoats();
+              onPressed: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${AppLocalizations.of(context)!.deleteGoatDeleted} ${goat.tagNo}'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
+                _permanentDeleteGoat(goat);
               },
-              child: Text(AppLocalizations.of(context)!.delete, style: const TextStyle(color: Colors.red)),
+              child: Text(
+                loc.delete,
+                style: const TextStyle(color: Colors.red),
+              ),
             ),
           ],
         );
       },
     );
   }
+
+  // NEW: Archive Dialog
+  void _showArchiveDialog(Goat goat) {
+    final reasons = ['sold', 'dead', 'lost', 'other'];
+    final reasonLabels = ['Sold', 'Dead', 'Lost', 'Other'];
+    
+    String? selectedReason;
+    String notes = '';
+    DateTime archiveDate = DateTime.now();
+    
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: const Text('Archive Goat'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Goat: ${goat.tagNo} - ${goat.name ?? "Unnamed"}'),
+                    const SizedBox(height: 16),
+                    // Reason selection
+                    DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(
+                        labelText: 'Reason for Archive',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: reasons.asMap().entries.map((entry) {
+                        return DropdownMenuItem<String>(
+                          value: entry.value,
+                          child: Text(reasonLabels[entry.key]),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setStateDialog(() => selectedReason = value);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    // Date selection
+                    InkWell(
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: archiveDate,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime.now(),
+                        );
+                        if (picked != null) {
+                          setStateDialog(() => archiveDate = picked);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.calendar_today),
+                            const SizedBox(width: 8),
+                            Text('${archiveDate.day}/${archiveDate.month}/${archiveDate.year}'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Notes
+                    TextField(
+                      decoration: const InputDecoration(
+                        labelText: 'Notes (optional)',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) => notes = value,
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (selectedReason != null) {
+                      await ArchiveService.archiveGoat(
+                        goat: goat,
+                        reason: selectedReason!,
+                        archiveDate: archiveDate,
+                        notes: notes.isEmpty ? null : notes,
+                      );
+                      
+                      // Remove from active list
+                      setState(() {
+                        goats.removeWhere((g) => g.tagNo == goat.tagNo);
+                      });
+                      
+                      await _saveGoats();
+                      
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Goat ${goat.tagNo} archived as ${selectedReason!}'),
+                            backgroundColor: const Color(0xFF4CAF50),
+                          ),
+                        );
+                        Navigator.of(ctx).pop();
+                      }
+                    }
+                  },
+                  child: const Text('Archive'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // NEW: Permanent Delete (keeps old functionality)
+  void _permanentDeleteGoat(Goat goat) async {
+    final loc = AppLocalizations.of(context)!;
+    setState(() {
+      goats.removeWhere((g) => g.tagNo == goat.tagNo);
+    });
+    await _saveGoats();
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${loc.deleteGoatDeleted} ${goat.tagNo}'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  // OLD: Delete Dialog (now replaced by archive dialog)
+  // void _showDeleteDialog(Goat goat) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text(AppLocalizations.of(context)!.deleteGoatTitle),
+  //         content: Text('${AppLocalizations.of(context)!.deleteGoatConfirm} ${goat.tagNo}?'),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.pop(context);
+  //             },
+  //             child: Text(AppLocalizations.of(context)!.cancel),
+  //           ),
+  //           TextButton(
+  //             onPressed: () async {
+  //               setState(() {
+  //                 goats.removeWhere((g) => g.tagNo == goat.tagNo);
+  //               });
+  //               await _saveGoats();
+  //               Navigator.pop(context);
+  //               ScaffoldMessenger.of(context).showSnackBar(
+  //                 SnackBar(
+  //                   content: Text('${AppLocalizations.of(context)!.deleteGoatDeleted} ${goat.tagNo}'),
+  //                   backgroundColor: Colors.red,
+  //                 ),
+  //               );
+  //             },
+  //             child: Text(AppLocalizations.of(context)!.delete, style: const TextStyle(color: Colors.red)),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   DateTime? _tryParseDate(String? s) {
     if (s == null) return null;

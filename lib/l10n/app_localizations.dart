@@ -2371,6 +2371,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Goats by gender.'**
   String get goatsByGender;
+
+  /// No description provided for @milkSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Milk summary.'**
+  String get milkSummary;
+
+  /// No description provided for @dailyMilkAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily milk average.'**
+  String get dailyMilkAverage;
+
+  /// No description provided for @totalMilkProduced.
+  ///
+  /// In en, this message translates to:
+  /// **'Total milk produced.'**
+  String get totalMilkProduced;
+
+  /// No description provided for @totalForKidsUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Total for kids/used.'**
+  String get totalForKidsUsed;
+
+  /// No description provided for @mostProductiveGoat.
+  ///
+  /// In en, this message translates to:
+  /// **'Most productive goat.'**
+  String get mostProductiveGoat;
+
+  /// No description provided for @leastProductiveGoat.
+  ///
+  /// In en, this message translates to:
+  /// **'Least productive goat.'**
+  String get leastProductiveGoat;
+
+  /// No description provided for @records.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get records;
+
+  /// No description provided for @day.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get day;
+
+  /// No description provided for @produced.
+  ///
+  /// In en, this message translates to:
+  /// **'Produced'**
+  String get produced;
+
+  /// No description provided for @notAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get notAvailable;
+
+  /// No description provided for @noRecordsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No records found for selected period'**
+  String get noRecordsFound;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
+
+  /// No description provided for @editRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Records'**
+  String get editRecords;
+
+  /// No description provided for @customRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Range'**
+  String get customRange;
+
+  /// No description provided for @selectDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date Range'**
+  String get selectDateRange;
+
+  /// No description provided for @january.
+  ///
+  /// In en, this message translates to:
+  /// **'January'**
+  String get january;
+
+  /// No description provided for @february.
+  ///
+  /// In en, this message translates to:
+  /// **'February'**
+  String get february;
+
+  /// No description provided for @march.
+  ///
+  /// In en, this message translates to:
+  /// **'March'**
+  String get march;
+
+  /// No description provided for @april.
+  ///
+  /// In en, this message translates to:
+  /// **'April'**
+  String get april;
+
+  /// No description provided for @may.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get may;
+
+  /// No description provided for @june.
+  ///
+  /// In en, this message translates to:
+  /// **'June'**
+  String get june;
+
+  /// No description provided for @july.
+  ///
+  /// In en, this message translates to:
+  /// **'July'**
+  String get july;
+
+  /// No description provided for @august.
+  ///
+  /// In en, this message translates to:
+  /// **'August'**
+  String get august;
+
+  /// No description provided for @september.
+  ///
+  /// In en, this message translates to:
+  /// **'September'**
+  String get september;
+
+  /// No description provided for @october.
+  ///
+  /// In en, this message translates to:
+  /// **'October'**
+  String get october;
+
+  /// No description provided for @november.
+  ///
+  /// In en, this message translates to:
+  /// **'November'**
+  String get november;
+
+  /// No description provided for @december.
+  ///
+  /// In en, this message translates to:
+  /// **'December'**
+  String get december;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @invalidDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid date range'**
+  String get invalidDateRange;
+
+  /// No description provided for @previousMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous Month'**
+  String get previousMonth;
+
+  /// No description provided for @exportPDF.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF'**
+  String get exportPDF;
+
+  /// No description provided for @pdfExportConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to generate PDF report for the selected period?'**
+  String get pdfExportConfirmation;
+
+  /// No description provided for @pdfGenerating.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating PDF report...'**
+  String get pdfGenerating;
+
+  /// No description provided for @generate.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate'**
+  String get generate;
+
+  /// No description provided for @noDataToExport.
+  ///
+  /// In en, this message translates to:
+  /// **'No data to export for selected period'**
+  String get noDataToExport;
 }
 
 class _AppLocalizationsDelegate

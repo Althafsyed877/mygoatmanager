@@ -21,7 +21,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get syncData => 'தரவு ஒத்திசைக்கவும்';
 
   @override
-  String get cancel => 'ரத்துசெய்';
+  String get cancel => 'ரத்து செய்';
 
   @override
   String get delete => 'அழி';
@@ -608,7 +608,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get lastWeek => 'கடந்த வாரம்';
 
   @override
-  String get currentMonth => 'தற்போதைய மாதம்';
+  String get currentMonth => 'நடப்பு மாதம்';
 
   @override
   String get lastMonth => 'கடந்த மாதம்';
@@ -1185,4 +1185,112 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get goatsByGender => 'பாலினம் மூலம் ஆடுகள்.';
+
+  @override
+  String get milkSummary => 'பால் சுருக்கம்.';
+
+  @override
+  String get dailyMilkAverage => 'தினசரி பால் சராசரி.';
+
+  @override
+  String get totalMilkProduced => 'மொத்த பால் உற்பத்தி.';
+
+  @override
+  String get totalForKidsUsed => 'குழந்தைகளுக்கு/பயன்படுத்தப்பட்ட மொத்தம்.';
+
+  @override
+  String get mostProductiveGoat => 'அதிக உற்பத்தி ஆடு.';
+
+  @override
+  String get leastProductiveGoat => 'குறைந்த உற்பத்தி ஆடு.';
+
+  @override
+  String get records => 'பதிவுகள்';
+
+  @override
+  String get day => 'நாள்';
+
+  @override
+  String get produced => 'உற்பத்தி';
+
+  @override
+  String get notAvailable => 'கிடைக்கவில்லை';
+
+  @override
+  String get noRecordsFound =>
+      'தேர்ந்தெடுக்கப்பட்ட காலகட்டத்தில் பதிவுகள் இல்லை';
+
+  @override
+  String get viewDetails => 'விவரங்களைப் பார்க்கவும்';
+
+  @override
+  String get editRecords => 'பதிவுகளைத் திருத்தவும்';
+
+  @override
+  String get customRange => 'தனிப்பட்ட காலம்';
+
+  @override
+  String get selectDateRange => 'தேதி வரம்பைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get january => 'ஜனவரி';
+
+  @override
+  String get february => 'பிப்ரவரி';
+
+  @override
+  String get march => 'மார்ச்';
+
+  @override
+  String get april => 'ஏப்ரல்';
+
+  @override
+  String get may => 'மே';
+
+  @override
+  String get june => 'ஜூன்';
+
+  @override
+  String get july => 'ஜூலை';
+
+  @override
+  String get august => 'ஆகஸ்ட்';
+
+  @override
+  String get september => 'செப்டம்பர்';
+
+  @override
+  String get october => 'அக்டோபர்';
+
+  @override
+  String get november => 'நவம்பர்';
+
+  @override
+  String get december => 'டிசம்பர்';
+
+  @override
+  String get confirm => 'உறுதிப்படுத்து';
+
+  @override
+  String get invalidDateRange => 'தவறான தேதி வரம்பு';
+
+  @override
+  String get previousMonth => 'கடந்த மாதம்';
+
+  @override
+  String get exportPDF => 'PDF ஏற்றுமதி';
+
+  @override
+  String get pdfExportConfirmation =>
+      'தேர்ந்தெடுக்கப்பட்ட காலகட்டத்திற்கான PDF அறிக்கையை உருவாக்க வேண்டுமா?';
+
+  @override
+  String get pdfGenerating => 'PDF அறிக்கை உருவாக்கப்படுகிறது...';
+
+  @override
+  String get generate => 'உருவாக்கு';
+
+  @override
+  String get noDataToExport =>
+      'தேர்ந்தெடுக்கப்பட்ட காலகட்டத்திற்கு ஏற்றுமதி செய்ய தரவு இல்லை';
 }

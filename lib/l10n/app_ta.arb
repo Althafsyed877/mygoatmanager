@@ -412,7 +412,54 @@
   "goatsByStage": "நிலை மூலம் ஆடுகள்.",
   "goatsByGender": "பாலினம் மூலம் ஆடுகள்.",
   "exportPdf": "PDF ஏற்றுமதி",
-  "filter": "வடிகட்டி"
+  "filter": "வடிகட்டி",
+ 
+  "milkReport": "பால் அறிக்கை",
+  "milkSummary": "பால் சுருக்கம்.",
+  "dailyMilkAverage": "தினசரி பால் சராசரி.",
+  "totalMilkProduced": "மொத்த பால் உற்பத்தி.",
+  "totalForKidsUsed": "குழந்தைகளுக்கு/பயன்படுத்தப்பட்ட மொத்தம்.",
+  "mostProductiveGoat": "அதிக உற்பத்தி ஆடு.",
+  "leastProductiveGoat": "குறைந்த உற்பத்தி ஆடு.",
+  "records": "பதிவுகள்",
+  "day": "நாள்",
+  "produced": "உற்பத்தி",
+  "used": "பயன்படுத்தப்பட்டது",
+  "notAvailable": "கிடைக்கவில்லை",
+  "noRecordsFound": "தேர்ந்தெடுக்கப்பட்ட காலகட்டத்தில் பதிவுகள் இல்லை",
+  "viewDetails": "விவரங்களைப் பார்க்கவும்",
+  "editRecords": "பதிவுகளைத் திருத்தவும்",
+  "customRange": "தனிப்பட்ட காலம்",
+  "selectDateRange": "தேதி வரம்பைத் தேர்ந்தெடுக்கவும்",
+  
+  "january": "ஜனவரி",
+  "february": "பிப்ரவரி",
+  "march": "மார்ச்",
+  "april": "ஏப்ரல்",
+  "may": "மே",
+  "june": "ஜூன்",
+  "july": "ஜூலை",
+  "august": "ஆகஸ்ட்",
+  "september": "செப்டம்பர்",
+  "october": "அக்டோபர்",
+  "november": "நவம்பர்",
+  "december": "டிசம்பர்",
+  
+  "confirm": "உறுதிப்படுத்து",
+  "cancel": "ரத்து செய்",
+  "save": "சேமி",
+  "invalidDateRange": "தவறான தேதி வரம்பு",
+
+  "today": "இன்று",
+"currentMonth": "நடப்பு மாதம்",
+"previousMonth": "கடந்த மாதம்",
+"exportPDF": "PDF ஏற்றுமதி",
+"pdfExportConfirmation": "தேர்ந்தெடுக்கப்பட்ட காலகட்டத்திற்கான PDF அறிக்கையை உருவாக்க வேண்டுமா?",
+"pdfGenerating": "PDF அறிக்கை உருவாக்கப்படுகிறது...",
+"generate": "உருவாக்கு",
+"noDataToExport": "தேர்ந்தெடுக்கப்பட்ட காலகட்டத்திற்கு ஏற்றுமதி செய்ய தரவு இல்லை"
+
 }
+
 
 

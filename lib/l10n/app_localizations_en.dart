@@ -1165,4 +1165,110 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goatsByGender => 'Goats by gender.';
+
+  @override
+  String get milkSummary => 'Milk summary.';
+
+  @override
+  String get dailyMilkAverage => 'Daily milk average.';
+
+  @override
+  String get totalMilkProduced => 'Total milk produced.';
+
+  @override
+  String get totalForKidsUsed => 'Total for kids/used.';
+
+  @override
+  String get mostProductiveGoat => 'Most productive goat.';
+
+  @override
+  String get leastProductiveGoat => 'Least productive goat.';
+
+  @override
+  String get records => 'Records';
+
+  @override
+  String get day => 'Day';
+
+  @override
+  String get produced => 'Produced';
+
+  @override
+  String get notAvailable => 'N/A';
+
+  @override
+  String get noRecordsFound => 'No records found for selected period';
+
+  @override
+  String get viewDetails => 'View Details';
+
+  @override
+  String get editRecords => 'Edit Records';
+
+  @override
+  String get customRange => 'Custom Range';
+
+  @override
+  String get selectDateRange => 'Select Date Range';
+
+  @override
+  String get january => 'January';
+
+  @override
+  String get february => 'February';
+
+  @override
+  String get march => 'March';
+
+  @override
+  String get april => 'April';
+
+  @override
+  String get may => 'May';
+
+  @override
+  String get june => 'June';
+
+  @override
+  String get july => 'July';
+
+  @override
+  String get august => 'August';
+
+  @override
+  String get september => 'September';
+
+  @override
+  String get october => 'October';
+
+  @override
+  String get november => 'November';
+
+  @override
+  String get december => 'December';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get invalidDateRange => 'Invalid date range';
+
+  @override
+  String get previousMonth => 'Previous Month';
+
+  @override
+  String get exportPDF => 'Export PDF';
+
+  @override
+  String get pdfExportConfirmation =>
+      'Do you want to generate PDF report for the selected period?';
+
+  @override
+  String get pdfGenerating => 'Generating PDF report...';
+
+  @override
+  String get generate => 'Generate';
+
+  @override
+  String get noDataToExport => 'No data to export for selected period';
 }

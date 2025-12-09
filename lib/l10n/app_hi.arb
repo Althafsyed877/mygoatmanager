@@ -411,7 +411,54 @@
   "goatsByStage": "स्टेज के अनुसार बकरियाँ.",
   "goatsByGender": "लिंग के अनुसार बकरियाँ.",
   "exportPdf": "PDF निर्यात करें",
-  "filter": "फ़िल्टर"
+  "filter": "फ़िल्टर",
+  
+  "milkReport": "दूध रिपोर्ट",
+  "milkSummary": "दूध सारांश.",
+  "dailyMilkAverage": "दैनिक दूध औसत.",
+  "totalMilkProduced": "कुल दूध उत्पादन.",
+  "totalForKidsUsed": "बच्चों के लिए/उपयोग किया गया कुल.",
+  "mostProductiveGoat": "सबसे अधिक उत्पादक बकरी.",
+  "leastProductiveGoat": "सबसे कम उत्पादक बकरी.",
+  "records": "रिकॉर्ड",
+  "day": "दिन",
+  "produced": "उत्पादित",
+  "used": "उपयोग किया गया",
+  "notAvailable": "उपलब्ध नहीं",
+  "noRecordsFound": "चयनित अवधि के लिए कोई रिकॉर्ड नहीं मिला",
+  "viewDetails": "विवरण देखें",
+  "editRecords": "रिकॉर्ड संपादित करें",
+  "customRange": "कस्टम रेंज",
+  "selectDateRange": "तिथि सीमा चुनें",
+  
+  "january": "जनवरी",
+  "february": "फरवरी",
+  "march": "मार्च",
+  "april": "अप्रैल",
+  "may": "मई",
+  "june": "जून",
+  "july": "जुलाई",
+  "august": "अगस्त",
+  "september": "सितंबर",
+  "october": "अक्टूबर",
+  "november": "नवंबर",
+  "december": "दिसंबर",
+  
+  "confirm": "पुष्टि करें",
+  "cancel": "रद्द करें",
+  "save": "सहेजें",
+  "invalidDateRange": "अमान्य तिथि सीमा",
+
+  "today": "आज",
+ "currentMonth": "वर्तमान माह",
+ "previousMonth": "पिछला माह",
+ "exportPDF": "PDF निर्यात",
+ "pdfExportConfirmation": "क्या आप चयनित अवधि के लिए PDF रिपोर्ट जनरेट करना चाहते हैं?",
+ "pdfGenerating": "PDF रिपोर्ट जनरेट की जा रही है...",
+ "generate": "जनरेट करें",
+ "noDataToExport": "चयनित अवधि के लिए निर्यात करने के लिए कोई डेटा नहीं है"
+
 }
+
 
 
