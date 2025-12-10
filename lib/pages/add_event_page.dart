@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
 import '../models/goat.dart';
-import '../models/event.dart'; // Import Event model
+import '../models/event.dart';
+import 'package:intl/intl.dart'; // ✅ ADD THIS IMPORT
 
 class AddEventPage extends StatefulWidget {
   final Goat goat;
@@ -54,28 +55,108 @@ class _AddEventPageState extends State<AddEventPage> {
     super.dispose();
   }
 
+  // ✅ NEW FUNCTION: Add weight record to goat's weightHistory
+  Future<void> _addWeightToGoatHistory() async {
+    if (_eventType != 'Weighed' || _weighedController.text.trim().isEmpty) {
+      return; // Only for weighed events with valid weight
+    }
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? goatsJson = prefs.getString('goats');
+      
+      if (goatsJson == null) return;
+      
+      final List<dynamic> decodedList = jsonDecode(goatsJson);
+      List<Goat> goats = decodedList.map((item) => Goat.fromJson(item)).toList();
+      
+      // Find the goat in the list
+      final goatIndex = goats.indexWhere((g) => g.tagNo == widget.goat.tagNo);
+      if (goatIndex == -1) return;
+      
+      // Get or initialize weightHistory
+      List<Map<String, dynamic>> weightHistory = 
+          goats[goatIndex].weightHistory ?? [];
+      
+      // Format date for storage (FIXED: Use DateFormat correctly)
+      final dateStr = _eventDate != null 
+          ? '${_eventDate!.year}-${_eventDate!.month.toString().padLeft(2, '0')}-${_eventDate!.day.toString().padLeft(2, '0')}'
+          : DateFormat('yyyy-MM-dd').format(DateTime.now());
+      
+      // Parse weight (handle if it's already a number or string)
+      final weightText = _weighedController.text.trim();
+      final weight = double.tryParse(weightText.replaceAll(',', '.')) ?? 0.0;
+      
+      // Add new weight record
+      weightHistory.add({
+        'date': dateStr,
+        'weight': weight,
+        'notes': _notesController.text.trim().isNotEmpty 
+            ? _notesController.text.trim() 
+            : null,
+      });
+      
+      // Create updated goat
+      final updatedGoat = Goat(
+        tagNo: goats[goatIndex].tagNo,
+        name: goats[goatIndex].name,
+        breed: goats[goatIndex].breed,
+        gender: goats[goatIndex].gender,
+        goatStage: goats[goatIndex].goatStage,
+        dateOfBirth: goats[goatIndex].dateOfBirth,
+        dateOfEntry: goats[goatIndex].dateOfEntry,
+        weight: weightText, // Update current weight
+        group: goats[goatIndex].group,
+        obtained: goats[goatIndex].obtained,
+        motherTag: goats[goatIndex].motherTag,
+        fatherTag: goats[goatIndex].fatherTag,
+        notes: goats[goatIndex].notes,
+        photoPath: goats[goatIndex].photoPath,
+        weightHistory: weightHistory, // ✅ Set the updated weight history
+      );
+      
+      // Replace the goat in the list
+      goats[goatIndex] = updatedGoat;
+      
+      // Save back to SharedPreferences
+      final updatedJson = jsonEncode(goats.map((goat) => goat.toJson()).toList());
+      await prefs.setString('goats', updatedJson);
+      
+      debugPrint('✅ Weight record added to ${widget.goat.tagNo}: $weightText kg on $dateStr');
+      
+    } catch (e) {
+      debugPrint('❌ Error saving weight history: $e');
+    }
+  }
+
   Future<void> _saveEvent() async {
-    final loc = AppLocalizations.of(context)!;
+    // REMOVED UNUSED 'loc' VARIABLE
+    // final loc = AppLocalizations.of(context)!;
     
     if (_eventDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.pleaseSelectEventDate)),
+        const SnackBar(content: Text('Please select event date')),
       );
       return;
     }
     
     if (_eventType == null || _eventType!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.pleaseSelectEventType)),
+        const SnackBar(content: Text('Please select event type')),
       );
       return;
     }
     
     if (_eventType == 'Other' && _otherEventController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.pleaseEnterEventName)),
+        const SnackBar(content: Text('Please enter event name')),
       );
       return;
+    }
+
+    // ✅ ADD WEIGHT TO GOAT HISTORY if it's a weighed event
+    if (_eventType == 'Weighed' && _weighedController.text.trim().isNotEmpty) {
+      await _addWeightToGoatHistory();
     }
 
     // Create the event
@@ -129,7 +210,8 @@ class _AddEventPageState extends State<AddEventPage> {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
+    // REMOVED UNUSED 'loc' VARIABLE
+    // final loc = AppLocalizations.of(context)!;
     
     return Scaffold(
       appBar: AppBar(
@@ -138,9 +220,9 @@ class _AddEventPageState extends State<AddEventPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
+        title: const Text(
           'Add Event',
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -301,10 +383,10 @@ class _AddEventPageState extends State<AddEventPage> {
               TextField(
                 controller: _notesController,
                 maxLines: 4,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Write some notes...',
-                  border: const OutlineInputBorder(),
-                  contentPadding: const EdgeInsets.all(12),
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(12),
                   labelText: 'Notes',
                 ),
               ),
@@ -363,10 +445,36 @@ class _AddEventPageState extends State<AddEventPage> {
   List<Widget> _buildWeighedFields() {
     return [
       const SizedBox(height: 12),
+      // ✅ IMPROVED: Added a note about weight recording
+      Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.green[50],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.green[200]!),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.info, color: Colors.green[700]),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'This weight will be saved to the goat\'s weight history for tracking.',
+                style: TextStyle(
+                  color: Colors.green[800],
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 12),
       TextField(
         controller: _weighedController,
+        keyboardType: TextInputType.numberWithOptions(decimal: true),
         decoration: const InputDecoration(
-          hintText: 'Weight result *',
+          hintText: 'Weight in kg (e.g., 25.5) *',
           border: OutlineInputBorder(),
           contentPadding: EdgeInsets.all(12),
           labelText: 'Weight',

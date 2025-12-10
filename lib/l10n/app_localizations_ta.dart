@@ -233,7 +233,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get generalDetails => 'பொது விவரங்கள்';
 
   @override
-  String get tagNo => 'டேக் எண்:';
+  String get tagNo => 'குறி எண்';
 
   @override
   String get tagNoLabel => 'டேக் எண்:';
@@ -1108,7 +1108,7 @@ class AppLocalizationsTa extends AppLocalizations {
   }
 
   @override
-  String get breed => 'Breed';
+  String get breed => 'இனம்';
 
   @override
   String get group => 'Group';
@@ -1368,4 +1368,83 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get reason => 'காரணம்';
+
+  @override
+  String get weightReportTitle => 'எடை அறிக்கை';
+
+  @override
+  String get lastMonths => 'கடந்த 12 மாதங்கள்';
+
+  @override
+  String get changeDateRange => 'தேதி வரம்பை மாற்றவும்';
+
+  @override
+  String get summaryForPeriod => 'தேர்ந்தெடுத்த காலத்திற்கான சுருக்கம்';
+
+  @override
+  String get numberActiveGoats => 'செயலில் உள்ள ஆடுகளின் எண்ணிக்கை';
+
+  @override
+  String get numberGoatsWithWeight => 'எடை பதிவு(கள்) உள்ள ஆடுகளின் எண்ணிக்கை';
+
+  @override
+  String get numberGoatsWithoutWeight => 'எடை பதிவு இல்லாத ஆடுகளின் எண்ணிக்கை';
+
+  @override
+  String get performanceByGoat => 'ஆட்டின் படி செயல்திறன்';
+
+  @override
+  String get detailedDataMessage =>
+      'இது மிகவும் விரிவானது என்பதால் தரவை இங்கே வைக்க முடியவில்லை.';
+
+  @override
+  String get exportPdfMessage =>
+      'முழு அறிக்கையையும் காண PDF க்கு ஏற்றுமதி செய்யவும்.';
+
+  @override
+  String get exportReportButton =>
+      'அறிக்கையை pdf க்கு ஏற்றுமதி செய்து இப்போது விவரங்களைப் பாருங்கள்!';
+
+  @override
+  String get weightReportFilename => 'எடை_அறிக்கை';
+
+  @override
+  String get summarySection => 'சுருக்கம்';
+
+  @override
+  String get name => 'பெயர்';
+
+  @override
+  String get firstWeight => 'முதல் எடை';
+
+  @override
+  String get lastWeight => 'கடைசி எடை';
+
+  @override
+  String get weightGain => 'எடை அதிகரிப்பு';
+
+  @override
+  String get gainPercentage => 'அதிகரிப்பு %';
+
+  @override
+  String get avgDailyGain => 'சராசரி தினசரி அதிகரிப்பு';
+
+  @override
+  String get avgWeight => 'சராசரி எடை';
+
+  @override
+  String get measurements => 'அளவீடுகள்';
+
+  @override
+  String get goatsWithoutWeight => 'எடை பதிவு இல்லாத ஆடுகள்';
+
+  @override
+  String get unnamed => 'பெயரிடப்படாத';
+
+  @override
+  String get generatedOn => 'உருவாக்கப்பட்டது';
+
+  @override
+  String get noPerformanceData =>
+      'தேர்ந்தெடுக்கப்பட்ட காலகட்டத்திற்கு விரிவான செயல்திறன் தரவு இல்லை.';
 }

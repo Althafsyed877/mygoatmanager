@@ -228,7 +228,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get generalDetails => 'सामान्य विवरण';
 
   @override
-  String get tagNo => 'टैग नं:';
+  String get tagNo => 'टैग नं.';
 
   @override
   String get tagNoLabel => 'टैग नं:';
@@ -1091,7 +1091,7 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get breed => 'Breed';
+  String get breed => 'नस्ल';
 
   @override
   String get group => 'Group';
@@ -1349,4 +1349,84 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get reason => 'कारण';
+
+  @override
+  String get weightReportTitle => 'वजन रिपोर्ट';
+
+  @override
+  String get lastMonths => 'पिछले 12 महीने';
+
+  @override
+  String get changeDateRange => 'तिथि सीमा बदलें';
+
+  @override
+  String get summaryForPeriod => 'चयनित अवधि के लिए सारांश';
+
+  @override
+  String get numberActiveGoats => 'सक्रिय बकरियों की संख्या';
+
+  @override
+  String get numberGoatsWithWeight => 'वजन रिकॉर्ड वाली बकरियों की संख्या';
+
+  @override
+  String get numberGoatsWithoutWeight =>
+      'बिना वजन रिकॉर्ड वाली बकरियों की संख्या';
+
+  @override
+  String get performanceByGoat => 'बकरी के अनुसार प्रदर्शन';
+
+  @override
+  String get detailedDataMessage =>
+      'हम यहां डेटा नहीं डाल सके क्योंकि यह अधिक विस्तृत है।';
+
+  @override
+  String get exportPdfMessage =>
+      'पूरी रिपोर्ट देखने के लिए PDF में निर्यात करें।';
+
+  @override
+  String get exportReportButton =>
+      'रिपोर्ट को pdf में निर्यात करें और अभी विवरण देखें!';
+
+  @override
+  String get weightReportFilename => 'वजन_रिपोर्ट';
+
+  @override
+  String get summarySection => 'सारांश';
+
+  @override
+  String get name => 'नाम';
+
+  @override
+  String get firstWeight => 'प्रथम वजन';
+
+  @override
+  String get lastWeight => 'अंतिम वजन';
+
+  @override
+  String get weightGain => 'वजन वृद्धि';
+
+  @override
+  String get gainPercentage => 'वृद्धि %';
+
+  @override
+  String get avgDailyGain => 'औसत दैनिक वृद्धि';
+
+  @override
+  String get avgWeight => 'औसत वजन';
+
+  @override
+  String get measurements => 'माप';
+
+  @override
+  String get goatsWithoutWeight => 'बिना वजन रिकॉर्ड वाली बकरियां';
+
+  @override
+  String get unnamed => 'अनाम';
+
+  @override
+  String get generatedOn => 'उत्पन्न किया गया';
+
+  @override
+  String get noPerformanceData =>
+      'चयनित अवधि के लिए कोई विस्तृत प्रदर्शन डेटा उपलब्ध नहीं है।';
 }

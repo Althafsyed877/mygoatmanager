@@ -228,7 +228,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalDetails => 'General Details';
 
   @override
-  String get tagNo => 'Tag No:';
+  String get tagNo => 'Tag No';
 
   @override
   String get tagNoLabel => 'Tag No:';
@@ -1346,4 +1346,83 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reason => 'Reason';
+
+  @override
+  String get weightReportTitle => 'Weight Report';
+
+  @override
+  String get lastMonths => 'Last 12 Months';
+
+  @override
+  String get changeDateRange => 'Change Date Range';
+
+  @override
+  String get summaryForPeriod => 'Summary for selected period';
+
+  @override
+  String get numberActiveGoats => 'Number of active goats';
+
+  @override
+  String get numberGoatsWithWeight => 'Number of goats with weight record(s)';
+
+  @override
+  String get numberGoatsWithoutWeight =>
+      'Number of goats with no weight record(s)';
+
+  @override
+  String get performanceByGoat => 'Performance By Goat';
+
+  @override
+  String get detailedDataMessage =>
+      'We could not put the data here because it\'s more detailed.';
+
+  @override
+  String get exportPdfMessage => 'Export to PDF to see the full report.';
+
+  @override
+  String get exportReportButton =>
+      'Export the report to pdf and see details now!';
+
+  @override
+  String get weightReportFilename => 'Weight_Report';
+
+  @override
+  String get summarySection => 'SUMMARY';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get firstWeight => 'First Weight';
+
+  @override
+  String get lastWeight => 'Last Weight';
+
+  @override
+  String get weightGain => 'Weight Gain';
+
+  @override
+  String get gainPercentage => 'Gain %';
+
+  @override
+  String get avgDailyGain => 'Avg Daily Gain';
+
+  @override
+  String get avgWeight => 'Avg Weight';
+
+  @override
+  String get measurements => 'Measurements';
+
+  @override
+  String get goatsWithoutWeight => 'GOATS WITHOUT WEIGHT RECORDS';
+
+  @override
+  String get unnamed => 'Unnamed';
+
+  @override
+  String get generatedOn => 'Generated on';
+
+  @override
+  String get noPerformanceData =>
+      'No detailed performance data available for the selected period.';
 }

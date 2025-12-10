@@ -228,7 +228,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get generalDetails => 'సాధారణ వివరాలు';
 
   @override
-  String get tagNo => 'ట్యాగ్ నం:';
+  String get tagNo => 'ట్యాగ్ నం';
 
   @override
   String get tagNoLabel => 'ట్యాగ్ నం:';
@@ -1092,7 +1092,7 @@ class AppLocalizationsTe extends AppLocalizations {
   }
 
   @override
-  String get breed => 'Breed';
+  String get breed => 'జాతి';
 
   @override
   String get group => 'Group';
@@ -1349,4 +1349,83 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get reason => 'కారణం';
+
+  @override
+  String get weightReportTitle => 'బరువు నివేదిక';
+
+  @override
+  String get lastMonths => 'చివరి 12 నెలలు';
+
+  @override
+  String get changeDateRange => 'తేదీ పరిధిని మార్చండి';
+
+  @override
+  String get summaryForPeriod => 'ఎంచుకున్న కాలానికి సారాంశం';
+
+  @override
+  String get numberActiveGoats => 'క్రియాశీల మేకల సంఖ్య';
+
+  @override
+  String get numberGoatsWithWeight => 'బరువు రికార్డ్(లు) ఉన్న మేకల సంఖ్య';
+
+  @override
+  String get numberGoatsWithoutWeight => 'బరువు రికార్డ్ లేని మేకల సంఖ్య';
+
+  @override
+  String get performanceByGoat => 'మేక వారీగా పనితీరు';
+
+  @override
+  String get detailedDataMessage =>
+      'ఇది మరింత వివరణాత్మకమైనది కాబట్టి మేము డేటాను ఇక్కడ ఉంచలేకపోయాము.';
+
+  @override
+  String get exportPdfMessage =>
+      'పూర్తి నివేదిక చూడటానికి PDFకి ఎగుమతి చేయండి.';
+
+  @override
+  String get exportReportButton =>
+      'నివేదికను pdfకి ఎగుమతి చేసి ఇప్పుడే వివరాలు చూడండి!';
+
+  @override
+  String get weightReportFilename => 'బరువు_నివేదిక';
+
+  @override
+  String get summarySection => 'సారాంశం';
+
+  @override
+  String get name => 'పేరు';
+
+  @override
+  String get firstWeight => 'మొదటి బరువు';
+
+  @override
+  String get lastWeight => 'చివరి బరువు';
+
+  @override
+  String get weightGain => 'బరువు పెరుగుదల';
+
+  @override
+  String get gainPercentage => 'పెరుగుదల %';
+
+  @override
+  String get avgDailyGain => 'సగటు రోజువారీ పెరుగుదల';
+
+  @override
+  String get avgWeight => 'సగటు బరువు';
+
+  @override
+  String get measurements => 'కొలతలు';
+
+  @override
+  String get goatsWithoutWeight => 'బరువు రికార్డ్లు లేని మేకలు';
+
+  @override
+  String get unnamed => 'పేరు లేని';
+
+  @override
+  String get generatedOn => 'జనరేట్ చేయబడింది';
+
+  @override
+  String get noPerformanceData =>
+      'ఎంచుకున్న కాలానికి వివరణాత్మక పనితీరు డేటా అందుబాటులో లేదు.';
 }

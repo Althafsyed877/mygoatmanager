@@ -228,7 +228,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get generalDetails => 'ಸಾಮಾನ್ಯ ವಿವರಗಳು';
 
   @override
-  String get tagNo => 'ಟ್ಯಾಗ್ ನಂ:';
+  String get tagNo => 'ಟ್ಯಾಗ್ ನಂ';
 
   @override
   String get tagNoLabel => 'ಟ್ಯಾಗ್ ನಂ:';
@@ -346,10 +346,10 @@ class AppLocalizationsKn extends AppLocalizations {
   String get goatsListPdf => 'ಮೇಕೆಗಳ ಪಟ್ಟಿ';
 
   @override
-  String get breedLabel2 => 'ಬ್ರೀಡ್:';
+  String get breedLabel2 => 'ಜಾತಿ:';
 
   @override
-  String get groupLabel2 => 'ಗ್ರೂಪ್:';
+  String get groupLabel2 => 'ಗುಂಪು:';
 
   @override
   String get dateLabel => 'ದಿನಾಂಕ:';
@@ -1094,7 +1094,7 @@ class AppLocalizationsKn extends AppLocalizations {
   }
 
   @override
-  String get breed => 'Breed';
+  String get breed => 'ಜಾತಿ';
 
   @override
   String get group => 'Group';
@@ -1351,4 +1351,82 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get reason => 'ಕಾರಣ';
+
+  @override
+  String get weightReportTitle => 'ತೂಕ ವರದಿ';
+
+  @override
+  String get lastMonths => 'ಕಳೆದ 12 ತಿಂಗಳು';
+
+  @override
+  String get changeDateRange => 'ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯನ್ನು ಬದಲಾಯಿಸಿ';
+
+  @override
+  String get summaryForPeriod => 'ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ ಸಾರಾಂಶ';
+
+  @override
+  String get numberActiveGoats => 'ಸಕ್ರಿಯ ಮೇಕೆಗಳ ಸಂಖ್ಯೆ';
+
+  @override
+  String get numberGoatsWithWeight => 'ತೂಕ ದಾಖಲೆ(ಗಳು) ಇರುವ ಮೇಕೆಗಳ ಸಂಖ್ಯೆ';
+
+  @override
+  String get numberGoatsWithoutWeight => 'ತೂಕ ದಾಖಲೆ ಇಲ್ಲದ ಮೇಕೆಗಳ ಸಂಖ್ಯೆ';
+
+  @override
+  String get performanceByGoat => 'ಮೇಕೆಯ ಪ್ರಕಾರ ಕಾರ್ಯಕ್ಷಮತೆ';
+
+  @override
+  String get detailedDataMessage =>
+      'ಇದು ಹೆಚ್ಚು ವಿವರವಾಗಿರುವುದರಿಂದ ನಾವು ಇಲ್ಲಿ ಡೇಟಾವನ್ನು ಇರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.';
+
+  @override
+  String get exportPdfMessage => 'ಪೂರ್ಣ ವರದಿಯನ್ನು ನೋಡಲು PDF ಗೆ ರಫ್ತು ಮಾಡಿ.';
+
+  @override
+  String get exportReportButton =>
+      'ವರದಿಯನ್ನು pdf ಗೆ ರಫ್ತು ಮಾಡಿ ಮತ್ತು ಈಗಿನಿಂದ ವಿವರಗಳನ್ನು ನೋಡಿ!';
+
+  @override
+  String get weightReportFilename => 'ತೂಕ_ವರದಿ';
+
+  @override
+  String get summarySection => 'ಸಾರಾಂಶ';
+
+  @override
+  String get name => 'ಹೆಸರು';
+
+  @override
+  String get firstWeight => 'ಮೊದಲ ತೂಕ';
+
+  @override
+  String get lastWeight => 'ಕೊನೆಯ ತೂಕ';
+
+  @override
+  String get weightGain => 'ತೂಕದ ಹೆಚ್ಚಳ';
+
+  @override
+  String get gainPercentage => 'ಹೆಚ್ಚಳ %';
+
+  @override
+  String get avgDailyGain => 'ಸರಾಸರಿ ದೈನಂದಿನ ಹೆಚ್ಚಳ';
+
+  @override
+  String get avgWeight => 'ಸರಾಸರಿ ತೂಕ';
+
+  @override
+  String get measurements => 'ಮಾಪನಗಳು';
+
+  @override
+  String get goatsWithoutWeight => 'ತೂಕ ದಾಖಲೆ ಇಲ್ಲದ ಮೇಕೆಗಳು';
+
+  @override
+  String get unnamed => 'ಹೆಸರಿಲ್ಲದ';
+
+  @override
+  String get generatedOn => 'ರಚಿಸಲಾಗಿದೆ';
+
+  @override
+  String get noPerformanceData =>
+      'ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ ವಿವರವಾದ ಕಾರ್ಯಕ್ಷಮತೆ ಡೇಟಾ ಲಭ್ಯವಿಲ್ಲ.';
 }

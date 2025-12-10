@@ -13,6 +13,7 @@ class Goat {
   final String? fatherTag;
   final String? notes;
   final String? photoPath;
+  final List<Map<String, dynamic>>? weightHistory;
 
   Goat({
     required this.tagNo,
@@ -29,6 +30,7 @@ class Goat {
     this.fatherTag,
     this.notes,
     this.photoPath,
+    this.weightHistory,
   });
 
   // Convert Goat to JSON
@@ -48,6 +50,7 @@ class Goat {
       'fatherTag': fatherTag,
       'notes': notes,
       'photoPath': photoPath,
+      'weightHistory': weightHistory,
     };
   }
 
@@ -68,6 +71,9 @@ class Goat {
       fatherTag: json['fatherTag'] as String?,
       notes: json['notes'] as String?,
       photoPath: json['photoPath'] as String?,
+      weightHistory: json['weightHistory'] != null 
+          ? List<Map<String, dynamic>>.from(json['weightHistory']) 
+          : null,
     );
   }
 }

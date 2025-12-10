@@ -539,7 +539,7 @@ abstract class AppLocalizations {
   /// No description provided for @tagNo.
   ///
   /// In en, this message translates to:
-  /// **'Tag No:'**
+  /// **'Tag No'**
   String get tagNo;
 
   /// No description provided for @tagNoLabel.
@@ -2731,6 +2731,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reason'**
   String get reason;
+
+  /// No description provided for @weightReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Report'**
+  String get weightReportTitle;
+
+  /// No description provided for @lastMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 12 Months'**
+  String get lastMonths;
+
+  /// No description provided for @changeDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Date Range'**
+  String get changeDateRange;
+
+  /// No description provided for @summaryForPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary for selected period'**
+  String get summaryForPeriod;
+
+  /// No description provided for @numberActiveGoats.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of active goats'**
+  String get numberActiveGoats;
+
+  /// No description provided for @numberGoatsWithWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of goats with weight record(s)'**
+  String get numberGoatsWithWeight;
+
+  /// No description provided for @numberGoatsWithoutWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of goats with no weight record(s)'**
+  String get numberGoatsWithoutWeight;
+
+  /// No description provided for @performanceByGoat.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance By Goat'**
+  String get performanceByGoat;
+
+  /// No description provided for @detailedDataMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not put the data here because it\'s more detailed.'**
+  String get detailedDataMessage;
+
+  /// No description provided for @exportPdfMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Export to PDF to see the full report.'**
+  String get exportPdfMessage;
+
+  /// No description provided for @exportReportButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Export the report to pdf and see details now!'**
+  String get exportReportButton;
+
+  /// No description provided for @weightReportFilename.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight_Report'**
+  String get weightReportFilename;
+
+  /// No description provided for @summarySection.
+  ///
+  /// In en, this message translates to:
+  /// **'SUMMARY'**
+  String get summarySection;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @firstWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'First Weight'**
+  String get firstWeight;
+
+  /// No description provided for @lastWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Weight'**
+  String get lastWeight;
+
+  /// No description provided for @weightGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Gain'**
+  String get weightGain;
+
+  /// No description provided for @gainPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Gain %'**
+  String get gainPercentage;
+
+  /// No description provided for @avgDailyGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Daily Gain'**
+  String get avgDailyGain;
+
+  /// No description provided for @avgWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Weight'**
+  String get avgWeight;
+
+  /// No description provided for @measurements.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurements'**
+  String get measurements;
+
+  /// No description provided for @goatsWithoutWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'GOATS WITHOUT WEIGHT RECORDS'**
+  String get goatsWithoutWeight;
+
+  /// No description provided for @unnamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unnamed'**
+  String get unnamed;
+
+  /// No description provided for @generatedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated on'**
+  String get generatedOn;
+
+  /// No description provided for @noPerformanceData.
+  ///
+  /// In en, this message translates to:
+  /// **'No detailed performance data available for the selected period.'**
+  String get noPerformanceData;
 }
 
 class _AppLocalizationsDelegate
