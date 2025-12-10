@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
 import '../models/goat.dart';
-import '../models/archive.dart';
 import '../services/archive_service.dart';
 
 class EventsReportPage extends StatefulWidget {
@@ -23,58 +22,11 @@ class _EventsReportPageState extends State<EventsReportPage> {
   int _deadGoatsCount = 0;
   int _lostGoatsCount = 0;
   int _otherArchivedCount = 0;
-  
-  // Individual event types - MUST MATCH AddEventPage exactly
-  List<String> _individualEventTypes = [];
-  
-  // Mass event types
-  List<String> _massEventTypes = [];
 
   @override
   void initState() {
     super.initState();
     _loadData();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Initialize localized strings
-    _initializeLocalizedStrings();
-    // Reload when page becomes visible
-    _loadData();
-  }
-
-  void _initializeLocalizedStrings() {
-    final loc = AppLocalizations.of(context)!;
-    
-    // Individual event types - localized
-    _individualEventTypes = [
-      loc.treated,
-      loc.weighed,
-      loc.weaned,
-      loc.givesBirth,
-      loc.dryOff,
-      loc.breeding,
-      loc.pregnant,
-      loc.aborted,
-      loc.castrated,
-      loc.vaccinated,
-      loc.deworming,
-    ];
-    
-    // Mass event types - localized
-    _massEventTypes = [
-      loc.treated,
-      loc.weighed,
-      loc.weaned,
-      loc.castrated,
-      loc.vaccinated,
-      loc.deworming,
-      loc.hoofTrimming,
-      loc.tagging,
-      loc.other,
-    ];
   }
 
   Future<void> _loadData() async {
@@ -172,27 +124,58 @@ class _EventsReportPageState extends State<EventsReportPage> {
            (eventDate.isAtSameMomentAs(endOfMonth) || eventDate.isBefore(endOfMonth));
   }).toList();
 
-  // Get count for individual event type - WITH DEBUG
-  int _getIndividualEventCount(String eventType) {
+  // Helper to get possible English event types for a localized string
+  List<String> _getPossibleEnglishEventTypes(String localizedEventType, AppLocalizations loc) {
+    final Map<String, List<String>> localizedToEnglish = {
+      loc.treated: ['Treated', 'TREATED'],
+      loc.weighed: ['Weighed', 'WEIGHED'],
+      loc.weaned: ['Weaned', 'WEANED'],
+      loc.givesBirth: ['Gives Birth'],
+      loc.dryOff: ['Dry off'],
+      loc.breeding: ['Breeding'],
+      loc.pregnant: ['Pregnant'],
+      loc.aborted: ['Aborted'],
+      loc.castrated: ['Castrated', 'CASTRATED'],
+      loc.vaccinated: ['Vaccinated', 'VACCINATED'],
+      loc.deworming: ['Deworming', 'DEWORMING'],
+      loc.hoofTrimming: ['Hoof Trimming', 'HOOF TRIMMING'],
+      loc.tagging: ['Tagging', 'TAGGING'],
+      loc.other: ['Other', 'OTHER'],
+    };
+    
+    return localizedToEnglish[localizedEventType] ?? [localizedEventType];
+  }
+
+  // Get count for individual event type - UPDATED VERSION
+  int _getIndividualEventCount(String localizedEventType, AppLocalizations loc) {
     final monthEvents = _monthEvents;
+    
+    // Get all English event types that map to this localized string
+    final possibleEnglishTypes = _getPossibleEnglishEventTypes(localizedEventType, loc);
+    
     final filtered = monthEvents.where((event) => 
-      !event.isMassEvent && event.eventType == eventType
+      !event.isMassEvent && possibleEnglishTypes.contains(event.eventType)
     ).toList();
     
-    print('DEBUG: Checking "$eventType" - Found ${filtered.length} events');
+    print('DEBUG: Checking "$localizedEventType" (English variants: $possibleEnglishTypes) - Found ${filtered.length} events');
     if (filtered.isNotEmpty) {
       for (var event in filtered) {
-        print('  - ${event.tagNo} on ${event.date}');
+        print('  - ${event.tagNo}: ${event.eventType} on ${event.date}');
       }
     }
     
     return filtered.length;
   }
 
-  // Get count for mass event type
-  int _getMassEventCount(String eventType) {
-    return _monthEvents.where((event) => 
-      event.isMassEvent && event.eventType == eventType
+  // Get count for mass event type - UPDATED VERSION
+  int _getMassEventCount(String localizedEventType, AppLocalizations loc) {
+    final monthEvents = _monthEvents;
+    
+    // Get all English event types that map to this localized string
+    final possibleEnglishTypes = _getPossibleEnglishEventTypes(localizedEventType, loc);
+    
+    return monthEvents.where((event) => 
+      event.isMassEvent && possibleEnglishTypes.contains(event.eventType)
     ).length;
   }
 
@@ -201,85 +184,114 @@ class _EventsReportPageState extends State<EventsReportPage> {
     final loc = AppLocalizations.of(context)!;
     final archives = await ArchiveService.getArchivedGoats(reason);
     
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: Text(title),
-          content: SizedBox(
-            width: double.maxFinite,
-            height: 300,
-            child: archives.isEmpty
-                ? Center(
-                    child: Text(
-                      loc.noArchivedGoatsFound,
-                      style: TextStyle(color: Colors.grey.shade600),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: archives.length,
-                    itemBuilder: (context, index) {
-                      final archive = archives[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        child: ListTile(
-                          title: Text(archive.displayName),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('${archive.breed ?? loc.unknownBreed} • ${archive.gender}'),
-                              Text('${loc.archived}: ${_formatDate(archive.archiveDate)}'),
-                              if (archive.notes != null && archive.notes!.isNotEmpty)
-                                Text('${loc.notes}: ${archive.notes}'),
-                            ],
-                          ),
-                          trailing: IconButton(
-                            icon: Icon(Icons.restore, color: Colors.green),
-                            onPressed: () async {
-                              final restoredGoat = await ArchiveService.restoreGoat(archive.tagNo);
-                              if (restoredGoat != null) {
-                                // Add back to active goats
-                                setState(() {
-                                  _goats.add(restoredGoat);
-                                });
-                                // Save goats
-                                final prefs = await SharedPreferences.getInstance();
-                                final updatedJson = _goats.map((g) => g.toJson()).toList();
-                                await prefs.setString('goats', jsonEncode(updatedJson));
-                                
-                                await _loadArchiveCounts();
-                                if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('${archive.tagNo} ${loc.restoredSuccessfully}'),
-                                      backgroundColor: const Color(0xFF4CAF50),
-                                    ),
-                                  );
-                                  Navigator.of(ctx).pop();
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            title: Text(title),
+            content: SizedBox(
+              width: double.maxFinite,
+              height: 300,
+              child: archives.isEmpty
+                  ? Center(
+                      child: Text(
+                        loc.noArchivedGoatsFound,
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: archives.length,
+                      itemBuilder: (context, index) {
+                        final archive = archives[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 4),
+                          child: ListTile(
+                            title: Text(archive.displayName),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('${archive.breed ?? loc.unknownBreed} • ${archive.gender}'),
+                                Text('Archived: ${_formatDate(archive.archiveDate)}'),
+                                if (archive.notes != null && archive.notes!.isNotEmpty)
+                                  Text('${loc.notes}: ${archive.notes}'),
+                              ],
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.restore, color: Colors.green),
+                              onPressed: () async {
+                                final restoredGoat = await ArchiveService.restoreGoat(archive.tagNo);
+                                if (restoredGoat != null) {
+                                  // Add back to active goats
+                                  setState(() {
+                                    _goats.add(restoredGoat);
+                                  });
+                                  // Save goats
+                                  final prefs = await SharedPreferences.getInstance();
+                                  final updatedJson = _goats.map((g) => g.toJson()).toList();
+                                  await prefs.setString('goats', jsonEncode(updatedJson));
+                                  
+                                  await _loadArchiveCounts();
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('${archive.tagNo} ${loc.restoredSuccessfully}'),
+                                        backgroundColor: const Color(0xFF4CAF50),
+                                      ),
+                                    );
+                                    Navigator.of(ctx).pop();
+                                  }
                                 }
-                              }
-                            },
+                              },
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text(loc.close),
+                        );
+                      },
+                    ),
             ),
-          ],
-        );
-      },
-    );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(loc.close),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    
+    // Initialize localized event types HERE in build method
+    final individualEventTypes = [
+      loc.treated,
+      loc.weighed,
+      loc.weaned,
+      loc.givesBirth,
+      loc.dryOff,
+      loc.breeding,
+      loc.pregnant,
+      loc.aborted,
+      loc.castrated,
+      loc.vaccinated,
+      loc.deworming,
+    ];
+    
+    final massEventTypes = [
+      loc.treated,
+      loc.weighed,
+      loc.weaned,
+      loc.castrated,
+      loc.vaccinated,
+      loc.deworming,
+      loc.hoofTrimming,
+      loc.tagging,
+      loc.other,
+    ];
     
     return Scaffold(
       appBar: AppBar(
@@ -288,18 +300,18 @@ class _EventsReportPageState extends State<EventsReportPage> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: Icon(Icons.calendar_month),
+            icon: const Icon(Icons.calendar_month),
             onPressed: () => _selectMonth(context),
           ),
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: () {
               print('=== MANUAL REFRESH TRIGGERED ===');
               _loadData();
             },
           ),
           IconButton(
-            icon: Icon(Icons.archive),
+            icon: const Icon(Icons.archive),
             onPressed: () => _showAllArchives(context),
           ),
         ],
@@ -328,7 +340,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                        const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
                         const SizedBox(width: 8),
                         Text(
                           loc.currentMonth,
@@ -347,7 +359,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '${loc.totalEvents}: ${_monthEvents.length}',
+                      'Total Events: ${_monthEvents.length}',
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF4CAF50),
@@ -355,7 +367,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                     ),
                     // Debug info
                     Text(
-                      '${loc.totalAllEvents}: ${_events.length}',
+                      'Total All Events: ${_events.length}',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: Colors.grey,
                       ),
@@ -368,19 +380,20 @@ class _EventsReportPageState extends State<EventsReportPage> {
             const SizedBox(height: 24),
             
             // Individual Events Section
-            _buildSectionHeader(loc.individualEvents),
+            _buildSectionHeader(loc.individualEvents, context),
             Card(
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Column(
-                  children: _individualEventTypes.map((eventType) {
-                    final count = _getIndividualEventCount(eventType);
+                  children: individualEventTypes.map((eventType) {
+                    final count = _getIndividualEventCount(eventType, loc);
                     return _buildEventRow(
                       eventType: eventType,
                       count: count,
-                      icon: _getEventIcon(eventType),
-                      color: _getEventColor(eventType),
+                      icon: _getEventIcon(eventType, loc),
+                      color: _getEventColor(eventType, loc),
+                      context: context,
                     );
                   }).toList(),
                 ),
@@ -390,7 +403,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
             const SizedBox(height: 32),
             
             // Mass Events Section
-            _buildSectionHeader(loc.massEvents),
+            _buildSectionHeader(loc.massEvents, context),
             Card(
               elevation: 2,
               child: Padding(
@@ -398,11 +411,13 @@ class _EventsReportPageState extends State<EventsReportPage> {
                 child: Wrap(
                   spacing: 16,
                   runSpacing: 16,
-                  children: _massEventTypes.map((eventType) {
-                    final count = _getMassEventCount(eventType);
+                  children: massEventTypes.map((eventType) {
+                    final count = _getMassEventCount(eventType, loc);
                     return _buildMassEventCard(
                       eventType: eventType,
                       count: count,
+                      loc: loc,
+                      context: context,
                     );
                   }).toList(),
                 ),
@@ -412,7 +427,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
             const SizedBox(height: 32),
             
             // Archives Section
-            _buildSectionHeader(loc.archives),
+            _buildSectionHeader(loc.archives, context),
             Card(
               elevation: 2,
               child: Padding(
@@ -427,6 +442,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                         count: _soldGoatsCount,
                         icon: Icons.sell,
                         color: Colors.orange,
+                        context: context,
                       ),
                     ),
                     const Divider(),
@@ -438,6 +454,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                         count: _deadGoatsCount,
                         icon: Icons.cancel,
                         color: Colors.red,
+                        context: context,
                       ),
                     ),
                     const Divider(),
@@ -449,6 +466,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                         count: _lostGoatsCount,
                         icon: Icons.location_off,
                         color: Colors.blue,
+                        context: context,
                       ),
                     ),
                     const Divider(),
@@ -460,6 +478,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                         count: _otherArchivedCount,
                         icon: Icons.archive,
                         color: Colors.purple,
+                        context: context,
                       ),
                     ),
                   ],
@@ -477,20 +496,20 @@ class _EventsReportPageState extends State<EventsReportPage> {
           print('Total events in memory: ${_events.length}');
           print('Current month: ${_selectedMonth.month}/${_selectedMonth.year}');
           print('Month events: ${_monthEvents.length}');
-          print('Weighed events count: ${_getIndividualEventCount(loc.weighed)}');
+          print('Weighed events count: ${_getIndividualEventCount(loc.weighed, loc)}');
           print('All event types:');
-          for (var type in _individualEventTypes) {
-            print('  $type: ${_getIndividualEventCount(type)}');
+          for (var type in individualEventTypes) {
+            print('  $type: ${_getIndividualEventCount(type, loc)}');
           }
           print('==================');
         },
         backgroundColor: Colors.blue,
-        child: Icon(Icons.bug_report),
+        child: const Icon(Icons.bug_report),
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Text(
@@ -508,6 +527,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
     required int count,
     required IconData icon,
     required Color color,
+    required BuildContext context,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -550,8 +570,10 @@ class _EventsReportPageState extends State<EventsReportPage> {
   Widget _buildMassEventCard({
     required String eventType,
     required int count,
+    required AppLocalizations loc,
+    required BuildContext context,
   }) {
-    final color = _getMassEventColor(eventType);
+    final color = _getMassEventColor(eventType, loc);
     return SizedBox(
       width: 150,
       child: Card(
@@ -589,6 +611,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
     required int count,
     required IconData icon,
     required Color color,
+    required BuildContext context,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -624,9 +647,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
   }
 
   // Helper methods to get icons and colors for events
-  IconData _getEventIcon(String eventType) {
-    final loc = AppLocalizations.of(context)!;
-    
+  IconData _getEventIcon(String eventType, AppLocalizations loc) {
     if (eventType == loc.treated) return Icons.healing;
     if (eventType == loc.weighed) return Icons.scale;
     if (eventType == loc.weaned) return Icons.child_care;
@@ -641,9 +662,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
     return Icons.event;
   }
 
-  Color _getEventColor(String eventType) {
-    final loc = AppLocalizations.of(context)!;
-    
+  Color _getEventColor(String eventType, AppLocalizations loc) {
     if (eventType == loc.treated) return Colors.red;
     if (eventType == loc.weighed) return Colors.teal;
     if (eventType == loc.weaned) return Colors.orange;
@@ -658,9 +677,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
     return Colors.grey;
   }
 
-  Color _getMassEventColor(String eventType) {
-    final loc = AppLocalizations.of(context)!;
-    
+  Color _getMassEventColor(String eventType, AppLocalizations loc) {
     if (eventType == loc.treated) return Colors.green;
     if (eventType == loc.weighed) return Colors.blue;
     if (eventType == loc.weaned) return Colors.deepOrange;
@@ -695,84 +712,86 @@ class _EventsReportPageState extends State<EventsReportPage> {
     final loc = AppLocalizations.of(context)!;
     final archives = await ArchiveService.getAllArchives();
     
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: Text(loc.allArchivedGoats),
-          content: SizedBox(
-            width: double.maxFinite,
-            height: 400,
-            child: archives.isEmpty
-                ? Center(
-                    child: Text(
-                      loc.noArchivedGoatsFound,
-                      style: TextStyle(color: Colors.grey.shade600),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: archives.length,
-                    itemBuilder: (context, index) {
-                      final archive = archives[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        child: ListTile(
-                          leading: Icon(
-                            _getArchiveIcon(archive.reason),
-                            color: _getArchiveColor(archive.reason),
-                          ),
-                          title: Text(archive.displayName),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('${loc.reason}: ${_getArchiveReasonText(archive.reason, loc)}'),
-                              Text('${loc.date}: ${_formatDate(archive.archiveDate)}'),
-                              if (archive.notes != null && archive.notes!.isNotEmpty)
-                                Text('${loc.notes}: ${archive.notes}'),
-                            ],
-                          ),
-                          trailing: IconButton(
-                            icon: Icon(Icons.restore, color: Colors.green),
-                            onPressed: () async {
-                              final restoredGoat = await ArchiveService.restoreGoat(archive.tagNo);
-                              if (restoredGoat != null) {
-                                // Add back to active goats
-                                setState(() {
-                                  _goats.add(restoredGoat);
-                                });
-                                // Save goats
-                                final prefs = await SharedPreferences.getInstance();
-                                final updatedJson = _goats.map((g) => g.toJson()).toList();
-                                await prefs.setString('goats', jsonEncode(updatedJson));
-                                
-                                await _loadArchiveCounts();
-                                if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('${archive.tagNo} ${loc.restoredSuccessfully}'),
-                                      backgroundColor: const Color(0xFF4CAF50),
-                                    ),
-                                  );
-                                  Navigator.of(ctx).pop();
-                                  _showAllArchives(context);
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            title: Text(loc.allArchivedGoats),
+            content: SizedBox(
+              width: double.maxFinite,
+              height: 400,
+              child: archives.isEmpty
+                  ? Center(
+                      child: Text(
+                        loc.noArchivedGoatsFound,
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: archives.length,
+                      itemBuilder: (context, index) {
+                        final archive = archives[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 4),
+                          child: ListTile(
+                            leading: Icon(
+                              _getArchiveIcon(archive.reason),
+                              color: _getArchiveColor(archive.reason),
+                            ),
+                            title: Text(archive.displayName),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Reason: ${_getArchiveReasonText(archive.reason, loc)}'),
+                                Text('Date: ${_formatDate(archive.archiveDate)}'),
+                                if (archive.notes != null && archive.notes!.isNotEmpty)
+                                  Text('Notes: ${archive.notes}'),
+                              ],
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.restore, color: Colors.green),
+                              onPressed: () async {
+                                final restoredGoat = await ArchiveService.restoreGoat(archive.tagNo);
+                                if (restoredGoat != null) {
+                                  // Add back to active goats
+                                  setState(() {
+                                    _goats.add(restoredGoat);
+                                  });
+                                  // Save goats
+                                  final prefs = await SharedPreferences.getInstance();
+                                  final updatedJson = _goats.map((g) => g.toJson()).toList();
+                                  await prefs.setString('goats', jsonEncode(updatedJson));
+                                  
+                                  await _loadArchiveCounts();
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('${archive.tagNo} ${loc.restoredSuccessfully}'),
+                                        backgroundColor: const Color(0xFF4CAF50),
+                                      ),
+                                    );
+                                    Navigator.of(ctx).pop();
+                                    _showAllArchives(context);
+                                  }
                                 }
-                              }
-                            },
+                              },
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text(loc.close),
+                        );
+                      },
+                    ),
             ),
-          ],
-        );
-      },
-    );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(loc.close),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   IconData _getArchiveIcon(String reason) {
