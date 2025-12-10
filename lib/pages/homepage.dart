@@ -253,7 +253,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 10,
                 spreadRadius: 5,
               ),
@@ -303,7 +303,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF4CAF50).withOpacity(0.1) : Colors.grey[100],
+                      color: isSelected ? const Color(0xFF4CAF50).withValues(alpha: 0.1) : Colors.grey[100],
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isSelected ? const Color(0xFF4CAF50) : Colors.transparent,
@@ -332,7 +332,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                         languageData['nativeName']!,
                         style: TextStyle(
                           fontSize: 14,
-                          color: isSelected ? const Color(0xFF4CAF50).withOpacity(0.8) : Colors.grey[600],
+                          color: isSelected ? const Color(0xFF4CAF50).withValues(alpha: 0.8) : Colors.grey[600],
                         ),
                       ),
                     ],

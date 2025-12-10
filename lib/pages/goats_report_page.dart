@@ -133,7 +133,7 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
   }
 
   String _getCorrectedStage(Goat goat) {
-    final gender = (goat.gender ?? '').toLowerCase();
+    final gender = (goat.gender).toLowerCase();
     final stage = (goat.goatStage ?? '').toLowerCase();
     
     // Handle English stage names that might be stored in the database
@@ -234,17 +234,17 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
       // Use context-aware stage counting
       final stageRows = stages.map((s) => [s, _countStage(context, s).toString()]);
       
-      final male = _filteredGoats.where((g) => (g.gender ?? '').toLowerCase() == 'male').length;
-      final female = _filteredGoats.where((g) => (g.gender ?? '').toLowerCase() == 'female').length;
+      final male = _filteredGoats.where((g) => (g.gender).toLowerCase() == 'male').length;
+      final female = _filteredGoats.where((g) => (g.gender).toLowerCase() == 'female').length;
 
       final maleKids = _filteredGoats.where((g) => 
         _getCorrectedStage(g) == 'kids' && 
-        (g.gender ?? '').toLowerCase() == 'male'
+        (g.gender).toLowerCase() == 'male'
       ).length;
       
       final femaleKids = _filteredGoats.where((g) => 
         _getCorrectedStage(g) == 'kids' && 
-        (g.gender ?? '').toLowerCase() == 'female'
+        (g.gender).toLowerCase() == 'female'
       ).length;
 
       // FIX: Changed 'context' parameter name to 'pdfContext' to avoid conflict
@@ -766,17 +766,17 @@ class _GoatsReportPageState extends State<GoatsReportPage> {
     final breeds = _getBreeds(context);
     
     final total = _filteredGoats.length;
-    final maleCount = _filteredGoats.where((g) => (g.gender ?? '').toLowerCase() == 'male').length;
-    final femaleCount = _filteredGoats.where((g) => (g.gender ?? '').toLowerCase() == 'female').length;
+    final maleCount = _filteredGoats.where((g) => (g.gender).toLowerCase() == 'male').length;
+    final femaleCount = _filteredGoats.where((g) => (g.gender).toLowerCase() == 'female').length;
 
     final maleKids = _filteredGoats.where((g) => 
       _getCorrectedStage(g) == 'kids' && 
-      (g.gender ?? '').toLowerCase() == 'male'
+      (g.gender).toLowerCase() == 'male'
     ).length;
     
     final femaleKids = _filteredGoats.where((g) => 
       _getCorrectedStage(g) == 'kids' && 
-      (g.gender ?? '').toLowerCase() == 'female'
+      (g.gender).toLowerCase() == 'female'
     ).length;
 
     // FIX: Calculate kids count directly

@@ -12,6 +12,7 @@ import '../models/goat.dart';
 import '../models/event.dart';
 import 'edit_goat_page.dart';
 import 'add_event_page.dart';
+import '../services/archive_service.dart';
 
 class ViewGoatPage extends StatefulWidget {
   final Goat goat;
@@ -131,11 +132,11 @@ class _ViewGoatPageState extends State<ViewGoatPage>
   }
 
   String _calculateAge() {
-    if (widget.goat.dateOfBirth == null || widget.goat.dateOfBirth!.isEmpty) {
+    if (_currentGoat.dateOfBirth == null || _currentGoat.dateOfBirth!.isEmpty) {
       return '-';
     }
     
-    final dobString = widget.goat.dateOfBirth!;
+    final dobString = _currentGoat.dateOfBirth!;
     final dob = _tryParseDate(dobString);
     
     if (dob == null) return '-';
@@ -179,16 +180,13 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     return '${monthNames[date.month - 1]} ${date.day}, ${date.year}';
   }
 
-  String _formatPdfDateTime(DateTime date) {
+  String _formatPdfDate(DateTime date) {
     final monthNames = [
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
     
-    final hour = date.hour.toString().padLeft(2, '0');
-    final minute = date.minute.toString().padLeft(2, '0');
-    
-    return '${monthNames[date.month - 1]} ${date.day}, ${date.year} $hour:$minute';
+    return '${monthNames[date.month - 1]} ${date.day}, ${date.year}';
   }
 
   String _formatEventDate(DateTime date) {
@@ -238,7 +236,7 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     
     if (weightEvents.isEmpty) return data;
     
-    DateTime? dob = _tryParseDate(widget.goat.dateOfBirth);
+    DateTime? dob = _tryParseDate(_currentGoat.dateOfBirth);
     
     for (int i = 0; i < weightEvents.length; i++) {
       final event = weightEvents[i];
@@ -318,201 +316,111 @@ class _ViewGoatPageState extends State<ViewGoatPage>
   }
 
   void _showMenuOptions() {
-    showModalBottomSheet(
+    showMenu(
       context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Options for ${widget.goat.tagNo}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ),
-                ),
-                
-                _buildMenuItem(
-                  icon: Icons.edit,
-                  iconColor: const Color(0xFF4CAF50),
-                  title: 'Edit',
-                  onTap: () {
-                    Navigator.pop(context);
-                    _navigateToEdit();
-                  },
-                ),
-                
-                _buildMenuItem(
-                  icon: Icons.event,
-                  iconColor: const Color(0xFFFF9800),
-                  title: 'Add Event',
-                  onTap: () {
-                    Navigator.pop(context);
-                    _navigateToAddEvent();
-                  },
-                ),
-                
-                _buildMenuItem(
-                  icon: Icons.switch_account,
-                  iconColor: const Color(0xFF2196F3),
-                  title: 'Change Stage',
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showChangeStageDialog();
-                  },
-                ),
-                
-                _buildMenuItem(
-                  icon: Icons.scale,
-                  iconColor: const Color(0xFF9C27B0),
-                  title: 'Weight Report',
-                  onTap: () {
-                    Navigator.pop(context);
-                    _exportWeightReportPdf();
-                  },
-                ),
-                
-                _buildMenuItem(
-                  icon: Icons.picture_as_pdf,
-                  iconColor: const Color(0xFFF44336),
-                  title: 'Export Pdf',
-                  onTap: () {
-                    Navigator.pop(context);
-                    _exportGoatDetailsPdf();
-                  },
-                ),
-                
-                _buildMenuItem(
-                  icon: Icons.archive,
-                  iconColor: const Color(0xFFFF9800),
-                  title: 'Archive (Sold, dead...)',
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showArchiveDialog();
-                  },
-                ),
-                
-                _buildMenuItem(
-                  icon: Icons.delete,
-                  iconColor: Colors.red,
-                  title: 'Delete Goat',
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showDeleteDialog();
-                  },
-                ),
-                
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        side: BorderSide(color: Colors.grey[300]!),
-                      ),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildMenuItem({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: Colors.grey[200]!,
-                width: 1,
-              ),
-            ),
-          ),
+      position: const RelativeRect.fromLTRB(400, 80, 0, 0), // Position at top-right corner
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      items: [
+        PopupMenuItem(
+          value: 'edit',
           child: Row(
             children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  icon,
-                  color: iconColor,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              const Icon(
-                Icons.chevron_right,
-                color: Colors.grey,
-                size: 24,
-              ),
+              Icon(Icons.edit, color: Colors.green[700]),
+              const SizedBox(width: 12),
+              const Text('Edit'),
             ],
           ),
         ),
-      ),
-    );
+        PopupMenuItem(
+          value: 'event',
+          child: Row(
+            children: [
+              Icon(Icons.event, color: Colors.orange[700]),
+              const SizedBox(width: 12),
+              const Text('Add Event'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'stage',
+          child: Row(
+            children: [
+              Icon(Icons.switch_account, color: Colors.blue[700]),
+              const SizedBox(width: 12),
+              const Text('Change Stage'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'weight_report',
+          child: Row(
+            children: [
+              Icon(Icons.scale, color: Colors.purple[700]),
+              const SizedBox(width: 12),
+              const Text('Weight Report'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'export_pdf',
+          child: Row(
+            children: [
+              Icon(Icons.picture_as_pdf, color: Colors.red[700]),
+              const SizedBox(width: 12),
+              const Text('Export PDF'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'archive',
+          child: Row(
+            children: [
+              Icon(Icons.archive, color: Colors.orange[700]),
+              const SizedBox(width: 12),
+              const Text('Archive'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(Icons.delete, color: Colors.red[700]),
+              const SizedBox(width: 12),
+              const Text('Delete Goat'),
+            ],
+          ),
+        ),
+      ],
+    ).then((value) {
+      if (value != null) {
+        switch (value) {
+          case 'edit':
+            _navigateToEdit();
+            break;
+          case 'event':
+            _navigateToAddEvent();
+            break;
+          case 'stage':
+            _showChangeStageDialog();
+            break;
+          case 'weight_report':
+            _exportWeightReportPdf();
+            break;
+          case 'export_pdf':
+            _exportGoatDetailsPdf();
+            break;
+          case 'archive':
+            _showArchiveDialog();
+            break;
+          case 'delete':
+            _showDeleteDialog();
+            break;
+        }
+      }
+    });
   }
 
   Future<void> _exportWeightReportPdf() async {
@@ -526,146 +434,340 @@ class _ViewGoatPageState extends State<ViewGoatPage>
       
       final weightData = _calculateWeightGainData();
       
-      // Header section with goat photo
-      final headerSection = pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.center,
-        children: [
-          // Goat photo at the top (from user upload)
-          if (selectedGoatPhotoBytes != null)
-            pw.Container(
-              margin: const pw.EdgeInsets.only(bottom: 12),
-              child: pw.Container(
-                width: 120,
-                height: 120,
-                decoration: pw.BoxDecoration(
-                  borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
-                ),
-                child: pw.ClipRRect(
-                  child: pw.Image(
-                    pw.MemoryImage(selectedGoatPhotoBytes),
-                    width: 120,
-                    height: 120,
-                    fit: pw.BoxFit.cover,
-                  ),
-                ),
-              ),
-            )
-          else if (defaultGoatIconBytes != null)
-            pw.Container(
-              margin: const pw.EdgeInsets.only(bottom: 8),
-              child: pw.Image(
-                pw.MemoryImage(defaultGoatIconBytes),
-                width: 60,
-                height: 60,
-              ),
-            ),
-          
-          // Farm settings text
-          pw.Text(
-            'Set farm\'s logo under app settings!',
-            style: pw.TextStyle(fontSize: 10, color: PdfColors.grey),
-          ),
-          pw.SizedBox(height: 4),
-          pw.Text(
-            'Set farm name under app settings!',
-            style: pw.TextStyle(fontSize: 10, color: PdfColors.grey),
-          ),
-          pw.SizedBox(height: 4),
-          pw.Text(
-            'Set farm location under app settings!',
-            style: pw.TextStyle(fontSize: 10, color: PdfColors.grey),
-          ),
-          pw.SizedBox(height: 16),
-          
-          // Title
-          pw.Text(
-            'Weight Report',
-            style: pw.TextStyle(
-              fontSize: 20,
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.black,
-            ),
-          ),
-          pw.SizedBox(height: 8),
-          
-          // Goat info
-          pw.Text(
-            'Goat: ${widget.goat.tagNo} ${widget.goat.name != null && widget.goat.name!.isNotEmpty ? '(${widget.goat.name})' : ''}',
-            style: pw.TextStyle(
-              fontSize: 14,
-              color: PdfColors.black,
-            ),
-          ),
-          pw.SizedBox(height: 8),
-          
-          // Date
-          pw.Text(
-            'Date: ${_formatPdfDateTime(now)}',
-            style: pw.TextStyle(
-              fontSize: 12,
-              color: PdfColors.grey,
-            ),
-          ),
-          pw.SizedBox(height: 16),
-          
-          // Divider line
-          pw.Divider(thickness: 1, color: PdfColors.black),
-          pw.SizedBox(height: 16),
-          
-          // Growth Table Title
-          pw.Text(
-            'Growth Table',
-            style: pw.TextStyle(
-              fontSize: 16,
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.black,
-            ),
-          ),
-          pw.SizedBox(height: 16),
-        ],
-      );
-
-      final tableHeaders = ['Date', 'Age', 'Result', 'Gain', 'Days Passed', 'Avg Daily Gain'];
-      final tableData = <List<String>>[];
-      
-      for (var data in weightData) {
-        tableData.add([
-          data['dateFormatted'] as String,
-          data['age'] as String,
-          data['weightStr'] as String,
-          data['gain'] as String,
-          data['daysPassed'] as String,
-          data['avgDailyGain'] as String,
-        ]);
-      }
-      
-      final table = pw.TableHelper.fromTextArray(
-        headers: tableHeaders,
-        data: tableData,
-        border: pw.TableBorder.all(color: PdfColors.black, width: 0.5),
-        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
-        cellStyle: pw.TextStyle(fontSize: 9),
-        headerDecoration: pw.BoxDecoration(color: PdfColors.grey200),
-        cellAlignments: {
-          0: pw.Alignment.centerLeft,
-          1: pw.Alignment.centerLeft,
-          2: pw.Alignment.centerRight,
-          3: pw.Alignment.centerRight,
-          4: pw.Alignment.centerRight,
-          5: pw.Alignment.centerRight,
-        },
-      );
-
       doc.addPage(
         pw.Page(
           pageFormat: PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(40),
+          margin: const pw.EdgeInsets.all(30),
           build: (pw.Context context) {
             return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
               children: [
-                headerSection,
-                table,
+                // Header with image
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
+                  children: [
+                    // Left: Image section
+                    pw.Container(
+                      width: 100,
+                      height: 100,
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(color: PdfColors.black, width: 1),
+                      ),
+                      child: selectedGoatPhotoBytes != null
+                          ? pw.Container(
+                              decoration: pw.BoxDecoration(
+                                border: pw.Border.all(color: PdfColors.black, width: 1),
+                              ),
+                              child: pw.Image(
+                                pw.MemoryImage(selectedGoatPhotoBytes),
+                                width: 100,
+                                height: 100,
+                                fit: pw.BoxFit.cover,
+                              ),
+                            )
+                          : (defaultGoatIconBytes != null
+                              ? pw.Center(
+                                  child: pw.Image(
+                                    pw.MemoryImage(defaultGoatIconBytes),
+                                    width: 60,
+                                    height: 60,
+                                  ),
+                                )
+                              : pw.Container()),
+                    ),
+                    
+                    // Center: Title
+                    pw.Expanded(
+                      child: pw.Column(
+                        mainAxisAlignment: pw.MainAxisAlignment.center,
+                        children: [
+                          pw.Text(
+                            'WEIGHT GROWTH REPORT',
+                            style: pw.TextStyle(
+                              fontSize: 20,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.black,
+                            ),
+                            textAlign: pw.TextAlign.center,
+                          ),
+                          pw.SizedBox(height: 8),
+                          pw.Text(
+                            'Goat Tag: ${_currentGoat.tagNo}',
+                            style: pw.TextStyle(
+                              fontSize: 16,
+                              color: PdfColors.black,
+                            ),
+                          ),
+                          if (_currentGoat.name != null && _currentGoat.name!.isNotEmpty)
+                            pw.Text(
+                              'Name: ${_currentGoat.name!}',
+                              style: pw.TextStyle(
+                                fontSize: 14,
+                                color: PdfColors.black,
+                              ),
+                            ),
+                          pw.SizedBox(height: 4),
+                          pw.Text(
+                            'Generated on: ${_formatPdfDate(now)}',
+                            style: pw.TextStyle(
+                              fontSize: 10,
+                              color: PdfColors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    // Right: Empty space for balance
+                    pw.Container(width: 100),
+                  ],
+                ),
+                
+                pw.SizedBox(height: 20),
+                pw.Divider(thickness: 1, color: PdfColors.black),
+                pw.SizedBox(height: 20),
+                
+                // Goat details
+                pw.Container(
+                  width: double.infinity,
+                  padding: const pw.EdgeInsets.all(12),
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey300, width: 1),
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        'Goat Information',
+                        style: pw.TextStyle(
+                          fontSize: 16,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.black,
+                        ),
+                      ),
+                      pw.SizedBox(height: 8),
+                      pw.Row(
+                        children: [
+                          pw.Expanded(
+                            child: pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                _buildPdfInfoRow('Breed:', _currentGoat.breed ?? '-'),
+                                _buildPdfInfoRow('Gender:', _currentGoat.gender),
+                                _buildPdfInfoRow('Date of Birth:', _formatDisplayDate(_currentGoat.dateOfBirth)),
+                              ],
+                            ),
+                          ),
+                          pw.Expanded(
+                            child: pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                _buildPdfInfoRow('Age:', _calculateAge()),
+                                _buildPdfInfoRow('Stage:', _currentGoat.goatStage ?? '-'),
+                                _buildPdfInfoRow('Current Weight:', _currentGoat.weight ?? '-'),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                
+                pw.SizedBox(height: 30),
+                
+                // Weight table title
+                pw.Container(
+                  width: double.infinity,
+                  padding: const pw.EdgeInsets.all(12),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.grey200,
+                  ),
+                  child: pw.Text(
+                    'WEIGHT HISTORY',
+                    style: pw.TextStyle(
+                      fontSize: 18,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.black,
+                    ),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                ),
+                
+                pw.SizedBox(height: 16),
+                
+                // Weight table
+                if (weightData.isNotEmpty)
+                  pw.TableHelper.fromTextArray(
+                    headers: ['Date', 'Age at Weighing', 'Weight (kg)', 'Gain (kg)', 'Days', 'Avg Daily Gain'],
+                    data: weightData.map((data) => [
+                      data['dateFormatted'] as String,
+                      data['age'] as String,
+                      data['weightStr'] as String,
+                      data['gain'] as String,
+                      data['daysPassed'] as String,
+                      data['avgDailyGain'] as String,
+                    ]).toList(),
+                    border: pw.TableBorder.all(color: PdfColors.black, width: 0.5),
+                    headerStyle: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.white,
+                    ),
+                    headerDecoration: pw.BoxDecoration(color: PdfColors.green),
+                    cellStyle: pw.TextStyle(fontSize: 9, color: PdfColors.black),
+                    cellAlignments: {
+                      0: pw.Alignment.centerLeft,
+                      1: pw.Alignment.centerLeft,
+                      2: pw.Alignment.centerRight,
+                      3: pw.Alignment.centerRight,
+                      4: pw.Alignment.centerRight,
+                      5: pw.Alignment.centerRight,
+                    },
+                    headerAlignment: pw.Alignment.center,
+                    cellAlignment: pw.Alignment.center,
+                    columnWidths: {
+                      0: pw.FlexColumnWidth(1.5),
+                      1: pw.FlexColumnWidth(2),
+                      2: pw.FlexColumnWidth(1),
+                      3: pw.FlexColumnWidth(1),
+                      4: pw.FlexColumnWidth(0.8),
+                      5: pw.FlexColumnWidth(1.2),
+                    },
+                  )
+                else
+                  pw.Container(
+                    padding: const pw.EdgeInsets.all(20),
+                    child: pw.Text(
+                      'No weight records available',
+                      style: pw.TextStyle(
+                        fontSize: 14,
+                        color: PdfColors.grey,
+                        fontStyle: pw.FontStyle.italic,
+                      ),
+                      textAlign: pw.TextAlign.center,
+                    ),
+                  ),
+                
+                pw.SizedBox(height: 30),
+                
+                // Summary
+                if (weightData.length > 1)
+                  pw.Container(
+                    width: double.infinity,
+                    padding: const pw.EdgeInsets.all(12),
+                    decoration: pw.BoxDecoration(
+                      border: pw.Border.all(color: PdfColors.green, width: 1),
+                    ),
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(
+                          'SUMMARY',
+                          style: pw.TextStyle(
+                            fontSize: 16,
+                            fontWeight: pw.FontWeight.bold,
+                            color: PdfColors.green,
+                          ),
+                        ),
+                        pw.SizedBox(height: 8),
+                        pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pw.Text(
+                              'Total Weightings:',
+                              style: pw.TextStyle(
+                                fontSize: 12,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                            pw.Text(
+                              '${weightData.length}',
+                              style: pw.TextStyle(
+                                fontSize: 12,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        pw.SizedBox(height: 4),
+                        pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pw.Text(
+                              'First Weight:',
+                              style: pw.TextStyle(fontSize: 11),
+                            ),
+                            pw.Text(
+                              '${weightData.first['weightStr']} kg',
+                              style: pw.TextStyle(fontSize: 11),
+                            ),
+                          ],
+                        ),
+                        pw.SizedBox(height: 4),
+                        pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pw.Text(
+                              'Latest Weight:',
+                              style: pw.TextStyle(fontSize: 11),
+                            ),
+                            pw.Text(
+                              '${weightData.last['weightStr']} kg',
+                              style: pw.TextStyle(fontSize: 11),
+                            ),
+                          ],
+                        ),
+                        if (weightData.length > 1)
+                          pw.SizedBox(height: 4),
+                        if (weightData.length > 1)
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                            children: [
+                              pw.Text(
+                                'Total Gain:',
+                                style: pw.TextStyle(fontSize: 11),
+                              ),
+                              pw.Text(
+                                '${(double.parse(weightData.last['weightStr'] as String) - double.parse(weightData.first['weightStr'] as String)).toStringAsFixed(2)} kg',
+                                style: pw.TextStyle(fontSize: 11),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+                
+                pw.SizedBox(height: 20),
+                
+                // Footer
+                pw.Container(
+                  width: double.infinity,
+                  padding: const pw.EdgeInsets.all(8),
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
+                  ),
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text(
+                        'Generated by Goat Manager',
+                        style: pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColors.grey,
+                        ),
+                      ),
+                      pw.Text(
+                        'Page 1 of 1',
+                        style: pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             );
           },
@@ -675,7 +777,7 @@ class _ViewGoatPageState extends State<ViewGoatPage>
       final bytes = await doc.save();
       await Printing.sharePdf(
         bytes: bytes,
-        filename: 'Weight_Report_${widget.goat.tagNo}_${DateTime.now().millisecondsSinceEpoch}.pdf',
+        filename: 'Weight_Report_${_currentGoat.tagNo}_${DateTime.now().millisecondsSinceEpoch}.pdf',
       );
 
     } catch (e) {
@@ -690,12 +792,39 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     }
   }
 
+  // Helper for PDF info rows
+  pw.Widget _buildPdfInfoRow(String label, String value) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.only(bottom: 4),
+      child: pw.Row(
+        children: [
+          pw.Text(
+            label,
+            style: pw.TextStyle(
+              fontSize: 11,
+              fontWeight: pw.FontWeight.bold,
+              color: PdfColors.grey,
+            ),
+          ),
+          pw.SizedBox(width: 8),
+          pw.Text(
+            value,
+            style: pw.TextStyle(
+              fontSize: 11,
+              color: PdfColors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _exportGoatDetailsPdf() async {
     try {
       final doc = pw.Document();
       final now = DateTime.now();
       
-      // Load goat's photo for PDF (user uploaded photo takes priority)
+      // Load goat's photo for PDF
       final selectedGoatPhotoBytes = await _loadSelectedGoatPhotoForPdf();
       final defaultGoatIconBytes = await _loadDefaultGoatIconForPdf();
       
@@ -705,137 +834,224 @@ class _ViewGoatPageState extends State<ViewGoatPage>
       final otherEvents = _goatEvents.where((e) => !e.eventType.toLowerCase().contains('weigh')).toList()
         ..sort((a, b) => b.date.compareTo(a.date));
 
-      // First Page - Goat Details with Photo
+      // First Page - Goat Details
       doc.addPage(
         pw.Page(
           pageFormat: PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(40),
+          margin: const pw.EdgeInsets.all(30),
           build: (pw.Context context) {
             return pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.center,
               children: [
-                // Goat photo at the top (from user upload)
-                if (selectedGoatPhotoBytes != null)
-                  pw.Container(
-                    margin: const pw.EdgeInsets.only(bottom: 16),
-                    child: pw.Container(
-                      width: 150,
-                      height: 150,
-                      decoration: pw.BoxDecoration(
-                        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
-                      ),
-                      child: pw.ClipRRect(
-                        child: pw.Image(
-                          pw.MemoryImage(selectedGoatPhotoBytes),
-                          width: 150,
-                          height: 150,
-                          fit: pw.BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  )
-                else if (defaultGoatIconBytes != null)
-                  pw.Container(
-                    margin: const pw.EdgeInsets.only(bottom: 8),
-                    child: pw.Image(
-                      pw.MemoryImage(defaultGoatIconBytes),
-                      width: 80,
-                      height: 80,
-                    ),
-                  ),
-                
-                // Farm settings text
-                pw.Text(
-                  'Set farm\'s logo under app settings!',
-                  style: pw.TextStyle(fontSize: 10, color: PdfColors.grey),
-                ),
-                pw.SizedBox(height: 4),
-                pw.Text(
-                  'Set farm name under app settings!',
-                  style: pw.TextStyle(fontSize: 10, color: PdfColors.grey),
-                ),
-                pw.SizedBox(height: 4),
-                pw.Text(
-                  'Set farm location under app settings!',
-                  style: pw.TextStyle(fontSize: 10, color: PdfColors.grey),
-                ),
-                pw.SizedBox(height: 16),
-                
-                // Title
-                pw.Text(
-                  'Goat Details',
-                  style: pw.TextStyle(
-                    fontSize: 20,
-                    fontWeight: pw.FontWeight.bold,
-                    color: PdfColors.black,
-                  ),
-                ),
-                pw.SizedBox(height: 8),
-                
-                // Tag and date
+                // Header with large image
                 pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
                   children: [
-                    pw.Text(
-                      'Tag: ${widget.goat.tagNo}',
-                      style: pw.TextStyle(fontSize: 14, color: PdfColors.black),
+                    // Goat image (larger)
+                    pw.Container(
+                      width: 180,
+                      height: 180,
+                      margin: const pw.EdgeInsets.only(right: 20),
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(color: PdfColors.black, width: 2),
+                      ),
+                      child: selectedGoatPhotoBytes != null
+                          ? pw.Container(
+                              decoration: pw.BoxDecoration(
+                                border: pw.Border.all(color: PdfColors.black, width: 2),
+                              ),
+                              child: pw.Image(
+                                pw.MemoryImage(selectedGoatPhotoBytes),
+                                width: 180,
+                                height: 180,
+                                fit: pw.BoxFit.cover,
+                              ),
+                            )
+                          : (defaultGoatIconBytes != null
+                              ? pw.Center(
+                                  child: pw.Image(
+                                    pw.MemoryImage(defaultGoatIconBytes),
+                                    width: 100,
+                                    height: 100,
+                                  ),
+                                )
+                              : pw.Container()),
                     ),
-                    pw.Text(
-                      'Date: ${_formatPdfDateTime(now)}',
-                      style: pw.TextStyle(fontSize: 10, color: PdfColors.grey),
+                    
+                    // Goat info
+                    pw.Expanded(
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            'GOAT DETAILS REPORT',
+                            style: pw.TextStyle(
+                              fontSize: 22,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.black,
+                            ),
+                          ),
+                          pw.SizedBox(height: 12),
+                          pw.Text(
+                            'Tag: ${_currentGoat.tagNo}',
+                            style: pw.TextStyle(
+                              fontSize: 18,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.blue,
+                            ),
+                          ),
+                          if (_currentGoat.name != null && _currentGoat.name!.isNotEmpty)
+                            pw.Text(
+                              'Name: ${_currentGoat.name!}',
+                              style: pw.TextStyle(
+                                fontSize: 16,
+                                color: PdfColors.black,
+                              ),
+                            ),
+                          pw.SizedBox(height: 8),
+                          pw.Text(
+                            'Generated on: ${_formatPdfDate(now)}',
+                            style: pw.TextStyle(
+                              fontSize: 10,
+                              color: PdfColors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                pw.SizedBox(height: 8),
                 
-                // Goat name if available
-                if (widget.goat.name != null && widget.goat.name!.isNotEmpty)
-                  pw.Text(
-                    'Name: ${widget.goat.name!}',
-                    style: pw.TextStyle(fontSize: 12, color: PdfColors.black),
-                  ),
-                
-                pw.SizedBox(height: 16),
-                
-                // Divider
-                pw.Divider(thickness: 1, color: PdfColors.black),
-                pw.SizedBox(height: 16),
+                pw.SizedBox(height: 30),
+                pw.Divider(thickness: 2, color: PdfColors.black),
+                pw.SizedBox(height: 20),
                 
                 // General Details section
-                pw.Text(
-                  'General Details',
-                  style: pw.TextStyle(
-                    fontSize: 16,
-                    fontWeight: pw.FontWeight.bold,
-                    color: PdfColors.black,
+                pw.Container(
+                  width: double.infinity,
+                  padding: const pw.EdgeInsets.all(16),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.grey50,
+                    border: pw.Border.all(color: PdfColors.grey300, width: 1),
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        'GENERAL INFORMATION',
+                        style: pw.TextStyle(
+                          fontSize: 18,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.black,
+                        ),
+                      ),
+                      pw.SizedBox(height: 16),
+                      
+                      // Two column layout for details
+                      pw.Row(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          // Left column
+                          pw.Expanded(
+                            child: pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                _buildPdfDetailRow('Tag No:', _currentGoat.tagNo),
+                                _buildPdfDetailRow('Name:', _currentGoat.name ?? '-'),
+                                _buildPdfDetailRow('Date of Birth:', _formatDisplayDate(_currentGoat.dateOfBirth)),
+                                _buildPdfDetailRow('Age:', _calculateAge()),
+                                _buildPdfDetailRow('Gender:', _currentGoat.gender),
+                                _buildPdfDetailRow('Weight:', _currentGoat.weight ?? '-'),
+                                _buildPdfDetailRow('Stage:', _currentGoat.goatStage ?? '-'),
+                              ],
+                            ),
+                          ),
+                          
+                          pw.SizedBox(width: 20),
+                          
+                          // Right column
+                          pw.Expanded(
+                            child: pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                _buildPdfDetailRow('Breed:', _currentGoat.breed ?? '-'),
+                                _buildPdfDetailRow('Group:', _currentGoat.group ?? '-'),
+                                _buildPdfDetailRow('Joined On:', _formatDisplayDate(_currentGoat.dateOfEntry)),
+                                _buildPdfDetailRow('Source:', _currentGoat.obtained ?? '-'),
+                                _buildPdfDetailRow('Mother Tag:', _currentGoat.motherTag ?? '-'),
+                                _buildPdfDetailRow('Father Tag:', _currentGoat.fatherTag ?? '-'),
+                                _buildPdfDetailRow('Status:', 'Active'),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                      pw.SizedBox(height: 16),
+                      
+                      // Notes section
+                      if (_currentGoat.notes != null && _currentGoat.notes!.isNotEmpty)
+                        pw.Container(
+                          width: double.infinity,
+                          padding: const pw.EdgeInsets.all(12),
+                          decoration: pw.BoxDecoration(
+                            border: pw.Border.all(color: PdfColors.grey300, width: 1),
+                          ),
+                          child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text(
+                                'NOTES',
+                                style: pw.TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColors.black,
+                                ),
+                              ),
+                              pw.SizedBox(height: 8),
+                              pw.Text(
+                                _currentGoat.notes!,
+                                style: pw.TextStyle(
+                                  fontSize: 11,
+                                  color: PdfColors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-                pw.SizedBox(height: 12),
                 
-                // Details table
-                pw.Table(
-                  border: null,
-                  columnWidths: {
-                    0: const pw.FlexColumnWidth(1.5),
-                    1: const pw.FlexColumnWidth(2),
-                  },
-                  children: [
-                    _buildPdfDetailRow('Tag No:', widget.goat.tagNo),
-                    _buildPdfDetailRow('Name:', widget.goat.name ?? '-'),
-                    _buildPdfDetailRow('D.O.B:', _formatDisplayDate(widget.goat.dateOfBirth)),
-                    _buildPdfDetailRow('Age:', _calculateAge()),
-                    _buildPdfDetailRow('Gender:', widget.goat.gender),
-                    _buildPdfDetailRow('Weight:', widget.goat.weight ?? '-'),
-                    _buildPdfDetailRow('Stage:', widget.goat.goatStage ?? '-'),
-                    _buildPdfDetailRow('Breed:', widget.goat.breed ?? '-'),
-                    _buildPdfDetailRow('Group:', widget.goat.group ?? '-'),
-                    _buildPdfDetailRow('Joined On:', _formatDisplayDate(widget.goat.dateOfEntry)),
-                    _buildPdfDetailRow('Source:', widget.goat.obtained ?? '-'),
-                    _buildPdfDetailRow('Mother:', widget.goat.motherTag ?? '-'),
-                    _buildPdfDetailRow('Father:', widget.goat.fatherTag ?? '-'),
-                    _buildPdfDetailRow('Notes:', widget.goat.notes ?? '-'),
-                    _buildPdfDetailRow('Archived', 'No'),
-                  ],
+                pw.SizedBox(height: 30),
+                
+                // Footer
+                pw.Container(
+                  width: double.infinity,
+                  padding: const pw.EdgeInsets.all(8),
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
+                  ),
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text(
+                        'Goat Manager - Comprehensive Goat Management System',
+                        style: pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColors.grey,
+                        ),
+                      ),
+                      pw.Text(
+                        'Page 1 of ${(weightEvents.isNotEmpty || otherEvents.isNotEmpty) ? 2 : 1}',
+                        style: pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             );
@@ -843,81 +1059,166 @@ class _ViewGoatPageState extends State<ViewGoatPage>
         ),
       );
 
-      // Second Page - Events
+      // Second Page - Events (if any)
       if (weightEvents.isNotEmpty || otherEvents.isNotEmpty) {
         doc.addPage(
           pw.Page(
             pageFormat: PdfPageFormat.a4,
-            margin: const pw.EdgeInsets.all(40),
+            margin: const pw.EdgeInsets.all(30),
             build: (pw.Context context) {
               return pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.center,
                 children: [
-                  // Goat photo at the top (from user upload)
-                  if (selectedGoatPhotoBytes != null)
-                    pw.Container(
-                      margin: const pw.EdgeInsets.only(bottom: 12),
-                      child: pw.Container(
-                        width: 100,
-                        height: 100,
+                  // Header for events page
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.center,
+                    children: [
+                      pw.Container(
+                        width: 80,
+                        height: 80,
+                        margin: const pw.EdgeInsets.only(right: 16),
                         decoration: pw.BoxDecoration(
-                          borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+                          border: pw.Border.all(color: PdfColors.black, width: 1),
                         ),
-                        child: pw.ClipRRect(
-                          child: pw.Image(
-                            pw.MemoryImage(selectedGoatPhotoBytes),
-                            width: 100,
-                            height: 100,
-                            fit: pw.BoxFit.cover,
+                        child: selectedGoatPhotoBytes != null
+                            ? pw.Container(
+                                decoration: pw.BoxDecoration(
+                                  border: pw.Border.all(color: PdfColors.black, width: 1),
+                                ),
+                                child: pw.Image(
+                                  pw.MemoryImage(selectedGoatPhotoBytes),
+                                  width: 80,
+                                  height: 80,
+                                  fit: pw.BoxFit.cover,
+                                ),
+                              )
+                            : (defaultGoatIconBytes != null
+                                ? pw.Center(
+                                    child: pw.Image(
+                                      pw.MemoryImage(defaultGoatIconBytes),
+                                      width: 50,
+                                      height: 50,
+                                    ),
+                                  )
+                                : pw.Container()),
+                      ),
+                      pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            'EVENTS HISTORY',
+                            style: pw.TextStyle(
+                              fontSize: 20,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.black,
+                            ),
                           ),
-                        ),
+                          pw.SizedBox(height: 4),
+                          pw.Text(
+                            'Goat: ${_currentGoat.tagNo}',
+                            style: pw.TextStyle(
+                              fontSize: 14,
+                              color: PdfColors.black,
+                            ),
+                          ),
+                          pw.SizedBox(height: 4),
+                          pw.Text(
+                            'Total Events: ${_goatEvents.length}',
+                            style: pw.TextStyle(
+                              fontSize: 12,
+                              color: PdfColors.grey,
+                            ),
+                          ),
+                        ],
                       ),
-                    )
-                  else if (defaultGoatIconBytes != null)
-                    pw.Container(
-                      margin: const pw.EdgeInsets.only(bottom: 8),
-                      child: pw.Image(
-                        pw.MemoryImage(defaultGoatIconBytes),
-                        width: 60,
-                        height: 60,
-                      ),
-                    ),
+                    ],
+                  ),
                   
-                  // Farm settings text
-                  pw.Text(
-                    'Set farm\'s logo under app settings!',
-                    style: pw.TextStyle(fontSize: 10, color: PdfColors.grey),
-                  ),
-                  pw.SizedBox(height: 4),
-                  pw.Text(
-                    'Set farm name under app settings!',
-                    style: pw.TextStyle(fontSize: 10, color: PdfColors.grey),
-                  ),
-                  pw.SizedBox(height: 4),
-                  pw.Text(
-                    'Set farm location under app settings!',
-                    style: pw.TextStyle(fontSize: 10, color: PdfColors.grey),
-                  ),
-                  pw.SizedBox(height: 16),
-                  
-                  // Events Title
-                  pw.Text(
-                    'Events',
-                    style: pw.TextStyle(
-                      fontSize: 20,
-                      fontWeight: pw.FontWeight.bold,
-                      color: PdfColors.black,
-                    ),
-                  ),
+                  pw.SizedBox(height: 30),
+                  pw.Divider(thickness: 1, color: PdfColors.grey),
                   pw.SizedBox(height: 20),
                   
                   // Events list
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      ...weightEvents.map((event) => _buildEventCardPdf(event)),
-                      ...otherEvents.map((event) => _buildEventCardPdf(event)),
+                      if (weightEvents.isNotEmpty)
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Container(
+                              padding: const pw.EdgeInsets.all(10),
+                              decoration: pw.BoxDecoration(
+                                color: PdfColors.blue50,
+                              ),
+                              child: pw.Text(
+                                'WEIGHT EVENTS (${weightEvents.length})',
+                                style: pw.TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColors.blue,
+                                ),
+                              ),
+                            ),
+                            pw.SizedBox(height: 12),
+                            ...weightEvents.map((event) => _buildEventCardPdf(event)),
+                            pw.SizedBox(height: 20),
+                          ],
+                        ),
+                      
+                      if (otherEvents.isNotEmpty)
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Container(
+                              padding: const pw.EdgeInsets.all(10),
+                              decoration: pw.BoxDecoration(
+                                color: PdfColors.green50,
+                              ),
+                              child: pw.Text(
+                                'OTHER EVENTS (${otherEvents.length})',
+                                style: pw.TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColors.green,
+                                ),
+                              ),
+                            ),
+                            pw.SizedBox(height: 12),
+                            ...otherEvents.map((event) => _buildEventCardPdf(event)),
+                          ],
+                        ),
                     ],
+                  ),
+                  
+                  pw.SizedBox(height: 30),
+                  
+                  // Footer
+                  pw.Container(
+                    width: double.infinity,
+                    padding: const pw.EdgeInsets.all(8),
+                    decoration: pw.BoxDecoration(
+                      border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
+                    ),
+                    child: pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      children: [
+                        pw.Text(
+                          'Goat Manager - Comprehensive Goat Management System',
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                            color: PdfColors.grey,
+                          ),
+                        ),
+                        pw.Text(
+                          'Page 2 of 2',
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                            color: PdfColors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               );
@@ -929,7 +1230,7 @@ class _ViewGoatPageState extends State<ViewGoatPage>
       final bytes = await doc.save();
       await Printing.sharePdf(
         bytes: bytes,
-        filename: 'Goat_Details_${widget.goat.tagNo}_${DateTime.now().millisecondsSinceEpoch}.pdf',
+        filename: 'Goat_Details_${_currentGoat.tagNo}_${DateTime.now().millisecondsSinceEpoch}.pdf',
       );
 
     } catch (e) {
@@ -945,41 +1246,43 @@ class _ViewGoatPageState extends State<ViewGoatPage>
   }
 
   // Helper for PDF detail rows
-  pw.TableRow _buildPdfDetailRow(String label, String value) {
-    return pw.TableRow(
-      children: [
-        pw.Container(
-          padding: const pw.EdgeInsets.symmetric(vertical: 6),
-          child: pw.Text(
-            label,
-            style: pw.TextStyle(
-              fontSize: 11,
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.grey,
+  pw.Widget _buildPdfDetailRow(String label, String value) {
+    return pw.Container(
+      margin: const pw.EdgeInsets.only(bottom: 8),
+      child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.SizedBox(
+            width: 120,
+            child: pw.Text(
+              label,
+              style: pw.TextStyle(
+                fontSize: 12,
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.grey,
+              ),
             ),
           ),
-        ),
-        pw.Container(
-          padding: const pw.EdgeInsets.symmetric(vertical: 6),
-          child: pw.Text(
-            value,
-            style: pw.TextStyle(
-              fontSize: 11,
-              color: PdfColors.black,
+          pw.Expanded(
+            child: pw.Text(
+              value,
+              style: pw.TextStyle(
+                fontSize: 12,
+                color: PdfColors.black,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   // Helper for PDF event cards
   pw.Widget _buildEventCardPdf(Event event) {
     return pw.Container(
-      margin: const pw.EdgeInsets.only(bottom: 16),
+      margin: const pw.EdgeInsets.only(bottom: 12),
       decoration: pw.BoxDecoration(
         border: pw.Border.all(color: PdfColors.grey300, width: 1),
-        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
       ),
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -989,37 +1292,55 @@ class _ViewGoatPageState extends State<ViewGoatPage>
             padding: const pw.EdgeInsets.all(12),
             decoration: pw.BoxDecoration(
               color: PdfColors.grey100,
-              borderRadius: const pw.BorderRadius.only(
-                topLeft: pw.Radius.circular(4),
-                topRight: pw.Radius.circular(4),
-              ),
             ),
-            child: pw.Text(
-              event.eventType,
-              style: pw.TextStyle(
-                fontSize: 14,
-                fontWeight: pw.FontWeight.bold,
-                color: PdfColors.black,
-              ),
+            child: pw.Row(
+              children: [
+                pw.Text(
+                  '●',
+                  style: pw.TextStyle(
+                    fontSize: 14,
+                    color: PdfColors.blue,
+                  ),
+                ),
+                pw.SizedBox(width: 8),
+                pw.Text(
+                  event.eventType.toUpperCase(),
+                  style: pw.TextStyle(
+                    fontSize: 14,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.black,
+                  ),
+                ),
+                pw.Spacer(),
+                pw.Text(
+                  _formatEventDate(event.date),
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    color: PdfColors.grey,
+                  ),
+                ),
+              ],
             ),
           ),
           
           // Event details
           pw.Container(
             padding: const pw.EdgeInsets.all(12),
-            child: pw.Table(
-              border: null,
-              columnWidths: {
-                0: const pw.FlexColumnWidth(1.2),
-                1: const pw.FlexColumnWidth(2),
-              },
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                _buildEventDetailRowPdf('Type:', event.eventType),
-                _buildEventDetailRowPdf('Date:', _formatEventDate(event.date)),
-                if (event.weighedResult != null)
-                  _buildEventDetailRowPdf('Result:', event.weighedResult!),
-                if (event.medicine != null)
+                if (event.weighedResult != null && event.weighedResult!.isNotEmpty)
+                  _buildEventDetailRowPdf('Weight:', event.weighedResult!),
+                if (event.medicine != null && event.medicine!.isNotEmpty)
                   _buildEventDetailRowPdf('Medicine:', event.medicine!),
+                if (event.symptoms != null && event.symptoms!.isNotEmpty)
+                  _buildEventDetailRowPdf('Symptoms:', event.symptoms!),
+                if (event.diagnosis != null && event.diagnosis!.isNotEmpty)
+                  _buildEventDetailRowPdf('Diagnosis:', event.diagnosis!),
+                if (event.technician != null && event.technician!.isNotEmpty)
+                  _buildEventDetailRowPdf('Technician:', event.technician!),
+                if (event.otherName != null && event.otherName!.isNotEmpty)
+                  _buildEventDetailRowPdf('Description:', event.otherName!),
                 if (event.notes != null && event.notes!.isNotEmpty)
                   _buildEventDetailRowPdf('Notes:', event.notes!),
               ],
@@ -1031,31 +1352,34 @@ class _ViewGoatPageState extends State<ViewGoatPage>
   }
 
   // Helper for PDF event detail rows
-  pw.TableRow _buildEventDetailRowPdf(String label, String value) {
-    return pw.TableRow(
-      children: [
-        pw.Container(
-          padding: const pw.EdgeInsets.symmetric(vertical: 4),
-          child: pw.Text(
-            label,
-            style: pw.TextStyle(
-              fontSize: 10,
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.grey,
+  pw.Widget _buildEventDetailRowPdf(String label, String value) {
+    return pw.Container(
+      margin: const pw.EdgeInsets.only(bottom: 6),
+      child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.SizedBox(
+            width: 80,
+            child: pw.Text(
+              label,
+              style: pw.TextStyle(
+                fontSize: 10,
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.grey,
+              ),
             ),
           ),
-        ),
-        pw.Container(
-          padding: const pw.EdgeInsets.symmetric(vertical: 4),
-          child: pw.Text(
-            value,
-            style: pw.TextStyle(
-              fontSize: 10,
-              color: PdfColors.black,
+          pw.Expanded(
+            child: pw.Text(
+              value,
+              style: pw.TextStyle(
+                fontSize: 10,
+                color: PdfColors.black,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -1063,12 +1387,32 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     final updatedGoat = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditGoatPage(goat: widget.goat),
+        builder: (context) => EditGoatPage(goat: _currentGoat),
       ),
     );
     
     if (updatedGoat != null && mounted) {
-      Navigator.pop(context, updatedGoat);
+      setState(() {
+        _currentGoat = updatedGoat;
+      });
+      // Update SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final goatsJson = prefs.getString('goats');
+      if (goatsJson != null) {
+        try {
+          final List<dynamic> decoded = jsonDecode(goatsJson);
+          for (var i = 0; i < decoded.length; i++) {
+            if (decoded[i]['tagNo'] == _currentGoat.tagNo) {
+              decoded[i] = _currentGoat.toJson();
+              break;
+            }
+          }
+          await prefs.setString('goats', jsonEncode(decoded));
+        } catch (_) {}
+      }
+      
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context, _currentGoat);
     }
   }
 
@@ -1076,7 +1420,7 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     final event = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddEventPage(goat: widget.goat),
+        builder: (context) => AddEventPage(goat: _currentGoat),
       ),
     );
     
@@ -1085,7 +1429,7 @@ class _ViewGoatPageState extends State<ViewGoatPage>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Event added for ${widget.goat.tagNo}'),
+            content: Text('Event added for ${_currentGoat.tagNo}'),
             backgroundColor: const Color(0xFF4CAF50),
           ),
         );
@@ -1128,6 +1472,7 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     );
   }
 
+  // FIXED: Update goat stage function
   Future<void> _updateGoatStage(String newStage) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -1135,41 +1480,45 @@ class _ViewGoatPageState extends State<ViewGoatPage>
       if (goatsJson != null) {
         final List<dynamic> decoded = jsonDecode(goatsJson);
         
+        bool updated = false;
         for (var item in decoded) {
-          if (item['tagNo'] == widget.goat.tagNo) {
+          if (item['tagNo'] == _currentGoat.tagNo) {
             item['goatStage'] = newStage;
+            updated = true;
             break;
           }
         }
         
-        await prefs.setString('goats', jsonEncode(decoded));
-        
-        setState(() {
-          _currentGoat = Goat(
-            tagNo: widget.goat.tagNo,
-            name: widget.goat.name,
-            breed: widget.goat.breed,
-            gender: widget.goat.gender,
-            goatStage: newStage,
-            dateOfBirth: widget.goat.dateOfBirth,
-            dateOfEntry: widget.goat.dateOfEntry,
-            weight: widget.goat.weight,
-            group: widget.goat.group,
-            obtained: widget.goat.obtained,
-            motherTag: widget.goat.motherTag,
-            fatherTag: widget.goat.fatherTag,
-            notes: widget.goat.notes,
-            photoPath: widget.goat.photoPath,
-          );
-        });
-        
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Stage updated to $newStage'),
-              backgroundColor: const Color(0xFF4CAF50),
-            ),
-          );
+        if (updated) {
+          await prefs.setString('goats', jsonEncode(decoded));
+          
+          setState(() {
+            _currentGoat = Goat(
+              tagNo: _currentGoat.tagNo,
+              name: _currentGoat.name,
+              breed: _currentGoat.breed,
+              gender: _currentGoat.gender,
+              goatStage: newStage,
+              dateOfBirth: _currentGoat.dateOfBirth,
+              dateOfEntry: _currentGoat.dateOfEntry,
+              weight: _currentGoat.weight,
+              group: _currentGoat.group,
+              obtained: _currentGoat.obtained,
+              motherTag: _currentGoat.motherTag,
+              fatherTag: _currentGoat.fatherTag,
+              notes: _currentGoat.notes,
+              photoPath: _currentGoat.photoPath,
+            );
+          });
+          
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Stage updated to $newStage'),
+                backgroundColor: const Color(0xFF4CAF50),
+              ),
+            );
+          }
         }
       }
     } catch (e) {
@@ -1184,53 +1533,135 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     }
   }
 
+  // UPDATED: Proper Archive Dialog
   void _showArchiveDialog() {
-    final reasons = ['Sold', 'Dead', 'Lost', 'Other'];
+    final reasons = ['sold', 'dead', 'lost', 'other'];
+    final reasonLabels = ['Sold', 'Dead', 'Lost', 'Other'];
+    
+    String? selectedReason;
+    String notes = '';
+    DateTime archiveDate = DateTime.now();
     
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Archive Goat'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Select reason for archiving:'),
-              const SizedBox(height: 16),
-              ...reasons.map((reason) {
-                return ListTile(
-                  title: Text(reason),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _archiveGoat(reason);
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: const Text('Archive Goat'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Goat: ${_currentGoat.tagNo} - ${_currentGoat.name ?? "Unnamed"}'),
+                    const SizedBox(height: 16),
+                    // Reason selection
+                    DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(
+                        labelText: 'Reason for Archive',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: reasons.asMap().entries.map((entry) {
+                        return DropdownMenuItem<String>(
+                          value: entry.value,
+                          child: Text(reasonLabels[entry.key]),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setStateDialog(() => selectedReason = value);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    // Date selection
+                    InkWell(
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: archiveDate,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime.now(),
+                        );
+                        if (picked != null) {
+                          setStateDialog(() => archiveDate = picked);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.calendar_today),
+                            const SizedBox(width: 8),
+                            Text('${archiveDate.day}/${archiveDate.month}/${archiveDate.year}'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Notes
+                    TextField(
+                      decoration: const InputDecoration(
+                        labelText: 'Notes (optional)',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) => notes = value,
+                      maxLines: 2,
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (selectedReason != null) {
+                      Navigator.of(ctx).pop();
+                      await _performArchive(selectedReason!, archiveDate, notes);
+                    }
                   },
-                );
-              }),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-          ],
+                  child: const Text('Archive'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  Future<void> _archiveGoat(String reason) async {
+  // Perform actual archiving
+  Future<void> _performArchive(String reason, DateTime archiveDate, String notes) async {
     try {
+      // Create archive record using ArchiveService
+      await ArchiveService.archiveGoat(
+        goat: _currentGoat,
+        reason: reason,
+        archiveDate: archiveDate,
+        notes: notes.isEmpty ? null : notes,
+      );
+      
+      // Also create an archive event for reporting
+      await _createArchiveEvent(_currentGoat, reason, archiveDate, notes);
+      
+      // Remove from active goats list
+      await _removeFromActiveGoats(_currentGoat.tagNo);
+      
+      // Show success message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Archiving goat ${widget.goat.tagNo} as $reason'),
-            backgroundColor: const Color(0xFFFF9800),
+            content: Text('Goat ${_currentGoat.tagNo} archived as $reason'),
+            backgroundColor: const Color(0xFF4CAF50),
           ),
         );
-      }
-      
-      if (mounted) {
+        
+        // Navigate back to goats list page
         Navigator.pop(context, 'archived');
       }
     } catch (e) {
@@ -1245,13 +1676,79 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     }
   }
 
+  // Create archive event
+  Future<void> _createArchiveEvent(Goat goat, String reason, DateTime date, String notes) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Load existing events
+      final eventsData = prefs.getString('events') ?? '[]';
+      final List<dynamic> eventsList = jsonDecode(eventsData);
+      final List<Event> events = eventsList.map((e) => Event.fromJson(e as Map<String, dynamic>)).toList();
+      
+      // Create archive event
+      final archiveEvent = Event(
+        date: date,
+        tagNo: goat.tagNo,
+        eventType: _getArchiveEventType(reason),
+        notes: notes.isEmpty ? null : notes,
+        isMassEvent: false,
+      );
+      
+      // Add to events list
+      events.add(archiveEvent);
+      
+      // Save back to SharedPreferences
+      final updatedEvents = events.map((e) => e.toJson()).toList();
+      await prefs.setString('events', jsonEncode(updatedEvents));
+      
+      // debugPrint('Archive event created for ${goat.tagNo} as $reason');
+    } catch (e) {
+      // debugPrint('Error creating archive event: $e');
+    }
+  }
+
+  // Helper to convert archive reason to event type
+  String _getArchiveEventType(String reason) {
+    switch (reason) {
+      case 'sold':
+        return 'Sold';
+      case 'dead':
+        return 'Dead';
+      case 'lost':
+        return 'Lost';
+      default:
+        return 'Archived';
+    }
+  }
+
+  // Remove goat from active goats list
+  Future<void> _removeFromActiveGoats(String tagNo) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final goatsJson = prefs.getString('goats');
+      
+      if (goatsJson != null) {
+        final List<dynamic> decoded = jsonDecode(goatsJson);
+        decoded.removeWhere((item) => item['tagNo'] == tagNo);
+        await prefs.setString('goats', jsonEncode(decoded));
+      }
+      
+      // Also remove stored photo if exists
+      await prefs.remove('goat_image_$tagNo');
+      
+    } catch (e) {
+      // debugPrint('Error removing goat from active list: $e');
+    }
+  }
+
   void _showDeleteDialog() {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Delete Goat'),
-          content: Text('Are you sure you want to delete goat ${widget.goat.tagNo}? This action cannot be undone.'),
+          content: Text('Are you sure you want to delete goat ${_currentGoat.tagNo}? This action cannot be undone.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -1273,26 +1770,29 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     );
   }
 
+  // Delete function with archiving - FIXED BuildContext async gap
   Future<void> _deleteGoat() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final goatsJson = prefs.getString('goats');
-      if (goatsJson != null) {
-        final List<dynamic> decoded = jsonDecode(goatsJson);
-        decoded.removeWhere((item) => item['tagNo'] == widget.goat.tagNo);
-        await prefs.setString('goats', jsonEncode(decoded));
+      // First archive as 'other' with delete note
+      await ArchiveService.archiveGoat(
+        goat: _currentGoat,
+        reason: 'other',
+        archiveDate: DateTime.now(),
+        notes: 'Deleted permanently',
+      );
+      
+      // Remove from active goats
+      await _removeFromActiveGoats(_currentGoat.tagNo);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Goat ${_currentGoat.tagNo} deleted'),
+            backgroundColor: Colors.red,
+          ),
+        );
         
-        await prefs.remove('goat_image_${widget.goat.tagNo}');
-        
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Goat ${widget.goat.tagNo} deleted'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-        
+        // Navigate back only if still mounted
         if (mounted) {
           Navigator.pop(context, 'deleted');
         }
@@ -1311,13 +1811,14 @@ class _ViewGoatPageState extends State<ViewGoatPage>
 
   @override
   Widget build(BuildContext context) {
-    Color genderColor = widget.goat.gender.toLowerCase() == 'male'
+    Color genderColor = _currentGoat.gender.toLowerCase() == 'male'
         ? const Color(0xFF4CAF50)
         : const Color(0xFFFFA726);
 
     return Scaffold(
       body: Column(
         children: [
+          // Top image section
           Container(
             height: 340,
             decoration: const BoxDecoration(
@@ -1386,7 +1887,7 @@ class _ViewGoatPageState extends State<ViewGoatPage>
                     bottom: 20,
                     left: 20,
                     child: Text(
-                      widget.goat.tagNo,
+                      _currentGoat.tagNo,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 64,
@@ -1405,6 +1906,8 @@ class _ViewGoatPageState extends State<ViewGoatPage>
               ),
             ),
           ),
+          
+          // Tab bar
           Container(
             color: Colors.white,
             child: TabBar(
@@ -1424,6 +1927,8 @@ class _ViewGoatPageState extends State<ViewGoatPage>
               ],
             ),
           ),
+          
+          // Tab content
           Expanded(
             child: TabBarView(
               controller: _tabController,
@@ -1439,7 +1944,7 @@ class _ViewGoatPageState extends State<ViewGoatPage>
   }
 
   Widget _buildDetailsTab() {
-    Color genderColor = widget.goat.gender.toLowerCase() == 'male'
+    Color genderColor = _currentGoat.gender.toLowerCase() == 'male'
         ? const Color(0xFF4CAF50)
         : const Color(0xFFFFA726);
 
@@ -1494,20 +1999,20 @@ class _ViewGoatPageState extends State<ViewGoatPage>
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        _buildDetailRow('Tag No', widget.goat.tagNo),
-                        _buildDetailRow('Name', widget.goat.name ?? '-'),
-                        _buildDetailRow('D.O.B', _formatDisplayDate(widget.goat.dateOfBirth)),
+                        _buildDetailRow('Tag No', _currentGoat.tagNo),
+                        _buildDetailRow('Name', _currentGoat.name ?? '-'),
+                        _buildDetailRow('D.O.B', _formatDisplayDate(_currentGoat.dateOfBirth)),
                         _buildDetailRow('Age', _calculateAge()),
-                        _buildDetailRow('Gender', widget.goat.gender, valueColor: genderColor),
-                        _buildDetailRow('Weight', widget.goat.weight ?? '-'),
-                        _buildDetailRow('Stage', widget.goat.goatStage ?? '-'),
-                        _buildDetailRow('Breed', widget.goat.breed ?? '-'),
-                        _buildDetailRow('Group', widget.goat.group ?? '-'),
-                        _buildDetailRow('Joined On', _formatDisplayDate(widget.goat.dateOfEntry)),
-                        _buildDetailRow('Source', widget.goat.obtained ?? '-'),
-                        _buildDetailRow('Mother', widget.goat.motherTag ?? '-'),
-                        _buildDetailRow('Father', widget.goat.fatherTag ?? '-'),
-                        _buildDetailRow('Notes', widget.goat.notes ?? '-'),
+                        _buildDetailRow('Gender', _currentGoat.gender, valueColor: genderColor),
+                        _buildDetailRow('Weight', _currentGoat.weight ?? '-'),
+                        _buildDetailRow('Stage', _currentGoat.goatStage ?? '-'),
+                        _buildDetailRow('Breed', _currentGoat.breed ?? '-'),
+                        _buildDetailRow('Group', _currentGoat.group ?? '-'),
+                        _buildDetailRow('Joined On', _formatDisplayDate(_currentGoat.dateOfEntry)),
+                        _buildDetailRow('Source', _currentGoat.obtained ?? '-'),
+                        _buildDetailRow('Mother', _currentGoat.motherTag ?? '-'),
+                        _buildDetailRow('Father', _currentGoat.fatherTag ?? '-'),
+                        _buildDetailRow('Notes', _currentGoat.notes ?? '-'),
                       ],
                     ),
                   ),
@@ -1613,7 +2118,7 @@ class _ViewGoatPageState extends State<ViewGoatPage>
   }
 
   Widget _buildEventCard(Event event) {
-    Color cardColor = widget.goat.gender.toLowerCase() == 'male' 
+    Color cardColor = _currentGoat.gender.toLowerCase() == 'male' 
         ? const Color(0xFF4CAF50) 
         : const Color(0xFFFFA726);
 
@@ -1661,19 +2166,19 @@ class _ViewGoatPageState extends State<ViewGoatPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildEventDetailRow('Date', _formatEventDate(event.date)),
-                if (event.symptoms != null) 
+                if (event.symptoms != null && event.symptoms!.isNotEmpty)
                   _buildEventDetailRow('Symptoms', event.symptoms!),
-                if (event.diagnosis != null) 
+                if (event.diagnosis != null && event.diagnosis!.isNotEmpty)
                   _buildEventDetailRow('Diagnosis', event.diagnosis!),
-                if (event.technician != null) 
+                if (event.technician != null && event.technician!.isNotEmpty)
                   _buildEventDetailRow('Treated by', event.technician!),
-                if (event.medicine != null) 
+                if (event.medicine != null && event.medicine!.isNotEmpty)
                   _buildEventDetailRow('Medicine', event.medicine!),
-                if (event.weighedResult != null) 
+                if (event.weighedResult != null && event.weighedResult!.isNotEmpty)
                   _buildEventDetailRow('Weight', event.weighedResult!),
-                if (event.otherName != null) 
+                if (event.otherName != null && event.otherName!.isNotEmpty)
                   _buildEventDetailRow('Event', event.otherName!),
-                if (event.notes != null) 
+                if (event.notes != null && event.notes!.isNotEmpty)
                   _buildEventDetailRow('Notes', event.notes!),
               ],
             ),
@@ -1713,7 +2218,7 @@ class _ViewGoatPageState extends State<ViewGoatPage>
   }
 
   Widget _buildDetailRow(String label, String value, {Color? valueColor}) {
-    Color defaultColor = widget.goat.gender.toLowerCase() == 'male'
+    Color defaultColor = _currentGoat.gender.toLowerCase() == 'male'
         ? const Color(0xFF4CAF50)
         : const Color(0xFFFFA726);
         
@@ -1791,14 +2296,14 @@ class _ViewGoatPageState extends State<ViewGoatPage>
         setState(() => _selectedImage = File(image.path));
         
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('goat_image_${widget.goat.tagNo}', image.path);
+        await prefs.setString('goat_image_${_currentGoat.tagNo}', image.path);
         
         final goatsJson = prefs.getString('goats');
         if (goatsJson != null) {
           try {
             final List<dynamic> decoded = jsonDecode(goatsJson);
             for (var item in decoded) {
-              if (item['tagNo'] == widget.goat.tagNo) {
+              if (item['tagNo'] == _currentGoat.tagNo) {
                 item['photoPath'] = image.path;
                 break;
               }
@@ -1808,19 +2313,19 @@ class _ViewGoatPageState extends State<ViewGoatPage>
         }
         
         _currentGoat = Goat(
-          tagNo: widget.goat.tagNo,
-          name: widget.goat.name,
-          breed: widget.goat.breed,
-          gender: widget.goat.gender,
-          goatStage: widget.goat.goatStage,
-          dateOfBirth: widget.goat.dateOfBirth,
-          dateOfEntry: widget.goat.dateOfEntry,
-          weight: widget.goat.weight,
-          group: widget.goat.group,
-          obtained: widget.goat.obtained,
-          motherTag: widget.goat.motherTag,
-          fatherTag: widget.goat.fatherTag,
-          notes: widget.goat.notes,
+          tagNo: _currentGoat.tagNo,
+          name: _currentGoat.name,
+          breed: _currentGoat.breed,
+          gender: _currentGoat.gender,
+          goatStage: _currentGoat.goatStage,
+          dateOfBirth: _currentGoat.dateOfBirth,
+          dateOfEntry: _currentGoat.dateOfEntry,
+          weight: _currentGoat.weight,
+          group: _currentGoat.group,
+          obtained: _currentGoat.obtained,
+          motherTag: _currentGoat.motherTag,
+          fatherTag: _currentGoat.fatherTag,
+          notes: _currentGoat.notes,
           photoPath: image.path,
         );
         
@@ -1837,14 +2342,14 @@ class _ViewGoatPageState extends State<ViewGoatPage>
       setState(() => _selectedImage = null);
       
       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('goat_image_${widget.goat.tagNo}');
+      await prefs.remove('goat_image_${_currentGoat.tagNo}');
       
       final goatsJson = prefs.getString('goats');
       if (goatsJson != null) {
         try {
           final List<dynamic> decoded = jsonDecode(goatsJson);
           for (var item in decoded) {
-            if (item['tagNo'] == widget.goat.tagNo) {
+            if (item['tagNo'] == _currentGoat.tagNo) {
               item.remove('photoPath');
               break;
             }
@@ -1854,19 +2359,19 @@ class _ViewGoatPageState extends State<ViewGoatPage>
       }
       
       _currentGoat = Goat(
-        tagNo: widget.goat.tagNo,
-        name: widget.goat.name,
-        breed: widget.goat.breed,
-        gender: widget.goat.gender,
-        goatStage: widget.goat.goatStage,
-        dateOfBirth: widget.goat.dateOfBirth,
-        dateOfEntry: widget.goat.dateOfEntry,
-        weight: widget.goat.weight,
-        group: widget.goat.group,
-        obtained: widget.goat.obtained,
-        motherTag: widget.goat.motherTag,
-        fatherTag: widget.goat.fatherTag,
-        notes: widget.goat.notes,
+        tagNo: _currentGoat.tagNo,
+        name: _currentGoat.name,
+        breed: _currentGoat.breed,
+        gender: _currentGoat.gender,
+        goatStage: _currentGoat.goatStage,
+        dateOfBirth: _currentGoat.dateOfBirth,
+        dateOfEntry: _currentGoat.dateOfEntry,
+        weight: _currentGoat.weight,
+        group: _currentGoat.group,
+        obtained: _currentGoat.obtained,
+        motherTag: _currentGoat.motherTag,
+        fatherTag: _currentGoat.fatherTag,
+        notes: _currentGoat.notes,
         photoPath: null,
       );
       

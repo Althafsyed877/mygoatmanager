@@ -7,7 +7,6 @@ import 'milk_records_page.dart';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
@@ -263,7 +262,7 @@ class _MilkReportPageState extends State<MilkReportPage> {
 
   Future<void> _selectFromDate(BuildContext context) async {
     final loc = AppLocalizations.of(context)!;
-    final helpText = loc.selectDateRange ?? 'Select Start Date';
+    final helpText = loc.selectDateRange;
     
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -287,7 +286,7 @@ class _MilkReportPageState extends State<MilkReportPage> {
 
   Future<void> _selectToDate(BuildContext context) async {
     final loc = AppLocalizations.of(context)!;
-    final helpText = loc.selectDateRange ?? 'Select End Date';
+    final helpText = loc.selectDateRange;
     
     final DateTime? picked = await showDatePicker(
       context: context,
