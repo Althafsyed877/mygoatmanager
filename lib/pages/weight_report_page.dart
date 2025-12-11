@@ -18,8 +18,7 @@ class WeightReportPage extends StatefulWidget {
 class _WeightReportPageState extends State<WeightReportPage> {
   List<Goat> _allGoats = []; // All goats from database
   List<Goat> _goatsWithWeightInRange = []; // Goats with weight IN DATE RANGE
-  List<Goat> _goatsWithoutWeightInRange = []; // Goats without weight IN DATE RANGE
-  List<Goat> _allGoatsInDateRange = []; // All goats that EXIST in date range
+  List<Goat> _goatsWithoutWeightInRange = []; // Goats without weight IN DATE RANGE (or without dates in range)
   bool _isLoading = true;
   
   // Date variables
@@ -56,9 +55,8 @@ class _WeightReportPageState extends State<WeightReportPage> {
       print('=== Weight Report Data ===');
       print('Total goats in database: ${_allGoats.length}');
       print('Date range: ${_getFormattedDateRange()}');
-      print('All goats in date range: ${_allGoatsInDateRange.length}');
-      print('With weight data: ${_goatsWithWeightInRange.length}');
-      print('Without weight data: ${_goatsWithoutWeightInRange.length}');
+      print('Goats with weight IN RANGE: ${_goatsWithWeightInRange.length}');
+      print('Goats without weight IN RANGE: ${_goatsWithoutWeightInRange.length}');
     }
     
     setState(() { _isLoading = false; });
@@ -66,17 +64,13 @@ class _WeightReportPageState extends State<WeightReportPage> {
   
   void _applyDateFilter() {
     // Reset lists
-    _allGoatsInDateRange = [];
     _goatsWithWeightInRange = [];
     _goatsWithoutWeightInRange = [];
     
     if (_fromDate == null || _toDate == null) {
-      // If no dates selected, show ALL goats
-      _allGoatsInDateRange = _allGoats;
-      
-      // Categorize all goats based on whether they have ANY weight data
+      // If no dates selected, show ALL goats with ANY weight data
       for (var goat in _allGoats) {
-        if (_hasWeightData(goat)) {
+        if (_hasAnyWeightData(goat)) {
           _goatsWithWeightInRange.add(goat);
         } else {
           _goatsWithoutWeightInRange.add(goat);
@@ -93,50 +87,88 @@ class _WeightReportPageState extends State<WeightReportPage> {
     print('From: ${DateFormat('yyyy-MM-dd').format(startDate)}');
     print('To: ${DateFormat('yyyy-MM-dd').format(endDate)}');
     
-    // First, find all goats that EXISTED during the date range
-    // (based on birth date or entry date)
     for (var goat in _allGoats) {
-      bool isGoatInDateRange = false;
+      print('=== Checking goat: ${goat.tagNo} ===');
       
-      // Check if goat was alive/existed during the date range
-      // Try to parse birth date
-      if (goat.dateOfBirth != null && goat.dateOfBirth!.isNotEmpty) {
-        final birthDate = _tryParseDate(goat.dateOfBirth!);
-        if (birthDate != null && birthDate.isBefore(endDate.add(const Duration(days: 1)))) {
-          isGoatInDateRange = true;
-        } else if (birthDate == null) {
-          // If date can't be parsed, include the goat (for backward compatibility)
-          isGoatInDateRange = true;
+      // Debug: Print weight history
+      if (goat.weightHistory != null && goat.weightHistory!.isNotEmpty) {
+        print('Weight history entries: ${goat.weightHistory!.length}');
+        for (var record in goat.weightHistory!) {
+          print('  Record: date="${record['date']}", weight="${record['weight']}"');
+        }
+      } else {
+        print('No weight history');
+      }
+      
+      bool hasWeightInDateRange = false;
+      String? latestWeightInRange;
+      DateTime? latestWeightDate;
+      
+      // FIRST and ONLY check: Check weight history for dates in range
+      if (goat.weightHistory != null && goat.weightHistory!.isNotEmpty) {
+        for (var record in goat.weightHistory!) {
+          if (record['date'] != null && record['weight'] != null) {
+            try {
+              final weightDateStr = record['date'].toString();
+              final weight = record['weight'].toString();
+              
+              // Try to parse the date
+              DateTime? weightDate = _tryParseDate(weightDateStr);
+              
+              if (weightDate != null) {
+                // Check if this weight record is within the selected date range
+                if (weightDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+                    weightDate.isBefore(endDate.add(const Duration(days: 1)))) {
+                  hasWeightInDateRange = true;
+                  
+                  // Track the latest weight in this range
+                  if (latestWeightDate == null || weightDate.isAfter(latestWeightDate)) {
+                    latestWeightDate = weightDate;
+                    latestWeightInRange = weight;
+                  }
+                  
+                  print('✓ ${goat.tagNo} has weight recorded on ${DateFormat('yyyy-MM-dd').format(weightDate)}: $weight');
+                } else {
+                  print('✗ ${goat.tagNo} weight date ${DateFormat('yyyy-MM-dd').format(weightDate)} is NOT in range');
+                }
+              } else {
+                print('✗ ${goat.tagNo} could not parse date: "$weightDateStr"');
+              }
+            } catch (e) {
+              print('✗ ${goat.tagNo} error parsing weight record: $e');
+            }
+          }
         }
       }
       
-      // If still not in range, try entry date
-      if (!isGoatInDateRange && goat.dateOfEntry != null && goat.dateOfEntry!.isNotEmpty) {
-        final entryDate = _tryParseDate(goat.dateOfEntry!);
-        if (entryDate != null && entryDate.isBefore(endDate.add(const Duration(days: 1)))) {
-          isGoatInDateRange = true;
-        } else if (entryDate == null) {
-          // If date can't be parsed, include the goat
-          isGoatInDateRange = true;
-        }
-      }
+      // SECOND: Check current weight - BUT ONLY IF we can't trust weight history
+      // Actually, for weight report, we should NOT include current weight without date
+      // because we don't know when it was recorded
+      // So we skip this part
       
-      // If no dates at all, include the goat (for backward compatibility)
-      if (!isGoatInDateRange && 
-          (goat.dateOfBirth == null || goat.dateOfBirth!.isEmpty) && 
-          (goat.dateOfEntry == null || goat.dateOfEntry!.isEmpty)) {
-        isGoatInDateRange = true;
-      }
-      
-      if (isGoatInDateRange) {
-        _allGoatsInDateRange.add(goat);
-        
-        // Now check if this goat has weight data
-        if (_hasWeightData(goat)) {
-          _goatsWithWeightInRange.add(goat);
-        } else {
-          _goatsWithoutWeightInRange.add(goat);
-        }
+      if (hasWeightInDateRange) {
+        // Create a temporary goat with the latest weight from the date range
+        final goatInRange = Goat(
+          tagNo: goat.tagNo,
+          name: goat.name,
+          breed: goat.breed,
+          gender: goat.gender,
+          goatStage: goat.goatStage,
+          dateOfBirth: goat.dateOfBirth,
+          dateOfEntry: goat.dateOfEntry,
+          weight: latestWeightInRange, // Use weight from the date range
+          group: goat.group,
+          obtained: goat.obtained,
+          motherTag: goat.motherTag,
+          fatherTag: goat.fatherTag,
+          notes: goat.notes,
+          photoPath: goat.photoPath,
+          weightHistory: goat.weightHistory,
+        );
+        _goatsWithWeightInRange.add(goatInRange);
+      } else {
+        // Goat has no weight recorded in this date range
+        _goatsWithoutWeightInRange.add(goat);
       }
     }
     
@@ -145,44 +177,97 @@ class _WeightReportPageState extends State<WeightReportPage> {
     _goatsWithoutWeightInRange.sort((a, b) => a.tagNo.compareTo(b.tagNo));
     
     print('=== Filter Results ===');
-    print('Goats that existed in date range: ${_allGoatsInDateRange.length}');
-    print('Goats with weight data: ${_goatsWithWeightInRange.length}');
-    print('Goats without weight data: ${_goatsWithoutWeightInRange.length}');
+    print('Goats with weight RECORDED IN DATE RANGE: ${_goatsWithWeightInRange.length}');
+    print('Goats WITHOUT weight recorded in date range: ${_goatsWithoutWeightInRange.length}');
   }
   
-  // Helper method to parse dates with different formats
+  // Improved date parsing method
   DateTime? _tryParseDate(String dateStr) {
+    if (dateStr.isEmpty) return null;
+    
+    // Clean the string
+    dateStr = dateStr.trim();
+    
+    // Try standard DateTime.parse first
     try {
-      // Try standard DateTime.parse first
       return DateTime.parse(dateStr);
     } catch (e1) {
+      print('Standard parse failed for: $dateStr');
+    }
+    
+    // Try common date formats
+    final formats = [
+      'yyyy-MM-dd',
+      'dd/MM/yyyy',
+      'dd-MM-yyyy',
+      'MM/dd/yyyy',
+      'MM-dd-yyyy',
+      'yyyy/MM/dd',
+      'dd MMM yyyy',
+      'MMM dd, yyyy',
+    ];
+    
+    for (var format in formats) {
       try {
-        // Try common date formats
-        final formats = [
-          DateFormat('dd/MM/yyyy'),
-          DateFormat('dd-MM-yyyy'),
-          DateFormat('MM/dd/yyyy'),
-          DateFormat('MM-dd-yyyy'),
-          DateFormat('yyyy/MM/dd'),
-          DateFormat('yyyy-MM-dd'),
-        ];
-        
-        for (var format in formats) {
-          try {
-            return format.parse(dateStr);
-          } catch (e) {
-            continue;
-          }
-        }
-      } catch (e2) {
-        return null;
+        return DateFormat(format).parse(dateStr);
+      } catch (e) {
+        continue;
       }
     }
+    
+    // Try to extract date from string (e.g., "2024-12-10 10:30:00.000")
+    try {
+      // Extract first part before space
+      final parts = dateStr.split(' ');
+      if (parts.isNotEmpty) {
+        return DateTime.parse(parts[0]);
+      }
+    } catch (e) {
+      // Ignore
+    }
+    
+    // Try manual parsing
+    try {
+      // Look for common separators
+      String? separator;
+      if (dateStr.contains('/')) separator = '/';
+      else if (dateStr.contains('-')) separator = '-';
+      else if (dateStr.contains('.')) separator = '.';
+      
+      if (separator != null) {
+        final parts = dateStr.split(separator);
+        if (parts.length == 3) {
+          // Try different orders
+          List<List<int>> orders = [
+            [2, 1, 0], // yyyy-MM-dd
+            [0, 1, 2], // dd-MM-yyyy
+            [2, 0, 1], // MM-dd-yyyy
+          ];
+          
+          for (var order in orders) {
+            try {
+              final y = int.tryParse(parts[order[0]]);
+              final m = int.tryParse(parts[order[1]]);
+              final d = int.tryParse(parts[order[2]]);
+              
+              if (y != null && m != null && d != null && y > 1900 && y < 2100) {
+                return DateTime(y, m, d);
+              }
+            } catch (e) {
+              continue;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      print('Manual parse failed for: $dateStr');
+    }
+    
     return null;
   }
   
-  // Check if goat has any weight data (current weight or weight history)
-  bool _hasWeightData(Goat goat) {
+  // Check if goat has ANY weight data at all (for "All Time" view)
+  bool _hasAnyWeightData(Goat goat) {
     // Check current weight
     if (goat.weight != null && goat.weight!.isNotEmpty && goat.weight != "0") {
       return true;
@@ -206,10 +291,10 @@ class _WeightReportPageState extends State<WeightReportPage> {
       for (var record in goat.weightHistory!) {
         if (record['date'] != null && record['weight'] != null) {
           try {
-            final weightDate = DateTime.parse(record['date'].toString());
+            final weightDate = _tryParseDate(record['date'].toString());
             final weight = record['weight'].toString();
             
-            if (latestDate == null || weightDate.isAfter(latestDate)) {
+            if (weightDate != null && (latestDate == null || weightDate.isAfter(latestDate))) {
               latestDate = weightDate;
               latestWeight = weight;
             }
@@ -235,6 +320,12 @@ class _WeightReportPageState extends State<WeightReportPage> {
     }
     
     final format = DateFormat('MMM dd, yyyy');
+    
+    // Check if it's a single day
+    if (_isSameDay(_fromDate!, _toDate!)) {
+      return format.format(_fromDate!);
+    }
+    
     return '${format.format(_fromDate!)} - ${format.format(_toDate!)}';
   }
   
@@ -276,7 +367,7 @@ class _WeightReportPageState extends State<WeightReportPage> {
                   ),
                 ),
                 Text(
-                  'Filter by Date',
+                  'Select Date Range for Weight Records',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: isSmallScreen ? 16 : 18,
@@ -293,9 +384,6 @@ class _WeightReportPageState extends State<WeightReportPage> {
                     _buildDateChip('Last 7 Days', isSmallScreen),
                     _buildDateChip('This Month', isSmallScreen),
                     _buildDateChip('Last Month', isSmallScreen),
-                    _buildDateChip('Last 30 Days', isSmallScreen),
-                    _buildDateChip('Last 90 Days', isSmallScreen),
-                    _buildDateChip('Last 12 Months', isSmallScreen),
                     _buildDateChip('All Time', isSmallScreen),
                   ],
                 ),
@@ -480,21 +568,6 @@ class _WeightReportPageState extends State<WeightReportPage> {
           isSelected = _isSameDay(_fromDate!, firstDayLastMonth) && 
                       _isSameDay(_toDate!, lastDayLastMonth);
           break;
-        case 'Last 30 Days':
-          final monthAgo = now.subtract(const Duration(days: 30));
-          isSelected = _isSameDay(_fromDate!, monthAgo) && 
-                      _isSameDay(_toDate!, now);
-          break;
-        case 'Last 90 Days':
-          final quarterAgo = now.subtract(const Duration(days: 90));
-          isSelected = _isSameDay(_fromDate!, quarterAgo) && 
-                      _isSameDay(_toDate!, now);
-          break;
-        case 'Last 12 Months':
-          final yearAgo = now.subtract(const Duration(days: 365));
-          isSelected = _isSameDay(_fromDate!, yearAgo) && 
-                      _isSameDay(_toDate!, now);
-          break;
         case 'All Time':
           isSelected = _fromDate == null && _toDate == null;
           break;
@@ -541,24 +614,6 @@ class _WeightReportPageState extends State<WeightReportPage> {
             setState(() {
               _fromDate = firstDayLastMonth;
               _toDate = lastDayLastMonth;
-            });
-            break;
-          case 'Last 30 Days':
-            setState(() {
-              _fromDate = now.subtract(const Duration(days: 30));
-              _toDate = now;
-            });
-            break;
-          case 'Last 90 Days':
-            setState(() {
-              _fromDate = now.subtract(const Duration(days: 90));
-              _toDate = now;
-            });
-            break;
-          case 'Last 12 Months':
-            setState(() {
-              _fromDate = now.subtract(const Duration(days: 365));
-              _toDate = now;
             });
             break;
           case 'All Time':
@@ -686,11 +741,11 @@ class _WeightReportPageState extends State<WeightReportPage> {
                   children: [
                     _buildPdfRow('Date Range:', _getFormattedDateRange()),
                     pw.SizedBox(height: 6),
-                    _buildPdfRow('Goats in Date Range:', '${_allGoatsInDateRange.length}'),
+                    _buildPdfRow('Total Goats in Database:', '${_allGoats.length}'),
                     pw.SizedBox(height: 6),
-                    _buildPdfRow('With Weight Data:', '${_goatsWithWeightInRange.length}'),
+                    _buildPdfRow('With weight recorded IN RANGE:', '${_goatsWithWeightInRange.length}'),
                     pw.SizedBox(height: 6),
-                    _buildPdfRow('Without Weight Data:', '${_goatsWithoutWeightInRange.length}'),
+                    _buildPdfRow('Without weight recorded IN RANGE:', '${_goatsWithoutWeightInRange.length}'),
                   ],
                 ),
               ),
@@ -700,7 +755,7 @@ class _WeightReportPageState extends State<WeightReportPage> {
               // Detailed Table
               if (_goatsWithWeightInRange.isNotEmpty) ...[
                 pw.Text(
-                  'GOATS WITH WEIGHT DATA (${_goatsWithWeightInRange.length})',
+                  'GOATS WITH WEIGHT RECORDED IN DATE RANGE (${_goatsWithWeightInRange.length})',
                   style: pw.TextStyle(
                     fontSize: 14,
                     fontWeight: pw.FontWeight.bold,
@@ -737,7 +792,7 @@ class _WeightReportPageState extends State<WeightReportPage> {
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
                           child: pw.Text(
-                            'Weight',
+                            'Latest Weight in Range',
                             style: pw.TextStyle(
                               color: pdf.PdfColors.white,
                               fontWeight: pw.FontWeight.bold,
@@ -770,7 +825,7 @@ class _WeightReportPageState extends State<WeightReportPage> {
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(_getLatestWeight(goat) ?? 'N/A'),
+                            child: pw.Text(goat.weight ?? 'N/A'),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
@@ -898,7 +953,7 @@ class _WeightReportPageState extends State<WeightReportPage> {
                   
                   const SizedBox(height: 20),
                   
-                  // Summary Section - CORRECTED LOGIC
+                  // Summary Section - SIMPLIFIED AND CORRECT
                   Text(
                     'Summary for Selected Period',
                     style: const TextStyle(
@@ -918,7 +973,7 @@ class _WeightReportPageState extends State<WeightReportPage> {
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         children: [
-                          // Goats in Date Range (NOT total goats)
+                          // Total Goats in Database
                           ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: Container(
@@ -931,11 +986,11 @@ class _WeightReportPageState extends State<WeightReportPage> {
                               child: const Icon(Icons.agriculture, color: Colors.green),
                             ),
                             title: const Text(
-                              'Goats in Date Range',
+                              'Total Goats in Database',
                               style: TextStyle(fontSize: 16),
                             ),
                             trailing: Text(
-                              '${_allGoatsInDateRange.length}',
+                              '${_allGoats.length}',
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -945,7 +1000,7 @@ class _WeightReportPageState extends State<WeightReportPage> {
                           ),
                           const Divider(),
                           
-                          // Goats WITH Weight in Date Range
+                          // Goats WITH Weight recorded IN Date Range
                           ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: Container(
@@ -958,7 +1013,7 @@ class _WeightReportPageState extends State<WeightReportPage> {
                               child: const Icon(Icons.check_circle, color: Colors.blue),
                             ),
                             title: const Text(
-                              'With Weight Data',
+                              'With Weight Recorded IN RANGE',
                               style: TextStyle(fontSize: 16),
                             ),
                             trailing: Text(
@@ -972,7 +1027,7 @@ class _WeightReportPageState extends State<WeightReportPage> {
                           ),
                           const Divider(),
                           
-                          // Goats WITHOUT Weight in Date Range
+                          // Goats WITHOUT Weight recorded IN Date Range
                           ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: Container(
@@ -985,7 +1040,7 @@ class _WeightReportPageState extends State<WeightReportPage> {
                               child: const Icon(Icons.warning, color: Colors.orange),
                             ),
                             title: const Text(
-                              'Without Weight Data',
+                              'Without Weight Recorded IN RANGE',
                               style: TextStyle(fontSize: 16),
                             ),
                             trailing: Text(
@@ -1004,56 +1059,43 @@ class _WeightReportPageState extends State<WeightReportPage> {
                   
                   const SizedBox(height: 20),
                   
-                  // Performance Card
-                  Text(
-                    'Detailed Report',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.purple,
+                  // Important Note
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.yellow[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.yellow[200]!),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  
-                  Card(
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.picture_as_pdf,
-                            size: 48,
-                            color: Colors.orange[700],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Export detailed weight report',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.orange,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.info, color: Colors.orange, size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              'Important:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange,
+                              ),
                             ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'This report ONLY shows goats that have weight records (from weight history) with dates that fall within the selected date range. Current weight without date history is NOT included.',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.orange[800],
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '${_goatsWithWeightInRange.length} goats with weight data in selected date range',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
                   
                   // PDF export button
                   SizedBox(
