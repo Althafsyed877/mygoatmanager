@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
 import '../models/goat.dart';
 import '../models/event.dart';
-import 'package:intl/intl.dart'; // ✅ ADD THIS IMPORT
+import 'package:intl/intl.dart';
 
 class AddEventPage extends StatefulWidget {
   final Goat goat;
@@ -55,84 +55,120 @@ class _AddEventPageState extends State<AddEventPage> {
     super.dispose();
   }
 
-  // ✅ NEW FUNCTION: Add weight record to goat's weightHistory
+  // ✅ FIXED FUNCTION: Properly saves weight to goat's weightHistory
   Future<void> _addWeightToGoatHistory() async {
     if (_eventType != 'Weighed' || _weighedController.text.trim().isEmpty) {
-      return; // Only for weighed events with valid weight
+      return;
     }
 
     try {
       final prefs = await SharedPreferences.getInstance();
       final String? goatsJson = prefs.getString('goats');
       
-      if (goatsJson == null) return;
+      if (goatsJson == null) {
+        print('❌ No goats data found in SharedPreferences');
+        return;
+      }
       
+      print('📥 Loading goats data...');
       final List<dynamic> decodedList = jsonDecode(goatsJson);
-      List<Goat> goats = decodedList.map((item) => Goat.fromJson(item)).toList();
+      List<Map<String, dynamic>> goatsData = List<Map<String, dynamic>>.from(decodedList);
       
       // Find the goat in the list
-      final goatIndex = goats.indexWhere((g) => g.tagNo == widget.goat.tagNo);
-      if (goatIndex == -1) return;
+      int goatIndex = -1;
+      for (int i = 0; i < goatsData.length; i++) {
+        if (goatsData[i]['tagNo'] == widget.goat.tagNo) {
+          goatIndex = i;
+          break;
+        }
+      }
+      
+      if (goatIndex == -1) {
+        print('❌ Goat ${widget.goat.tagNo} not found in data');
+        return;
+      }
+      
+      print('✅ Found goat at index $goatIndex');
       
       // Get or initialize weightHistory
-      List<Map<String, dynamic>> weightHistory = 
-          goats[goatIndex].weightHistory ?? [];
+      List<Map<String, dynamic>> weightHistory = [];
+      if (goatsData[goatIndex]['weightHistory'] != null) {
+        try {
+          weightHistory = List<Map<String, dynamic>>.from(goatsData[goatIndex]['weightHistory']);
+          print('📊 Existing weightHistory has ${weightHistory.length} records');
+        } catch (e) {
+          print('⚠️ Error reading weightHistory: $e');
+          weightHistory = [];
+        }
+      } else {
+        print('📝 No existing weightHistory, creating new one');
+      }
       
-      // Format date for storage (FIXED: Use DateFormat correctly)
+      // Format date for storage
       final dateStr = _eventDate != null 
           ? '${_eventDate!.year}-${_eventDate!.month.toString().padLeft(2, '0')}-${_eventDate!.day.toString().padLeft(2, '0')}'
           : DateFormat('yyyy-MM-dd').format(DateTime.now());
       
-      // Parse weight (handle if it's already a number or string)
+      // Parse weight
       final weightText = _weighedController.text.trim();
       final weight = double.tryParse(weightText.replaceAll(',', '.')) ?? 0.0;
       
       // Add new weight record
-      weightHistory.add({
+      Map<String, dynamic> newRecord = {
         'date': dateStr,
         'weight': weight,
-        'notes': _notesController.text.trim().isNotEmpty 
-            ? _notesController.text.trim() 
-            : null,
-      });
+      };
       
-      // Create updated goat
-      final updatedGoat = Goat(
-        tagNo: goats[goatIndex].tagNo,
-        name: goats[goatIndex].name,
-        breed: goats[goatIndex].breed,
-        gender: goats[goatIndex].gender,
-        goatStage: goats[goatIndex].goatStage,
-        dateOfBirth: goats[goatIndex].dateOfBirth,
-        dateOfEntry: goats[goatIndex].dateOfEntry,
-        weight: weightText, // Update current weight
-        group: goats[goatIndex].group,
-        obtained: goats[goatIndex].obtained,
-        motherTag: goats[goatIndex].motherTag,
-        fatherTag: goats[goatIndex].fatherTag,
-        notes: goats[goatIndex].notes,
-        photoPath: goats[goatIndex].photoPath,
-        weightHistory: weightHistory, // ✅ Set the updated weight history
-      );
+      if (_notesController.text.trim().isNotEmpty) {
+        newRecord['notes'] = _notesController.text.trim();
+      }
       
-      // Replace the goat in the list
-      goats[goatIndex] = updatedGoat;
+      weightHistory.add(newRecord);
       
-      // Save back to SharedPreferences
-      final updatedJson = jsonEncode(goats.map((goat) => goat.toJson()).toList());
+      print('➕ Adding weight record:');
+      print('   - Date: $dateStr');
+      print('   - Weight: $weight');
+      print('   - Notes: ${_notesController.text.trim().isNotEmpty ? _notesController.text.trim() : "None"}');
+      
+      // ✅ CRITICAL: Update the goat's data in the list
+      goatsData[goatIndex]['weightHistory'] = weightHistory;
+      goatsData[goatIndex]['weight'] = weightText; // Also update current weight
+      
+      print('✅ UPDATING GOAT ${widget.goat.tagNo}:');
+      print('   - Weight: $weightText');
+      print('   - Date: $dateStr');
+      print('   - weightHistory now has ${weightHistory.length} records');
+      
+      // ✅ Save back to SharedPreferences
+      final updatedJson = jsonEncode(goatsData);
       await prefs.setString('goats', updatedJson);
       
-      debugPrint('✅ Weight record added to ${widget.goat.tagNo}: $weightText kg on $dateStr');
+      print('💾 Saved to SharedPreferences successfully');
+      
+      // Verify the update
+      final verifiedJson = prefs.getString('goats');
+      if (verifiedJson != null) {
+        final verifiedList = jsonDecode(verifiedJson);
+        for (var goat in verifiedList) {
+          if (goat['tagNo'] == widget.goat.tagNo) {
+            print('✅ VERIFICATION:');
+            print('   - Goat: ${goat['tagNo']}');
+            print('   - Current weight: ${goat['weight']}');
+            print('   - weightHistory: ${goat['weightHistory']}');
+            print('   - weightHistory length: ${goat['weightHistory'] != null ? (goat['weightHistory'] as List).length : 0}');
+            break;
+          }
+        }
+      }
       
     } catch (e) {
-      debugPrint('❌ Error saving weight history: $e');
+      print('❌ Error in _addWeightToGoatHistory: $e');
+      print('Stack trace: ${e.toString()}');
     }
   }
 
   Future<void> _saveEvent() async {
-    // REMOVED UNUSED 'loc' VARIABLE
-    // final loc = AppLocalizations.of(context)!;
-    
+    // Basic validation
     if (_eventDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select event date')),
@@ -154,8 +190,9 @@ class _AddEventPageState extends State<AddEventPage> {
       return;
     }
 
-    // ✅ ADD WEIGHT TO GOAT HISTORY if it's a weighed event
+    // ✅ ADD WEIGHT TO GOAT HISTORY FIRST
     if (_eventType == 'Weighed' && _weighedController.text.trim().isNotEmpty) {
+      print('⚡ Adding weight record for ${widget.goat.tagNo}...');
       await _addWeightToGoatHistory();
     }
 
@@ -197,6 +234,7 @@ class _AddEventPageState extends State<AddEventPage> {
         Navigator.pop(context, event);
       }
     } catch (e) {
+      print('❌ Error saving event: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -210,9 +248,6 @@ class _AddEventPageState extends State<AddEventPage> {
 
   @override
   Widget build(BuildContext context) {
-    // REMOVED UNUSED 'loc' VARIABLE
-    // final loc = AppLocalizations.of(context)!;
-    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF4CAF50),
@@ -445,7 +480,6 @@ class _AddEventPageState extends State<AddEventPage> {
   List<Widget> _buildWeighedFields() {
     return [
       const SizedBox(height: 12),
-      // ✅ IMPROVED: Added a note about weight recording
       Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(

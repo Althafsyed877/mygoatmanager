@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
 import '../models/goat.dart';
-import '../services/archive_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:pdf/widgets.dart' as pw;
@@ -17,113 +16,584 @@ class WeightReportPage extends StatefulWidget {
 }
 
 class _WeightReportPageState extends State<WeightReportPage> {
-  // Date range variables
-  DateTime? _startDate;
-  DateTime? _endDate;
-  
-  // Report data
-  List<Goat> _activeGoats = [];
-  List<Goat> _goatsWithWeight = [];
-  List<Goat> _goatsWithoutWeight = [];
-  
-  // Loading state
+  List<Goat> _allGoats = []; // All goats from database
+  List<Goat> _goatsWithWeightInRange = []; // Goats with weight IN DATE RANGE
+  List<Goat> _goatsWithoutWeightInRange = []; // Goats without weight IN DATE RANGE
+  List<Goat> _allGoatsInDateRange = []; // All goats that EXIST in date range
   bool _isLoading = true;
+  
+  // Date variables
+  DateTime? _fromDate;
+  DateTime? _toDate;
   
   @override
   void initState() {
     super.initState();
-    // Set default date range to last 12 months
-    _endDate = DateTime.now();
-    _startDate = DateTime(_endDate!.year - 1, _endDate!.month, _endDate!.day);
+    _initializeDates();
     _loadData();
   }
   
+  void _initializeDates() {
+    final now = DateTime.now();
+    // Set default to last 30 days
+    _fromDate = now.subtract(const Duration(days: 30));
+    _toDate = now;
+  }
+  
   Future<void> _loadData() async {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() { _isLoading = true; });
     
-    // Load goats from SharedPreferences (same as GoatsPage)
     final prefs = await SharedPreferences.getInstance();
     final String? goatsJson = prefs.getString('goats');
     
     if (goatsJson != null) {
-      final List<dynamic> decodedList = jsonDecode(goatsJson);
-      List<Goat> allGoats = decodedList.map((item) => Goat.fromJson(item)).toList();
+      final List<dynamic> decoded = jsonDecode(goatsJson);
+      _allGoats = decoded.map((item) => Goat.fromJson(item)).toList();
       
-      // Load archived goats to filter them out
-      // FIXED: Removed context parameter - check your ArchiveService
-    final archivedGoats = await ArchiveService.getArchivedGoats('archived_goats.json');
-      final archivedTags = archivedGoats.map((g) => g.tagNo).toSet();
+      // Apply date filter
+      _applyDateFilter();
       
-      // Filter active goats (not archived)
-      _activeGoats = allGoats.where((goat) => !archivedTags.contains(goat.tagNo)).toList();
-      
-      // Analyze weight data
-      _analyzeWeights();
+      print('=== Weight Report Data ===');
+      print('Total goats in database: ${_allGoats.length}');
+      print('Date range: ${_getFormattedDateRange()}');
+      print('All goats in date range: ${_allGoatsInDateRange.length}');
+      print('With weight data: ${_goatsWithWeightInRange.length}');
+      print('Without weight data: ${_goatsWithoutWeightInRange.length}');
     }
     
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() { _isLoading = false; });
   }
   
-  void _analyzeWeights() {
-    _goatsWithWeight = [];
-    _goatsWithoutWeight = [];
+  void _applyDateFilter() {
+    // Reset lists
+    _allGoatsInDateRange = [];
+    _goatsWithWeightInRange = [];
+    _goatsWithoutWeightInRange = [];
     
-    for (var goat in _activeGoats) {
-      final hasWeightRecord = _hasWeightInPeriod(goat);
+    if (_fromDate == null || _toDate == null) {
+      // If no dates selected, show ALL goats
+      _allGoatsInDateRange = _allGoats;
       
-      if (hasWeightRecord) {
-        _goatsWithWeight.add(goat);
-      } else {
-        _goatsWithoutWeight.add(goat);
+      // Categorize all goats based on whether they have ANY weight data
+      for (var goat in _allGoats) {
+        if (_hasWeightData(goat)) {
+          _goatsWithWeightInRange.add(goat);
+        } else {
+          _goatsWithoutWeightInRange.add(goat);
+        }
+      }
+      return;
+    }
+    
+    // Adjust times for proper date comparison
+    final startDate = DateTime(_fromDate!.year, _fromDate!.month, _fromDate!.day);
+    final endDate = DateTime(_toDate!.year, _toDate!.month, _toDate!.day, 23, 59, 59);
+    
+    print('=== Applying Date Filter ===');
+    print('From: ${DateFormat('yyyy-MM-dd').format(startDate)}');
+    print('To: ${DateFormat('yyyy-MM-dd').format(endDate)}');
+    
+    // First, find all goats that EXISTED during the date range
+    // (based on birth date or entry date)
+    for (var goat in _allGoats) {
+      bool isGoatInDateRange = false;
+      
+      // Check if goat was alive/existed during the date range
+      // Try to parse birth date
+      if (goat.dateOfBirth != null && goat.dateOfBirth!.isNotEmpty) {
+        final birthDate = _tryParseDate(goat.dateOfBirth!);
+        if (birthDate != null && birthDate.isBefore(endDate.add(const Duration(days: 1)))) {
+          isGoatInDateRange = true;
+        } else if (birthDate == null) {
+          // If date can't be parsed, include the goat (for backward compatibility)
+          isGoatInDateRange = true;
+        }
+      }
+      
+      // If still not in range, try entry date
+      if (!isGoatInDateRange && goat.dateOfEntry != null && goat.dateOfEntry!.isNotEmpty) {
+        final entryDate = _tryParseDate(goat.dateOfEntry!);
+        if (entryDate != null && entryDate.isBefore(endDate.add(const Duration(days: 1)))) {
+          isGoatInDateRange = true;
+        } else if (entryDate == null) {
+          // If date can't be parsed, include the goat
+          isGoatInDateRange = true;
+        }
+      }
+      
+      // If no dates at all, include the goat (for backward compatibility)
+      if (!isGoatInDateRange && 
+          (goat.dateOfBirth == null || goat.dateOfBirth!.isEmpty) && 
+          (goat.dateOfEntry == null || goat.dateOfEntry!.isEmpty)) {
+        isGoatInDateRange = true;
+      }
+      
+      if (isGoatInDateRange) {
+        _allGoatsInDateRange.add(goat);
+        
+        // Now check if this goat has weight data
+        if (_hasWeightData(goat)) {
+          _goatsWithWeightInRange.add(goat);
+        } else {
+          _goatsWithoutWeightInRange.add(goat);
+        }
       }
     }
+    
+    // Sort by tag number
+    _goatsWithWeightInRange.sort((a, b) => a.tagNo.compareTo(b.tagNo));
+    _goatsWithoutWeightInRange.sort((a, b) => a.tagNo.compareTo(b.tagNo));
+    
+    print('=== Filter Results ===');
+    print('Goats that existed in date range: ${_allGoatsInDateRange.length}');
+    print('Goats with weight data: ${_goatsWithWeightInRange.length}');
+    print('Goats without weight data: ${_goatsWithoutWeightInRange.length}');
   }
   
-  bool _hasWeightInPeriod(Goat goat) {
-    // IMPORTANT: You need to add weightHistory field to your Goat model
-    if (goat.weightHistory == null || goat.weightHistory!.isEmpty) {
-      return false;
+  // Helper method to parse dates with different formats
+  DateTime? _tryParseDate(String dateStr) {
+    try {
+      // Try standard DateTime.parse first
+      return DateTime.parse(dateStr);
+    } catch (e1) {
+      try {
+        // Try common date formats
+        final formats = [
+          DateFormat('dd/MM/yyyy'),
+          DateFormat('dd-MM-yyyy'),
+          DateFormat('MM/dd/yyyy'),
+          DateFormat('MM-dd-yyyy'),
+          DateFormat('yyyy/MM/dd'),
+          DateFormat('yyyy-MM-dd'),
+        ];
+        
+        for (var format in formats) {
+          try {
+            return format.parse(dateStr);
+          } catch (e) {
+            continue;
+          }
+        }
+      } catch (e2) {
+        return null;
+      }
+    }
+    return null;
+  }
+  
+  // Check if goat has any weight data (current weight or weight history)
+  bool _hasWeightData(Goat goat) {
+    // Check current weight
+    if (goat.weight != null && goat.weight!.isNotEmpty && goat.weight != "0") {
+      return true;
     }
     
-    for (var entry in goat.weightHistory!) {
-      final entryDate = _parseDate(entry['date']);
-      if (entryDate != null && 
-          entryDate.isAfter(_startDate!.subtract(const Duration(days: 1))) && 
-          entryDate.isBefore(_endDate!.add(const Duration(days: 1)))) {
-        return true;
-      }
+    // Check weight history
+    if (goat.weightHistory != null && goat.weightHistory!.isNotEmpty) {
+      return true;
     }
     
     return false;
   }
   
-  DateTime? _parseDate(String? dateStr) {
-    if (dateStr == null) return null;
-    try {
-      return DateFormat('yyyy-MM-dd').parse(dateStr);
-    } catch (_) {
-      try {
-        return DateFormat('dd/MM/yyyy').parse(dateStr);
-      } catch (_) {
-        try {
-          return DateFormat('dd-MM-yyyy').parse(dateStr);
-        } catch (_) {
-          return null;
+  // Get the latest weight from weight history or current weight
+  String? _getLatestWeight(Goat goat) {
+    String? latestWeight;
+    DateTime? latestDate;
+    
+    // Check weight history for latest entry
+    if (goat.weightHistory != null && goat.weightHistory!.isNotEmpty) {
+      for (var record in goat.weightHistory!) {
+        if (record['date'] != null && record['weight'] != null) {
+          try {
+            final weightDate = DateTime.parse(record['date'].toString());
+            final weight = record['weight'].toString();
+            
+            if (latestDate == null || weightDate.isAfter(latestDate)) {
+              latestDate = weightDate;
+              latestWeight = weight;
+            }
+          } catch (e) {
+            // Skip invalid records
+          }
         }
       }
     }
+    
+    // If no weight history, use current weight
+    if (latestWeight == null && goat.weight != null && goat.weight!.isNotEmpty && goat.weight != "0") {
+      latestWeight = goat.weight;
+    }
+    
+    return latestWeight;
   }
   
-  Future<void> _selectDateRange(BuildContext context) async {
-    final DateTimeRange? picked = await showDateRangePicker(
+  // Date format for display
+  String _getFormattedDateRange() {
+    if (_fromDate == null || _toDate == null) {
+      return 'All Time';
+    }
+    
+    final format = DateFormat('MMM dd, yyyy');
+    return '${format.format(_fromDate!)} - ${format.format(_toDate!)}';
+  }
+  
+  // Show filter options in a bottom sheet
+  void _showFilterBottomSheet(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final isSmallScreen = mediaQuery.size.width < 360;
+    
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            padding: EdgeInsets.all(isSmallScreen ? 12.0 : 16.0),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Text(
+                  'Filter by Date',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: isSmallScreen ? 16 : 18,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: [
+                    _buildDateChip('Today', isSmallScreen),
+                    _buildDateChip('Yesterday', isSmallScreen),
+                    _buildDateChip('Last 7 Days', isSmallScreen),
+                    _buildDateChip('This Month', isSmallScreen),
+                    _buildDateChip('Last Month', isSmallScreen),
+                    _buildDateChip('Last 30 Days', isSmallScreen),
+                    _buildDateChip('Last 90 Days', isSmallScreen),
+                    _buildDateChip('Last 12 Months', isSmallScreen),
+                    _buildDateChip('All Time', isSmallScreen),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Custom Date Range',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: isSmallScreen ? 14 : 16,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Column(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('From Date', style: TextStyle(fontSize: isSmallScreen ? 13 : 14)),
+                        const SizedBox(height: 6),
+                        GestureDetector(
+                          onTap: () => _selectFromDate(context),
+                          child: Container(
+                            padding: EdgeInsets.all(isSmallScreen ? 12.0 : 14.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade400),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.calendar_today, size: 18, color: Colors.grey[600]),
+                                SizedBox(width: isSmallScreen ? 8 : 12),
+                                Expanded(
+                                  child: Text(
+                                    _fromDate != null 
+                                        ? DateFormat('dd/MM/yyyy').format(_fromDate!)
+                                        : 'Select Date',
+                                    style: TextStyle(
+                                      fontSize: isSmallScreen ? 14 : 16,
+                                      color: _fromDate != null ? Colors.black : Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('To Date', style: TextStyle(fontSize: isSmallScreen ? 13 : 14)),
+                        const SizedBox(height: 6),
+                        GestureDetector(
+                          onTap: () => _selectToDate(context),
+                          child: Container(
+                            padding: EdgeInsets.all(isSmallScreen ? 12.0 : 14.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade400),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.calendar_today, size: 18, color: Colors.grey[600]),
+                                SizedBox(width: isSmallScreen ? 8 : 12),
+                                Expanded(
+                                  child: Text(
+                                    _toDate != null 
+                                        ? DateFormat('dd/MM/yyyy').format(_toDate!)
+                                        : 'Select Date',
+                                    style: TextStyle(
+                                      fontSize: isSmallScreen ? 14 : 16,
+                                      color: _toDate != null ? Colors.black : Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          setState(() {
+                            _fromDate = null;
+                            _toDate = null;
+                          });
+                          _applyDateFilter();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 14 : 16),
+                          side: BorderSide(color: Colors.grey.shade400),
+                        ),
+                        child: Text(
+                          'Clear Filter',
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 14 : 16,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: isSmallScreen ? 12 : 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _applyDateFilter();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4CAF50),
+                          padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 14 : 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          'Apply Filter',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: isSmallScreen ? 14 : 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+  
+  Widget _buildDateChip(String label, bool isSmallScreen) {
+    final now = DateTime.now();
+    bool isSelected = false;
+    
+    if (_fromDate == null && _toDate == null && label == 'All Time') {
+      isSelected = true;
+    } else if (_fromDate != null && _toDate != null) {
+      switch (label) {
+        case 'Today':
+          final todayStart = DateTime(now.year, now.month, now.day);
+          final todayEnd = DateTime(now.year, now.month, now.day, 23, 59, 59);
+          isSelected = _isSameDay(_fromDate!, todayStart) && 
+                      _isSameDay(_toDate!, todayEnd);
+          break;
+        case 'Yesterday':
+          final yesterday = now.subtract(const Duration(days: 1));
+          final yesterdayStart = DateTime(yesterday.year, yesterday.month, yesterday.day);
+          final yesterdayEnd = DateTime(yesterday.year, yesterday.month, yesterday.day, 23, 59, 59);
+          isSelected = _isSameDay(_fromDate!, yesterdayStart) && 
+                      _isSameDay(_toDate!, yesterdayEnd);
+          break;
+        case 'Last 7 Days':
+          final weekAgo = now.subtract(const Duration(days: 7));
+          isSelected = _isSameDay(_fromDate!, weekAgo) && 
+                      _isSameDay(_toDate!, now);
+          break;
+        case 'This Month':
+          final monthStart = DateTime(now.year, now.month, 1);
+          isSelected = _isSameDay(_fromDate!, monthStart) && 
+                      _isSameDay(_toDate!, now);
+          break;
+        case 'Last Month':
+          final firstDayLastMonth = DateTime(now.year, now.month - 1, 1);
+          final lastDayLastMonth = DateTime(now.year, now.month, 0, 23, 59, 59);
+          isSelected = _isSameDay(_fromDate!, firstDayLastMonth) && 
+                      _isSameDay(_toDate!, lastDayLastMonth);
+          break;
+        case 'Last 30 Days':
+          final monthAgo = now.subtract(const Duration(days: 30));
+          isSelected = _isSameDay(_fromDate!, monthAgo) && 
+                      _isSameDay(_toDate!, now);
+          break;
+        case 'Last 90 Days':
+          final quarterAgo = now.subtract(const Duration(days: 90));
+          isSelected = _isSameDay(_fromDate!, quarterAgo) && 
+                      _isSameDay(_toDate!, now);
+          break;
+        case 'Last 12 Months':
+          final yearAgo = now.subtract(const Duration(days: 365));
+          isSelected = _isSameDay(_fromDate!, yearAgo) && 
+                      _isSameDay(_toDate!, now);
+          break;
+        case 'All Time':
+          isSelected = _fromDate == null && _toDate == null;
+          break;
+      }
+    }
+
+    return ChoiceChip(
+      label: Text(
+        label,
+        style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
+      ),
+      selected: isSelected,
+      onSelected: (selected) {
+        final now = DateTime.now();
+        switch (label) {
+          case 'Today':
+            setState(() {
+              _fromDate = DateTime(now.year, now.month, now.day);
+              _toDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
+            });
+            break;
+          case 'Yesterday':
+            final yesterday = now.subtract(const Duration(days: 1));
+            setState(() {
+              _fromDate = DateTime(yesterday.year, yesterday.month, yesterday.day);
+              _toDate = DateTime(yesterday.year, yesterday.month, yesterday.day, 23, 59, 59);
+            });
+            break;
+          case 'Last 7 Days':
+            setState(() {
+              _fromDate = now.subtract(const Duration(days: 7));
+              _toDate = now;
+            });
+            break;
+          case 'This Month':
+            setState(() {
+              _fromDate = DateTime(now.year, now.month, 1);
+              _toDate = now;
+            });
+            break;
+          case 'Last Month':
+            final firstDayLastMonth = DateTime(now.year, now.month - 1, 1);
+            final lastDayLastMonth = DateTime(now.year, now.month, 0, 23, 59, 59);
+            setState(() {
+              _fromDate = firstDayLastMonth;
+              _toDate = lastDayLastMonth;
+            });
+            break;
+          case 'Last 30 Days':
+            setState(() {
+              _fromDate = now.subtract(const Duration(days: 30));
+              _toDate = now;
+            });
+            break;
+          case 'Last 90 Days':
+            setState(() {
+              _fromDate = now.subtract(const Duration(days: 90));
+              _toDate = now;
+            });
+            break;
+          case 'Last 12 Months':
+            setState(() {
+              _fromDate = now.subtract(const Duration(days: 365));
+              _toDate = now;
+            });
+            break;
+          case 'All Time':
+            setState(() {
+              _fromDate = null;
+              _toDate = null;
+            });
+            break;
+        }
+        _applyDateFilter();
+        Navigator.pop(context);
+      },
+      backgroundColor: Colors.white,
+      selectedColor: const Color(0xFF4CAF50),
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : Colors.grey[800],
+        fontWeight: FontWeight.w500,
+      ),
+      side: BorderSide(color: isSelected ? const Color(0xFF4CAF50) : Colors.grey.shade300),
+    );
+  }
+  
+  // Helper to compare if two dates are the same day
+  bool _isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+           date1.month == date2.month &&
+           date1.day == date2.day;
+  }
+
+  Future<void> _selectFromDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _fromDate ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
-      initialDateRange: DateTimeRange(start: _startDate!, end: _endDate!),
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -135,305 +605,212 @@ class _WeightReportPageState extends State<WeightReportPage> {
         );
       },
     );
-    
     if (picked != null) {
       setState(() {
-        _startDate = picked.start;
-        _endDate = picked.end;
+        _fromDate = picked;
       });
-      _analyzeWeights();
+    }
+  }
+
+  Future<void> _selectToDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _toDate ?? DateTime.now(),
+      firstDate: _fromDate ?? DateTime(2000),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: const Color(0xFF4CAF50),
+            colorScheme: const ColorScheme.light(primary: Color(0xFF4CAF50)),
+            buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        _toDate = picked;
+      });
     }
   }
   
+  // ✅ PDF Export Function
   Future<void> _exportToPdf(BuildContext context) async {
     final loc = AppLocalizations.of(context)!;
-    final doc = pw.Document();
-    final dateFormat = DateFormat('MMM dd, yyyy');
     
-    // Calculate performance data for PDF only
-    final performanceData = await _calculatePerformanceDataForPdf();
+    // Create PDF document
+    final pdfDoc = pw.Document();
     
-    doc.addPage(
-      pw.MultiPage(
+    pdfDoc.addPage(
+      pw.Page(
         pageFormat: pdf.PdfPageFormat.a4,
-        build: (context) => [
-          // Header
-          pw.Column(
+        build: (pw.Context context) {
+          return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
+              // Header
               pw.Text(
-                loc.weightReportTitle.toUpperCase(),
+                'WEIGHT REPORT',
                 style: pw.TextStyle(
                   fontSize: 24,
                   fontWeight: pw.FontWeight.bold,
                   color: pdf.PdfColors.green,
                 ),
               ),
+              pw.SizedBox(height: 8),
               pw.Text(
-                '${loc.lastMonths}: ${dateFormat.format(_startDate!)} - ${dateFormat.format(_endDate!)}',
-                style: pw.TextStyle(fontSize: 12, color: pdf.PdfColors.grey),
+                _getFormattedDateRange(),
+                style: const pw.TextStyle(fontSize: 12),
               ),
-              pw.Divider(thickness: 2),
-            ],
-          ),
-          
-          // Summary Section
-          pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text(loc.summarySection, style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
-              pw.SizedBox(height: 10),
+              pw.Divider(),
+              pw.SizedBox(height: 16),
+              
+              // Summary Section
+              pw.Text(
+                'SUMMARY',
+                style: pw.TextStyle(
+                  fontSize: 16,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              pw.SizedBox(height: 8),
               pw.Container(
-                padding: const pw.EdgeInsets.all(10),
+                padding: const pw.EdgeInsets.all(12),
                 decoration: pw.BoxDecoration(
                   border: pw.Border.all(color: pdf.PdfColors.grey300),
-                  borderRadius: pw.BorderRadius.circular(5),
+                  borderRadius: pw.BorderRadius.circular(4),
                 ),
                 child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    pw.Text(loc.summaryForPeriod, style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-                    pw.SizedBox(height: 10),
-                    _buildSummaryRow(loc.numberActiveGoats, '${_activeGoats.length}'),
-                    _buildSummaryRow(loc.numberGoatsWithWeight, '${_goatsWithWeight.length}'),
-                    _buildSummaryRow(loc.numberGoatsWithoutWeight, '${_goatsWithoutWeight.length}'),
+                    _buildPdfRow('Date Range:', _getFormattedDateRange()),
+                    pw.SizedBox(height: 6),
+                    _buildPdfRow('Goats in Date Range:', '${_allGoatsInDateRange.length}'),
+                    pw.SizedBox(height: 6),
+                    _buildPdfRow('With Weight Data:', '${_goatsWithWeightInRange.length}'),
+                    pw.SizedBox(height: 6),
+                    _buildPdfRow('Without Weight Data:', '${_goatsWithoutWeightInRange.length}'),
                   ],
                 ),
               ),
-            ],
-          ),
-          
-          pw.SizedBox(height: 20),
-          
-          // Performance Data Section
-          pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text(loc.performanceByGoat, style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
-              pw.SizedBox(height: 10),
-              performanceData.isEmpty 
-                  ? pw.Padding(
-                      padding: const pw.EdgeInsets.all(20),
-                      child: pw.Text(
-                        loc.noPerformanceData,
-                        style: pw.TextStyle(fontSize: 12, color: pdf.PdfColors.grey),
-                      ),
-                    )
-                  : pw.TableHelper.fromTextArray(
-                      context: context,
-                      headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: pdf.PdfColors.white),
-                      headerDecoration: pw.BoxDecoration(color: pdf.PdfColors.green),
-                      headers: [
-                        loc.tagNo,
-                        loc.name,
-                        loc.breed,
-                        loc.gender,
-                        '${loc.firstWeight} (kg)',
-                        '${loc.lastWeight} (kg)',
-                        '${loc.weightGain} (kg)',
-                        '${loc.gainPercentage} (%)',
-                        '${loc.avgDailyGain} (kg/day)',
-                        '${loc.avgWeight} (kg)',
-                        loc.measurements,
+              
+              pw.SizedBox(height: 24),
+              
+              // Detailed Table
+              if (_goatsWithWeightInRange.isNotEmpty) ...[
+                pw.Text(
+                  'GOATS WITH WEIGHT DATA (${_goatsWithWeightInRange.length})',
+                  style: pw.TextStyle(
+                    fontSize: 14,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.SizedBox(height: 8),
+                pw.Table(
+                  border: pw.TableBorder.all(color: pdf.PdfColors.grey300),
+                  children: [
+                    // Header
+                    pw.TableRow(
+                      decoration: const pw.BoxDecoration(color: pdf.PdfColors.green),
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            'Tag No',
+                            style: pw.TextStyle(
+                              color: pdf.PdfColors.white,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            'Name',
+                            style: pw.TextStyle(
+                              color: pdf.PdfColors.white,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            'Weight',
+                            style: pw.TextStyle(
+                              color: pdf.PdfColors.white,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            'Gender',
+                            style: pw.TextStyle(
+                              color: pdf.PdfColors.white,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ],
-                      data: performanceData,
                     ),
-            ],
-          ),
-          
-          // Goats Without Weight
-          if (_goatsWithoutWeight.isNotEmpty) ...[
-            pw.SizedBox(height: 20),
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text(loc.goatsWithoutWeight, style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: pdf.PdfColors.orange)),
-                pw.SizedBox(height: 10),
-                pw.Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: _goatsWithoutWeight.map((goat) => 
-                    pw.Container(
-                      padding: const pw.EdgeInsets.all(8),
-                      decoration: pw.BoxDecoration(
-                        border: pw.Border.all(color: pdf.PdfColors.orange),
-                        borderRadius: pw.BorderRadius.circular(5),
+                    // Data rows
+                    for (var goat in _goatsWithWeightInRange)
+                      pw.TableRow(
+                        children: [
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text(goat.tagNo),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text(goat.name ?? 'Unnamed'),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text(_getLatestWeight(goat) ?? 'N/A'),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text(goat.gender),
+                          ),
+                        ],
                       ),
-                      child: pw.Text('${goat.tagNo} - ${goat.name ?? loc.unnamed}'),
-                    )
-                  ).toList(),
+                  ],
                 ),
               ],
-            ),
-          ],
-          
-          // Footer
-          pw.Column(
-            children: [
-              pw.Divider(thickness: 1),
+              
+              // Footer
+              pw.SizedBox(height: 24),
+              pw.Divider(),
+              pw.SizedBox(height: 8),
               pw.Text(
-                '${loc.generatedOn}: ${DateFormat('dd MMM yyyy, HH:mm').format(DateTime.now())}',
-                style: pw.TextStyle(fontSize: 10, color: pdf.PdfColors.grey),
+                'Generated on ${DateFormat('dd MMM yyyy, HH:mm').format(DateTime.now())}',
+                style: const pw.TextStyle(fontSize: 10),
               ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
     
-    final bytes = await doc.save();
+    // Save and share PDF
+    final pdfBytes = await pdfDoc.save();
     
     await Printing.sharePdf(
-      bytes: bytes,
-      filename: '${loc.weightReportFilename}_${DateTime.now().millisecondsSinceEpoch}.pdf',
+      bytes: pdfBytes,
+      filename: 'Weight_Report_${DateTime.now().millisecondsSinceEpoch}.pdf',
     );
   }
   
-  Future<List<List<String>>> _calculatePerformanceDataForPdf() async {
-    List<List<String>> data = [];
-    
-    for (var goat in _goatsWithWeight) {
-      final performance = await _calculateGoatPerformance(goat);
-      if (performance.isNotEmpty) {
-        data.add([
-          performance['tagNo'] ?? '',
-          performance['name'] ?? '',
-          performance['breed'] ?? '-',
-          performance['gender'] ?? '',
-          performance['firstWeight'] ?? '0.0',
-          performance['lastWeight'] ?? '0.0',
-          performance['weightGain'] ?? '0.0',
-          performance['weightGainPercentage'] ?? '0.0%',
-          performance['avgDailyGain'] ?? '0.000',
-          performance['avgWeight'] ?? '0.0',
-          performance['measurementsCount'] ?? '0',
-        ]);
-      }
-    }
-    
-    return data;
-  }
-  
-  Future<Map<String, String>> _calculateGoatPerformance(Goat goat) async {
-    // IMPORTANT: You need to add weightHistory field to your Goat model
-    if (goat.weightHistory == null || goat.weightHistory!.isEmpty) {
-      return {};
-    }
-    
-    final sortedHistory = List<Map<String, dynamic>>.from(goat.weightHistory!);
-    sortedHistory.sort((a, b) {
-      final dateA = _parseDate(a['date']) ?? DateTime(1970);
-      final dateB = _parseDate(b['date']) ?? DateTime(1970);
-      return dateA.compareTo(dateB);
-    });
-    
-    final periodWeights = sortedHistory.where((entry) {
-      final entryDate = _parseDate(entry['date']);
-      return entryDate != null && 
-          entryDate.isAfter(_startDate!.subtract(const Duration(days: 1))) && 
-          entryDate.isBefore(_endDate!.add(const Duration(days: 1)));
-    }).toList();
-    
-    if (periodWeights.length < 2) {
-      return {};
-    }
-    
-    final firstWeight = periodWeights.first['weight'] ?? 0.0;
-    final lastWeight = periodWeights.last['weight'] ?? 0.0;
-    final firstDate = _parseDate(periodWeights.first['date']);
-    final lastDate = _parseDate(periodWeights.last['date']);
-    
-    if (firstDate == null || lastDate == null) {
-      return {};
-    }
-    
-    final weightDiff = lastWeight - firstWeight;
-    final weightGainPercentage = firstWeight > 0 ? (weightDiff / firstWeight) * 100 : 0;
-    final daysBetween = lastDate.difference(firstDate).inDays;
-    final avgDailyGain = daysBetween > 0 ? weightDiff / daysBetween : 0;
-    
-    double totalWeight = 0;
-    for (var entry in periodWeights) {
-      if (entry['weight'] != null) {
-        totalWeight += entry['weight'];
-      }
-    }
-    final avgWeight = totalWeight / periodWeights.length;
-    
-    return {
-      'tagNo': goat.tagNo,
-      'name': goat.name ?? 'Unnamed',
-      'breed': goat.breed ?? '-',
-      'gender': goat.gender,
-      'firstWeight': firstWeight.toStringAsFixed(1),
-      'lastWeight': lastWeight.toStringAsFixed(1),
-      'weightGain': weightDiff.toStringAsFixed(1),
-      'weightGainPercentage': '${weightGainPercentage.toStringAsFixed(1)}%',
-      'avgDailyGain': avgDailyGain.toStringAsFixed(3),
-      'avgWeight': avgWeight.toStringAsFixed(1),
-      'measurementsCount': periodWeights.length.toString(),
-    };
-  }
-  
-  pw.Widget _buildSummaryRow(String label, String value) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.symmetric(vertical: 4),
-      child: pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-        children: [
-          pw.Text(label, style: pw.TextStyle(fontSize: 12)),
-          pw.Text(value, style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
-        ],
-      ),
-    );
-  }
-  
-  Widget _buildStatRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color color,
-    bool isGood = true,
-  }) {
-    return Row(
+  pw.Widget _buildPdfRow(String label, String value) {
+    return pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
       children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1), // FIXED: Changed from withOpacity()
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 24),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Icon(
-          isGood ? Icons.check_circle : Icons.warning,
-          color: isGood ? Colors.green : Colors.orange,
-          size: 28,
-        ),
+        pw.Text(label, style: const pw.TextStyle(fontSize: 12)),
+        pw.Text(value, style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
       ],
     );
   }
@@ -441,48 +818,39 @@ class _WeightReportPageState extends State<WeightReportPage> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final dateFormat = DateFormat('MMM dd, yyyy');
     
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF4CAF50),
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           loc.weightReportTitle,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.w500,
-          ),
+          style: const TextStyle(color: Colors.white),
         ),
         actions: [
+          // Filter Icon
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white, size: 28),
-            onPressed: _loadData,
+            icon: const Icon(Icons.filter_list, color: Colors.white, size: 28),
+            onPressed: () => _showFilterBottomSheet(context),
+            tooltip: 'Filter by Date',
+          ),
+          // PDF Icon
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf, color: Colors.white, size: 28),
+            onPressed: () => _exportToPdf(context),
+            tooltip: 'Export to PDF',
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Container(
-            height: 4,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFFF9800), Color(0xFFFF5722)],
-              ),
-            ),
-          ),
-        ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFF4CAF50)))
-          : Container(
-              color: const Color(0xFFF5F5F5),
-              child: ListView(
-                padding: const EdgeInsets.all(16),
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Date Range Card
                   Card(
@@ -495,44 +863,32 @@ class _WeightReportPageState extends State<WeightReportPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Icon(Icons.calendar_today, color: Colors.blue[700], size: 20),
-                              const SizedBox(width: 8),
-                              Text(
-                                loc.lastMonths,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.blue[800],
-                                ),
-                              ),
-                            ],
+                          Text(
+                            'Selected Date Range',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            '${dateFormat.format(_startDate!)} - ${dateFormat.format(_endDate!)}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
+                            _getFormattedDateRange(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
                             ),
                           ),
                           const SizedBox(height: 16),
                           SizedBox(
                             width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: () => _selectDateRange(context),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue[50],
-                                foregroundColor: Colors.blue[700],
+                            child: OutlinedButton.icon(
+                              onPressed: () => _showFilterBottomSheet(context),
+                              icon: const Icon(Icons.filter_list, size: 18),
+                              label: const Text('Change Date Filter'),
+                              style: OutlinedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(color: Colors.blue[300]!),
-                                ),
                               ),
-                              icon: const Icon(Icons.edit_calendar, size: 20),
-                              label: Text(loc.changeDateRange),
                             ),
                           ),
                         ],
@@ -540,9 +896,19 @@ class _WeightReportPageState extends State<WeightReportPage> {
                     ),
                   ),
                   
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   
-                  // Summary Card
+                  // Summary Section - CORRECTED LOGIC
+                  Text(
+                    'Summary for Selected Period',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  
                   Card(
                     elevation: 2,
                     shape: RoundedRectangleBorder(
@@ -551,111 +917,135 @@ class _WeightReportPageState extends State<WeightReportPage> {
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Icon(Icons.summarize, color: Colors.green[700], size: 20),
-                              const SizedBox(width: 8),
-                              Text(
-                                loc.summaryForPeriod,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.green[800],
-                                ),
+                          // Goats in Date Range (NOT total goats)
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.green.withOpacity(0.1),
+                                shape: BoxShape.circle,
                               ),
-                            ],
+                              child: const Icon(Icons.agriculture, color: Colors.green),
+                            ),
+                            title: const Text(
+                              'Goats in Date Range',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            trailing: Text(
+                              '${_allGoatsInDateRange.length}',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                              ),
+                            ),
                           ),
-                          const SizedBox(height: 16),
+                          const Divider(),
                           
-                          // Summary Stats
-                          _buildStatRow(
-                            icon: Icons.agriculture,
-                            label: loc.numberActiveGoats,
-                            value: '${_activeGoats.length}',
-                            color: Colors.green,
+                          // Goats WITH Weight in Date Range
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.check_circle, color: Colors.blue),
+                            ),
+                            title: const Text(
+                              'With Weight Data',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            trailing: Text(
+                              '${_goatsWithWeightInRange.length}',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                              ),
+                            ),
                           ),
-                          const Divider(height: 24),
-                          _buildStatRow(
-                            icon: Icons.scale,
-                            label: loc.numberGoatsWithWeight,
-                            value: '${_goatsWithWeight.length}',
-                            color: Colors.blue,
-                            isGood: true,
-                          ),
-                          const Divider(height: 24),
-                          _buildStatRow(
-                            icon: Icons.warning,
-                            label: loc.numberGoatsWithoutWeight,
-                            value: '${_goatsWithoutWeight.length}',
-                            color: Colors.orange,
-                            isGood: false,
+                          const Divider(),
+                          
+                          // Goats WITHOUT Weight in Date Range
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withOpacity(0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.warning, color: Colors.orange),
+                            ),
+                            title: const Text(
+                              'Without Weight Data',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            trailing: Text(
+                              '${_goatsWithoutWeightInRange.length}',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange,
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
                   
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   
                   // Performance Card
+                  Text(
+                    'Detailed Report',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.purple,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  
                   Card(
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(20),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Icon(Icons.assessment, color: Colors.purple[700], size: 20),
-                              const SizedBox(width: 8),
-                              Text(
-                                loc.performanceByGoat,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.purple[800],
-                                ),
-                              ),
-                            ],
+                          Icon(
+                            Icons.picture_as_pdf,
+                            size: 48,
+                            color: Colors.orange[700],
                           ),
                           const SizedBox(height: 16),
-                          
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.orange[50],
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.orange[200]!),
+                          Text(
+                            'Export detailed weight report',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.orange,
                             ),
-                            child: Column(
-                              children: [
-                                Icon(Icons.picture_as_pdf, color: Colors.orange[700], size: 40),
-                                const SizedBox(height: 12),
-                                Text(
-                                  loc.detailedDataMessage,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.orange[800],
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  loc.exportPdfMessage,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[700],
-                                  ),
-                                ),
-                              ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '${_goatsWithWeightInRange.length} goats with weight data in selected date range',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
                             ),
                           ),
                         ],
@@ -665,14 +1055,13 @@ class _WeightReportPageState extends State<WeightReportPage> {
                   
                   const SizedBox(height: 24),
                   
-                  // Export Button
+                  // PDF export button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () => _exportToPdf(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF4CAF50),
-                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
