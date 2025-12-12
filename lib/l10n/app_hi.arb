@@ -489,5 +489,26 @@
   "groupLabel2": "समूह:",
   "dateLabel": "तिथि:",
   "totalGoats": "कुल",
-  "goatsFilename": "बकरियाँ"
+  "goatsFilename": "बकरियाँ",
+
+ "exportToPdf": "PDF निर्यात करें",
+ "filterByDate": "तारीख से फ़िल्टर करें",
+ "refreshData": "डेटा ताज़ा करें",
+ "changeDateRange": "तिथि सीमा बदलें",
+ "withWeight": "वजन सहित",
+ "withoutWeight": "वजन के बिना",
+ "noWeightRecordsFound": "चयनित तिथि सीमा में कोई वजन रिकॉर्ड नहीं मिला",
+ "allGoatsHaveWeightRecords": "चयनित तिथि सीमा में सभी बकरियों के वजन के रिकॉर्ड हैं",
+ "noWeight": "वजन नहीं",
+ "selectDateRange": "तिथि सीमा चुनें",
+ "customRange": "कस्टम रेंज",
+ "fromDate": "तारीख से",
+ "toDate": "तारीख तक",
+ "clearFilter": "फ़िल्टर साफ़ करें",
+ "applyFilter": "फ़िल्टर लागू करें",
+ "allTime": "सभी समय",
+ "last7Days": "पिछले 7 दिन",
+ "thisMonth": "इस महीने",
+ "dateRange": "तिथि सीमा",
+ "last3Months": "पिछले 3 महीने"
 }

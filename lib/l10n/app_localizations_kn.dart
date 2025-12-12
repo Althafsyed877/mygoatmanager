@@ -582,7 +582,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get mass => 'ಸಮೂಹ';
 
   @override
-  String get filterByDate => 'ದಿನಾಂಕದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filterByDate => 'ದಿನಾಂಕದಿಂದ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
   String get customDateRange => 'ಕಸ್ಟಮ್ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ';
@@ -1214,7 +1214,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get customRange => 'ಕಸ್ಟಮ್ ವ್ಯಾಪ್ತಿ';
 
   @override
-  String get selectDateRange => 'ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ';
+  String get selectDateRange => 'ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ ಆಯ್ಕೆಮಾಡಿ';
 
   @override
   String get january => 'ಜನವರಿ';
@@ -1359,7 +1359,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get lastMonths => 'ಕಳೆದ 12 ತಿಂಗಳು';
 
   @override
-  String get changeDateRange => 'ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯನ್ನು ಬದಲಾಯಿಸಿ';
+  String get changeDateRange => 'ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ ಬದಲಾಯಿಸಿ';
 
   @override
   String get summaryForPeriod => 'ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ ಸಾರಾಂಶ';
@@ -1429,4 +1429,54 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String get noPerformanceData =>
       'ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ ವಿವರವಾದ ಕಾರ್ಯಕ್ಷಮತೆ ಡೇಟಾ ಲಭ್ಯವಿಲ್ಲ.';
+
+  @override
+  String get exportToPdf => 'PDF ಗೆ ರಫ್ತು ಮಾಡಿ';
+
+  @override
+  String get refreshData => 'ಡೇಟಾ ರಿಫ್ರೆಶ್ ಮಾಡಿ';
+
+  @override
+  String get withWeight => 'ತೂಕದೊಂದಿಗೆ';
+
+  @override
+  String get withoutWeight => 'ತೂಕ ಇಲ್ಲದೆ';
+
+  @override
+  String get noWeightRecordsFound =>
+      'ಆಯ್ಕೆಮಾಡಿದ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ತೂಕದ ದಾಖಲೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+
+  @override
+  String get allGoatsHaveWeightRecords =>
+      'ಆಯ್ಕೆಮಾಡಿದ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ಎಲ್ಲಾ ಮೇಕೆಗಳಿಗೆ ತೂಕದ ದಾಖಲೆಗಳಿವೆ';
+
+  @override
+  String get noWeight => 'ತೂಕ ಇಲ್ಲ';
+
+  @override
+  String get fromDate => 'ದಿನಾಂಕದಿಂದ';
+
+  @override
+  String get toDate => 'ದಿನಾಂಕದವರೆಗೆ';
+
+  @override
+  String get clearFilter => 'ಫಿಲ್ಟರ್ ತೆರವುಗೊಳಿಸಿ';
+
+  @override
+  String get applyFilter => 'ಫಿಲ್ಟರ್ ಅನ್ವಯಿಸಿ';
+
+  @override
+  String get allTime => 'ಎಲ್ಲಾ ಸಮಯ';
+
+  @override
+  String get last7Days => 'ಕಳೆದ 7 ದಿನಗಳು';
+
+  @override
+  String get thisMonth => 'ಈ ತಿಂಗಳು';
+
+  @override
+  String get dateRange => 'ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ';
+
+  @override
+  String get last3Months => 'ಕಳೆದ 3 ತಿಂಗಳು';
 }

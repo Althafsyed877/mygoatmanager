@@ -518,5 +518,26 @@
   "groupLabel2": "Group:",
   "dateLabel": "Date:",
   "totalGoats": "Total",
-  "goatsFilename": "goats"
+  "goatsFilename": "goats",
+  
+ "exportToPdf": "Export to PDF",
+ "filterByDate": "Filter by Date",
+ "refreshData": "Refresh Data",
+ "changeDateRange": "Change Date Range",
+ "withWeight": "With Weight",
+ "withoutWeight": "Without Weight",
+ "noWeightRecordsFound": "No weight records found in selected date range",
+ "allGoatsHaveWeightRecords": "All goats have weight records in selected date range",
+ "noWeight": "No Weight",
+ "selectDateRange": "Select Date Range",
+ "customRange": "Custom Range",
+ "fromDate": "From Date",
+ "toDate": "To Date",
+ "clearFilter": "Clear Filter",
+ "applyFilter": "Apply Filter",
+ "allTime": "All Time",
+ "last7Days": "Last 7 Days",
+ "thisMonth": "This Month",
+ "dateRange": "Date Range",
+ "last3Months": "Last 3 Months"
 }

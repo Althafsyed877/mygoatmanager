@@ -588,7 +588,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get mass => 'குழு';
 
   @override
-  String get filterByDate => 'தேதியால் வடிகட்டவும்';
+  String get filterByDate => 'தேதியின்படி வடிகட்டு';
 
   @override
   String get customDateRange => 'தனிபயன் தேதி வரம்பு';
@@ -1226,10 +1226,10 @@ class AppLocalizationsTa extends AppLocalizations {
   String get editRecords => 'பதிவுகளைத் திருத்தவும்';
 
   @override
-  String get customRange => 'தனிபயன் வரம்பு';
+  String get customRange => 'தனிப்பயன் வரம்பு';
 
   @override
-  String get selectDateRange => 'தேதி வரம்பைத் தேர்ந்தெடுக்கவும்';
+  String get selectDateRange => 'தேதி வரம்பைத் தேர்ந்தெடு';
 
   @override
   String get january => 'ஜனவரி';
@@ -1376,7 +1376,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get lastMonths => 'கடந்த 12 மாதங்கள்';
 
   @override
-  String get changeDateRange => 'தேதி வரம்பை மாற்றவும்';
+  String get changeDateRange => 'தேதி வரம்பை மாற்று';
 
   @override
   String get summaryForPeriod => 'தேர்ந்தெடுத்த காலத்திற்கான சுருக்கம்';
@@ -1447,4 +1447,54 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get noPerformanceData =>
       'தேர்ந்தெடுக்கப்பட்ட காலகட்டத்திற்கு விரிவான செயல்திறன் தரவு இல்லை.';
+
+  @override
+  String get exportToPdf => 'PDF ஐ ஏற்றுமதி செய்';
+
+  @override
+  String get refreshData => 'தரவைப் புதுப்பி';
+
+  @override
+  String get withWeight => 'எடையுடன்';
+
+  @override
+  String get withoutWeight => 'எடை இல்லாமல்';
+
+  @override
+  String get noWeightRecordsFound =>
+      'தேர்ந்தெடுத்த தேதி வரம்பில் எடை பதிவுகள் எதுவும் கிடைக்கவில்லை';
+
+  @override
+  String get allGoatsHaveWeightRecords =>
+      'தேர்ந்தெடுத்த தேதி வரம்பில் அனைத்து ஆடுகளுக்கும் எடை பதிவுகள் உள்ளன';
+
+  @override
+  String get noWeight => 'எடை இல்லை';
+
+  @override
+  String get fromDate => 'தேதியிலிருந்து';
+
+  @override
+  String get toDate => 'தேதி வரை';
+
+  @override
+  String get clearFilter => 'வடிகட்டியை அழி';
+
+  @override
+  String get applyFilter => 'வடிகட்டியைப் பயன்படுத்து';
+
+  @override
+  String get allTime => 'அனைத்து நேரம்';
+
+  @override
+  String get last7Days => 'கடந்த 7 நாட்கள்';
+
+  @override
+  String get thisMonth => 'இந்த மாதம்';
+
+  @override
+  String get dateRange => 'தேதி வரம்பு';
+
+  @override
+  String get last3Months => 'கடந்த 3 மாதங்கள்';
 }

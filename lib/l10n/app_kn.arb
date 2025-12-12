@@ -489,5 +489,26 @@
   "groupLabel2": "ಗುಂಪು:",
   "dateLabel": "ದಿನಾಂಕ:",
   "totalGoats": "ಒಟ್ಟು",
-  "goatsFilename": "ಮೇಕೆಗಳು"
+  "goatsFilename": "ಮೇಕೆಗಳು",
+
+  "exportToPdf": "PDF ಗೆ ರಫ್ತು ಮಾಡಿ",
+ "filterByDate": "ದಿನಾಂಕದಿಂದ ಫಿಲ್ಟರ್ ಮಾಡಿ",
+ "refreshData": "ಡೇಟಾ ರಿಫ್ರೆಶ್ ಮಾಡಿ",
+ "changeDateRange": "ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ ಬದಲಾಯಿಸಿ",
+ "withWeight": "ತೂಕದೊಂದಿಗೆ",
+ "withoutWeight": "ತೂಕ ಇಲ್ಲದೆ",
+ "noWeightRecordsFound": "ಆಯ್ಕೆಮಾಡಿದ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ತೂಕದ ದಾಖಲೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
+ "allGoatsHaveWeightRecords": "ಆಯ್ಕೆಮಾಡಿದ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ಎಲ್ಲಾ ಮೇಕೆಗಳಿಗೆ ತೂಕದ ದಾಖಲೆಗಳಿವೆ",
+ "noWeight": "ತೂಕ ಇಲ್ಲ",
+ "selectDateRange": "ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ ಆಯ್ಕೆಮಾಡಿ",
+ "customRange": "ಕಸ್ಟಮ್ ವ್ಯಾಪ್ತಿ",
+ "fromDate": "ದಿನಾಂಕದಿಂದ",
+ "toDate": "ದಿನಾಂಕದವರೆಗೆ",
+ "clearFilter": "ಫಿಲ್ಟರ್ ತೆರವುಗೊಳಿಸಿ",
+ "applyFilter": "ಫಿಲ್ಟರ್ ಅನ್ವಯಿಸಿ",
+ "allTime": "ಎಲ್ಲಾ ಸಮಯ",
+ "last7Days": "ಕಳೆದ 7 ದಿನಗಳು",
+ "thisMonth": "ಈ ತಿಂಗಳು",
+ "dateRange": "ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ",
+ "last3Months": "ಕಳೆದ 3 ತಿಂಗಳು"
 }

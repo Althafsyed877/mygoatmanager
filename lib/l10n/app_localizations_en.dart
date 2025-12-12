@@ -1425,4 +1425,54 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noPerformanceData =>
       'No detailed performance data available for the selected period.';
+
+  @override
+  String get exportToPdf => 'Export to PDF';
+
+  @override
+  String get refreshData => 'Refresh Data';
+
+  @override
+  String get withWeight => 'With Weight';
+
+  @override
+  String get withoutWeight => 'Without Weight';
+
+  @override
+  String get noWeightRecordsFound =>
+      'No weight records found in selected date range';
+
+  @override
+  String get allGoatsHaveWeightRecords =>
+      'All goats have weight records in selected date range';
+
+  @override
+  String get noWeight => 'No Weight';
+
+  @override
+  String get fromDate => 'From Date';
+
+  @override
+  String get toDate => 'To Date';
+
+  @override
+  String get clearFilter => 'Clear Filter';
+
+  @override
+  String get applyFilter => 'Apply Filter';
+
+  @override
+  String get allTime => 'All Time';
+
+  @override
+  String get last7Days => 'Last 7 Days';
+
+  @override
+  String get thisMonth => 'This Month';
+
+  @override
+  String get dateRange => 'Date Range';
+
+  @override
+  String get last3Months => 'Last 3 Months';
 }

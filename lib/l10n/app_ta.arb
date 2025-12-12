@@ -489,5 +489,26 @@
   "groupLabel2": "குழு:",
   "dateLabel": "தேதி:",
   "totalGoats": "மொத்தம்",
-  "goatsFilename": "ஆடுகள்"
+  "goatsFilename": "ஆடுகள்",
+
+  "exportToPdf": "PDF ஐ ஏற்றுமதி செய்",
+ "filterByDate": "தேதியின்படி வடிகட்டு",
+ "refreshData": "தரவைப் புதுப்பி",
+ "changeDateRange": "தேதி வரம்பை மாற்று",
+ "withWeight": "எடையுடன்",
+ "withoutWeight": "எடை இல்லாமல்",
+ "noWeightRecordsFound": "தேர்ந்தெடுத்த தேதி வரம்பில் எடை பதிவுகள் எதுவும் கிடைக்கவில்லை",
+ "allGoatsHaveWeightRecords": "தேர்ந்தெடுத்த தேதி வரம்பில் அனைத்து ஆடுகளுக்கும் எடை பதிவுகள் உள்ளன",
+ "noWeight": "எடை இல்லை",
+ "selectDateRange": "தேதி வரம்பைத் தேர்ந்தெடு",
+ "customRange": "தனிப்பயன் வரம்பு",
+ "fromDate": "தேதியிலிருந்து",
+ "toDate": "தேதி வரை",
+ "clearFilter": "வடிகட்டியை அழி",
+ "applyFilter": "வடிகட்டியைப் பயன்படுத்து",
+ "allTime": "அனைத்து நேரம்",
+ "last7Days": "கடந்த 7 நாட்கள்",
+ "thisMonth": "இந்த மாதம்",
+ "dateRange": "தேதி வரம்பு",
+ "last3Months": "கடந்த 3 மாதங்கள்"
 }

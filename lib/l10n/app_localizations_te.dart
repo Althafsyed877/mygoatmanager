@@ -1357,7 +1357,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get lastMonths => 'చివరి 12 నెలలు';
 
   @override
-  String get changeDateRange => 'తేదీ పరిధిని మార్చండి';
+  String get changeDateRange => 'తేదీ పరిధి మార్చండి';
 
   @override
   String get summaryForPeriod => 'ఎంచుకున్న కాలానికి సారాంశం';
@@ -1428,4 +1428,54 @@ class AppLocalizationsTe extends AppLocalizations {
   @override
   String get noPerformanceData =>
       'ఎంచుకున్న కాలానికి వివరణాత్మక పనితీరు డేటా అందుబాటులో లేదు.';
+
+  @override
+  String get exportToPdf => 'PDF గా ఎగుమతి చేయండి';
+
+  @override
+  String get refreshData => 'డేటా రీఫ్రెష్ చేయండి';
+
+  @override
+  String get withWeight => 'బరువుతో';
+
+  @override
+  String get withoutWeight => 'బరువు లేకుండా';
+
+  @override
+  String get noWeightRecordsFound =>
+      'ఎంచుకున్న తేదీ పరిధిలో బరువు రికార్డులు ఏవీ లేవు';
+
+  @override
+  String get allGoatsHaveWeightRecords =>
+      'ఎంచుకున్న తేదీ పరిధిలో అన్ని మేకలకు బరువు రికార్డులు ఉన్నాయి';
+
+  @override
+  String get noWeight => 'బరువు లేదు';
+
+  @override
+  String get fromDate => 'తేదీ నుండి';
+
+  @override
+  String get toDate => 'తేదీ వరకు';
+
+  @override
+  String get clearFilter => 'ఫిల్టర్ క్లియర్ చేయండి';
+
+  @override
+  String get applyFilter => 'ఫిల్టర్ వర్తింపజేయండి';
+
+  @override
+  String get allTime => 'అన్ని సమయం';
+
+  @override
+  String get last7Days => 'గత 7 రోజులు';
+
+  @override
+  String get thisMonth => 'ఈ నెల';
+
+  @override
+  String get dateRange => 'తేదీ పరిధి';
+
+  @override
+  String get last3Months => 'గత 3 నెలలు';
 }

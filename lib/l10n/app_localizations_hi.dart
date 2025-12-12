@@ -580,7 +580,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get mass => 'सामूहिक';
 
   @override
-  String get filterByDate => 'तिथि द्वारा फ़िल्टर करें';
+  String get filterByDate => 'तारीख से फ़िल्टर करें';
 
   @override
   String get customDateRange => 'कस्टम तिथि सीमा';
@@ -1208,7 +1208,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get editRecords => 'रिकॉर्ड संपादित करें';
 
   @override
-  String get customRange => 'कस्टम सीमा';
+  String get customRange => 'कस्टम रेंज';
 
   @override
   String get selectDateRange => 'तिथि सीमा चुनें';
@@ -1429,4 +1429,54 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get noPerformanceData =>
       'चयनित अवधि के लिए कोई विस्तृत प्रदर्शन डेटा उपलब्ध नहीं है।';
+
+  @override
+  String get exportToPdf => 'PDF निर्यात करें';
+
+  @override
+  String get refreshData => 'डेटा ताज़ा करें';
+
+  @override
+  String get withWeight => 'वजन सहित';
+
+  @override
+  String get withoutWeight => 'वजन के बिना';
+
+  @override
+  String get noWeightRecordsFound =>
+      'चयनित तिथि सीमा में कोई वजन रिकॉर्ड नहीं मिला';
+
+  @override
+  String get allGoatsHaveWeightRecords =>
+      'चयनित तिथि सीमा में सभी बकरियों के वजन के रिकॉर्ड हैं';
+
+  @override
+  String get noWeight => 'वजन नहीं';
+
+  @override
+  String get fromDate => 'तारीख से';
+
+  @override
+  String get toDate => 'तारीख तक';
+
+  @override
+  String get clearFilter => 'फ़िल्टर साफ़ करें';
+
+  @override
+  String get applyFilter => 'फ़िल्टर लागू करें';
+
+  @override
+  String get allTime => 'सभी समय';
+
+  @override
+  String get last7Days => 'पिछले 7 दिन';
+
+  @override
+  String get thisMonth => 'इस महीने';
+
+  @override
+  String get dateRange => 'तिथि सीमा';
+
+  @override
+  String get last3Months => 'पिछले 3 महीने';
 }

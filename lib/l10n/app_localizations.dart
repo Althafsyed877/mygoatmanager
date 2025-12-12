@@ -2881,6 +2881,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No detailed performance data available for the selected period.'**
   String get noPerformanceData;
+
+  /// No description provided for @exportToPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Export to PDF'**
+  String get exportToPdf;
+
+  /// No description provided for @refreshData.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh Data'**
+  String get refreshData;
+
+  /// No description provided for @withWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'With Weight'**
+  String get withWeight;
+
+  /// No description provided for @withoutWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Without Weight'**
+  String get withoutWeight;
+
+  /// No description provided for @noWeightRecordsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No weight records found in selected date range'**
+  String get noWeightRecordsFound;
+
+  /// No description provided for @allGoatsHaveWeightRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'All goats have weight records in selected date range'**
+  String get allGoatsHaveWeightRecords;
+
+  /// No description provided for @noWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'No Weight'**
+  String get noWeight;
+
+  /// No description provided for @fromDate.
+  ///
+  /// In en, this message translates to:
+  /// **'From Date'**
+  String get fromDate;
+
+  /// No description provided for @toDate.
+  ///
+  /// In en, this message translates to:
+  /// **'To Date'**
+  String get toDate;
+
+  /// No description provided for @clearFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filter'**
+  String get clearFilter;
+
+  /// No description provided for @applyFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Filter'**
+  String get applyFilter;
+
+  /// No description provided for @allTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All Time'**
+  String get allTime;
+
+  /// No description provided for @last7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 Days'**
+  String get last7Days;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get thisMonth;
+
+  /// No description provided for @dateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Date Range'**
+  String get dateRange;
+
+  /// No description provided for @last3Months.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 3 Months'**
+  String get last3Months;
 }
 
 class _AppLocalizationsDelegate

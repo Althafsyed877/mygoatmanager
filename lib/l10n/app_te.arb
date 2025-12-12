@@ -489,5 +489,26 @@
   "groupLabel2": "గ్రూప్:",
   "dateLabel": "తేదీ:",
   "totalGoats": "మొత్తం",
-  "goatsFilename": "మేకలు"
+  "goatsFilename": "మేకలు",
+
+  "exportToPdf": "PDF గా ఎగుమతి చేయండి",
+ "filterByDate": "తేదీ ద్వారా ఫిల్టర్ చేయండి",
+ "refreshData": "డేటా రీఫ్రెష్ చేయండి",
+ "changeDateRange": "తేదీ పరిధి మార్చండి",
+ "withWeight": "బరువుతో",
+ "withoutWeight": "బరువు లేకుండా",
+ "noWeightRecordsFound": "ఎంచుకున్న తేదీ పరిధిలో బరువు రికార్డులు ఏవీ లేవు",
+ "allGoatsHaveWeightRecords": "ఎంచుకున్న తేదీ పరిధిలో అన్ని మేకలకు బరువు రికార్డులు ఉన్నాయి",
+ "noWeight": "బరువు లేదు",
+ "selectDateRange": "తేదీ పరిధిని ఎంచుకోండి",
+ "customRange": "కస్టమ్ పరిధి",
+ "fromDate": "తేదీ నుండి",
+ "toDate": "తేదీ వరకు",
+ "clearFilter": "ఫిల్టర్ క్లియర్ చేయండి",
+ "applyFilter": "ఫిల్టర్ వర్తింపజేయండి",
+ "allTime": "అన్ని సమయం",
+ "last7Days": "గత 7 రోజులు",
+ "thisMonth": "ఈ నెల",
+ "dateRange": "తేదీ పరిధి",
+ "last3Months": "గత 3 నెలలు"
 }
