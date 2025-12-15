@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
 import 'package:mygoatmanager/pages/auth_page.dart';
 import 'package:mygoatmanager/pages/events_page.dart';
+import 'package:mygoatmanager/pages/transactions_page.dart';
 import 'package:mygoatmanager/pages/farm_setup_page.dart';
 import 'package:mygoatmanager/pages/reports_page.dart';
-import 'package:mygoatmanager/pages/transactions_page.dart';
 import 'package:mygoatmanager/pages/goats_page.dart';
 import 'package:mygoatmanager/pages/milk_records_page.dart';
+import 'package:mygoatmanager/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Homepage extends StatefulWidget {
@@ -78,6 +80,9 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
 
     // Load saved language
     _loadSavedLanguage();
+    
+    // Download latest data from server after login
+    _downloadDataFromServer();
     
     // Repeat the animation
     _animationController.repeat(reverse: true);
@@ -932,56 +937,313 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
   }
 
   void _syncData() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+    try {
+      // Show loading snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                AppLocalizations.of(context)!.syncingData,
-                style: const TextStyle(fontSize: 14),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.syncingData,
+                  style: const TextStyle(fontSize: 14),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
+          duration: const Duration(seconds: 30), // Longer duration for sync
+          backgroundColor: const Color(0xFF4CAF50),
         ),
-        duration: const Duration(seconds: 2),
-        backgroundColor: const Color(0xFF4CAF50),
-      ),
-    );
-    
-    await Future.delayed(const Duration(seconds: 2));
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle, color: Colors.white, size: 24),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                AppLocalizations.of(context)!.dataSyncedSuccessfully,
-                style: const TextStyle(fontSize: 14),
+      );
+
+      final prefs = await SharedPreferences.getInstance();
+      final apiService = ApiService();
+      bool hasErrors = false;
+      String errorMessage = '';
+
+      // 1. Sync Goats
+      try {
+        final goatsData = prefs.getString('goats');
+        if (goatsData != null) {
+          final List<dynamic> goatsJson = jsonDecode(goatsData);
+          final List<Map<String, dynamic>> goats = goatsJson.map((e) => Map<String, dynamic>.from(e)).toList();
+          if (goats.isNotEmpty) {
+            final response = await apiService.syncGoats(goats);
+            if (!response.success) {
+              hasErrors = true;
+              errorMessage += 'Goats sync failed: ${response.message}\n';
+            }
+          }
+        }
+      } catch (e) {
+        hasErrors = true;
+        errorMessage += 'Goats sync error: $e\n';
+      }
+
+      // 2. Sync Events
+      try {
+        final eventsData = prefs.getString('events');
+        if (eventsData != null) {
+          final List<dynamic> eventsJson = jsonDecode(eventsData);
+          final List<Map<String, dynamic>> events = eventsJson.map((e) => Map<String, dynamic>.from(e)).toList();
+          if (events.isNotEmpty) {
+            final response = await apiService.syncEvents(events);
+            if (!response.success) {
+              hasErrors = true;
+              errorMessage += 'Events sync failed: ${response.message}\n';
+            }
+          }
+        }
+      } catch (e) {
+        hasErrors = true;
+        errorMessage += 'Events sync error: $e\n';
+      }
+
+      // 3. Sync Milk Records
+      try {
+        final milkRecordsData = prefs.getString('milk_records');
+        if (milkRecordsData != null) {
+          final List<dynamic> milkRecordsJson = jsonDecode(milkRecordsData);
+          final List<Map<String, dynamic>> milkRecords = milkRecordsJson.map((e) => Map<String, dynamic>.from(e)).toList();
+          if (milkRecords.isNotEmpty) {
+            final response = await apiService.syncMilkRecords(milkRecords);
+            if (!response.success) {
+              hasErrors = true;
+              errorMessage += 'Milk records sync failed: ${response.message}\n';
+            }
+          }
+        }
+      } catch (e) {
+        hasErrors = true;
+        errorMessage += 'Milk records sync error: $e\n';
+      }
+
+      // 4. Sync Transactions
+      try {
+        final incomesData = prefs.getString('saved_incomes');
+        final expensesData = prefs.getString('saved_expenses');
+        
+        List<Map<String, dynamic>> incomes = [];
+        List<Map<String, dynamic>> expenses = [];
+        
+        if (incomesData != null) {
+          final List<dynamic> incomesJson = jsonDecode(incomesData);
+          incomes = incomesJson.map((e) => Map<String, dynamic>.from(e)).toList();
+        }
+        
+        if (expensesData != null) {
+          final List<dynamic> expensesJson = jsonDecode(expensesData);
+          expenses = expensesJson.map((e) => Map<String, dynamic>.from(e)).toList();
+        }
+        
+        if (incomes.isNotEmpty || expenses.isNotEmpty) {
+          final response = await apiService.syncTransactions(incomes, expenses);
+          if (!response.success) {
+            hasErrors = true;
+            errorMessage += 'Transactions sync failed: ${response.message}\n';
+          }
+        }
+      } catch (e) {
+        hasErrors = true;
+        errorMessage += 'Transactions sync error: $e\n';
+      }
+
+      // 5. Sync Farm Setup
+      try {
+        final farmSetupData = {
+          'incomeCategories': prefs.getStringList('incomeCategories') ?? [],
+          'expenseCategories': prefs.getStringList('expenseCategories') ?? [],
+          'goatBreeds': prefs.getStringList('goatBreeds') ?? [],
+          'goatGroups': prefs.getStringList('goatGroups') ?? [],
+        };
+        
+        // Only sync if there's data
+        if (farmSetupData.values.any((list) => (list as List).isNotEmpty)) {
+          final response = await apiService.syncFarmSetup(farmSetupData);
+          if (!response.success) {
+            hasErrors = true;
+            errorMessage += 'Farm setup sync failed: ${response.message}\n';
+          }
+        }
+      } catch (e) {
+        hasErrors = true;
+        errorMessage += 'Farm setup sync error: $e\n';
+      }
+
+      // 6. Sync Archived Goats
+      try {
+        final archivedGoatsData = prefs.getString('archived_goats');
+        if (archivedGoatsData != null) {
+          final List<dynamic> archivedGoatsJson = jsonDecode(archivedGoatsData);
+          final List<Map<String, dynamic>> archivedGoats = archivedGoatsJson.map((e) => Map<String, dynamic>.from(e)).toList();
+          if (archivedGoats.isNotEmpty) {
+            final response = await apiService.syncArchivedGoats(archivedGoats);
+            if (!response.success) {
+              hasErrors = true;
+              errorMessage += 'Archived goats sync failed: ${response.message}\n';
+            }
+          }
+        }
+      } catch (e) {
+        hasErrors = true;
+        errorMessage += 'Archived goats sync error: $e\n';
+      }
+
+      // Hide loading snackbar
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      // Show result
+      if (hasErrors) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.warning, color: Colors.white, size: 24),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Sync completed with errors:\n$errorMessage',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.orange,
+            duration: const Duration(seconds: 5),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white, size: 24),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    AppLocalizations.of(context)!.dataSyncedSuccessfully,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      // Hide loading snackbar
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.white, size: 24),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Sync failed: $e',
+                  style: const TextStyle(fontSize: 14),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
         ),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+      );
+    }
+  }
+
+  // Download/sync data from server (called after login)
+  Future<void> _downloadDataFromServer() async {
+    try {
+      final apiService = ApiService();
+      final response = await apiService.downloadAllData();
+      
+      if (response.success && response.data != null) {
+        final prefs = await SharedPreferences.getInstance();
+        final data = response.data!;
+        
+        // Save downloaded data to local storage
+        if (data['goats'] != null) {
+          await prefs.setString('goats', jsonEncode(data['goats']));
+        }
+        if (data['events'] != null) {
+          await prefs.setString('events', jsonEncode(data['events']));
+        }
+        if (data['milk_records'] != null) {
+          await prefs.setString('milk_records', jsonEncode(data['milk_records']));
+        }
+        if (data['incomes'] != null) {
+          await prefs.setString('saved_incomes', jsonEncode(data['incomes']));
+        }
+        if (data['expenses'] != null) {
+          await prefs.setString('saved_expenses', jsonEncode(data['expenses']));
+        }
+        if (data['farm_setup'] != null) {
+          final farmSetup = data['farm_setup'];
+          if (farmSetup['incomeCategories'] != null) {
+            await prefs.setStringList('incomeCategories', List<String>.from(farmSetup['incomeCategories']));
+          }
+          if (farmSetup['expenseCategories'] != null) {
+            await prefs.setStringList('expenseCategories', List<String>.from(farmSetup['expenseCategories']));
+          }
+          if (farmSetup['goatBreeds'] != null) {
+            await prefs.setStringList('goatBreeds', List<String>.from(farmSetup['goatBreeds']));
+          }
+          if (farmSetup['goatGroups'] != null) {
+            await prefs.setStringList('goatGroups', List<String>.from(farmSetup['goatGroups']));
+          }
+        }
+        if (data['archived_goats'] != null) {
+          await prefs.setString('archived_goats', jsonEncode(data['archived_goats']));
+        }
+        
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Data downloaded from server successfully'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      } else {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to download data: ${response.message}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Download error: $e'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
         ),
-      ),
-    );
+      );
+    }
   }
 
   void _shareApp() {

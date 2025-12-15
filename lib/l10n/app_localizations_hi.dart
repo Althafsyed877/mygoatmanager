@@ -157,14 +157,14 @@ class AppLocalizationsHi extends AppLocalizations {
   String get pleaseFillAllFields => 'कृपया सभी फ़ील्ड भरें';
 
   @override
-  String get passwordsDoNotMatch => 'पासवर्ड मेल नहीं खा रहे';
+  String get passwordsDoNotMatch => 'पासवर्ड मेल नहीं खाते';
 
   @override
   String get passwordMustBeAtLeast6Characters =>
       'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए';
 
   @override
-  String get pleaseEnterEmail => 'कृपया अपना ईमेल पता दर्ज करें';
+  String get pleaseEnterEmail => 'कृपया ईमेल पता दर्ज करें';
 
   @override
   String get resetLinkSentTo => 'रीसेट लिंक भेज दिया गया';
@@ -843,7 +843,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get please_go_to_record =>
-      'कृपया बिकी हुई बकरी के रिकॉर्ड पर जाएं और उसे \'बिक गई\' कारण से आर्काइव करें, एक आय रिकॉर्ड स्वचालित रूप से बन जाएगा!';
+      'कृपया बिकी हुई बकरी के रिकॉर्ड पर जाएं और उसे बिक गई कारण से आर्काइव करें, एक आय रिकॉर्ड स्वचालित रूप से बन जाएगा!';
 
   @override
   String get quantity_of_items => 'वस्तुओं की मात्रा';
@@ -1479,4 +1479,40 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get last3Months => 'पिछले 3 महीने';
+
+  @override
+  String get breedingReportTitle => 'प्रजनन रिपोर्ट';
+
+  @override
+  String get noPregnantGoats => 'कोई गर्भवती बकरियाँ नहीं मिलीं';
+
+  @override
+  String get noLactatingGoats => 'कोई दूध पिलाने वाली बकरियाँ नहीं मिलीं';
+
+  @override
+  String get noBredGoats => 'कोई प्रजनन की गई बकरियाँ नहीं मिलीं';
+
+  @override
+  String get allGoatsBred => 'सभी मादा बकरियों के प्रजनन रिकॉर्ड हैं';
+
+  @override
+  String get enterValidEmail => 'कृपया एक वैध ईमेल पता दर्ज करें';
+
+  @override
+  String get pleaseEnterPassword => 'कृपया पासवर्ड दर्ज करें';
+
+  @override
+  String get passwordMinLength => 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए';
+
+  @override
+  String get pleaseConfirmPassword => 'कृपया पासवर्ड की पुष्टि करें';
+
+  @override
+  String get pleaseEnterName => 'कृपया अपना नाम दर्ज करें';
+
+  @override
+  String get pleaseEnterPhone => 'कृपया फोन नंबर दर्ज करें';
+
+  @override
+  String get enterValidPhone => 'कृपया एक वैध फोन नंबर दर्ज करें';
 }

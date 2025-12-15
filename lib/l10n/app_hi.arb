@@ -286,7 +286,7 @@
   "milk_quantity_sold": "बिके हुए दूध की मात्रा",
   "selling_price_per_litre": "प्रति लीटर/यूनिट बिक्री मूल्य",
   "how_much_did_you_earn": "आपने कितना कमाया?",
-  "please_go_to_record": "कृपया बिकी हुई बकरी के रिकॉर्ड पर जाएं और उसे 'बिक गई' कारण से आर्काइव करें, एक आय रिकॉर्ड स्वचालित रूप से बन जाएगा!",
+  "please_go_to_record": "कृपया बिकी हुई बकरी के रिकॉर्ड पर जाएं और उसे बिक गई कारण से आर्काइव करें, एक आय रिकॉर्ड स्वचालित रूप से बन जाएगा!",
   "quantity_of_items": "वस्तुओं की मात्रा",
   "please_specify_source": "कृपया आय का स्रोत निर्दिष्ट करें",
   "specify_income_source": "आय स्रोत निर्दिष्ट करें",
@@ -510,5 +510,20 @@
  "last7Days": "पिछले 7 दिन",
  "thisMonth": "इस महीने",
  "dateRange": "तिथि सीमा",
- "last3Months": "पिछले 3 महीने"
+ "last3Months": "पिछले 3 महीने",
+ "breedingReportTitle": "प्रजनन रिपोर्ट",
+ "noPregnantGoats": "कोई गर्भवती बकरियाँ नहीं मिलीं",
+ "noLactatingGoats": "कोई दूध पिलाने वाली बकरियाँ नहीं मिलीं",
+ "noBredGoats": "कोई प्रजनन की गई बकरियाँ नहीं मिलीं",
+ "allGoatsBred": "सभी मादा बकरियों के प्रजनन रिकॉर्ड हैं",
+
+ "enterValidEmail": "कृपया एक वैध ईमेल पता दर्ज करें",
+ "pleaseEnterEmail": "कृपया ईमेल पता दर्ज करें",
+ "pleaseEnterPassword": "कृपया पासवर्ड दर्ज करें",
+ "passwordMinLength": "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए",
+ "pleaseConfirmPassword": "कृपया पासवर्ड की पुष्टि करें",
+ "passwordsDoNotMatch": "पासवर्ड मेल नहीं खाते",
+ "pleaseEnterName": "कृपया अपना नाम दर्ज करें",
+ "pleaseEnterPhone": "कृपया फोन नंबर दर्ज करें",
+ "enterValidPhone": "कृपया एक वैध फोन नंबर दर्ज करें"
 }

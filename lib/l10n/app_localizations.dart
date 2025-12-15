@@ -413,7 +413,7 @@ abstract class AppLocalizations {
   /// No description provided for @pleaseEnterEmail.
   ///
   /// In en, this message translates to:
-  /// **'Please enter your email address'**
+  /// **'Please enter email address'**
   String get pleaseEnterEmail;
 
   /// No description provided for @resetLinkSentTo.
@@ -647,13 +647,13 @@ abstract class AppLocalizations {
   /// No description provided for @goatsOffspring.
   ///
   /// In en, this message translates to:
-  /// **'Goat\'s Offspring'**
+  /// **'Goats Offspring'**
   String get goatsOffspring;
 
   /// No description provided for @goatOffspring.
   ///
   /// In en, this message translates to:
-  /// **'Goat\'s Offspring'**
+  /// **'Goats Offspring'**
   String get goatOffspring;
 
   /// No description provided for @noEventsYet.
@@ -863,13 +863,13 @@ abstract class AppLocalizations {
   /// No description provided for @motherTagLabel.
   ///
   /// In en, this message translates to:
-  /// **'Mother\'s tag no.'**
+  /// **'Mothers tag no.'**
   String get motherTagLabel;
 
   /// No description provided for @fatherTagLabel.
   ///
   /// In en, this message translates to:
-  /// **'Father\'s tag no.'**
+  /// **'Fathers tag no.'**
   String get fatherTagLabel;
 
   /// No description provided for @notesPlaceholder.
@@ -1013,7 +1013,7 @@ abstract class AppLocalizations {
   /// No description provided for @setFarmLogo.
   ///
   /// In en, this message translates to:
-  /// **'Set farm\'s logo under app settings!'**
+  /// **'Set farms logo under app settings!'**
   String get setFarmLogo;
 
   /// No description provided for @setFarmName.
@@ -1751,7 +1751,7 @@ abstract class AppLocalizations {
   /// No description provided for @please_go_to_record.
   ///
   /// In en, this message translates to:
-  /// **'Please go to the record of the goat sold and archive it with a reason \'Sold\' and an income record will be created automatically!'**
+  /// **'Please go to the record of the goat sold and archive it with a reason Sold and an income record will be created automatically!'**
   String get please_go_to_record;
 
   /// No description provided for @quantity_of_items.
@@ -2783,7 +2783,7 @@ abstract class AppLocalizations {
   /// No description provided for @detailedDataMessage.
   ///
   /// In en, this message translates to:
-  /// **'We could not put the data here because it\'s more detailed.'**
+  /// **'We could not put the data here because its more detailed.'**
   String get detailedDataMessage;
 
   /// No description provided for @exportPdfMessage.
@@ -2977,6 +2977,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last 3 Months'**
   String get last3Months;
+
+  /// No description provided for @breedingReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Breeding Report'**
+  String get breedingReportTitle;
+
+  /// No description provided for @noPregnantGoats.
+  ///
+  /// In en, this message translates to:
+  /// **'No pregnant goats found'**
+  String get noPregnantGoats;
+
+  /// No description provided for @noLactatingGoats.
+  ///
+  /// In en, this message translates to:
+  /// **'No lactating goats found'**
+  String get noLactatingGoats;
+
+  /// No description provided for @noBredGoats.
+  ///
+  /// In en, this message translates to:
+  /// **'No bred goats found'**
+  String get noBredGoats;
+
+  /// No description provided for @allGoatsBred.
+  ///
+  /// In en, this message translates to:
+  /// **'All female goats have breeding records'**
+  String get allGoatsBred;
+
+  /// No description provided for @enterValidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get enterValidEmail;
+
+  /// No description provided for @pleaseEnterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter password'**
+  String get pleaseEnterPassword;
+
+  /// No description provided for @passwordMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordMinLength;
+
+  /// No description provided for @pleaseConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm password'**
+  String get pleaseConfirmPassword;
+
+  /// No description provided for @pleaseEnterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name'**
+  String get pleaseEnterName;
+
+  /// No description provided for @pleaseEnterPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter phone number'**
+  String get pleaseEnterPhone;
+
+  /// No description provided for @enterValidPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid phone number'**
+  String get enterValidPhone;
 }
 
 class _AppLocalizationsDelegate

@@ -157,14 +157,14 @@ class AppLocalizationsTe extends AppLocalizations {
   String get pleaseFillAllFields => 'దయచేసి అన్ని ఫీల్డ్లను పూరించండి';
 
   @override
-  String get passwordsDoNotMatch => 'పాస్వర్డ్లు సరిపోలడం లేదు';
+  String get passwordsDoNotMatch => 'పాస్వర్డ్‌లు సరిపోలలేదు';
 
   @override
   String get passwordMustBeAtLeast6Characters =>
       'పాస్వర్డ్ కనీసం 6 అక్షరాలు ఉండాలి';
 
   @override
-  String get pleaseEnterEmail => 'దయచేసి మీ ఇమెయిల్ చిరునామాను నమోదు చేయండి';
+  String get pleaseEnterEmail => 'దయచేసి ఇమెయిల్ చిరునామా నమోదు చేయండి';
 
   @override
   String get resetLinkSentTo => 'రీసెట్ లింక్ పంపబడింది';
@@ -846,7 +846,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get please_go_to_record =>
-      'దయచేసి అమ్మబడిన మేక రికార్డుకు వెళ్లి, \'విక్రయించబడింది\' కారణంతో ఆర్కైవ్ చేయండి మరియు ఆదాయ రికార్డ్ స్వయంచాలకంగా సృష్టించబడుతుంది!';
+      'దయచేసి అమ్మబడిన మేక రికార్డుకు వెళ్లి, విక్రయించబడింది కారణంతో ఆర్కైవ్ చేయండి మరియు ఆదాయ రికార్డ్ స్వయంచాలకంగా సృష్టించబడుతుంది!';
 
   @override
   String get quantity_of_items => 'వస్తువుల పరిమాణం';
@@ -1478,4 +1478,40 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get last3Months => 'గత 3 నెలలు';
+
+  @override
+  String get breedingReportTitle => 'బ్రీడింగ్ నివేదిక';
+
+  @override
+  String get noPregnantGoats => 'గర్భిణీ మేకలు కనుగొనబడలేదు';
+
+  @override
+  String get noLactatingGoats => 'పాలిచ్చే మేకలు కనుగొనబడలేదు';
+
+  @override
+  String get noBredGoats => 'ప్రజననం చేసిన మేకలు కనుగొనబడలేదు';
+
+  @override
+  String get allGoatsBred => 'అన్ని ఆడ మేకలకు బ్రీడింగ్ రికార్డులు ఉన్నాయి';
+
+  @override
+  String get enterValidEmail => 'దయచేసి సరైన ఇమెయిల్ చిరునామా నమోదు చేయండి';
+
+  @override
+  String get pleaseEnterPassword => 'దయచేసి పాస్వర్డ్ నమోదు చేయండి';
+
+  @override
+  String get passwordMinLength => 'పాస్వర్డ్ కనీసం 6 అక్షరాలు ఉండాలి';
+
+  @override
+  String get pleaseConfirmPassword => 'దయచేసి పాస్వర్డ్ ని నిర్ధారించండి';
+
+  @override
+  String get pleaseEnterName => 'దయచేసి మీ పేరు నమోదు చేయండి';
+
+  @override
+  String get pleaseEnterPhone => 'దయచేసి ఫోన్ నంబర్ నమోదు చేయండి';
+
+  @override
+  String get enterValidPhone => 'దయచేసి సరైన ఫోన్ నంబర్ నమోదు చేయండి';
 }

@@ -167,8 +167,7 @@ class AppLocalizationsTa extends AppLocalizations {
       'கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்';
 
   @override
-  String get pleaseEnterEmail =>
-      'தயவு செய்து உங்கள் மின்னஞ்சல் முகவரியை உள்ளிடவும்';
+  String get pleaseEnterEmail => 'மின்னஞ்சல் முகவரியை உள்ளிடவும்';
 
   @override
   String get resetLinkSentTo => 'மீட்டமைப்பு இணைப்பு அனுப்பப்பட்டது';
@@ -853,7 +852,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get please_go_to_record =>
-      'தயவு செய்து விற்கப்பட்ட ஆட்டின் பதிவுக்குச் சென்று, \'விற்கப்பட்டது\' என்ற காரணத்துடன் ஆர்கைவ் செய்யவும், ஒரு வருமான பதிவு தானாகவே உருவாக்கப்படும்!';
+      'தயவு செய்து விற்கப்பட்ட ஆட்டின் பதிவுக்குச் சென்று, விற்கப்பட்டது என்ற காரணத்துடன் ஆர்கைவ் செய்யவும், ஒரு வருமான பதிவு தானாகவே உருவாக்கப்படும்!';
 
   @override
   String get quantity_of_items => 'பொருட்களின் அளவு';
@@ -1497,4 +1496,43 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get last3Months => 'கடந்த 3 மாதங்கள்';
+
+  @override
+  String get breedingReportTitle => 'இனப்பெருக்க அறிக்கை';
+
+  @override
+  String get noPregnantGoats => 'கர்ப்பமான ஆடுகள் எதுவும் கிடைக்கவில்லை';
+
+  @override
+  String get noLactatingGoats => 'பால் கொடுக்கும் ஆடுகள் எதுவும் கிடைக்கவில்லை';
+
+  @override
+  String get noBredGoats =>
+      'இனப்பெருக்கம் செய்யப்பட்ட ஆடுகள் எதுவும் கிடைக்கவில்லை';
+
+  @override
+  String get allGoatsBred =>
+      'அனைத்து பெண் ஆடுகளுக்கும் இனப்பெருக்க பதிவுகள் உள்ளன';
+
+  @override
+  String get enterValidEmail => 'சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்';
+
+  @override
+  String get pleaseEnterPassword => 'கடவுச்சொல்லை உள்ளிடவும்';
+
+  @override
+  String get passwordMinLength =>
+      'கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்';
+
+  @override
+  String get pleaseConfirmPassword => 'கடவுச்சொல்லை உறுதிப்படுத்தவும்';
+
+  @override
+  String get pleaseEnterName => 'உங்கள் பெயரை உள்ளிடவும்';
+
+  @override
+  String get pleaseEnterPhone => 'தொலைபேசி எண்ணை உள்ளிடவும்';
+
+  @override
+  String get enterValidPhone => 'சரியான தொலைபேசி எண்ணை உள்ளிடவும்';
 }

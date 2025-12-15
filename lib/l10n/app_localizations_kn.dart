@@ -157,14 +157,14 @@ class AppLocalizationsKn extends AppLocalizations {
   String get pleaseFillAllFields => 'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಫೀಲ್ಡ್ಗಳನ್ನು ತುಂಬಿಸಿ';
 
   @override
-  String get passwordsDoNotMatch => 'ಪಾಸ್ವರ್ಡ್ಗಳು ಹೊಂದಿಕೆಯಾಗುವುದಿಲ್ಲ';
+  String get passwordsDoNotMatch => 'ಪಾಸ್ವರ್ಡ್‌ಗಳು ಹೊಂದಿಕೆಯಾಗುವುದಿಲ್ಲ';
 
   @override
   String get passwordMustBeAtLeast6Characters =>
       'ಪಾಸ್ವರ್ಡ್ ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳನ್ನು ಹೊಂದಿರಬೇಕು';
 
   @override
-  String get pleaseEnterEmail => 'ದಯವಿಟ್ಟು ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ';
+  String get pleaseEnterEmail => 'ದಯವಿಟ್ಟು ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ';
 
   @override
   String get resetLinkSentTo => 'ರೀಸೆಟ್ ಲಿಂಕ್ ಕಳುಹಿಸಲಾಗಿದೆ';
@@ -845,7 +845,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get please_go_to_record =>
-      'ದಯವಿಟ್ಟು ಮಾರಾಟವಾದ ಮೇಕೆಯ ರೆಕಾರ್ಡ್ಗೆ ಹೋಗಿ, \'ಮಾರಾಟವಾಯಿತು\' ಕಾರಣದೊಂದಿಗೆ ಆರ್ಕೈವ್ ಮಾಡಿ, ಆದಾಯ ರೆಕಾರ್ಡ್ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ರಚಿಸಲ್ಪಡುತ್ತದೆ!';
+      'ದಯವಿಟ್ಟು ಮಾರಾಟವಾದ ಮೇಕೆಯ ರೆಕಾರ್ಡ್ಗೆ ಹೋಗಿ, ಮಾರಾಟವಾಯಿತು ಕಾರಣದೊಂದಿಗೆ ಆರ್ಕೈವ್ ಮಾಡಿ, ಆದಾಯ ರೆಕಾರ್ಡ್ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ರಚಿಸಲ್ಪಡುತ್ತದೆ!';
 
   @override
   String get quantity_of_items => 'ವಸ್ತುಗಳ ಪ್ರಮಾಣ';
@@ -1479,4 +1479,40 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get last3Months => 'ಕಳೆದ 3 ತಿಂಗಳು';
+
+  @override
+  String get breedingReportTitle => 'ಸಂತಾನೋತ್ಪತ್ತಿ ವರದಿ';
+
+  @override
+  String get noPregnantGoats => 'ಗರ್ಭಿಣಿ ಮೇಕೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+
+  @override
+  String get noLactatingGoats => 'ಹಾಲು ಕೊಡುವ ಮೇಕೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+
+  @override
+  String get noBredGoats => 'ಸಂತಾನೋತ್ಪತ್ತಿ ಮಾಡಿದ ಮೇಕೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+
+  @override
+  String get allGoatsBred => 'ಎಲ್ಲಾ ಹೆಣ್ಣು ಮೇಕೆಗಳಿಗೂ ಸಂತಾನೋತ್ಪತ್ತಿ ದಾಖಲೆಗಳಿವೆ';
+
+  @override
+  String get enterValidEmail => 'ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ';
+
+  @override
+  String get pleaseEnterPassword => 'ದಯವಿಟ್ಟು ಪಾಸ್ವರ್ಡ್ ನಮೂದಿಸಿ';
+
+  @override
+  String get passwordMinLength => 'ಪಾಸ್ವರ್ಡ್ ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳು ಇರಬೇಕು';
+
+  @override
+  String get pleaseConfirmPassword => 'ದಯವಿಟ್ಟು ಪಾಸ್ವರ್ಡ್ ಅನ್ನು ದೃಢೀಕರಿಸಿ';
+
+  @override
+  String get pleaseEnterName => 'ದಯವಿಟ್ಟು ನಿಮ್ಮ ಹೆಸರನ್ನು ನಮೂದಿಸಿ';
+
+  @override
+  String get pleaseEnterPhone => 'ದಯವಿಟ್ಟು ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ';
+
+  @override
+  String get enterValidPhone => 'ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ';
 }

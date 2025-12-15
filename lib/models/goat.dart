@@ -14,6 +14,13 @@ class Goat {
   final String? notes;
   final String? photoPath;
   final List<Map<String, dynamic>>? weightHistory;
+  
+  // ONLY add these breeding fields:
+  final String? breedingStatus;
+  final String? breedingDate;
+  final String? breedingPartner;
+  final List<Map<String, dynamic>>? kiddingHistory;
+  final String? kiddingDueDate;
 
   Goat({
     required this.tagNo,
@@ -31,9 +38,15 @@ class Goat {
     this.notes,
     this.photoPath,
     this.weightHistory,
+    
+    // Only breeding fields
+    this.breedingStatus = 'Not Bred',
+    this.breedingDate,
+    this.breedingPartner,
+    this.kiddingHistory,
+    this.kiddingDueDate,
   });
 
-  // Convert Goat to JSON
   Map<String, dynamic> toJson() {
     return {
       'tagNo': tagNo,
@@ -51,10 +64,16 @@ class Goat {
       'notes': notes,
       'photoPath': photoPath,
       'weightHistory': weightHistory,
+      
+      // Only breeding fields
+      'breedingStatus': breedingStatus,
+      'breedingDate': breedingDate,
+      'breedingPartner': breedingPartner,
+      'kiddingHistory': kiddingHistory,
+      'kiddingDueDate': kiddingDueDate,
     };
   }
 
-  // Create Goat from JSON
   factory Goat.fromJson(Map<String, dynamic> json) {
     return Goat(
       tagNo: json['tagNo'] as String,
@@ -74,6 +93,15 @@ class Goat {
       weightHistory: json['weightHistory'] != null 
           ? List<Map<String, dynamic>>.from(json['weightHistory']) 
           : null,
+      
+      // Only breeding fields
+      breedingStatus: json['breedingStatus'] as String? ?? 'Not Bred',
+      breedingDate: json['breedingDate'] as String?,
+      breedingPartner: json['breedingPartner'] as String?,
+      kiddingHistory: json['kiddingHistory'] != null 
+          ? List<Map<String, dynamic>>.from(json['kiddingHistory']) 
+          : null,
+      kiddingDueDate: json['kiddingDueDate'] as String?,
     );
   }
 }

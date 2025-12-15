@@ -164,7 +164,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Password must be at least 6 characters';
 
   @override
-  String get pleaseEnterEmail => 'Please enter your email address';
+  String get pleaseEnterEmail => 'Please enter email address';
 
   @override
   String get resetLinkSentTo => 'Reset link sent to';
@@ -282,10 +282,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changePicture => 'Change picture...';
 
   @override
-  String get goatsOffspring => 'Goat\'s Offspring';
+  String get goatsOffspring => 'Goats Offspring';
 
   @override
-  String get goatOffspring => 'Goat\'s Offspring';
+  String get goatOffspring => 'Goats Offspring';
 
   @override
   String get noEventsYet => 'No Events Yet';
@@ -391,10 +391,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectObtained => 'Select how the goat was obtained. *';
 
   @override
-  String get motherTagLabel => 'Mother\'s tag no.';
+  String get motherTagLabel => 'Mothers tag no.';
 
   @override
-  String get fatherTagLabel => 'Father\'s tag no.';
+  String get fatherTagLabel => 'Fathers tag no.';
 
   @override
   String get notesPlaceholder => 'Write some notes ...';
@@ -466,7 +466,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fillRequiredFields => 'Please fill in all required fields';
 
   @override
-  String get setFarmLogo => 'Set farm\'s logo under app settings!';
+  String get setFarmLogo => 'Set farms logo under app settings!';
 
   @override
   String get setFarmName => 'Set farm name under app settings!';
@@ -842,7 +842,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get please_go_to_record =>
-      'Please go to the record of the goat sold and archive it with a reason \'Sold\' and an income record will be created automatically!';
+      'Please go to the record of the goat sold and archive it with a reason Sold and an income record will be created automatically!';
 
   @override
   String get quantity_of_items => 'Quantity of items';
@@ -1374,7 +1374,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get detailedDataMessage =>
-      'We could not put the data here because it\'s more detailed.';
+      'We could not put the data here because its more detailed.';
 
   @override
   String get exportPdfMessage => 'Export to PDF to see the full report.';
@@ -1475,4 +1475,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get last3Months => 'Last 3 Months';
+
+  @override
+  String get breedingReportTitle => 'Breeding Report';
+
+  @override
+  String get noPregnantGoats => 'No pregnant goats found';
+
+  @override
+  String get noLactatingGoats => 'No lactating goats found';
+
+  @override
+  String get noBredGoats => 'No bred goats found';
+
+  @override
+  String get allGoatsBred => 'All female goats have breeding records';
+
+  @override
+  String get enterValidEmail => 'Please enter a valid email address';
+
+  @override
+  String get pleaseEnterPassword => 'Please enter password';
+
+  @override
+  String get passwordMinLength => 'Password must be at least 6 characters';
+
+  @override
+  String get pleaseConfirmPassword => 'Please confirm password';
+
+  @override
+  String get pleaseEnterName => 'Please enter your name';
+
+  @override
+  String get pleaseEnterPhone => 'Please enter phone number';
+
+  @override
+  String get enterValidPhone => 'Please enter a valid phone number';
 }
