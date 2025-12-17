@@ -1511,4 +1511,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get enterValidPhone => 'Please enter a valid phone number';
+
+  @override
+  String get username => 'username';
 }

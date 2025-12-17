@@ -1515,4 +1515,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get enterValidPhone => 'ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ';
+
+  @override
+  String get username => 'username';
 }

@@ -525,5 +525,7 @@
  "passwordsDoNotMatch": "கடவுச்சொற்கள் பொருந்தவில்லை",
  "pleaseEnterName": "உங்கள் பெயரை உள்ளிடவும்",
  "pleaseEnterPhone": "தொலைபேசி எண்ணை உள்ளிடவும்",
- "enterValidPhone": "சரியான தொலைபேசி எண்ணை உள்ளிடவும்"
+ "enterValidPhone": "சரியான தொலைபேசி எண்ணை உள்ளிடவும்",
+
+ "username": "username"
 }

@@ -1514,4 +1514,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get enterValidPhone => 'దయచేసి సరైన ఫోన్ నంబర్ నమోదు చేయండి';
+
+  @override
+  String get username => 'username';
 }

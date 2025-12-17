@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
 import '../services/api_service.dart';
 
+
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
 
@@ -18,7 +19,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   bool _isLoading = false;
 
   // Form controllers
-  final _loginEmailController = TextEditingController();
+  final _loginNameController = TextEditingController();
   final _loginPasswordController = TextEditingController();
   final _signupNameController = TextEditingController();
   final _signupEmailController = TextEditingController();
@@ -43,7 +44,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   @override
   void dispose() {
     _tabController.dispose();
-    _loginEmailController.dispose();
+    _loginNameController.dispose();
     _loginPasswordController.dispose();
     _signupNameController.dispose();
     _signupEmailController.dispose();
@@ -62,11 +63,8 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-    final screenHeight = mediaQuery.size.height;
-
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -86,20 +84,16 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
               return Stack(
                 children: [
                   SingleChildScrollView(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: availableHeight,
-                      ),
-                      child: IntrinsicHeight(
-                        child: Column(
-                          children: [
-                            _buildHeader(context, availableWidth, availableHeight),
-                            
-                            Expanded(
-                              child: _buildAuthCard(context, availableWidth, availableHeight),
-                            ),
-                          ],
-                        ),
+                    child: SizedBox(
+                      height: availableHeight,
+                      child: Column(
+                        children: [
+                          _buildHeader(context, availableWidth, availableHeight),
+                          
+                          Expanded(
+                            child: _buildAuthCard(context, availableWidth, availableHeight),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -241,7 +235,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
         ],
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         children: [
           Container(
             height: isSmallPhone ? 40 : 45,
@@ -279,10 +273,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
           
           SizedBox(height: availableHeight * 0.02),
 
-          SizedBox(
-            height: isSmallPhone 
-                ? availableHeight * 0.40
-                : availableHeight * 0.45,
+          Flexible(
             child: TabBarView(
               controller: _tabController,
               children: [
@@ -376,302 +367,292 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
     final isSmallPhone = availableWidth < 360;
     
     return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.all(availableWidth * 0.02),
-      child: Form(
-        key: _loginFormKey,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minHeight: availableHeight * 0.35,
-          ),
+      child: Padding(
+        padding: EdgeInsets.all(availableWidth * 0.02),
+        child: Form(
+          key: _loginFormKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildTextField(
-                controller: _loginEmailController,
-                label: AppLocalizations.of(context)!.emailAddress,
-                icon: Icons.email_outlined,
-                keyboardType: TextInputType.emailAddress,
-                screenWidth: availableWidth,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.pleaseEnterEmail;
-                  }
-                  if (!value.contains('@')) {
-                    return AppLocalizations.of(context)!.enterValidEmail;
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: availableHeight * 0.015),
+            _buildTextField(
+              controller: _loginNameController,
+              label: AppLocalizations.of(context)!.username,
+              icon: Icons.person_outline,
+              keyboardType: TextInputType.text,
+              screenWidth: availableWidth,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return AppLocalizations.of(context)!.termsOfService;
+                }
+                if (!value.contains(RegExp(r'^[a-zA-Z0-9_]+$'))) {
+                  return AppLocalizations.of(context)!.termsOfService;
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: availableHeight * 0.015),
 
-              _buildPasswordField(
-                controller: _loginPasswordController,
-                label: AppLocalizations.of(context)!.password,
-                isVisible: _isPasswordVisible,
-                onToggleVisibility: () {
-                  setState(() {
-                    _isPasswordVisible = !_isPasswordVisible;
-                  });
-                },
-                screenWidth: availableWidth,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.pleaseEnterPassword;
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: availableHeight * 0.015),
+            _buildPasswordField(
+              controller: _loginPasswordController,
+              label: AppLocalizations.of(context)!.password,
+              isVisible: _isPasswordVisible,
+              onToggleVisibility: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+              screenWidth: availableWidth,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return AppLocalizations.of(context)!.pleaseEnterPassword;
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: availableHeight * 0.015),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: isSmallPhone ? 20 : 24,
-                        height: isSmallPhone ? 20 : 24,
-                        child: Checkbox(
-                          value: _rememberMe,
-                          onChanged: (value) {
-                            setState(() {
-                              _rememberMe = value ?? false;
-                            });
-                          },
-                          activeColor: const Color(0xFF4CAF50),
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    SizedBox(
+                      width: isSmallPhone ? 20 : 24,
+                      height: isSmallPhone ? 20 : 24,
+                      child: Checkbox(
+                        value: _rememberMe,
+                        onChanged: (value) {
+                          setState(() {
+                            _rememberMe = value ?? false;
+                          });
+                        },
+                        activeColor: const Color(0xFF4CAF50),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      SizedBox(width: isSmallPhone ? 4 : 6),
-                      Text(
-                        AppLocalizations.of(context)!.rememberMe,
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: isSmallPhone 
-                              ? availableWidth * 0.032
-                              : availableWidth * 0.035,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  TextButton(
-                    onPressed: () {
-                      _showForgotPasswordDialog(context, availableWidth);
-                    },
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: Text(
-                      AppLocalizations.of(context)!.forgotPassword,
+                    SizedBox(width: isSmallPhone ? 4 : 6),
+                    Text(
+                      AppLocalizations.of(context)!.rememberMe,
                       style: TextStyle(
-                        color: const Color(0xFF4CAF50),
+                        color: Colors.grey[700],
                         fontSize: isSmallPhone 
                             ? availableWidth * 0.032
                             : availableWidth * 0.035,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: availableHeight * 0.02),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _login,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4CAF50),
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(
-                      vertical: isSmallPhone 
-                          ? availableHeight * 0.018
-                          : availableHeight * 0.02,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
-                    ),
-                    elevation: 3,
-                  ),
-                  child: _isLoading
-                      ? SizedBox(
-                          height: isSmallPhone ? 20 : 24,
-                          width: isSmallPhone ? 20 : 24,
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : Text(
-                          AppLocalizations.of(context)!.login,
-                          style: TextStyle(
-                            fontSize: isSmallPhone 
-                                ? availableWidth * 0.038
-                                : availableWidth * 0.04,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                  ],
                 ),
+
+                TextButton(
+                  onPressed: () {
+                    _showForgotPasswordDialog(context, availableWidth);
+                  },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.forgotPassword,
+                    style: TextStyle(
+                      color: const Color(0xFF4CAF50),
+                      fontSize: isSmallPhone 
+                          ? availableWidth * 0.032
+                          : availableWidth * 0.035,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: availableHeight * 0.02),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4CAF50),
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    vertical: isSmallPhone 
+                        ? availableHeight * 0.018
+                        : availableHeight * 0.02,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
+                  ),
+                  elevation: 3,
+                ),
+                child: _isLoading
+                    ? SizedBox(
+                        height: isSmallPhone ? 20 : 24,
+                        width: isSmallPhone ? 20 : 24,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : Text(
+                        AppLocalizations.of(context)!.login,
+                        style: TextStyle(
+                          fontSize: isSmallPhone 
+                              ? availableWidth * 0.038
+                              : availableWidth * 0.04,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
+    ) );
   }
 
   Widget _buildSignupForm(BuildContext context, double availableWidth, double availableHeight) {
     final isSmallPhone = availableWidth < 360;
     
     return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.all(availableWidth * 0.02),
-      child: Form(
-        key: _signupFormKey,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minHeight: availableHeight * 0.35,
-          ),
+      child: Padding(
+        padding: EdgeInsets.all(availableWidth * 0.02),
+        child: Form(
+          key: _signupFormKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildTextField(
-                controller: _signupNameController,
-                label: AppLocalizations.of(context)!.fullName,
-                icon: Icons.person_outline,
-                screenWidth: availableWidth,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.pleaseEnterName;
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: availableHeight * 0.015),
+            _buildTextField(
+              controller: _signupNameController,
+              label: AppLocalizations.of(context)!.fullName,
+              icon: Icons.person_outline,
+              screenWidth: availableWidth,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return AppLocalizations.of(context)!.pleaseEnterName;
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: availableHeight * 0.015),
 
-              _buildTextField(
-                controller: _signupEmailController,
-                label: AppLocalizations.of(context)!.emailAddress,
-                icon: Icons.email_outlined,
-                keyboardType: TextInputType.emailAddress,
-                screenWidth: availableWidth,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.pleaseEnterEmail;
-                  }
-                  if (!value.contains('@')) {
-                    return AppLocalizations.of(context)!.enterValidEmail;
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: availableHeight * 0.015),
+            _buildTextField(
+              controller: _signupEmailController,
+              label: AppLocalizations.of(context)!.emailAddress,
+              icon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+              screenWidth: availableWidth,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return AppLocalizations.of(context)!.pleaseEnterEmail;
+                }
+                if (!value.contains('@')) {
+                  return AppLocalizations.of(context)!.enterValidEmail;
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: availableHeight * 0.015),
 
-              _buildTextField(
-                controller: _signupPhoneController,
-                label: AppLocalizations.of(context)!.phoneNumber,
-                icon: Icons.phone_outlined,
-                keyboardType: TextInputType.phone,
-                screenWidth: availableWidth,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.pleaseEnterPhone;
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: availableHeight * 0.015),
+            _buildTextField(
+              controller: _signupPhoneController,
+              label: AppLocalizations.of(context)!.phoneNumber,
+              icon: Icons.phone_outlined,
+              keyboardType: TextInputType.phone,
+              screenWidth: availableWidth,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return AppLocalizations.of(context)!.pleaseEnterPhone;
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: availableHeight * 0.015),
 
-              _buildPasswordField(
-                controller: _signupPasswordController,
-                label: AppLocalizations.of(context)!.password,
-                isVisible: _isPasswordVisible,
-                onToggleVisibility: () {
-                  setState(() {
-                    _isPasswordVisible = !_isPasswordVisible;
-                  });
-                },
-                screenWidth: availableWidth,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.pleaseEnterPassword;
-                  }
-                  if (value.length < 6) {
-                    return AppLocalizations.of(context)!.passwordMinLength;
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: availableHeight * 0.015),
+            _buildPasswordField(
+              controller: _signupPasswordController,
+              label: AppLocalizations.of(context)!.password,
+              isVisible: _isPasswordVisible,
+              onToggleVisibility: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+              screenWidth: availableWidth,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return AppLocalizations.of(context)!.pleaseEnterPassword;
+                }
+                if (value.length < 6) {
+                  return AppLocalizations.of(context)!.passwordMinLength;
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: availableHeight * 0.015),
 
-              _buildPasswordField(
-                controller: _signupConfirmPasswordController,
-                label: AppLocalizations.of(context)!.confirmPassword,
-                isVisible: _isConfirmPasswordVisible,
-                onToggleVisibility: () {
-                  setState(() {
-                    _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                  });
-                },
-                screenWidth: availableWidth,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.pleaseConfirmPassword;
-                  }
-                  if (value != _signupPasswordController.text) {
-                    return AppLocalizations.of(context)!.passwordsDoNotMatch;
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: availableHeight * 0.02),
+            _buildPasswordField(
+              controller: _signupConfirmPasswordController,
+              label: AppLocalizations.of(context)!.confirmPassword,
+              isVisible: _isConfirmPasswordVisible,
+              onToggleVisibility: () {
+                setState(() {
+                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                });
+              },
+              screenWidth: availableWidth,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return AppLocalizations.of(context)!.pleaseConfirmPassword;
+                }
+                if (value != _signupPasswordController.text) {
+                  return AppLocalizations.of(context)!.passwordsDoNotMatch;
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: availableHeight * 0.02),
 
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _signup,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4CAF50),
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(
-                      vertical: isSmallPhone 
-                          ? availableHeight * 0.018
-                          : availableHeight * 0.02,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
-                    ),
-                    elevation: 3,
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _signup,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4CAF50),
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    vertical: isSmallPhone 
+                        ? availableHeight * 0.018
+                        : availableHeight * 0.02,
                   ),
-                  child: _isLoading
-                      ? SizedBox(
-                          height: isSmallPhone ? 20 : 24,
-                          width: isSmallPhone ? 20 : 24,
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : Text(
-                          AppLocalizations.of(context)!.createAccount,
-                          style: TextStyle(
-                            fontSize: isSmallPhone 
-                                ? availableWidth * 0.038
-                                : availableWidth * 0.04,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
+                  ),
+                  elevation: 3,
                 ),
+                child: _isLoading
+                    ? SizedBox(
+                        height: isSmallPhone ? 20 : 24,
+                        width: isSmallPhone ? 20 : 24,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : Text(
+                        AppLocalizations.of(context)!.createAccount,
+                        style: TextStyle(
+                          fontSize: isSmallPhone 
+                              ? availableWidth * 0.038
+                              : availableWidth * 0.04,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
+    ) );
   }
 
   Widget _buildTextField({
@@ -851,23 +832,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
           isSmallPhone: isSmallPhone,
         ),
         SizedBox(width: screenWidth * 0.04),
-        
-        _buildSocialButton(
-          icon: Icons.facebook,
-          color: const Color(0xFF4267B2),
-          onPressed: () => _socialLogin('Facebook'),
-          screenWidth: screenWidth,
-          isSmallPhone: isSmallPhone,
-        ),
-        SizedBox(width: screenWidth * 0.04),
-        
-        _buildSocialButton(
-          icon: Icons.apple,
-          color: Colors.black,
-          onPressed: () => _socialLogin('Apple'),
-          screenWidth: screenWidth,
-          isSmallPhone: isSmallPhone,
-        ),
+      
       ],
     );
   }
@@ -1040,10 +1005,12 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
 
     try {
       final result = await _apiService.login(
-        _loginEmailController.text.trim(),
-        _loginPasswordController.text,
+        _loginNameController.text.trim(),
+        _loginPasswordController.text.trim(),
       );
 
+      debugPrint('Login result: ${result.success}, message: ${result.message}, status: ${result.statusCode}');
+      
       setState(() {
         _isLoading = false;
       });
@@ -1087,10 +1054,10 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
 
     try {
       final result = await _apiService.register({
-        'name': _signupNameController.text.trim(),
+        'username': _signupNameController.text.trim(),
         'email': _signupEmailController.text.trim(),
         'phone': _signupPhoneController.text.trim(),
-        'password': _signupPasswordController.text,
+        'password': _signupPasswordController.text.trim(),
       });
 
       setState(() {

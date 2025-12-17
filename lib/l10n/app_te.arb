@@ -525,5 +525,7 @@
  "passwordsDoNotMatch": "పాస్వర్డ్‌లు సరిపోలలేదు",
  "pleaseEnterName": "దయచేసి మీ పేరు నమోదు చేయండి",
  "pleaseEnterPhone": "దయచేసి ఫోన్ నంబర్ నమోదు చేయండి",
- "enterValidPhone": "దయచేసి సరైన ఫోన్ నంబర్ నమోదు చేయండి"
+ "enterValidPhone": "దయచేసి సరైన ఫోన్ నంబర్ నమోదు చేయండి",
+
+ "username": "username"
 }

@@ -554,6 +554,8 @@
  "passwordsDoNotMatch": "Passwords do not match",
  "pleaseEnterName": "Please enter your name",
  "pleaseEnterPhone": "Please enter phone number",
- "enterValidPhone": "Please enter a valid phone number"
+ "enterValidPhone": "Please enter a valid phone number",
+
+ "username": "username"
 
 }

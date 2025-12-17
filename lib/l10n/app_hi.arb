@@ -525,5 +525,7 @@
  "passwordsDoNotMatch": "पासवर्ड मेल नहीं खाते",
  "pleaseEnterName": "कृपया अपना नाम दर्ज करें",
  "pleaseEnterPhone": "कृपया फोन नंबर दर्ज करें",
- "enterValidPhone": "कृपया एक वैध फोन नंबर दर्ज करें"
+ "enterValidPhone": "कृपया एक वैध फोन नंबर दर्ज करें",
+
+ "username": "username"
 }

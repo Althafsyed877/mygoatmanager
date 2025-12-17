@@ -82,16 +82,21 @@ class ApiService {
   }
   
   // === AUTHENTICATION ===
-  Future<ApiResponse> login(String email, String password) async {
+  Future<ApiResponse> login(String username, String password) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'email': email,
+          'username': username,
           'password': password,
         }),
       );
+      
+      print('Login request to: $baseUrl/auth/login');
+      print('Request body: ${json.encode({'username': username, 'password': password})}');
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
       
       final result = ApiResponse.fromHttpResponse(response);
       
@@ -457,7 +462,41 @@ class ApiService {
       return ApiResponse.error('Download all data error: $e');
     }
   }
-  
+  // === GOOGLE AUTHENTICATION ===
+  Future<ApiResponse> loginWithGoogle(String idToken) async {
+    try {
+      final response = await http.post(
+        
+        Uri.parse('$baseUrl/auth/google'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'idToken': idToken, // Sending the token to Node.js
+        }),
+      );
+      
+      print('Google Login request to: $baseUrl/auth/google');
+      // print('Token sent: $idToken'); // Uncomment for debugging only
+      
+      final result = ApiResponse.fromHttpResponse(response);
+      
+      if (result.success && result.data?['token'] != null) {
+        // Save the JWT token from your Node.js backend
+        await saveToken(result.data!['token']);
+        
+        // Save user data
+        if (result.data?['user'] != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('user_data', json.encode(result.data!['user']));
+        }
+      }
+      
+      return result;
+    } catch (e) {
+      return ApiResponse.error('Google Login error: $e');
+    }
+  }
+
+
   // === UTILITIES ===
   Future<bool> isAuthenticated() async {
     final token = await getToken();

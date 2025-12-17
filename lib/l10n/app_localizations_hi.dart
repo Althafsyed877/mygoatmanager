@@ -1515,4 +1515,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get enterValidPhone => 'कृपया एक वैध फोन नंबर दर्ज करें';
+
+  @override
+  String get username => 'username';
 }

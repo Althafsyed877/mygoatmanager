@@ -1535,4 +1535,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get enterValidPhone => 'சரியான தொலைபேசி எண்ணை உள்ளிடவும்';
+
+  @override
+  String get username => 'username';
 }

@@ -3049,6 +3049,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter a valid phone number'**
   String get enterValidPhone;
+
+  /// No description provided for @username.
+  ///
+  /// In en, this message translates to:
+  /// **'username'**
+  String get username;
 }
 
 class _AppLocalizationsDelegate
