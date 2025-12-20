@@ -527,5 +527,8 @@
  "pleaseEnterPhone": "ದಯವಿಟ್ಟು ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
  "enterValidPhone": "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
 
- "username": "username"
+ "username": "username",
+ "syncFailed": "ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
+ "syncCompletedWithErrors": "ಸಿಂಕ್ ದೋಷಗಳೊಂದಿಗೆ ಪೂರ್ಣಗೊಂಡಿದೆ",
+ "logout": "ಲಾಗ್ಔಟ್"
 }

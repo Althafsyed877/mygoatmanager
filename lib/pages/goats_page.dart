@@ -29,11 +29,14 @@ class _GoatsPageState extends State<GoatsPage> {
   final TextEditingController searchController = TextEditingController();
   List<Goat> goats = [];
   Set<String> selectedGoats = {};
+  List<String> _breeds = [];
+  List<String> _groups = [];
 
   @override
   void initState() {
     super.initState();
     _loadGoats();
+    _loadBreedsAndGroups();
   }
 
   Future<void> _loadGoats() async {
@@ -42,9 +45,23 @@ class _GoatsPageState extends State<GoatsPage> {
     if (goatsJson != null) {
       final List<dynamic> decodedList = jsonDecode(goatsJson);
       setState(() {
-        goats = decodedList.map((item) => Goat.fromJson(item)).toList();
+        goats = decodedList
+            .map((item) => Goat.fromJson(item))
+            .where((goat) => goat.tagNo.isNotEmpty) // Filter out goats with empty tagNo
+            .toList();
       });
     }
+  }
+
+  Future<void> _loadBreedsAndGroups() async {
+    final prefs = await SharedPreferences.getInstance();
+    final breedsData = prefs.getStringList('goatBreeds') ?? [];
+    final groupsData = prefs.getStringList('goatGroups') ?? [];
+    
+    setState(() {
+      _breeds = [AppLocalizations.of(context)!.allBreeds, ...breedsData];
+      _groups = [AppLocalizations.of(context)!.allGroups, ...groupsData];
+    });
   }
 
   Future<void> _saveGoats() async {
@@ -53,7 +70,7 @@ class _GoatsPageState extends State<GoatsPage> {
     await prefs.setString('goats', goatsJson);
   }
 
-  List<String> get breeds => [
+  List<String> get breeds => _breeds.isNotEmpty ? _breeds : [
     AppLocalizations.of(context)!.allBreeds,
     AppLocalizations.of(context)!.alpine,
     AppLocalizations.of(context)!.boer,
@@ -61,9 +78,51 @@ class _GoatsPageState extends State<GoatsPage> {
     AppLocalizations.of(context)!.nubian,
   ];
 
-  List<String> get groups => [
+  List<String> get groups => _groups.isNotEmpty ? _groups : [
     AppLocalizations.of(context)!.allGroups,
   ];
+
+  List<Goat> get filteredGoats {
+    List<Goat> filtered = List.from(goats);
+    final loc = AppLocalizations.of(context);
+
+    // Apply search filter
+    if (isSearching && searchController.text.isNotEmpty) {
+      final query = searchController.text.toLowerCase();
+      filtered = filtered.where((goat) {
+        return goat.tagNo.toLowerCase().contains(query) ||
+               (goat.name?.toLowerCase().contains(query) ?? false);
+      }).toList();
+    }
+
+    // Apply breed filter
+    if (selectedBreed != (loc?.allBreeds ?? 'All Breeds')) {
+      filtered = filtered.where((goat) {
+        final localizedBreed = _getLocalizedBreed(goat.breed ?? '');
+        return localizedBreed == selectedBreed;
+      }).toList();
+    }
+
+    // Apply group filter
+    if (selectedGroup != (loc?.allGroups ?? 'All Groups')) {
+      filtered = filtered.where((goat) => goat.group == selectedGroup).toList();
+    }
+
+    return filtered;
+  }
+
+  String _getLocalizedBreed(String englishBreed) {
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return englishBreed;
+    
+    switch (englishBreed) {
+      case 'Alpine': return loc.alpine;
+      case 'Boer': return loc.boer;
+      case 'Kiko': return loc.kiko;
+      case 'Nubian': return loc.nubian;
+      default: return englishBreed;
+    }
+  }
 
   void _showBreedPicker() {
     showDialog(
@@ -453,12 +512,14 @@ class _GoatsPageState extends State<GoatsPage> {
             ),
             // Goats list or empty state
             Expanded(
-              child: goats.isEmpty
+              child: filteredGoats.isEmpty
                   ? Center(
                       child: Padding(
                         padding: const EdgeInsets.all(32.0),
                         child: Text(
-                          AppLocalizations.of(context)!.noGoatsRegistered,
+                          isSearching || selectedBreed != AppLocalizations.of(context)!.allBreeds || selectedGroup != AppLocalizations.of(context)!.allGroups
+                              ? 'No goats match the current filters'
+                              : AppLocalizations.of(context)!.noGoatsRegistered,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 18,
@@ -470,9 +531,9 @@ class _GoatsPageState extends State<GoatsPage> {
                     )
                   : ListView.builder(
                       padding: const EdgeInsets.all(16),
-                      itemCount: goats.length,
+                      itemCount: filteredGoats.length,
                       itemBuilder: (context, index) {
-                        final goat = goats[index];
+                        final goat = filteredGoats[index];
                         return _buildGoatCard(goat);
                       },
                     ),
@@ -686,6 +747,16 @@ class _GoatsPageState extends State<GoatsPage> {
                     });
                     break;
                   case 'edit':
+                    // Validate goat data before editing
+                    if (goat.tagNo.isEmpty || goat.gender.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Cannot edit goat with invalid data.'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      break;
+                    }
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -884,7 +955,7 @@ class _GoatsPageState extends State<GoatsPage> {
                       await _saveGoats();
                       
                       if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
+                        ScaffoldMessenger.of(ctx).showSnackBar(
                           SnackBar(
                             content: Text('Goat ${goat.tagNo} archived as ${selectedReason!}'),
                             backgroundColor: const Color(0xFF4CAF50),
@@ -912,12 +983,14 @@ class _GoatsPageState extends State<GoatsPage> {
     });
     await _saveGoats();
     
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${loc.deleteGoatDeleted} ${goat.tagNo}'),
-        backgroundColor: Colors.red,
-      ),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${loc.deleteGoatDeleted} ${goat.tagNo}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   // OLD: Delete Dialog (now replaced by archive dialog)
@@ -1046,17 +1119,27 @@ class _GoatsPageState extends State<GoatsPage> {
     final setFarmLogo = localizations.setFarmLogo;
     final setFarmName = localizations.setFarmName;
     final setFarmLocation = localizations.setFarmLocation;
+    final tagLabel = localizations.tagLabel;
+    final nameLabel = localizations.nameLabel;
+    final genderLabel = localizations.genderLabel;
+    final stageLabel = localizations.stageLabel;
+    final dobLabel = localizations.dobLabel;
+    final ageLabel = localizations.ageLabel;
+    final breedLabel2 = localizations.breedLabel;
+    final groupLabel2 = localizations.groupLabel;
+    final weightLabel = localizations.weightLabel;
+    final goatsFilename = localizations.goatsFilename;
 
     final headers = [
-      AppLocalizations.of(context)!.tagLabel,
-      AppLocalizations.of(context)!.nameLabel,
-      AppLocalizations.of(context)!.genderLabel,
-      AppLocalizations.of(context)!.stageLabel,
-      AppLocalizations.of(context)!.dobLabel,
-      AppLocalizations.of(context)!.ageLabel,
-      AppLocalizations.of(context)!.breedLabel,
-      AppLocalizations.of(context)!.groupLabel,
-      AppLocalizations.of(context)!.weightLabel,
+      tagLabel,
+      nameLabel,
+      genderLabel,
+      stageLabel,
+      dobLabel,
+      ageLabel,
+      breedLabel2,
+      groupLabel2,
+      weightLabel,
     ];
 
     final data = goats.map((g) {
@@ -1087,7 +1170,7 @@ class _GoatsPageState extends State<GoatsPage> {
               pw.SizedBox(height: 6),
               pw.Text('$dateLabel ${DateTime.now().toLocal().toString().substring(0, 19)}', style: pw.TextStyle(fontSize: 10, color: pdf.PdfColors.red)),
               pw.SizedBox(height: 12),
-              pw.Table.fromTextArray(
+              pw.TableHelper.fromTextArray(
                 headers: headers,
                 data: data,
                 headerStyle: pw.TextStyle(fontSize: 10, color: pdf.PdfColors.white),
@@ -1108,7 +1191,7 @@ class _GoatsPageState extends State<GoatsPage> {
 
     await Printing.sharePdf(
       bytes: bytes, 
-      filename: '${AppLocalizations.of(context)!.goatsFilename}_${DateTime.now().millisecondsSinceEpoch}.pdf'
+      filename: '${goatsFilename}_${DateTime.now().millisecondsSinceEpoch}.pdf'
     );
   }
 }

@@ -76,10 +76,10 @@ class Goat {
 
   factory Goat.fromJson(Map<String, dynamic> json) {
     return Goat(
-      tagNo: json['tagNo'] as String,
+      tagNo: json['tagNo'] as String? ?? '',
       name: json['name'] as String?,
       breed: json['breed'] as String?,
-      gender: json['gender'] as String,
+      gender: json['gender'] as String? ?? 'Male',
       goatStage: json['goatStage'] as String?,
       dateOfBirth: json['dateOfBirth'] as String?,
       dateOfEntry: json['dateOfEntry'] as String?,

@@ -1518,4 +1518,13 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get username => 'username';
+
+  @override
+  String get syncFailed => 'सिंक विफल हुआ';
+
+  @override
+  String get syncCompletedWithErrors => 'सिंक त्रुटियों के साथ पूरा हुआ';
+
+  @override
+  String get logout => 'लॉगआउट';
 }

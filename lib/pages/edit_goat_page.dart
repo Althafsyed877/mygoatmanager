@@ -26,6 +26,7 @@ class _EditGoatPageState extends State<EditGoatPage> {
   String? _selectedGoatStage;
   String? _selectedGroup;
   String? _selectedObtained;
+  String? _selectedBreedingStatus;
 
   final List<String> _breeds = [
     'Boer',
@@ -55,9 +56,54 @@ class _EditGoatPageState extends State<EditGoatPage> {
     'Adopted',
   ];
 
+  final List<String> _breedingStatuses = [
+    'Not Bred',
+    'Bred',
+    'Pregnant',
+    'Lactating',
+    'Not Applicable',
+  ];
+
+  String? _normalizeObtainedValue(String? value) {
+    if (value == null) return null;
+    
+    // Find the matching item in _obtainedMethods (case-insensitive)
+    for (String method in _obtainedMethods) {
+      if (method.toLowerCase() == value.toLowerCase()) {
+        return method; // Return the correctly cased version
+      }
+    }
+    return null; // Not found
+  }
+
   @override
   void initState() {
     super.initState();
+    
+    // Validate goat data
+    if (widget.goat.tagNo.isEmpty || widget.goat.gender.isEmpty) {
+      // Invalid goat data, initialize with empty controllers and show error
+      _tagNoController = TextEditingController();
+      _nameController = TextEditingController();
+      _dobController = TextEditingController();
+      _entryDateController = TextEditingController();
+      _weightController = TextEditingController();
+      _motherTagController = TextEditingController();
+      _fatherTagController = TextEditingController();
+      _notesController = TextEditingController();
+      
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Invalid goat data. Cannot edit this goat.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        Navigator.pop(context);
+      });
+      return;
+    }
+    
     _tagNoController = TextEditingController(text: widget.goat.tagNo);
     _nameController = TextEditingController(text: widget.goat.name);
     _dobController = TextEditingController(text: widget.goat.dateOfBirth);
@@ -73,7 +119,8 @@ class _EditGoatPageState extends State<EditGoatPage> {
     _selectedGender = widget.goat.gender;
     _selectedGoatStage = widget.goat.goatStage;
     _selectedGroup = widget.goat.group;
-    _selectedObtained = widget.goat.obtained;
+    _selectedObtained = _normalizeObtainedValue(widget.goat.obtained);
+    _selectedBreedingStatus = widget.goat.breedingStatus;
   }
 
   @override
@@ -216,6 +263,19 @@ class _EditGoatPageState extends State<EditGoatPage> {
               onChanged: (value) {
                 setState(() {
                   _selectedObtained = value;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Breeding Status Dropdown
+            _buildDropdownField(
+              label: 'Breeding Status',
+              value: _selectedBreedingStatus,
+              items: _breedingStatuses,
+              onChanged: (value) {
+                setState(() {
+                  _selectedBreedingStatus = value;
                 });
               },
             ),
@@ -403,6 +463,11 @@ class _EditGoatPageState extends State<EditGoatPage> {
             _fatherTagController.text.isEmpty ? null : _fatherTagController.text,
         notes: _notesController.text.isEmpty ? null : _notesController.text,
         photoPath: widget.goat.photoPath,
+        breedingStatus: _selectedBreedingStatus,
+        breedingDate: widget.goat.breedingDate,
+        breedingPartner: widget.goat.breedingPartner,
+        kiddingHistory: widget.goat.kiddingHistory,
+        kiddingDueDate: widget.goat.kiddingDueDate,
       );
 
       Navigator.pop(context, updatedGoat);

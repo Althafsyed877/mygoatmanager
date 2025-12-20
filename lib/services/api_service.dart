@@ -2,8 +2,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/goat.dart';  // Your existing Goat model
-import '../models/event.dart'; // Your existing Event model
+import '../models/goat.dart';  // Your Goat model
+import '../models/event.dart'; // Your Event model
 
 class ApiService {
   // === CONFIGURATION - UPDATE THESE FOR YOUR GOAT MANAGER ===
@@ -12,10 +12,11 @@ class ApiService {
   static const String productionUrl = 'https://sheepfarmmanager.myqrmart.com/api';
   
   // Local development URL (adjust port as needed)
-  static const String localUrl = 'http://10.0.2.2:38429/api';
+  static const String localUrl = 'http://10.0.2.2:38429/api'; // For emulator
+  // For physical device testing: 'http://<YOUR_COMPUTER_IP>:38429/api'
   
   // Toggle between local and production
-  static bool useLocalhost = false;
+  static bool useLocalhost = false; // Set to true for local testing
   
   static String get baseUrl => useLocalhost ? localUrl : productionUrl;
   
@@ -24,7 +25,7 @@ class ApiService {
   factory ApiService() => _instance;
   ApiService._internal();
   
-  // === TOKEN MANAGEMENT ===
+  // === TOKEN MANAGEMENT (KEEP THESE - AuthService uses them) ===
   Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('goat_auth_token', token);
@@ -81,7 +82,7 @@ class ApiService {
     }
   }
   
-  // === AUTHENTICATION ===
+  // === AUTHENTICATION ENDPOINTS ===
   Future<ApiResponse> login(String username, String password) async {
     try {
       final response = await http.post(
@@ -94,7 +95,6 @@ class ApiService {
       );
       
       print('Login request to: $baseUrl/auth/login');
-      print('Request body: ${json.encode({'username': username, 'password': password})}');
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
       
@@ -141,6 +141,64 @@ class ApiService {
       return ApiResponse.fromHttpResponse(response);
     } catch (e) {
       return ApiResponse.error('Forgot password error: $e');
+    }
+  }
+  
+  // === GOOGLE AUTHENTICATION ===
+  Future<ApiResponse> loginWithGoogle(String idToken) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/google'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'idToken': idToken,
+        }),
+      );
+      
+      print('Google Login request to: $baseUrl/auth/google');
+      
+      final result = ApiResponse.fromHttpResponse(response);
+      
+      if (result.success && result.data?['token'] != null) {
+        await saveToken(result.data!['token']);
+        
+        if (result.data?['user'] != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('user_data', json.encode(result.data!['user']));
+        }
+      }
+      
+      return result;
+    } catch (e) {
+      return ApiResponse.error('Google Login error: $e');
+    }
+  }
+  
+  // === USER DATA ===
+  Future<Map<String, dynamic>?> getUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userString = prefs.getString('user_data');
+    if (userString != null) {
+      return json.decode(userString);
+    }
+    return null;
+  }
+  
+  // === AUTH VALIDATION (For AuthService) ===
+  Future<bool> isAuthenticated() async {
+    final token = await getToken();
+    if (token == null) return false;
+    
+    try {
+      final headers = await _getHeaders();
+      final response = await http.get(
+        Uri.parse('$baseUrl/auth/validate'),
+        headers: headers,
+      );
+      
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
     }
   }
   
@@ -309,6 +367,21 @@ class ApiService {
     }
   }
   
+  Future<ApiResponse> createMilkRecord(Map<String, dynamic> milkData) async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/milk-records'),
+        headers: headers,
+        body: json.encode(milkData),
+      );
+      
+      return ApiResponse.fromHttpResponse(response);
+    } catch (e) {
+      return ApiResponse.error('Create milk record error: $e');
+    }
+  }
+  
   // === PREGNANCIES ===
   Future<ApiResponse> getPregnancies() async {
     try {
@@ -351,6 +424,36 @@ class ApiService {
       return ApiResponse.fromHttpResponse(response);
     } catch (e) {
       return ApiResponse.error('Get transactions error: $e');
+    }
+  }
+  
+  Future<ApiResponse> createIncome(Map<String, dynamic> incomeData) async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/incomes'),
+        headers: headers,
+        body: json.encode(incomeData),
+      );
+      
+      return ApiResponse.fromHttpResponse(response);
+    } catch (e) {
+      return ApiResponse.error('Create income error: $e');
+    }
+  }
+  
+  Future<ApiResponse> createExpense(Map<String, dynamic> expenseData) async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/expenses'),
+        headers: headers,
+        body: json.encode(expenseData),
+      );
+      
+      return ApiResponse.fromHttpResponse(response);
+    } catch (e) {
+      return ApiResponse.error('Create expense error: $e');
     }
   }
   
@@ -462,68 +565,8 @@ class ApiService {
       return ApiResponse.error('Download all data error: $e');
     }
   }
-  // === GOOGLE AUTHENTICATION ===
-  Future<ApiResponse> loginWithGoogle(String idToken) async {
-    try {
-      final response = await http.post(
-        
-        Uri.parse('$baseUrl/auth/google'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'idToken': idToken, // Sending the token to Node.js
-        }),
-      );
-      
-      print('Google Login request to: $baseUrl/auth/google');
-      // print('Token sent: $idToken'); // Uncomment for debugging only
-      
-      final result = ApiResponse.fromHttpResponse(response);
-      
-      if (result.success && result.data?['token'] != null) {
-        // Save the JWT token from your Node.js backend
-        await saveToken(result.data!['token']);
-        
-        // Save user data
-        if (result.data?['user'] != null) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('user_data', json.encode(result.data!['user']));
-        }
-      }
-      
-      return result;
-    } catch (e) {
-      return ApiResponse.error('Google Login error: $e');
-    }
-  }
-
-
-  // === UTILITIES ===
-  Future<bool> isAuthenticated() async {
-    final token = await getToken();
-    if (token == null) return false;
-    
-    try {
-      final headers = await _getHeaders();
-      final response = await http.get(
-        Uri.parse('$baseUrl/auth/validate'),
-        headers: headers,
-      );
-      
-      return response.statusCode == 200;
-    } catch (e) {
-      return false;
-    }
-  }
   
-  Future<Map<String, dynamic>?> getUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userString = prefs.getString('user_data');
-    if (userString != null) {
-      return json.decode(userString);
-    }
-    return null;
-  }
-  
+  // === LOGOUT ===
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('goat_auth_token');
@@ -592,10 +635,18 @@ class ApiResponse {
         );
       }
     } catch (e) {
-      return ApiResponse.error(
-        'Response parsing error: $e',
-        statusCode: response.statusCode,
-      );
+      // If JSON parsing fails, treat the response body as plain text error message
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return ApiResponse.success(
+          message: response.body.isNotEmpty ? response.body : 'Success',
+          statusCode: response.statusCode,
+        );
+      } else {
+        return ApiResponse.error(
+          response.body.isNotEmpty ? response.body : 'Request failed',
+          statusCode: response.statusCode,
+        );
+      }
     }
   }
   

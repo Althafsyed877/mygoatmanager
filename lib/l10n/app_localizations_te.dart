@@ -1517,4 +1517,13 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get username => 'username';
+
+  @override
+  String get syncFailed => 'సమకాలీకరణ విఫలమైంది';
+
+  @override
+  String get syncCompletedWithErrors => 'సమకాలీకరణ లోపాలతో పూర్తయింది';
+
+  @override
+  String get logout => 'లాగ్అవుట్';
 }

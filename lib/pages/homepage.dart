@@ -9,6 +9,7 @@ import 'package:mygoatmanager/pages/reports_page.dart';
 import 'package:mygoatmanager/pages/goats_page.dart';
 import 'package:mygoatmanager/pages/milk_records_page.dart';
 import 'package:mygoatmanager/services/api_service.dart';
+import 'package:mygoatmanager/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Homepage extends StatefulWidget {
@@ -32,7 +33,9 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
   
   // Current selected language
   String _selectedLanguage = 'English';
-  String _selectedLanguageCode = 'en';
+  
+  // User data
+  String? userEmail;
   
   // Language data
   final Map<String, Map<String, String>> _languages = {
@@ -81,6 +84,9 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
     // Load saved language
     _loadSavedLanguage();
     
+    // Load user data
+    _loadUserData();
+    
     // Download latest data from server after login
     _downloadDataFromServer();
     
@@ -90,18 +96,38 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
 
   // Load saved language from shared preferences
   Future<void> _loadSavedLanguage() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedLanguage = prefs.getString('selectedLanguage') ?? 'English';
-    final savedLanguageCode = prefs.getString('selectedLanguageCode') ?? 'en';
-    
-    setState(() {
-      _selectedLanguage = savedLanguage;
-      _selectedLanguageCode = savedLanguageCode;
-    });
-    
-    // If we have a saved language, update the app locale
-    if (savedLanguageCode != 'en' && widget.onLocaleChanged != null) {
-      widget.onLocaleChanged!(Locale(savedLanguageCode));
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedLanguage = prefs.getString('selectedLanguage') ?? 'English';
+      
+      setState(() {
+        _selectedLanguage = savedLanguage;
+      });
+      
+      // If we have a saved language, update the app locale
+      final savedLanguageCode = prefs.getString('selectedLanguageCode') ?? 'en';
+      if (savedLanguageCode != 'en' && widget.onLocaleChanged != null) {
+        widget.onLocaleChanged!(Locale(savedLanguageCode));
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error loading saved language: $e');
+    }
+  }
+
+  // Load user data
+  Future<void> _loadUserData() async {
+    try {
+      final authService = AuthService();
+      final userData = await authService.getUserData();
+      if (userData != null && userData['email'] != null) {
+        setState(() {
+          userEmail = userData['email'].toString();
+        });
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error loading user data: $e');
     }
   }
 
@@ -113,51 +139,42 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenSize = mediaQuery.size;
-    final screenWidth = screenSize.width;
-    final screenHeight = screenSize.height;
-    final padding = mediaQuery.padding;
-
-    // Calculate responsive values based on screen size
-    final isSmallPhone = screenWidth < 360;
-    final isLargePhone = screenWidth >= 360 && screenWidth < 600;
-    final isTablet = screenWidth >= 600 && screenWidth < 900;
-    final isDesktop = screenWidth >= 900;
-
+    // Get localizations with null check
+    final appLocalizations = AppLocalizations.of(context);
+    
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: const Color(0xFF4CAF50),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.menu, 
             color: Colors.white, 
-            size: isSmallPhone ? 20 : (isLargePhone ? 24 : 28)
+            size: 24,
           ),
           onPressed: () {
             _scaffoldKey.currentState?.openDrawer();
           },
         ),
         title: Text(
-          AppLocalizations.of(context)!.appTitle,
-          style: TextStyle(
+          appLocalizations?.appTitle ?? 'Goat Manager',
+          style: const TextStyle(
             color: Colors.white,
-            fontSize: isSmallPhone ? 16 : (isLargePhone ? 20 : 22),
+            fontSize: 20,
             fontWeight: FontWeight.w500,
           ),
         ),
         actions: [
           // Language Icon
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.language,
               color: Colors.white,
-              size: isSmallPhone ? 20 : (isLargePhone ? 24 : 28),
+              size: 24,
             ),
             onPressed: _showLanguageSelector,
-            tooltip: AppLocalizations.of(context)!.selectLanguage,
+            tooltip: appLocalizations?.selectLanguage ?? 'Select Language',
           ),
           
           // Animated Notification Bell Icon
@@ -167,31 +184,33 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               return Transform.rotate(
                 angle: _animation.value,
                 child: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.notifications, 
                     color: Colors.amber, 
-                    size: isSmallPhone ? 20 : (isLargePhone ? 24 : 28)
+                    size: 24,
                   ),
                   onPressed: _showNotifications,
-                  tooltip: AppLocalizations.of(context)!.notifications,
+                  tooltip: appLocalizations?.notifications ?? 'Notifications',
                 ),
               );
             },
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(isSmallPhone ? 2 : 4),
-          child: Container(
-            height: isSmallPhone ? 2 : 4,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFFF9800), Color(0xFFFF5722)],
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(4),
+          child: SizedBox(
+            height: 4,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFFF9800), Color(0xFFFF5722)],
+                ),
               ),
             ),
           ),
         ),
       ),
-      drawer: _buildDrawer(context),
+      drawer: _buildDrawer(context, appLocalizations),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -203,29 +222,22 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
           ),
         ),
         child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final availableHeight = constraints.maxHeight - padding.top - padding.bottom;
-              final availableWidth = constraints.maxWidth;
-
-              return _buildResponsiveGrid(availableWidth, availableHeight);
-            },
-          ),
+          child: _buildResponsiveGrid(context, appLocalizations),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _syncData,
         backgroundColor: const Color(0xFFFFA726),
-        icon: Icon(
+        icon: const Icon(
           Icons.sync, 
           color: Colors.white, 
-          size: isSmallPhone ? 16 : 20
+          size: 20,
         ),
         label: Text(
-          AppLocalizations.of(context)!.syncData,
-          style: TextStyle(
+          appLocalizations?.syncData ?? 'Sync Data',
+          style: const TextStyle(
             color: Colors.white,
-            fontSize: isSmallPhone ? 12 : (isLargePhone ? 14 : 16),
+            fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -245,6 +257,8 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
 
   // Method to show language selector
   void _showLanguageSelector() {
+    final appLocalizations = AppLocalizations.of(context);
+    
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -258,7 +272,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
+                color: Colors.black.withOpacity(0.2),
                 blurRadius: 10,
                 spreadRadius: 5,
               ),
@@ -279,14 +293,14 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.language,
                       color: Colors.white,
                       size: 24,
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      AppLocalizations.of(context)!.selectLanguage,
+                      appLocalizations?.selectLanguage ?? 'Select Language',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -308,7 +322,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF4CAF50).withValues(alpha: 0.1) : Colors.grey[100],
+                      color: isSelected ? const Color(0xFF4CAF50).withOpacity(0.1) : Colors.grey[100],
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isSelected ? const Color(0xFF4CAF50) : Colors.transparent,
@@ -334,23 +348,23 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                         ),
                       ),
                       Text(
-                        languageData['nativeName']!,
+                        languageData['nativeName'] ?? '',
                         style: TextStyle(
                           fontSize: 14,
-                          color: isSelected ? const Color(0xFF4CAF50).withValues(alpha: 0.8) : Colors.grey[600],
+                          color: isSelected ? const Color(0xFF4CAF50).withOpacity(0.8) : Colors.grey[600],
                         ),
                       ),
                     ],
                   ),
                   trailing: isSelected
-                      ? Icon(
+                      ? const Icon(
                           Icons.check_circle,
-                          color: const Color(0xFF4CAF50),
+                          color: Color(0xFF4CAF50),
                           size: 24,
                         )
                       : null,
                   onTap: () {
-                    _changeLanguage(languageName, languageData['code']!);
+                    _changeLanguage(languageName, languageData['code'] ?? 'en');
                     Navigator.pop(context);
                   },
                 );
@@ -373,7 +387,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                       Navigator.pop(context);
                     },
                     child: Text(
-                      AppLocalizations.of(context)!.cancel,
+                      appLocalizations?.cancel ?? 'Cancel',
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.grey,
@@ -391,35 +405,42 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
 
   // Method to change language
   void _changeLanguage(String languageName, String languageCode) async {
-    // Save language preference
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selectedLanguage', languageName);
-    await prefs.setString('selectedLanguageCode', languageCode);
-    
-    setState(() {
-      _selectedLanguage = languageName;
-      _selectedLanguageCode = languageCode;
-    });
-    
-    // Create a Locale object
-    final newLocale = Locale(languageCode);
-    
-    // Notify parent to change locale
-    if (widget.onLocaleChanged != null) {
-      widget.onLocaleChanged!(newLocale);
+    try {
+      // Save language preference
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('selectedLanguage', languageName);
+      await prefs.setString('selectedLanguageCode', languageCode);
+      
+      setState(() {
+        _selectedLanguage = languageName;
+      });
+      
+      // Create a Locale object
+      final newLocale = Locale(languageCode);
+      
+      // Notify parent to change locale
+      if (widget.onLocaleChanged != null) {
+        widget.onLocaleChanged?.call(newLocale);
+      }
+      
+      if (mounted) {
+        final appLocalizations = AppLocalizations.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${appLocalizations?.languageChangedTo ?? 'Language changed to'} $languageName'),
+            backgroundColor: const Color(0xFF4CAF50),
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error changing language: $e');
     }
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${AppLocalizations.of(context)!.languageChangedTo} $languageName'),
-        backgroundColor: const Color(0xFF4CAF50),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
   }
 
   // Helper method to get language flag emoji
@@ -440,90 +461,76 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
     }
   }
 
-  Widget _buildResponsiveGrid(double availableWidth, double availableHeight) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-    
-    int crossAxisCount;
-    double childAspectRatio;
-    EdgeInsets padding;
-    double spacing;
-
-    if (screenWidth < 360) {
-      crossAxisCount = 2;
-      childAspectRatio = 0.7;
-      padding = const EdgeInsets.all(8.0);
-      spacing = 6.0;
-    } else if (screenWidth < 400) {
-      crossAxisCount = 2;
-      childAspectRatio = 0.75;
-      padding = const EdgeInsets.all(10.0);
-      spacing = 8.0;
-    } else if (screenWidth < 600) {
-      crossAxisCount = 2;
-      childAspectRatio = 0.8;
-      padding = const EdgeInsets.all(12.0);
-      spacing = 10.0;
-    } else if (screenWidth < 900) {
-      crossAxisCount = 3;
-      childAspectRatio = 0.9;
-      padding = const EdgeInsets.all(16.0);
-      spacing = 12.0;
-    } else {
-      crossAxisCount = 4;
-      childAspectRatio = 1.0;
-      padding = const EdgeInsets.all(20.0);
-      spacing = 16.0;
-    }
-
-    return Padding(
-      padding: padding,
-      child: GridView.count(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: spacing,
-        mainAxisSpacing: spacing,
-        childAspectRatio: childAspectRatio,
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        children: [
-          _buildMenuCard(context, AppLocalizations.of(context)!.goats, 'assets/images/goat.png', () {
+  Widget _buildResponsiveGrid(BuildContext context, AppLocalizations? appLocalizations) {
+    return GridView.count(
+      crossAxisCount: 2,
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 10,
+      childAspectRatio: 0.8,
+      shrinkWrap: true,
+      padding: const EdgeInsets.all(12),
+      physics: const BouncingScrollPhysics(),
+      children: [
+        _buildMenuCard(
+          context, 
+          appLocalizations?.goats ?? 'Goats', 
+          'assets/images/goat.png', 
+          () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => const GoatsPage()));
-          }),
-          _buildMenuCard(context, AppLocalizations.of(context)!.milkRecords, 'assets/images/milk.png', () {
+          }
+        ),
+        _buildMenuCard(
+          context, 
+          appLocalizations?.milkRecords ?? 'Milk Records', 
+          'assets/images/milk.png', 
+          () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => const MilkRecordsPage()));
-          }),
-          _buildMenuCard(context, AppLocalizations.of(context)!.events, 'assets/images/events.png', () {
+          }
+        ),
+        _buildMenuCard(
+          context, 
+          appLocalizations?.events ?? 'Events', 
+          'assets/images/events.png', 
+          () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => const EventsPage()));
-          }),
-          _buildMenuCard(context, AppLocalizations.of(context)!.transactions, 'assets/images/transactions.png', () {
+          }
+        ),
+        _buildMenuCard(
+          context, 
+          appLocalizations?.transactions ?? 'Transactions', 
+          'assets/images/transactions.png', 
+          () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => const TransactionsPage()));
-          }),
-          _buildMenuCard(context, AppLocalizations.of(context)!.farmSetup, 'assets/images/farm_setup.png', () {
+          }
+        ),
+        _buildMenuCard(
+          context, 
+          appLocalizations?.farmSetup ?? 'Farm Setup', 
+          'assets/images/farm_setup.png', 
+          () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => FarmSetupPage()));
-          }),
-          _buildMenuCard(context, AppLocalizations.of(context)!.reports, 'assets/images/reports.png', () {
+          }
+        ),
+        _buildMenuCard(
+          context, 
+          appLocalizations?.reports ?? 'Reports', 
+          'assets/images/reports.png', 
+          () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => ReportsPage()));
-          }),
-        ],
-      ),
+          }
+        ),
+      ],
     );
   }
 
-  Widget _buildDrawer(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-    
-    final isSmallPhone = screenWidth < 360;
-    final isLargePhone = screenWidth >= 360 && screenWidth < 600;
-    final isTablet = screenWidth >= 600;
-
+  Widget _buildDrawer(BuildContext context, AppLocalizations? appLocalizations) {
     return Drawer(
-      width: screenWidth * (isSmallPhone ? 0.85 : (isLargePhone ? 0.8 : 0.75)),
+      width: MediaQuery.of(context).size.width * 0.75,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           Container(
-            height: isSmallPhone ? 140 : (isLargePhone ? 160 : 180),
+            height: 160,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -532,91 +539,130 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               ),
             ),
             child: Padding(
-              padding: EdgeInsets.all(isSmallPhone ? 10.0 : (isLargePhone ? 12.0 : 16.0)),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: isSmallPhone ? 12 : (isLargePhone ? 15 : 20)),
+                  const SizedBox(height: 20),
                   Text(
-                    AppLocalizations.of(context)!.createYourFarmAccount,
-                    style: TextStyle(
+                    appLocalizations?.createYourFarmAccount ?? 'Create Your Farm Account',
+                    style: const TextStyle(
                       color: Colors.white,
-                      fontSize: isSmallPhone ? 13 : (isLargePhone ? 15 : 16),
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: isSmallPhone ? 6 : (isLargePhone ? 8 : 10)),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Container(
-                      width: isSmallPhone ? 32 : (isLargePhone ? 36 : 40),
-                      height: isSmallPhone ? 32 : (isLargePhone ? 36 : 40),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(6),
+                  const SizedBox(height: 10),
+                  if (userEmail == null)
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Icon(
+                          Icons.person_add,
+                          color: Color(0xFF4CAF50),
+                          size: 20,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.person_add,
-                        color: const Color(0xFF4CAF50),
-                        size: isSmallPhone ? 18 : (isLargePhone ? 20 : 24),
+                      title: Text(
+                        appLocalizations?.loginOrCreateAccount ?? 'Login or Create Account',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _navigateToAuthPage();
+                      },
+                    )
+                  else
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Icon(
+                          Icons.person,
+                          color: Color(0xFF4CAF50),
+                          size: 20,
+                        ),
+                      ),
+                      title: Text(
+                        userEmail!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                    title: Text(
-                      AppLocalizations.of(context)!.loginOrCreateAccount,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: isSmallPhone ? 11 : (isLargePhone ? 13 : 14),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      _navigateToAuthPage();
-                    },
-                  ),
                 ],
               ),
             ),
           ),
 
           _buildDrawerSection(
-            title: AppLocalizations.of(context)!.upgradeAndAccount,
-            isSmallPhone: isSmallPhone,
-            isLargePhone: isLargePhone,
+            title: appLocalizations?.upgradeAndAccount ?? 'Upgrade & Account',
             children: [
               _buildDrawerItem(
                 icon: Icons.workspace_premium,
-                title: AppLocalizations.of(context)!.createYourFarmAccount,
-                isSmallPhone: isSmallPhone,
-                isLargePhone: isLargePhone,
+                title: appLocalizations?.createYourFarmAccount ?? 'Create Your Farm Account',
                 onTap: () {
                   Navigator.pop(context);
                   _navigateToAuthPage();
                 },
               ),
-              _buildDrawerItem(
-                icon: Icons.login,
-                title: AppLocalizations.of(context)!.loginOrCreateAccount,
-                isSmallPhone: isSmallPhone,
-                isLargePhone: isLargePhone,
-                onTap: () {
-                  Navigator.pop(context);
-                  _navigateToAuthPage();
-                },
-              ),
+              if (userEmail == null)
+                _buildDrawerItem(
+                  icon: Icons.login,
+                  title: appLocalizations?.loginOrCreateAccount ?? 'Login or Create Account',
+                  onTap: () {
+                    Navigator.pop(context);
+                    _navigateToAuthPage();
+                  },
+                )
+              else
+                Column(
+                  children: [
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        userEmail!,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF4CAF50),
+                        ),
+                      ),
+                    ),
+                    _buildDrawerItem(
+                      icon: Icons.logout,
+                      title: AppLocalizations.of(context)?.logout ?? 'Logout', 
+                      onTap: _logoutUser,
+                    ),
+                  ],
+                ),
             ],
           ),
 
           _buildDrawerSection(
-            title: AppLocalizations.of(context)!.appAndFarmTools,
-            isSmallPhone: isSmallPhone,
-            isLargePhone: isLargePhone,
+            title: appLocalizations?.appAndFarmTools ?? 'App & Farm Tools',
             children: [
               _buildDrawerItem(
                 icon: Icons.settings,
-                title: AppLocalizations.of(context)!.settings,
-                isSmallPhone: isSmallPhone,
-                isLargePhone: isLargePhone,
+                title: appLocalizations?.settings ?? 'Settings',
                 onTap: () {
                   Navigator.pop(context);
                   _showComingSoonSnackbar();
@@ -624,9 +670,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               ),
               _buildDrawerItem(
                 icon: Icons.note,
-                title: AppLocalizations.of(context)!.farmNotes,
-                isSmallPhone: isSmallPhone,
-                isLargePhone: isLargePhone,
+                title: appLocalizations?.farmNotes ?? 'Farm Notes',
                 onTap: () {
                   Navigator.pop(context);
                   _showComingSoonSnackbar();
@@ -634,9 +678,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               ),
               _buildDrawerItem(
                 icon: Icons.apps,
-                title: AppLocalizations.of(context)!.seeAllOurApps,
-                isSmallPhone: isSmallPhone,
-                isLargePhone: isLargePhone,
+                title: appLocalizations?.seeAllOurApps ?? 'See All Our Apps',
                 onTap: () {
                   Navigator.pop(context);
                   _showComingSoonSnackbar();
@@ -644,9 +686,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               ),
               _buildDrawerItem(
                 icon: Icons.school,
-                title: AppLocalizations.of(context)!.farmingKnowledge,
-                isSmallPhone: isSmallPhone,
-                isLargePhone: isLargePhone,
+                title: appLocalizations?.farmingKnowledge ?? 'Farming Knowledge',
                 onTap: () {
                   Navigator.pop(context);
                   _showComingSoonSnackbar();
@@ -656,15 +696,11 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
           ),
 
           _buildDrawerSection(
-            title: AppLocalizations.of(context)!.helpAndSupport,
-            isSmallPhone: isSmallPhone,
-            isLargePhone: isLargePhone,
+            title: appLocalizations?.helpAndSupport ?? 'Help & Support',
             children: [
               _buildDrawerItem(
                 icon: Icons.help_outline,
-                title: AppLocalizations.of(context)!.howToUseThisApp,
-                isSmallPhone: isSmallPhone,
-                isLargePhone: isLargePhone,
+                title: appLocalizations?.howToUseThisApp ?? 'How to Use This App',
                 onTap: () {
                   Navigator.pop(context);
                   _showComingSoonSnackbar();
@@ -672,9 +708,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               ),
               _buildDrawerItem(
                 icon: Icons.contact_support,
-                title: AppLocalizations.of(context)!.contactOurTeam,
-                isSmallPhone: isSmallPhone,
-                isLargePhone: isLargePhone,
+                title: appLocalizations?.contactOurTeam ?? 'Contact Our Team',
                 onTap: () {
                   Navigator.pop(context);
                   _showComingSoonSnackbar();
@@ -684,37 +718,27 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
           ),
 
           _buildDrawerSection(
-            title: AppLocalizations.of(context)!.shareAndRecommend,
-            isSmallPhone: isSmallPhone,
-            isLargePhone: isLargePhone,
+            title: appLocalizations?.shareAndRecommend ?? 'Share & Recommend',
             children: [
               _buildDrawerItem(
                 icon: Icons.share,
-                title: AppLocalizations.of(context)!.shareAppWithFriends,
-                isSmallPhone: isSmallPhone,
-                isLargePhone: isLargePhone,
+                title: appLocalizations?.shareAppWithFriends ?? 'Share App with Friends',
                 onTap: _shareApp,
               ),
               _buildDrawerItem(
                 icon: Icons.star,
-                title: AppLocalizations.of(context)!.rateAppInPlayStore,
-                isSmallPhone: isSmallPhone,
-                isLargePhone: isLargePhone,
+                title: appLocalizations?.rateAppInPlayStore ?? 'Rate App in Play Store',
                 onTap: _rateApp,
               ),
             ],
           ),
 
           _buildDrawerSection(
-            title: AppLocalizations.of(context)!.legal,
-            isSmallPhone: isSmallPhone,
-            isLargePhone: isLargePhone,
+            title: appLocalizations?.legal ?? 'Legal',
             children: [
               _buildDrawerItem(
                 icon: Icons.privacy_tip,
-                title: AppLocalizations.of(context)!.privacyPolicy,
-                isSmallPhone: isSmallPhone,
-                isLargePhone: isLargePhone,
+                title: appLocalizations?.privacyPolicy ?? 'Privacy Policy',
                 onTap: () {
                   Navigator.pop(context);
                   _showComingSoonSnackbar();
@@ -723,7 +747,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
             ],
           ),
 
-          SizedBox(height: isSmallPhone ? 12 : (isLargePhone ? 16 : 20)),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -731,26 +755,19 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
 
   Widget _buildDrawerSection({
     required String title,
-    required bool isSmallPhone,
-    required bool isLargePhone,
     required List<Widget> children,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(
-            isSmallPhone ? 10 : (isLargePhone ? 12 : 16), 
-            isSmallPhone ? 12 : (isLargePhone ? 15 : 20), 
-            isSmallPhone ? 10 : (isLargePhone ? 12 : 16), 
-            isSmallPhone ? 6 : (isLargePhone ? 8 : 10)
-          ),
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
           child: Text(
             title,
-            style: TextStyle(
-              fontSize: isSmallPhone ? 13 : (isLargePhone ? 15 : 16),
+            style: const TextStyle(
+              fontSize: 15,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF424242),
+              color: Color(0xFF424242),
             ),
           ),
         ),
@@ -763,29 +780,24 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
   Widget _buildDrawerItem({
     required IconData icon,
     required String title,
-    required bool isSmallPhone,
-    required bool isLargePhone,
     required VoidCallback onTap,
   }) {
     return ListTile(
       leading: Icon(
         icon,
         color: const Color(0xFF4CAF50),
-        size: isSmallPhone ? 18 : (isLargePhone ? 20 : 24),
+        size: 20,
       ),
       title: Text(
         title,
-        style: TextStyle(
-          fontSize: isSmallPhone ? 12 : (isLargePhone ? 14 : 16),
-          color: const Color(0xFF424242),
+        style: const TextStyle(
+          fontSize: 14,
+          color: Color(0xFF424242),
         ),
       ),
       onTap: onTap,
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: isSmallPhone ? 10 : (isLargePhone ? 12 : 16)
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       minLeadingWidth: 0,
-      dense: isSmallPhone,
     );
   }
 
@@ -795,44 +807,37 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
     String imagePath,
     VoidCallback onTap,
   ) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-    
-    final isSmallPhone = screenWidth < 360;
-    final isLargePhone = screenWidth >= 360 && screenWidth < 600;
-    final isTablet = screenWidth >= 600;
-
     return Card(
-      elevation: isSmallPhone ? 3 : 4,
+      elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(isSmallPhone ? 10 : (isLargePhone ? 15 : 20)),
+        borderRadius: BorderRadius.circular(15),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(isSmallPhone ? 10 : (isLargePhone ? 15 : 20)),
+        borderRadius: BorderRadius.circular(15),
         splashColor: const Color(0xFF4CAF50).withOpacity(0.2),
         highlightColor: const Color(0xFF4CAF50).withOpacity(0.1),
         child: Container(
-          padding: EdgeInsets.all(isSmallPhone ? 6 : (isLargePhone ? 10 : 16)),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(isSmallPhone ? 10 : (isLargePhone ? 15 : 20)),
+            borderRadius: BorderRadius.circular(15),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: isSmallPhone ? 50 : (isLargePhone ? 80 : 120),
-                height: isSmallPhone ? 50 : (isLargePhone ? 80 : 120),
-                padding: EdgeInsets.all(isSmallPhone ? 4 : (isLargePhone ? 8 : 16)),
+                width: 80,
+                height: 80,
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Colors.grey[50],
-                  borderRadius: BorderRadius.circular(isSmallPhone ? 6 : (isLargePhone ? 10 : 16)),
+                  borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.2),
                       spreadRadius: 1,
-                      blurRadius: isSmallPhone ? 2 : 4,
+                      blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
                   ],
@@ -841,21 +846,21 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                   imagePath,
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
-                    return Icon(
+                    return const Icon(
                       Icons.image_not_supported,
-                      size: isSmallPhone ? 20 : (isLargePhone ? 30 : 60),
+                      size: 30,
                       color: Colors.grey,
                     );
                   },
                 ),
               ),
-              SizedBox(height: isSmallPhone ? 4 : (isLargePhone ? 8 : 16)),
+              const SizedBox(height: 8),
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: isSmallPhone ? 10 : (isLargePhone ? 14 : 18),
+                style: const TextStyle(
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: const Color(0xFF424242),
+                  color: Color(0xFF424242),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -869,6 +874,8 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
   }
 
   void _showNotifications() {
+    final appLocalizations = AppLocalizations.of(context);
+    
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -891,7 +898,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               ),
               const SizedBox(height: 16),
               Text(
-                AppLocalizations.of(context)!.notifications,
+                appLocalizations?.notifications ?? 'Notifications',
                 style: const TextStyle(
                   fontSize: 20, 
                   fontWeight: FontWeight.bold,
@@ -906,7 +913,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               ),
               const SizedBox(height: 16),
               Text(
-                AppLocalizations.of(context)!.noNewNotifications,
+                appLocalizations?.noNewNotifications ?? 'No new notifications',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -936,34 +943,38 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
     );
   }
 
-  void _syncData() async {
+  Future<void> _syncData() async {
     try {
+      final appLocalizations = AppLocalizations.of(context);
+      
       // Show loading snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  AppLocalizations.of(context)!.syncingData,
-                  style: const TextStyle(fontSize: 14),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    appLocalizations?.syncingData ?? 'Syncing data...',
+                    style: const TextStyle(fontSize: 14),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
+            duration: const Duration(seconds: 30),
+            backgroundColor: const Color(0xFF4CAF50),
           ),
-          duration: const Duration(seconds: 30), // Longer duration for sync
-          backgroundColor: const Color(0xFF4CAF50),
-        ),
-      );
+        );
+      }
 
       final prefs = await SharedPreferences.getInstance();
       final apiService = ApiService();
@@ -1057,118 +1068,87 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
         errorMessage += 'Transactions sync error: $e\n';
       }
 
-      // 5. Sync Farm Setup
-      try {
-        final farmSetupData = {
-          'incomeCategories': prefs.getStringList('incomeCategories') ?? [],
-          'expenseCategories': prefs.getStringList('expenseCategories') ?? [],
-          'goatBreeds': prefs.getStringList('goatBreeds') ?? [],
-          'goatGroups': prefs.getStringList('goatGroups') ?? [],
-        };
-        
-        // Only sync if there's data
-        if (farmSetupData.values.any((list) => (list as List).isNotEmpty)) {
-          final response = await apiService.syncFarmSetup(farmSetupData);
-          if (!response.success) {
-            hasErrors = true;
-            errorMessage += 'Farm setup sync failed: ${response.message}\n';
-          }
-        }
-      } catch (e) {
-        hasErrors = true;
-        errorMessage += 'Farm setup sync error: $e\n';
-      }
-
-      // 6. Sync Archived Goats
-      try {
-        final archivedGoatsData = prefs.getString('archived_goats');
-        if (archivedGoatsData != null) {
-          final List<dynamic> archivedGoatsJson = jsonDecode(archivedGoatsData);
-          final List<Map<String, dynamic>> archivedGoats = archivedGoatsJson.map((e) => Map<String, dynamic>.from(e)).toList();
-          if (archivedGoats.isNotEmpty) {
-            final response = await apiService.syncArchivedGoats(archivedGoats);
-            if (!response.success) {
-              hasErrors = true;
-              errorMessage += 'Archived goats sync failed: ${response.message}\n';
-            }
-          }
-        }
-      } catch (e) {
-        hasErrors = true;
-        errorMessage += 'Archived goats sync error: $e\n';
-      }
-
       // Hide loading snackbar
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
 
       // Show result
       if (hasErrors) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.warning, color: Colors.white, size: 24),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      '${appLocalizations?.syncCompletedWithErrors ?? 'Sync completed with errors'}:\n$errorMessage',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 5),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white, size: 24),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      appLocalizations?.dataSyncedSuccessfully ?? 'Data synced successfully',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      // Hide loading snackbar
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
+      
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.warning, color: Colors.white, size: 24),
+                const Icon(Icons.error, color: Colors.white, size: 24),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Sync completed with errors:\n$errorMessage',
+                    '${AppLocalizations.of(context)?.syncFailed ?? 'Sync failed'}: $e',
                     style: const TextStyle(fontSize: 14),
                   ),
                 ),
               ],
             ),
-            backgroundColor: Colors.orange,
+            backgroundColor: Colors.red,
             duration: const Duration(seconds: 5),
             behavior: SnackBarBehavior.floating,
           ),
         );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.check_circle, color: Colors.white, size: 24),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    AppLocalizations.of(context)!.dataSyncedSuccessfully,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 3),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
       }
-    } catch (e) {
-      // Hide loading snackbar
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.error, color: Colors.white, size: 24),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'Sync failed: $e',
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ),
-            ],
-          ),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 5),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
     }
   }
 
@@ -1198,101 +1178,110 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
         if (data['expenses'] != null) {
           await prefs.setString('saved_expenses', jsonEncode(data['expenses']));
         }
-        if (data['farm_setup'] != null) {
-          final farmSetup = data['farm_setup'];
-          if (farmSetup['incomeCategories'] != null) {
-            await prefs.setStringList('incomeCategories', List<String>.from(farmSetup['incomeCategories']));
-          }
-          if (farmSetup['expenseCategories'] != null) {
-            await prefs.setStringList('expenseCategories', List<String>.from(farmSetup['expenseCategories']));
-          }
-          if (farmSetup['goatBreeds'] != null) {
-            await prefs.setStringList('goatBreeds', List<String>.from(farmSetup['goatBreeds']));
-          }
-          if (farmSetup['goatGroups'] != null) {
-            await prefs.setStringList('goatGroups', List<String>.from(farmSetup['goatGroups']));
-          }
-        }
-        if (data['archived_goats'] != null) {
-          await prefs.setString('archived_goats', jsonEncode(data['archived_goats']));
-        }
         
         // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Data downloaded from server successfully'),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      } else {
-        // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to download data: ${response.message}'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Data downloaded from server successfully'),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
       }
     } catch (e) {
+      // ignore: avoid_print
+      print('Download error: $e');
+    }
+  }
+
+ Future<void> _logoutUser() async {
+  try {
+    // Close drawer
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
+    
+    await Future.delayed(const Duration(milliseconds: 300));
+    
+    // Clear auth
+    final authService = AuthService();
+    await authService.logout();
+    
+    // **Use MaterialPageRoute instead of named routes**
+    if (mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const AuthPage()),
+        (route) => false,
+      );
+    }
+  } catch (e) {
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Download error: $e'),
+          content: Text('Logout error: $e'),
           backgroundColor: Colors.red,
           duration: const Duration(seconds: 3),
         ),
       );
     }
   }
-
+}
   void _shareApp() {
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.share, color: Colors.white),
-            const SizedBox(width: 8),
-            const Text('Share app functionality coming soon!'),
-          ],
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.share, color: Colors.white),
+              SizedBox(width: 8),
+              Text('Share app functionality coming soon!'),
+            ],
+          ),
+          backgroundColor: Color(0xFF4CAF50),
+          duration: Duration(seconds: 2),
         ),
-        backgroundColor: const Color(0xFF4CAF50),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+      );
+    }
   }
 
   void _rateApp() {
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.star, color: Colors.white),
-            const SizedBox(width: 8),
-            const Text('Rate app functionality coming soon!'),
-          ],
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.star, color: Colors.white),
+              SizedBox(width: 8),
+              Text('Rate app functionality coming soon!'),
+            ],
+          ),
+          backgroundColor: Color(0xFF4CAF50),
+          duration: Duration(seconds: 2),
         ),
-        backgroundColor: const Color(0xFF4CAF50),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+      );
+    }
   }
 
   void _showComingSoonSnackbar() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.info_outline, color: Colors.white),
-            const SizedBox(width: 8),
-            const Text('Feature coming soon!'),
-          ],
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.info_outline, color: Colors.white),
+              SizedBox(width: 8),
+              Text('Feature coming soon!'),
+            ],
+          ),
+          backgroundColor: Color(0xFF4CAF50),
+          duration: Duration(seconds: 2),
         ),
-        backgroundColor: const Color(0xFF4CAF50),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+      );
+    }
   }
 }

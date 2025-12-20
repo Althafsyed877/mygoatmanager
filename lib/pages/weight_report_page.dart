@@ -482,214 +482,245 @@ class _WeightReportPageState extends State<WeightReportPage> {
   Future<void> _exportToPdf(BuildContext context) async {
     try {
       final pdfDoc = pw.Document();
-      
+      final greenColor = pdf.PdfColor.fromInt(0xFF00FF00);
+      final blackColor = pdf.PdfColor.fromInt(0xFF000000);
+      final redColor = pdf.PdfColor.fromInt(0xFFFF0000);
+      final now = DateTime.now();
+      final dateRange = _getFormattedDateRange();
+
       pdfDoc.addPage(
-        pw.Page(
+        pw.MultiPage(
           pageFormat: pdf.PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(30),
+          margin: const pw.EdgeInsets.all(20),
           build: (pw.Context context) {
-            final greenColor = pdf.PdfColor.fromInt(0xFF4CAF50);
-            final whiteColor = pdf.PdfColor.fromInt(0xFFFFFFFF);
-            final greyColor = pdf.PdfColor.fromInt(0xFF9E9E9E);
-            final orangeColor = pdf.PdfColor.fromInt(0xFFFF9800);
-            final grey300 = pdf.PdfColor.fromInt(0xFFE0E0E0);
-            
-            return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                // Header
-                pw.Center(
-                  child: pw.Text(
-                    'WEIGHT REPORT',
-                    style: pw.TextStyle(
-                      fontSize: 24,
-                      fontWeight: pw.FontWeight.bold,
-                      color: greenColor,
-                    ),
+            List<pw.Widget> widgets = [];
+            // Header with logo and farm info
+            widgets.add(
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                children: [
+                  pw.SizedBox(height: 10),
+                  pw.Center(
+                    child: pw.Text('🐐', style: pw.TextStyle(fontSize: 40)),
                   ),
-                ),
-                pw.SizedBox(height: 8),
-                pw.Center(
-                  child: pw.Text(
-                    _getFormattedDateRange(),
-                    style: pw.TextStyle(fontSize: 14, fontStyle: pw.FontStyle.italic),
+                  pw.SizedBox(height: 10),
+                  pw.Center(
+                    child: pw.Text("Set farm's logo under app settings!", style: pw.TextStyle(fontSize: 14)),
                   ),
-                ),
-                pw.SizedBox(height: 4),
-                pw.Center(
-                  child: pw.Text(
-                    'Generated on ${DateFormat('dd MMM yyyy, HH:mm').format(DateTime.now())}',
-                    style: pw.TextStyle(fontSize: 10, color: greyColor),
+                  pw.Center(
+                    child: pw.Text('Set farm name under app settings!', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
                   ),
-                ),
-                pw.Divider(thickness: 1),
-                pw.SizedBox(height: 20),
-                
-                // Summary
-                pw.Text(
-                  'SUMMARY',
-                  style: pw.TextStyle(
-                    fontSize: 18,
-                    fontWeight: pw.FontWeight.bold,
+                  pw.Center(
+                    child: pw.Text('Set farm location under app settings!', style: pw.TextStyle(fontSize: 14)),
                   ),
-                ),
-                pw.SizedBox(height: 12),
+                  pw.SizedBox(height: 10),
+                  pw.Center(
+                    child: pw.Text('Weight Report', style: pw.TextStyle(fontSize: 16)),
+                  ),
+                  pw.Center(
+                    child: pw.Text('Goat: All', style: pw.TextStyle(fontSize: 14)),
+                  ),
+                  pw.Center(
+                    child: pw.Text('Last 12 Months', style: pw.TextStyle(fontSize: 14)),
+                  ),
+                  pw.Center(
+                    child: pw.Text('($dateRange)', style: pw.TextStyle(fontSize: 12)),
+                  ),
+                  pw.SizedBox(height: 6),
+                  pw.Center(
+                    child: pw.Text('Date: ${DateFormat('MMMM d, yyyy HH:mm').format(now)}', style: pw.TextStyle(fontSize: 16, color: redColor, fontWeight: pw.FontWeight.bold)),
+                  ),
+                  pw.SizedBox(height: 16),
+                ],
+              ),
+            );
+
+            widgets.add(
+              pw.Align(
+                alignment: pw.Alignment.centerLeft,
+                child: pw.Text('Performance By Goat', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+              ),
+            );
+            widgets.add(pw.SizedBox(height: 8));
+
+            // For each goat with weight events, build a table
+            for (int i = 0; i < _goatsWithWeight.length; i++) {
+              final item = _goatsWithWeight[i];
+              final goat = item['goat'] as Goat;
+              final weightHistory = goat.weightHistory ?? [];
+              // Compose rows for this goat
+              List<List<String>> rows = [];
+              for (var event in weightHistory) {
+                rows.add([
+                  event['date'] ?? '',
+                  event['age'] ?? '',
+                  event['result']?.toString() ?? '',
+                  event['gain']?.toString() ?? '-',
+                  event['daysPassed']?.toString() ?? '-',
+                  event['avgDailyGain']?.toString() ?? '-',
+                ]);
+              }
+              // Table header
+              widgets.add(
                 pw.Container(
-                  padding: const pw.EdgeInsets.all(12),
-                  decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: grey300, width: 0.5),
-                    borderRadius: pw.BorderRadius.circular(4),
-                  ),
-                  child: pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                    children: [
-                      pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: [
-                          _buildPdfSummaryItem('Total Goats:', '${_allGoats.length}', greenColor),
-                          pw.SizedBox(height: 6),
-                          _buildPdfSummaryItem('With Weight:', '${_goatsWithWeight.length}', greenColor),
-                          pw.SizedBox(height: 6),
-                          _buildPdfSummaryItem('Without Weight:', '${_goatsWithoutWeight.length}', greenColor),
-                        ],
-                      ),
-                      pw.Container(
-                        width: 100,
-                        height: 100,
-                        child: pw.Stack(
-                          children: [
-                            pw.Container(
-                              decoration: pw.BoxDecoration(
-                                color: greenColor,
-                                shape: pw.BoxShape.circle,
-                              ),
-                              width: 100,
-                              height: 100,
-                            ),
-                            pw.Center(
-                              child: pw.Text(
-                                '${_goatsWithWeight.length}/${_allGoats.length}',
-                                style: pw.TextStyle(
-                                  fontSize: 16,
-                                  color: whiteColor,
-                                  fontWeight: pw.FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  width: double.infinity,
+                  color: greenColor,
+                  padding: const pw.EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  child: pw.Text('Goat: ${goat.tagNo}', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold, color: blackColor)),
                 ),
-                
-                pw.SizedBox(height: 30),
-                
-                // Goats with weight
-                if (_goatsWithWeight.isNotEmpty) ...[
-                  pw.Text(
-                    'GOATS WITH WEIGHT RECORDED',
-                    style: pw.TextStyle(
-                      fontSize: 16,
-                      fontWeight: pw.FontWeight.bold,
-                      color: greenColor,
-                    ),
-                  ),
-                  pw.SizedBox(height: 12),
-                  
-                  pw.TableHelper.fromTextArray(
-                    context: context,
-                    data: [
-                      ['Tag No', 'Name', 'Weight', 'Gender', 'Breed'],
-                      ..._goatsWithWeight.map((item) {
-                        final goat = item['goat'] as Goat;
-                        final weight = item['weight'] as String;
-                        return [
-                          goat.tagNo,
-                          goat.name ?? 'Unnamed',
-                          '$weight kg',
-                          goat.gender,
-                          goat.breed ?? 'N/A',
-                        ];
-                      }),
-                    ],
-                    headerStyle: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                      color: whiteColor,
-                    ),
-                    headerDecoration: pw.BoxDecoration(color: greenColor),
-                    cellStyle: pw.TextStyle(fontSize: 9),
-                    cellAlignment: pw.Alignment.centerLeft,
-                    headerAlignment: pw.Alignment.centerLeft,
-                    border: pw.TableBorder.all(color: grey300, width: 0.5),
-                    columnWidths: {
-                      0: const pw.FlexColumnWidth(1.2),
-                      1: const pw.FlexColumnWidth(1.5),
-                      2: const pw.FlexColumnWidth(1),
-                      3: const pw.FlexColumnWidth(1),
-                      4: const pw.FlexColumnWidth(1.5),
-                    },
-                  ),
-                  
-                  pw.SizedBox(height: 30),
-                ],
-                
-                // Goats without weight
-                if (_goatsWithoutWeight.isNotEmpty) ...[
-                  pw.Text(
-                    'GOATS WITHOUT WEIGHT RECORDED',
-                    style: pw.TextStyle(
-                      fontSize: 16,
-                      fontWeight: pw.FontWeight.bold,
-                      color: orangeColor,
-                    ),
-                  ),
-                  pw.SizedBox(height: 12),
-                  
-                  pw.Wrap(
-                    children: _goatsWithoutWeight.map((goat) {
-                      return pw.Container(
-                        margin: const pw.EdgeInsets.only(right: 8, bottom: 4),
-                        child: pw.Text(
-                          goat.tagNo,
-                          style: pw.TextStyle(fontSize: 9),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-                
-                // Footer
-                pw.SizedBox(height: 40),
-                pw.Divider(thickness: 0.5),
-                pw.SizedBox(height: 8),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              );
+              widgets.add(
+                pw.Table(
+                  border: pw.TableBorder.all(),
+                  columnWidths: {
+                    0: const pw.FlexColumnWidth(2),
+                    1: const pw.FlexColumnWidth(2),
+                    2: const pw.FlexColumnWidth(2),
+                    3: const pw.FlexColumnWidth(2),
+                    4: const pw.FlexColumnWidth(2),
+                    5: const pw.FlexColumnWidth(2),
+                  },
                   children: [
-                    pw.Text(
-                      'Goat Manager - Weight Report',
-                      style: pw.TextStyle(fontSize: 8, color: greyColor),
+                    pw.TableRow(
+                      decoration: pw.BoxDecoration(color: greenColor),
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text('Date', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text('Age', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text('Result', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text('Gain', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text('Days Passed', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text('Avg Daily Gain', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                      ],
                     ),
-                    pw.Text(
-                      'Page 1 of 1',
-                      style: pw.TextStyle(fontSize: 8, color: greyColor),
+                    ...rows.map((row) => pw.TableRow(
+                      children: List.generate(row.length, (j) {
+                        final isRed = (j == 5 && (row[j] == '-' || row[j] == '0' || row[j] == '0.00'));
+                        return pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(row[j], style: pw.TextStyle(color: isRed ? redColor : blackColor)),
+                        );
+                      }),
+                    )),
+                  ],
+                ),
+              );
+              widgets.add(pw.SizedBox(height: 12));
+            }
+
+            // Goats with no weight event records
+            if (_goatsWithoutWeight.isNotEmpty) {
+              widgets.add(pw.SizedBox(height: 16));
+              widgets.add(
+                pw.Container(
+                  width: double.infinity,
+                  color: greenColor,
+                  padding: const pw.EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  child: pw.Text('Active goats with no weight event records in the selected period', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                ),
+              );
+              widgets.add(
+                pw.Table(
+                  border: pw.TableBorder.all(),
+                  columnWidths: {
+                    0: const pw.FlexColumnWidth(2),
+                    1: const pw.FlexColumnWidth(3),
+                    2: const pw.FlexColumnWidth(2),
+                    3: const pw.FlexColumnWidth(2),
+                  },
+                  children: [
+                    pw.TableRow(
+                      decoration: pw.BoxDecoration(color: greenColor),
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text('Tag.', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text('Name', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text('Gender', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text('Stage', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                    ..._goatsWithoutWeight.map((goat) => pw.TableRow(
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(goat.tagNo),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(goat.name ?? ''),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(goat.gender),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text(goat.goatStage ?? ''),
+                        ),
+                      ],
+                    )),
+                    pw.TableRow(
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text('Total', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                        pw.SizedBox(),
+                        pw.SizedBox(),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(4),
+                          child: pw.Text('${_goatsWithoutWeight.length}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            );
+              );
+            }
+
+            return widgets;
           },
+          footer: (pw.Context context) => pw.Container(
+            alignment: pw.Alignment.centerRight,
+            margin: const pw.EdgeInsets.only(top: 10),
+            child: pw.Text('page ${context.pageNumber}', style: pw.TextStyle(fontSize: 10)),
+          ),
         ),
       );
-      
+
       final pdfBytes = await pdfDoc.save();
-      
       await Printing.sharePdf(
         bytes: pdfBytes,
         filename: 'Weight_Report_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.pdf',
       );
-      
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -698,7 +729,6 @@ class _WeightReportPageState extends State<WeightReportPage> {
           ),
         );
       }
-      
     } catch (e) {
       debugPrint('PDF Export Error: $e');
       if (mounted) {
@@ -712,26 +742,7 @@ class _WeightReportPageState extends State<WeightReportPage> {
     }
   }
   
-  pw.Widget _buildPdfSummaryItem(String label, String value, pdf.PdfColor color) {
-    return pw.Row(
-      mainAxisSize: pw.MainAxisSize.min,
-      children: [
-        pw.Text(
-          label,
-          style: const pw.TextStyle(fontSize: 11),
-        ),
-        pw.SizedBox(width: 8),
-        pw.Text(
-          value,
-          style: pw.TextStyle(
-            fontSize: 11,
-            fontWeight: pw.FontWeight.bold,
-            color: color,
-          ),
-        ),
-      ],
-    );
-  }
+  // _buildPdfSummaryItem removed (no longer used)
   
   @override
   Widget build(BuildContext context) {
@@ -1076,7 +1087,7 @@ class _WeightReportPageState extends State<WeightReportPage> {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(icon, size: 20, color: color),

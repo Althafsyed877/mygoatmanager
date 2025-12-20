@@ -97,6 +97,20 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     super.dispose();
   }
 
+  String _getLocalizedBreed(String? englishBreed) {
+    if (englishBreed == null) return '-';
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return englishBreed;
+    
+    switch (englishBreed) {
+      case 'Alpine': return loc.alpine;
+      case 'Boer': return loc.boer;
+      case 'Kiko': return loc.kiko;
+      case 'Nubian': return loc.nubian;
+      default: return englishBreed;
+    }
+  }
+
   DateTime? _tryParseDate(String? dateString) {
     if (dateString == null) return null;
     try {
@@ -2006,7 +2020,8 @@ class _ViewGoatPageState extends State<ViewGoatPage>
                         _buildDetailRow('Gender', _currentGoat.gender, valueColor: genderColor),
                         _buildDetailRow('Weight', _currentGoat.weight ?? '-'),
                         _buildDetailRow('Stage', _currentGoat.goatStage ?? '-'),
-                        _buildDetailRow('Breed', _currentGoat.breed ?? '-'),
+                        _buildDetailRow('Breed', _getLocalizedBreed(_currentGoat.breed)),
+                        _buildDetailRow('Breeding Status', _currentGoat.breedingStatus ?? 'Not Bred'),
                         _buildDetailRow('Group', _currentGoat.group ?? '-'),
                         _buildDetailRow('Joined On', _formatDisplayDate(_currentGoat.dateOfEntry)),
                         _buildDetailRow('Source', _currentGoat.obtained ?? '-'),

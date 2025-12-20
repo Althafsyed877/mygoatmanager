@@ -1518,4 +1518,13 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get username => 'username';
+
+  @override
+  String get syncFailed => 'ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ';
+
+  @override
+  String get syncCompletedWithErrors => 'ಸಿಂಕ್ ದೋಷಗಳೊಂದಿಗೆ ಪೂರ್ಣಗೊಂಡಿದೆ';
+
+  @override
+  String get logout => 'ಲಾಗ್ಔಟ್';
 }

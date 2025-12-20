@@ -556,6 +556,9 @@
  "pleaseEnterPhone": "Please enter phone number",
  "enterValidPhone": "Please enter a valid phone number",
 
- "username": "username"
+ "username": "username",
+ "syncFailed": "Sync failed",
+ "syncCompletedWithErrors": "Sync completed with errors",
+ "logout": "Logout"
 
 }

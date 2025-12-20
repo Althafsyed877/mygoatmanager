@@ -3055,6 +3055,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'username'**
   String get username;
+
+  /// No description provided for @syncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync failed'**
+  String get syncFailed;
+
+  /// No description provided for @syncCompletedWithErrors.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync completed with errors'**
+  String get syncCompletedWithErrors;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
 }
 
 class _AppLocalizationsDelegate

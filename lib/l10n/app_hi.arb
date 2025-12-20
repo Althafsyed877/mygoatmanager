@@ -527,5 +527,8 @@
  "pleaseEnterPhone": "कृपया फोन नंबर दर्ज करें",
  "enterValidPhone": "कृपया एक वैध फोन नंबर दर्ज करें",
 
- "username": "username"
+ "username": "username",
+ "syncFailed": "सिंक विफल हुआ",
+ "syncCompletedWithErrors": "सिंक त्रुटियों के साथ पूरा हुआ",
+ "logout": "लॉगआउट"
 }

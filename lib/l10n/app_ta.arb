@@ -527,5 +527,8 @@
  "pleaseEnterPhone": "தொலைபேசி எண்ணை உள்ளிடவும்",
  "enterValidPhone": "சரியான தொலைபேசி எண்ணை உள்ளிடவும்",
 
- "username": "username"
+ "username": "username",
+ "syncFailed": "ஒத்திசைவு தோல்வியுற்றது",
+ "syncCompletedWithErrors": "ஒத்திசைவு பிழைகளுடன் நிறைவடைந்தது",
+ "logout": "வெளியேறு"
 }

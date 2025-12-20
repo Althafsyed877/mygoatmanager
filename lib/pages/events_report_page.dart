@@ -30,7 +30,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
   }
 
   Future<void> _loadData() async {
-    print('=== LOADING EVENTS REPORT DATA ===');
+    debugPrint('=== LOADING EVENTS REPORT DATA ===');
     await _loadEvents();
     await _loadGoats();
     await _loadArchiveCounts();
@@ -55,8 +55,8 @@ class _EventsReportPageState extends State<EventsReportPage> {
     final prefs = await SharedPreferences.getInstance();
     final data = prefs.getString('events');
     
-    print('=== LOADING EVENTS FROM SHAREDPREFS ===');
-    print('Data exists: ${data != null}');
+    debugPrint('=== LOADING EVENTS FROM SHAREDPREFS ===');
+    debugPrint('Data exists: ${data != null}');
     
     if (data != null) {
       try {
@@ -64,31 +64,31 @@ class _EventsReportPageState extends State<EventsReportPage> {
         _events = list.map((e) => Event.fromJson(e as Map<String, dynamic>)).toList();
         
         // DEBUG: Print all event types
-        print('Total events loaded: ${_events.length}');
-        print('Event types found:');
+        debugPrint('Total events loaded: ${_events.length}');
+        debugPrint('Event types found:');
         final typeCounts = <String, int>{};
         for (var event in _events) {
           final type = event.eventType;
           typeCounts[type] = (typeCounts[type] ?? 0) + 1;
         }
         typeCounts.forEach((type, count) {
-          print('  "$type": $count events');
+          debugPrint('  "$type": $count events');
         });
         
         // Print current month events
         final monthEvents = _monthEvents;
-        print('Current month events (${_formatDate(_firstDayOfMonth)} - ${_formatDate(_lastDayOfMonth)}): ${monthEvents.length}');
+        debugPrint('Current month events (${_formatDate(_firstDayOfMonth)} - ${_formatDate(_lastDayOfMonth)}): ${monthEvents.length}');
         for (var event in monthEvents) {
-          print('  - ${event.tagNo}: ${event.eventType} on ${event.date}');
+          debugPrint('  - ${event.tagNo}: ${event.eventType} on ${event.date}');
         }
         
       } catch (e) {
-        print('Error loading events: $e');
+        debugPrint('Error loading events: $e');
       }
     } else {
-      print('No events data found in SharedPreferences');
+      debugPrint('No events data found in SharedPreferences');
     }
-    print('===================================');
+    debugPrint('===================================');
   }
 
   Future<void> _loadGoats() async {
@@ -99,7 +99,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
         final List<dynamic> list = jsonDecode(data) as List<dynamic>;
         _goats = list.map((e) => Goat.fromJson(e as Map<String, dynamic>)).toList();
       } catch (e) {
-        print('Error loading goats: $e');
+        debugPrint('Error loading goats: $e');
       }
     }
   }
@@ -157,10 +157,10 @@ class _EventsReportPageState extends State<EventsReportPage> {
       !event.isMassEvent && possibleEnglishTypes.contains(event.eventType)
     ).toList();
     
-    print('DEBUG: Checking "$localizedEventType" (English variants: $possibleEnglishTypes) - Found ${filtered.length} events');
+    debugPrint('DEBUG: Checking "$localizedEventType" (English variants: $possibleEnglishTypes) - Found ${filtered.length} events');
     if (filtered.isNotEmpty) {
       for (var event in filtered) {
-        print('  - ${event.tagNo}: ${event.eventType} on ${event.date}');
+        debugPrint('  - ${event.tagNo}: ${event.eventType} on ${event.date}');
       }
     }
     
@@ -306,7 +306,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              print('=== MANUAL REFRESH TRIGGERED ===');
+              debugPrint('=== MANUAL REFRESH TRIGGERED ===');
               _loadData();
             },
           ),
@@ -492,16 +492,16 @@ class _EventsReportPageState extends State<EventsReportPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print('=== DEBUG INFO ===');
-          print('Total events in memory: ${_events.length}');
-          print('Current month: ${_selectedMonth.month}/${_selectedMonth.year}');
-          print('Month events: ${_monthEvents.length}');
-          print('Weighed events count: ${_getIndividualEventCount(loc.weighed, loc)}');
-          print('All event types:');
+          debugPrint('=== DEBUG INFO ===');
+          debugPrint('Total events in memory: ${_events.length}');
+          debugPrint('Current month: ${_selectedMonth.month}/${_selectedMonth.year}');
+          debugPrint('Month events: ${_monthEvents.length}');
+          debugPrint('Weighed events count: ${_getIndividualEventCount(loc.weighed, loc)}');
+          debugPrint('All event types:');
           for (var type in individualEventTypes) {
-            print('  $type: ${_getIndividualEventCount(type, loc)}');
+            debugPrint('  $type: ${_getIndividualEventCount(type, loc)}');
           }
-          print('==================');
+          debugPrint('==================');
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.bug_report),

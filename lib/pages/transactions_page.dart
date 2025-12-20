@@ -992,9 +992,13 @@ class _NewIncomePageState extends State<NewIncomePage> {
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _otherSourceController = TextEditingController();
 
+  final List<String> _incomeCategories = [];
+  String? _selectedIncomeCategory;
+
   @override
   void initState() {
     super.initState();
+    _loadIncomeCategories();
     // Initialize with existing data if editing
     final data = widget.initialData;
     if (data != null) {
@@ -1013,6 +1017,11 @@ class _NewIncomePageState extends State<NewIncomePage> {
       _receiptController.text = data['receipt']?.toString() ?? '';
       _notesController.text = data['notes']?.toString() ?? '';
       
+      // Set category if it exists
+      if (data['category'] != null) {
+        _selectedIncomeCategory = data['category']?.toString();
+      }
+      
       // Check if it's an "other" type
       if (_selectedIncomeType != null && 
           _selectedIncomeType != 'Milk Sale' && 
@@ -1022,6 +1031,12 @@ class _NewIncomePageState extends State<NewIncomePage> {
         _selectedIncomeType = 'Other (specify)';
       }
     }
+  }
+
+  Future<void> _loadIncomeCategories() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getStringList('incomeCategories') ?? [];
+    setState(() => _incomeCategories.addAll(data));
   }
 
   @override
@@ -1177,6 +1192,109 @@ class _NewIncomePageState extends State<NewIncomePage> {
       children: [
         const SizedBox(height: 16),
         Text(
+          '${loc.select_category} .*',
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: () async {
+            if (_incomeCategories.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('No income categories available. Please add categories in Farm Setup.')),
+              );
+              return;
+            }
+            final cat = await showDialog<String>(
+              context: context,
+              builder: (ctx) {
+                String searchQuery = '';
+                return StatefulBuilder(
+                  builder: (ctx, setState) {
+                    final filteredCategories = _incomeCategories
+                        .where((category) => category.toLowerCase().contains(searchQuery.toLowerCase()))
+                        .toList();
+                    return AlertDialog(
+                      title: Text(loc.select_category),
+                      content: SizedBox(
+                        width: double.maxFinite,
+                        height: 350,
+                        child: Column(
+                          children: [
+                            // Search TextField
+                            TextField(
+                              decoration: InputDecoration(
+                                hintText: 'Search categories...',
+                                prefixIcon: const Icon(Icons.search),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                              ),
+                              onChanged: (value) {
+                                setState(() => searchQuery = value);
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            // Categories List
+                            Expanded(
+                              child: filteredCategories.isEmpty
+                                  ? Center(
+                                      child: Text(
+                                        'No categories found',
+                                        style: TextStyle(color: Colors.grey.shade600),
+                                      ),
+                                    )
+                                  : ListView.separated(
+                                      itemCount: filteredCategories.length,
+                                      separatorBuilder: (_, __) => const Divider(height: 1),
+                                      itemBuilder: (context, index) {
+                                        final c = filteredCategories[index];
+                                        return ListTile(
+                                          title: Text(c),
+                                          onTap: () => Navigator.pop(ctx, c),
+                                        );
+                                      },
+                                    ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+            if (cat != null) {
+              setState(() => _selectedIncomeCategory = cat);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _selectedIncomeCategory ?? loc.select_category,
+                    style: TextStyle(
+                      color: _selectedIncomeCategory != null ? Colors.black87 : Colors.grey.shade600,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.arrow_drop_down, color: Colors.grey),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
           '${loc.quantity_of_items} .*',
           style: const TextStyle(
             fontSize: 16,
@@ -1315,6 +1433,12 @@ class _NewIncomePageState extends State<NewIncomePage> {
                 );
                 return;
               }
+              if (_selectedIncomeType == loc.category_income && _selectedIncomeCategory == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(loc.please_select_category)),
+                );
+                return;
+              }
               if (_selectedIncomeType == loc.other_specify && _otherSourceController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(loc.please_specify_income_source)),
@@ -1330,6 +1454,7 @@ class _NewIncomePageState extends State<NewIncomePage> {
                 'kind': 'income',
                 'date': _incomeDate!.toIso8601String(),
                 'type': typeValue,
+                'category': _selectedIncomeType == loc.category_income ? _selectedIncomeCategory : null,
                 'quantity': _selectedIncomeType == loc.milk_sale || _selectedIncomeType == loc.category_income ? _quantityController.text.trim() : null,
                 'price': _selectedIncomeType == loc.milk_sale ? _priceController.text.trim() : null,
                 'amount': _amountController.text.trim(),
@@ -1512,12 +1637,13 @@ class _NewExpensePageState extends State<NewExpensePage> {
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _otherExpenseController = TextEditingController();
 
-  final List<String> _expenseCategories = ['milk type'];
+  final List<String> _expenseCategories = [];
   String? _selectedCategory;
 
   @override
   void initState() {
     super.initState();
+    _loadExpenseCategories();
     // Initialize with existing data if editing
     final data = widget.initialData;
     if (data != null) {
@@ -1537,6 +1663,12 @@ class _NewExpensePageState extends State<NewExpensePage> {
       _receiptController.text = data['receipt']?.toString() ?? '';
       _notesController.text = data['notes']?.toString() ?? '';
     }
+  }
+
+  Future<void> _loadExpenseCategories() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getStringList('expenseCategories') ?? [];
+    setState(() => _expenseCategories.addAll(data));
   }
 
   @override
@@ -1763,23 +1895,60 @@ class _NewExpensePageState extends State<NewExpensePage> {
                       final cat = await showDialog<String>(
                         context: context,
                         builder: (ctx) {
-                          return AlertDialog(
-                            title: Text(loc.select_category),
-                            content: SizedBox(
-                              width: double.maxFinite,
-                              height: 250,
-                              child: ListView.separated(
-                                itemCount: _expenseCategories.length,
-                                separatorBuilder: (_, __) => const Divider(height: 1),
-                                itemBuilder: (context, index) {
-                                  final c = _expenseCategories[index];
-                                  return ListTile(
-                                    title: Text(c),
-                                    onTap: () => Navigator.pop(ctx, c),
-                                  );
-                                },
-                              ),
-                            ),
+                          String searchQuery = '';
+                          return StatefulBuilder(
+                            builder: (ctx, setState) {
+                              final filteredCategories = _expenseCategories
+                                  .where((category) => category.toLowerCase().contains(searchQuery.toLowerCase()))
+                                  .toList();
+                              return AlertDialog(
+                                title: Text(loc.select_category),
+                                content: SizedBox(
+                                  width: double.maxFinite,
+                                  height: 350,
+                                  child: Column(
+                                    children: [
+                                      // Search TextField
+                                      TextField(
+                                        decoration: InputDecoration(
+                                          hintText: 'Search categories...',
+                                          prefixIcon: const Icon(Icons.search),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                                        ),
+                                        onChanged: (value) {
+                                          setState(() => searchQuery = value);
+                                        },
+                                      ),
+                                      const SizedBox(height: 8),
+                                      // Categories List
+                                      Expanded(
+                                        child: filteredCategories.isEmpty
+                                            ? Center(
+                                                child: Text(
+                                                  'No categories found',
+                                                  style: TextStyle(color: Colors.grey.shade600),
+                                                ),
+                                              )
+                                            : ListView.separated(
+                                                itemCount: filteredCategories.length,
+                                                separatorBuilder: (_, __) => const Divider(height: 1),
+                                                itemBuilder: (context, index) {
+                                                  final c = filteredCategories[index];
+                                                  return ListTile(
+                                                    title: Text(c),
+                                                    onTap: () => Navigator.pop(ctx, c),
+                                                  );
+                                                },
+                                              ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       );

@@ -1514,4 +1514,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get username => 'username';
+
+  @override
+  String get syncFailed => 'Sync failed';
+
+  @override
+  String get syncCompletedWithErrors => 'Sync completed with errors';
+
+  @override
+  String get logout => 'Logout';
 }

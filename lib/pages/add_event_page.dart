@@ -34,6 +34,9 @@ class _AddEventPageState extends State<AddEventPage> {
     'Vaccinated',
     'Deworming',
     'Hoof Trimming',
+    'Bred',
+    'Pregnancy Confirmed',
+    'Started Lactating',
     'Other',
   ];
 
@@ -66,11 +69,11 @@ class _AddEventPageState extends State<AddEventPage> {
       final String? goatsJson = prefs.getString('goats');
       
       if (goatsJson == null) {
-        print('❌ No goats data found in SharedPreferences');
+        debugPrint('❌ No goats data found in SharedPreferences');
         return;
       }
-      
-      print('📥 Loading goats data...');
+
+      debugPrint('📥 Loading goats data...');
       final List<dynamic> decodedList = jsonDecode(goatsJson);
       List<Map<String, dynamic>> goatsData = List<Map<String, dynamic>>.from(decodedList);
       
@@ -84,24 +87,24 @@ class _AddEventPageState extends State<AddEventPage> {
       }
       
       if (goatIndex == -1) {
-        print('❌ Goat ${widget.goat.tagNo} not found in data');
+        debugPrint('❌ Goat ${widget.goat.tagNo} not found in data');
         return;
       }
-      
-      print('✅ Found goat at index $goatIndex');
+
+      debugPrint('✅ Found goat at index $goatIndex');
       
       // Get or initialize weightHistory
       List<Map<String, dynamic>> weightHistory = [];
       if (goatsData[goatIndex]['weightHistory'] != null) {
         try {
           weightHistory = List<Map<String, dynamic>>.from(goatsData[goatIndex]['weightHistory']);
-          print('📊 Existing weightHistory has ${weightHistory.length} records');
+          debugPrint('📊 Existing weightHistory has ${weightHistory.length} records');
         } catch (e) {
-          print('⚠️ Error reading weightHistory: $e');
+          debugPrint('⚠️ Error reading weightHistory: $e');
           weightHistory = [];
         }
       } else {
-        print('📝 No existing weightHistory, creating new one');
+        debugPrint('📝 No existing weightHistory, creating new one');
       }
       
       // Format date for storage
@@ -124,46 +127,114 @@ class _AddEventPageState extends State<AddEventPage> {
       }
       
       weightHistory.add(newRecord);
-      
-      print('➕ Adding weight record:');
-      print('   - Date: $dateStr');
-      print('   - Weight: $weight');
-      print('   - Notes: ${_notesController.text.trim().isNotEmpty ? _notesController.text.trim() : "None"}');
-      
+
+      debugPrint('➕ Adding weight record:');
+      debugPrint('   - Date: $dateStr');
+      debugPrint('   - Weight: $weight');
+      debugPrint('   - Notes: ${_notesController.text.trim().isNotEmpty ? _notesController.text.trim() : "None"}');
+
       // ✅ CRITICAL: Update the goat's data in the list
       goatsData[goatIndex]['weightHistory'] = weightHistory;
       goatsData[goatIndex]['weight'] = weightText; // Also update current weight
       
-      print('✅ UPDATING GOAT ${widget.goat.tagNo}:');
-      print('   - Weight: $weightText');
-      print('   - Date: $dateStr');
-      print('   - weightHistory now has ${weightHistory.length} records');
+      debugPrint('✅ UPDATING GOAT ${widget.goat.tagNo}:');
+      debugPrint('   - Weight: $weightText');
+      debugPrint('   - Date: $dateStr');
+      debugPrint('   - weightHistory now has ${weightHistory.length} records');
       
       // ✅ Save back to SharedPreferences
       final updatedJson = jsonEncode(goatsData);
       await prefs.setString('goats', updatedJson);
-      
-      print('💾 Saved to SharedPreferences successfully');
-      
+
+      debugPrint('💾 Saved to SharedPreferences successfully');
+
       // Verify the update
       final verifiedJson = prefs.getString('goats');
       if (verifiedJson != null) {
         final verifiedList = jsonDecode(verifiedJson);
         for (var goat in verifiedList) {
           if (goat['tagNo'] == widget.goat.tagNo) {
-            print('✅ VERIFICATION:');
-            print('   - Goat: ${goat['tagNo']}');
-            print('   - Current weight: ${goat['weight']}');
-            print('   - weightHistory: ${goat['weightHistory']}');
-            print('   - weightHistory length: ${goat['weightHistory'] != null ? (goat['weightHistory'] as List).length : 0}');
+            debugPrint('✅ VERIFICATION:');
+            debugPrint('   - Goat: ${goat['tagNo']}');
+            debugPrint('   - Current weight: ${goat['weight']}');
+            debugPrint('   - weightHistory: ${goat['weightHistory']}');
+            debugPrint('   - weightHistory length: ${goat['weightHistory'] != null ? (goat['weightHistory'] as List).length : 0}');
             break;
           }
         }
       }
       
     } catch (e) {
-      print('❌ Error in _addWeightToGoatHistory: $e');
-      print('Stack trace: ${e.toString()}');
+      debugPrint('❌ Error in _addWeightToGoatHistory: $e');
+      debugPrint('Stack trace: ${e.toString()}');
+    }
+  }
+
+  // ✅ NEW FUNCTION: Update breeding status based on breeding events
+  Future<void> _updateBreedingStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? goatsJson = prefs.getString('goats');
+
+      if (goatsJson == null) {
+        debugPrint('❌ No goats data found in SharedPreferences');
+        return;
+      }
+
+      debugPrint('📥 Loading goats data for breeding status update...');
+      final List<dynamic> decodedList = jsonDecode(goatsJson);
+      List<Map<String, dynamic>> goatsData = List<Map<String, dynamic>>.from(decodedList);
+
+      // Find the goat in the list
+      int goatIndex = -1;
+      for (int i = 0; i < goatsData.length; i++) {
+        if (goatsData[i]['tagNo'] == widget.goat.tagNo) {
+          goatIndex = i;
+          break;
+        }
+      }
+
+      if (goatIndex == -1) {
+        debugPrint('❌ Goat ${widget.goat.tagNo} not found in data');
+        return;
+      }
+
+      debugPrint('✅ Found goat at index $goatIndex');
+
+      // Determine new breeding status based on event type
+      String newBreedingStatus;
+      switch (_eventType) {
+        case 'Bred':
+          newBreedingStatus = 'Bred';
+          break;
+        case 'Pregnancy Confirmed':
+          newBreedingStatus = 'Pregnant';
+          break;
+        case 'Started Lactating':
+          newBreedingStatus = 'Lactating';
+          break;
+        default:
+          return; // Should not happen
+      }
+
+      // Update the breeding status
+      final oldStatus = goatsData[goatIndex]['breedingStatus'] ?? 'Not Bred';
+      goatsData[goatIndex]['breedingStatus'] = newBreedingStatus;
+
+      debugPrint('✅ UPDATING BREEDING STATUS for ${widget.goat.tagNo}:');
+      debugPrint('   - Old status: $oldStatus');
+      debugPrint('   - New status: $newBreedingStatus');
+      debugPrint('   - Event type: $_eventType');
+
+      // ✅ Save back to SharedPreferences
+      final updatedJson = jsonEncode(goatsData);
+      await prefs.setString('goats', updatedJson);
+
+      debugPrint('💾 Breeding status saved to SharedPreferences successfully');
+
+    } catch (e) {
+      debugPrint('❌ Error in _updateBreedingStatus: $e');
+      debugPrint('Stack trace: ${e.toString()}');
     }
   }
 
@@ -192,8 +263,14 @@ class _AddEventPageState extends State<AddEventPage> {
 
     // ✅ ADD WEIGHT TO GOAT HISTORY FIRST
     if (_eventType == 'Weighed' && _weighedController.text.trim().isNotEmpty) {
-      print('⚡ Adding weight record for ${widget.goat.tagNo}...');
+      debugPrint('⚡ Adding weight record for ${widget.goat.tagNo}...');
       await _addWeightToGoatHistory();
+    }
+
+    // ✅ UPDATE BREEDING STATUS FOR BREEDING EVENTS
+    if (['Bred', 'Pregnancy Confirmed', 'Started Lactating'].contains(_eventType)) {
+      debugPrint('⚡ Updating breeding status for ${widget.goat.tagNo}...');
+      await _updateBreedingStatus();
     }
 
     // Create the event
@@ -234,7 +311,7 @@ class _AddEventPageState extends State<AddEventPage> {
         Navigator.pop(context, event);
       }
     } catch (e) {
-      print('❌ Error saving event: $e');
+      debugPrint('❌ Error saving event: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

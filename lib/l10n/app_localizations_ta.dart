@@ -1538,4 +1538,13 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get username => 'username';
+
+  @override
+  String get syncFailed => 'ஒத்திசைவு தோல்வியுற்றது';
+
+  @override
+  String get syncCompletedWithErrors => 'ஒத்திசைவு பிழைகளுடன் நிறைவடைந்தது';
+
+  @override
+  String get logout => 'வெளியேறு';
 }

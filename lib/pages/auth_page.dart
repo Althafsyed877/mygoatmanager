@@ -1,11 +1,15 @@
 // lib/pages/auth_page.dart
 import 'package:flutter/material.dart';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
-import '../services/api_service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mygoatmanager/pages/homepage.dart';
+import '../services/auth_service.dart';
 
 
 class AuthPage extends StatefulWidget {
-  const AuthPage({super.key});
+final VoidCallback? onLoginSuccess;
+
+ const AuthPage({super.key, this.onLoginSuccess});
 
   @override
   State<AuthPage> createState() => _AuthPageState();
@@ -32,7 +36,14 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   final _signupFormKey = GlobalKey<FormState>();
 
   // API service instance
-  final ApiService _apiService = ApiService();
+  final AuthService _authService = AuthService();
+
+  // Google Sign In
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+  // No clientId parameter for Android!
+  scopes: ['email', 'profile'],
+);
 
   @override
   void initState() {
@@ -55,11 +66,15 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   }
 
   Future<void> _checkExistingSession() async {
-    final isAuthenticated = await _apiService.isAuthenticated();
-    if (isAuthenticated && mounted) {
-      Navigator.pushReplacementNamed(context, '/homepage');
-    }
+  final isAuthenticated = await _authService.validateSession();
+  if (isAuthenticated && mounted) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/homepage');
+      }
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -250,6 +265,8 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                   colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)],
                 ),
                 borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+                // Added padding to the indicator to increase the border space
+                border: Border.all(color: Colors.transparent, width: 10), // Adjust width as needed
               ),
               labelColor: Colors.white,
               unselectedLabelColor: Colors.grey[700],
@@ -382,10 +399,10 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
               screenWidth: availableWidth,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context)!.termsOfService;
+                  return 'Please enter username';
                 }
                 if (!value.contains(RegExp(r'^[a-zA-Z0-9_]+$'))) {
-                  return AppLocalizations.of(context)!.termsOfService;
+                  return 'Username can only contain letters, numbers, and underscores';
                 }
                 return null;
               },
@@ -821,53 +838,36 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   Widget _buildSocialLoginButtons(BuildContext context, double screenWidth) {
     final isSmallPhone = screenWidth < 360;
     
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: [
-        _buildSocialButton(
-          icon: Icons.g_mobiledata,
-          color: const Color(0xFFDB4437),
-          onPressed: () => _socialLogin('Google'),
-          screenWidth: screenWidth,
-          isSmallPhone: isSmallPhone,
-        ),
-        SizedBox(width: screenWidth * 0.04),
-      
-      ],
-    );
-  }
-
-  Widget _buildSocialButton({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onPressed,
-    required double screenWidth,
-    required bool isSmallPhone,
-  }) {
-    return Container(
-      width: isSmallPhone ? screenWidth * 0.10 : screenWidth * 0.12,
-      height: isSmallPhone ? screenWidth * 0.10 : screenWidth * 0.12,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(isSmallPhone ? screenWidth * 0.05 : screenWidth * 0.06),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: _isLoading ? null : _socialLogin,
+            icon: Icon(
+              Icons.g_mobiledata,
+              color: Colors.white,
+              size: isSmallPhone ? 20 : 24,
+            ),
+            label: Text(
+              _tabController.index == 0 ? 'Login with Google' : 'Sign up with Google',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: isSmallPhone ? screenWidth * 0.04 : screenWidth * 0.045,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDB4437),
+              padding: EdgeInsets.symmetric(vertical: isSmallPhone ? 12 : 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+              ),
+              elevation: 3,
+            ),
           ),
-        ],
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: IconButton(
-        icon: Icon(
-          icon,
-          color: color,
-          size: isSmallPhone ? screenWidth * 0.05 : screenWidth * 0.06,
         ),
-        onPressed: onPressed,
-        padding: EdgeInsets.zero,
-      ),
+      ],
     );
   }
 
@@ -996,135 +996,142 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
 
   // === API CALL METHODS ===
 
-  Future<void> _login() async {
-    if (!_loginFormKey.currentState!.validate()) return;
+ Future<void> _login() async {
+  if (!_loginFormKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+  setState(() {
+    _isLoading = true;
+  });
 
-    try {
-      final result = await _apiService.login(
-        _loginNameController.text.trim(),
-        _loginPasswordController.text.trim(),
-      );
-
-      debugPrint('Login result: ${result.success}, message: ${result.message}, status: ${result.statusCode}');
-      
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (result.success) {
-        _showSnackBar(
-          AppLocalizations.of(context)!.loginSuccessful,
-          const Color(0xFF4CAF50),
-        );
-        
-        // Navigate to homepage
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/homepage');
-        }
-      } else {
-        if (result.requiresLogin) {
-          await _apiService.logout();
-        }
-        _showSnackBar(
-          result.message,
-          Colors.red,
-        );
-      }
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      _showSnackBar(
-        'Network error: $e',
-        Colors.red,
-      );
-    }
-  }
-
-  Future<void> _signup() async {
-    if (!_signupFormKey.currentState!.validate()) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final result = await _apiService.register({
-        'username': _signupNameController.text.trim(),
-        'email': _signupEmailController.text.trim(),
-        'phone': _signupPhoneController.text.trim(),
-        'password': _signupPasswordController.text.trim(),
-      });
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (result.success) {
-        _showSnackBar(
-          AppLocalizations.of(context)!.accountCreatedSuccessfully,
-          const Color(0xFF4CAF50),
-        );
-        
-        // Switch to login tab
-        _tabController.animateTo(0);
-        _clearSignupFields();
-      } else {
-        _showSnackBar(
-          result.message,
-          Colors.red,
-        );
-      }
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      _showSnackBar(
-        'Registration error: $e',
-        Colors.red,
-      );
-    }
-  }
-
-  Future<void> _resetPassword(String email) async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final result = await _apiService.forgotPassword(email);
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      _showSnackBar(
-        result.message,
-        result.success ? const Color(0xFF4CAF50) : Colors.red,
-      );
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      _showSnackBar(
-        'Reset password error: $e',
-        Colors.red,
-      );
-    }
-  }
-
-  void _socialLogin(String platform) {
-    _showSnackBar(
-      '${AppLocalizations.of(context)!.signingInWith} $platform',
-      Colors.blue,
+  try {
+    final result = await _authService.login(
+      _loginNameController.text.trim(),
+      _loginPasswordController.text.trim(),
     );
     
-    // For now, simulate social login
-    Future.delayed(const Duration(seconds: 2), () {
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (result.success) {
+      _showSnackBar(
+        AppLocalizations.of(context)!.loginSuccessful,
+        const Color(0xFF4CAF50),
+      );
+      
+      // **Call the callback if provided**
+      if (widget.onLoginSuccess != null) {
+        widget.onLoginSuccess!();
+      } else {
+        // **CRITICAL FIX: Use MaterialPageRoute instead of pushReplacementNamed**
+        if (mounted) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Homepage(
+                currentLocale: const Locale('en'), // Provide required parameters
+                onLocaleChanged: (locale) {}, // Provide empty callback
+              ),
+            ),
+            (route) => false, // Remove all routes
+          );
+        }
+      }
+    } else {
+      _showSnackBar(
+        result.message,
+        Colors.red,
+      );
+    }
+  } catch (e) {
+    setState(() {
+      _isLoading = false;
+    });
+    _showSnackBar(
+      'Login error: $e',
+      Colors.red,
+    );
+  }
+}
+
+  Future<void> _signup() async {
+  if (!_signupFormKey.currentState!.validate()) return;
+
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    final result = await _authService.register({
+      'username': _signupNameController.text.trim(),
+      'email': _signupEmailController.text.trim(),
+      'phone': _signupPhoneController.text.trim(),
+      'password': _signupPasswordController.text.trim(),
+    });
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (result.success) {
+      _showSnackBar(
+        AppLocalizations.of(context)!.accountCreatedSuccessfully,
+        const Color(0xFF4CAF50),
+      );
+      
+      _tabController.animateTo(0);
+      _clearSignupFields();
+    } else {
+      _showSnackBar(
+        result.message,
+        Colors.red,
+      );
+    }
+  } catch (e) {
+    setState(() {
+      _isLoading = false;
+    });
+    _showSnackBar(
+      'Registration error: $e',
+      Colors.red,
+    );
+  }
+}
+Future<void> _resetPassword(String email) async {
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    final result = await _authService.forgotPassword(email);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    _showSnackBar(
+      result.message,
+      result.success ? const Color(0xFF4CAF50) : Colors.red,
+    );
+  } catch (e) {
+    setState(() {
+      _isLoading = false;
+    });
+    _showSnackBar(
+      'Reset password error: $e',
+      Colors.red,
+    );
+  }
+}
+  void _socialLogin() async {
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    final result = await _authService.loginWithGoogle();
+
+    if (result.success) {
       _showSnackBar(
         AppLocalizations.of(context)!.loginSuccessful,
         const Color(0xFF4CAF50),
@@ -1132,10 +1139,25 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/homepage');
       }
+    } else {
+      _showSnackBar(
+        result.message,
+        Colors.red,
+      );
+    }
+  } catch (e) {
+    _showSnackBar(
+      'Google login failed: $e',
+      Colors.red,
+    );
+  } finally {
+    setState(() {
+      _isLoading = false;
     });
   }
+}
 
-  void _clearSignupFields() {
+      void _clearSignupFields() {
     _signupNameController.clear();
     _signupEmailController.clear();
     _signupPhoneController.clear();

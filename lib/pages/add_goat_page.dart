@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mygoatmanager/l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/goat.dart';
 
 class AddGoatPage extends StatefulWidget {
@@ -25,6 +26,32 @@ class _AddGoatPageState extends State<AddGoatPage> {
   String? selectedGroup;
   String? selectedObtained;
   String? selectedBreedingStatus = 'Not Bred'; // New: Breeding status
+
+  List<String> _breeds = [];
+  List<String> _groups = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBreedsAndGroups();
+  }
+
+  Future<void> _loadBreedsAndGroups() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedBreeds = prefs.getStringList('goatBreeds') ?? [];
+    final savedGroups = prefs.getStringList('goatGroups') ?? [];
+    
+    setState(() {
+      _breeds = [
+        AppLocalizations.of(context)!.alpine,
+        AppLocalizations.of(context)!.boer,
+        AppLocalizations.of(context)!.kiko,
+        AppLocalizations.of(context)!.nubian,
+        ...savedBreeds,
+      ];
+      _groups = savedGroups;
+    });
+  }
 
   @override
   void dispose() {
@@ -238,12 +265,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
                       setState(() {
                         selectedGender = gender;
                         selectedGoatStage = null; // Reset goat stage when gender changes
-                        // Reset breeding status to default if gender changes
-                        if (gender.toLowerCase().contains('male')) {
-                          selectedBreedingStatus = 'Not Applicable';
-                        } else {
-                          selectedBreedingStatus = 'Not Bred';
-                        }
                       });
                       Navigator.pop(context);
                     },
@@ -354,6 +375,38 @@ class _AddGoatPageState extends State<AddGoatPage> {
                           ),
                         ),
                       ),
+                      // Group options from farm setup
+                      ..._getGroups().map((group) {
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedGroup = group;
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.grey.shade200,
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              group,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Color(0xFF424242),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
                       // Create new group option
                       InkWell(
                         onTap: () {
@@ -525,10 +578,13 @@ class _AddGoatPageState extends State<AddGoatPage> {
 
   // NEW: Breeding Status Picker
   void _showBreedingStatusPicker() {
-    final isMale = selectedGender?.toLowerCase().contains('male') ?? false;
-    final breedingOptions = isMale 
-        ? ['Not Applicable', 'Breeding Active', 'Breeding Rest']
-        : ['Not Bred', 'Bred', 'Pregnant', 'Lactating'];
+    final breedingOptions = [
+      'Not Bred',
+      'Bred', 
+      'Pregnant',
+      'Lactating',
+      'Not Applicable'
+    ];
     
     showDialog(
       context: context,
@@ -546,7 +602,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Text(
-                    isMale ? 'Breeding Status (Male)' : 'Breeding Status',
+                    'Breeding Status',
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
@@ -618,12 +674,16 @@ class _AddGoatPageState extends State<AddGoatPage> {
 
   // Helper methods to get localized lists
   List<String> _getBreeds() {
-    return [
+    return _breeds.isNotEmpty ? _breeds : [
       AppLocalizations.of(context)!.alpine,
       AppLocalizations.of(context)!.boer,
       AppLocalizations.of(context)!.kiko,
       AppLocalizations.of(context)!.nubian,
     ];
+  }
+
+  List<String> _getGroups() {
+    return _groups;
   }
 
   List<String> _getGenders() {
@@ -635,18 +695,19 @@ class _AddGoatPageState extends State<AddGoatPage> {
 
   // Gender-specific goat stages
   List<String> _getGenderSpecificGoatStages() {
-    if (selectedGender?.toLowerCase().contains('male') ?? false) {
+    final loc = AppLocalizations.of(context)!;
+    if (selectedGender == loc.male) {
       return [
-        AppLocalizations.of(context)!.kid,
-        AppLocalizations.of(context)!.wether,
-        AppLocalizations.of(context)!.buckling,
-        AppLocalizations.of(context)!.buck,
+        loc.kid,
+        loc.wether,
+        loc.buckling,
+        loc.buck,
       ];
-    } else if (selectedGender?.toLowerCase().contains('female') ?? false) {
+    } else if (selectedGender == loc.female) {
       return [
-        AppLocalizations.of(context)!.kid,
-        'Doelings', // You need to add this to your AppLocalizations
-        'Does',      // You need to add this to your AppL
+        loc.kid,
+        loc.doelings,
+        loc.does,
       ];
     }
     return [];
@@ -664,8 +725,12 @@ class _AddGoatPageState extends State<AddGoatPage> {
   @override
   Widget build(BuildContext context) {
     final isMale = selectedGender?.toLowerCase().contains('male') ?? false;
-    final breedingStatusLabel = selectedBreedingStatus ?? 
-        (isMale ? 'Not Applicable' : 'Not Bred');
+    final breedingStatusLabel = selectedBreedingStatus ?? 'Not Bred';
+
+    // Ensure breeding status has a default value
+    if (selectedBreedingStatus == null) {
+      selectedBreedingStatus = 'Not Bred';
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -967,37 +1032,42 @@ class _AddGoatPageState extends State<AddGoatPage> {
               ),
               const SizedBox(height: 16),
 
-              // NEW: Breeding Status
-              InkWell(
-                onTap: _showBreedingStatusPicker,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFF9C27B0), width: 2),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        breedingStatusLabel,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w500,
+              // NEW: Breeding Status (only show if gender is selected)
+              if (selectedGender != null)
+                Column(
+                  children: [
+                    InkWell(
+                      onTap: _showBreedingStatusPicker,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFF9C27B0), width: 2),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              breedingStatusLabel,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.arrow_drop_down,
+                              color: Color(0xFF9C27B0),
+                              size: 28,
+                            ),
+                          ],
                         ),
                       ),
-                      const Icon(
-                        Icons.arrow_drop_down,
-                        color: Color(0xFF9C27B0),
-                        size: 28,
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 16),
 
               // Mother's tag no.
               _buildTextField(

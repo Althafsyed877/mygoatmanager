@@ -106,7 +106,7 @@ class _BreedingReportPageState extends State<BreedingReportPage> {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(icon, size: 20, color: color),
@@ -167,7 +167,7 @@ class _BreedingReportPageState extends State<BreedingReportPage> {
         child: Row(
           children: [
             CircleAvatar(
-              backgroundColor: statusColor.withOpacity(0.1),
+              backgroundColor: statusColor.withValues(alpha: 0.1),
               child: Icon(statusIcon, color: statusColor),
             ),
             const SizedBox(width: 16),
@@ -197,8 +197,8 @@ class _BreedingReportPageState extends State<BreedingReportPage> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    backgroundColor: statusColor.withOpacity(0.1),
-                    side: BorderSide(color: statusColor.withOpacity(0.3)),
+                    backgroundColor: statusColor.withValues(alpha: 0.1),
+                    side: BorderSide(color: statusColor.withValues(alpha: 0.3)),
                   ),
                 ],
               ),

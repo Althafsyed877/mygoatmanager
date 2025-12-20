@@ -527,5 +527,8 @@
  "pleaseEnterPhone": "దయచేసి ఫోన్ నంబర్ నమోదు చేయండి",
  "enterValidPhone": "దయచేసి సరైన ఫోన్ నంబర్ నమోదు చేయండి",
 
- "username": "username"
+ "username": "username",
+ "syncFailed": "సమకాలీకరణ విఫలమైంది",
+ "syncCompletedWithErrors": "సమకాలీకరణ లోపాలతో పూర్తయింది",
+ "logout": "లాగ్అవుట్"
 }
