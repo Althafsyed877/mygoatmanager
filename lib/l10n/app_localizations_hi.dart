@@ -732,7 +732,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get income => 'आय';
 
   @override
-  String get expenses => 'व्यय';
+  String get expenses => 'खर्च';
 
   @override
   String get search => 'खोजें';
@@ -1022,7 +1022,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get editGroup => 'समूह संपादित करें';
 
   @override
-  String get transactionsReport => 'लेन-देन';
+  String get transactionsReport => 'लेन-देन रिपोर्ट';
 
   @override
   String get milkReport => 'दूध रिपोर्ट';
@@ -1527,4 +1527,28 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get logout => 'लॉगआउट';
+
+  @override
+  String get pleaseLoginToSync => 'सिंक करने के लिए लॉगिन करें';
+
+  @override
+  String get lineChart => 'रेखा चार्ट';
+
+  @override
+  String get dataSummary => 'डेटा सारांश';
+
+  @override
+  String get incomes => 'आय';
+
+  @override
+  String get totalIncome => 'कुल आय';
+
+  @override
+  String get totalExpenses => 'कुल खर्च';
+
+  @override
+  String get net => 'शुद्ध';
+
+  @override
+  String get currentRange => 'वर्तमान सीमा';
 }

@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mygoatmanager/l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../models/goat.dart';
 import '../models/event.dart';
 import 'package:intl/intl.dart';
 
 class AddEventPage extends StatefulWidget {
   final Goat goat;
+  final Event? existingEvent; // Optional existing event for editing
 
-  const AddEventPage({super.key, required this.goat});
+  const AddEventPage({super.key, required this.goat, this.existingEvent});
 
   @override
   State<AddEventPage> createState() => _AddEventPageState();
@@ -43,7 +44,22 @@ class _AddEventPageState extends State<AddEventPage> {
   @override
   void initState() {
     super.initState();
-    _eventDate = DateTime.now();
+    
+    if (widget.existingEvent != null) {
+      // Populate fields from existing event
+      final event = widget.existingEvent!;
+      _eventDate = event.date;
+      _eventType = event.eventType;
+      _notesController.text = event.notes ?? '';
+      _symptomsController.text = event.symptoms ?? '';
+      _diagnosisController.text = event.diagnosis ?? '';
+      _weighedController.text = event.weighedResult ?? '';
+      _otherEventController.text = event.otherName ?? '';
+      _technicianController.text = event.technician ?? '';
+      _medicineController.text = event.medicine ?? '';
+    } else {
+      _eventDate = DateTime.now();
+    }
   }
 
   @override
@@ -298,13 +314,34 @@ class _AddEventPageState extends State<AddEventPage> {
         eventsList = jsonDecode(existingData) as List<dynamic>;
       }
       
-      eventsList.add(event.toJson());
+      if (widget.existingEvent != null) {
+        // Update existing event
+        final index = eventsList.indexWhere((e) {
+          final eventJson = e as Map<String, dynamic>;
+          return eventJson['date'] == widget.existingEvent!.date.toIso8601String() &&
+                 eventJson['tagNo'] == widget.existingEvent!.tagNo &&
+                 eventJson['eventType'] == widget.existingEvent!.eventType;
+        });
+        
+        if (index != -1) {
+          eventsList[index] = event.toJson();
+        } else {
+          // If not found, add as new
+          eventsList.add(event.toJson());
+        }
+      } else {
+        // Add new event
+        eventsList.add(event.toJson());
+      }
+      
       await prefs.setString('events', jsonEncode(eventsList));
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Event added successfully for ${widget.goat.tagNo}'),
+            content: Text(widget.existingEvent != null 
+              ? 'Event updated successfully for ${widget.goat.tagNo}'
+              : 'Event added successfully for ${widget.goat.tagNo}'),
             backgroundColor: const Color(0xFF4CAF50),
           ),
         );
@@ -332,8 +369,8 @@ class _AddEventPageState extends State<AddEventPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Add Event',
+        title: Text(
+          widget.existingEvent != null ? 'Edit Event' : 'Add Event',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [

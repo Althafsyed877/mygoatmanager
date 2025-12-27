@@ -131,7 +131,7 @@ Future<bool> validateSession() async {
         return ApiResponse.error('No ID token received from Google');
       }
       
-      final result = await _apiService.loginWithGoogle(idToken);
+      final result = await _apiService.loginWithGoogle(idToken, googleUser.email);
       
       if (result.success && result.data?['token'] != null) {
         await saveToken(result.data!['token']);

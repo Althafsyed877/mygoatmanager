@@ -559,6 +559,16 @@
  "username": "username",
  "syncFailed": "Sync failed",
  "syncCompletedWithErrors": "Sync completed with errors",
- "logout": "Logout"
+ "logout": "Logout",
+ "pleaseLoginToSync": "Please login to sync",
 
+  "transactionsReport": "Transactions Report",
+  "lineChart": "Line Chart",
+  "dataSummary": "Data Summary",
+  "incomes": "Incomes",
+  "expenses": "Expenses",
+  "totalIncome": "Total Income",
+  "totalExpenses": "Total Expenses",
+  "net": "Net",
+  "currentRange": "current range"
 }

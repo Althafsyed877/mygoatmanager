@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/goat.dart';
-import 'package:mygoatmanager/l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 class StageTrackingPage extends StatefulWidget {
   final List<Goat> goats;

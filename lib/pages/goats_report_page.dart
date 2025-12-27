@@ -9,7 +9,7 @@ import 'package:printing/printing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/goat.dart';
-import 'package:mygoatmanager/l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 class GoatsReportPage extends StatefulWidget {
   const GoatsReportPage({super.key});

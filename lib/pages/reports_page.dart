@@ -10,7 +10,7 @@ import 'weight_report_page.dart';
 import '../models/goat.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:mygoatmanager/l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 class ReportsPage extends StatelessWidget {
   const ReportsPage({super.key});

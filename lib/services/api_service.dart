@@ -1,9 +1,12 @@
 // lib/services/api_service.dart
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/goat.dart';  // Your Goat model
 import '../models/event.dart'; // Your Event model
+import 'dart:io';
+import 'dart:math';
 
 class ApiService {
   // === CONFIGURATION - UPDATE THESE FOR YOUR GOAT MANAGER ===
@@ -18,7 +21,7 @@ class ApiService {
   // Toggle between local and production
   static bool useLocalhost = false; // Set to true for local testing
   
-  static String get baseUrl => useLocalhost ? localUrl : productionUrl;
+  static String get baseUrl => productionUrl;
   
   // === SINGLETON ===
   static final ApiService _instance = ApiService._internal();
@@ -55,33 +58,6 @@ class ApiService {
     return headers;
   }
   
-  // === HEALTH CHECKS ===
-  Future<ApiResponse> checkApiHealth() async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/health'),
-        headers: {'Content-Type': 'application/json'},
-      );
-      
-      return ApiResponse.fromHttpResponse(response);
-    } catch (e) {
-      return ApiResponse.error('Connection error: $e');
-    }
-  }
-  
-  Future<ApiResponse> checkDbHealth() async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/db-health'),
-        headers: {'Content-Type': 'application/json'},
-      );
-      
-      return ApiResponse.fromHttpResponse(response);
-    } catch (e) {
-      return ApiResponse.error('Database check error: $e');
-    }
-  }
-  
   // === AUTHENTICATION ENDPOINTS ===
   Future<ApiResponse> login(String username, String password) async {
     try {
@@ -94,9 +70,9 @@ class ApiService {
         }),
       );
       
-      print('Login request to: $baseUrl/auth/login');
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      debugPrint('Login request to: $baseUrl/auth/login');
+      debugPrint('Response status: ${response.statusCode}');
+      debugPrint('Response body: ${response.body}');
       
       final result = ApiResponse.fromHttpResponse(response);
       
@@ -145,17 +121,18 @@ class ApiService {
   }
   
   // === GOOGLE AUTHENTICATION ===
-  Future<ApiResponse> loginWithGoogle(String idToken) async {
+  Future<ApiResponse> loginWithGoogle(String idToken, String email) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/auth/google'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'idToken': idToken,
+          'email': email,
         }),
       );
       
-      print('Google Login request to: $baseUrl/auth/google');
+      debugPrint('Google Login request to: $baseUrl/auth/google');
       
       final result = ApiResponse.fromHttpResponse(response);
       
@@ -203,30 +180,46 @@ class ApiService {
   }
   
   // === GOAT OPERATIONS ===
-  Future<ApiResponse> getAllGoats() async {
-    try {
-      final headers = await _getHeaders();
-      final response = await http.get(
-        Uri.parse('$baseUrl/goats'),
-        headers: headers,
-      );
-      
-      final result = ApiResponse.fromHttpResponse(response);
-      
-      // Convert API data to your Goat models if successful
-      if (result.success && result.data?['goats'] is List) {
+   Future<ApiResponse> getAllGoats() async {
+   try {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/goats'),
+      headers: headers,
+     );
+
+    debugPrint('Get goats response: ${response.statusCode}');
+
+    final result = ApiResponse.fromHttpResponse(response);
+    
+    // Convert API data to your Goat models if successful
+    if (result.success && result.data?['goats'] is List) {
+      try {
         final goatsList = (result.data!['goats'] as List)
-            .map((json) => Goat.fromJson(json))
+            .map((json) {
+              // If it's already a Goat object, return it
+              if (json is Goat) {
+                return json;
+              }
+              // Otherwise, convert from JSON
+              return Goat.fromJson(json);
+            })
             .toList();
         result.data = {'goats': goatsList};
+      } catch (e) {
+        debugPrint('Error converting goats: $e');
+        return ApiResponse.error('Error processing goats data: $e');
       }
-      
-      return result;
-    } catch (e) {
-      return ApiResponse.error('Get goats error: $e');
     }
+    
+    return result;
+   } catch (e) {
+    debugPrint('Get goats error: $e');
+    return ApiResponse.error('Get goats error: $e');
+   }
   }
-  
+
+
   Future<ApiResponse> getGoat(String id) async {
     try {
       final headers = await _getHeaders();
@@ -248,6 +241,7 @@ class ApiService {
     }
   }
   
+
   Future<ApiResponse> createGoat(Map<String, dynamic> goatData) async {
     try {
       final headers = await _getHeaders();
@@ -270,6 +264,7 @@ class ApiService {
     }
   }
   
+
   Future<ApiResponse> updateGoat(String id, Map<String, dynamic> goatData) async {
     try {
       final headers = await _getHeaders();
@@ -292,6 +287,7 @@ class ApiService {
     }
   }
   
+
   Future<ApiResponse> deleteGoat(String id) async {
     try {
       final headers = await _getHeaders();
@@ -306,6 +302,7 @@ class ApiService {
     }
   }
   
+
   // === EVENT OPERATIONS ===
   Future<ApiResponse> getAllEvents() async {
     try {
@@ -330,6 +327,7 @@ class ApiService {
     }
   }
   
+
   Future<ApiResponse> createEvent(Map<String, dynamic> eventData) async {
     try {
       final headers = await _getHeaders();
@@ -352,6 +350,7 @@ class ApiService {
     }
   }
   
+
   // === MILK RECORDS ===
   Future<ApiResponse> getMilkRecords() async {
     try {
@@ -382,6 +381,7 @@ class ApiService {
     }
   }
   
+  
   // === PREGNANCIES ===
   Future<ApiResponse> getPregnancies() async {
     try {
@@ -397,6 +397,7 @@ class ApiService {
     }
   }
   
+
   // === REPORTS ===
   Future<ApiResponse> getReports() async {
     try {
@@ -412,6 +413,7 @@ class ApiService {
     }
   }
   
+
   // === TRANSACTIONS ===
   Future<ApiResponse> getTransactions() async {
     try {
@@ -427,6 +429,7 @@ class ApiService {
     }
   }
   
+
   Future<ApiResponse> createIncome(Map<String, dynamic> incomeData) async {
     try {
       final headers = await _getHeaders();
@@ -442,6 +445,7 @@ class ApiService {
     }
   }
   
+
   Future<ApiResponse> createExpense(Map<String, dynamic> expenseData) async {
     try {
       final headers = await _getHeaders();
@@ -457,52 +461,116 @@ class ApiService {
     }
   }
   
+
   // === SYNC DATA METHODS ===
-  Future<ApiResponse> syncGoats(List<Map<String, dynamic>> goatsData) async {
-    try {
-      final headers = await _getHeaders();
-      final response = await http.post(
-        Uri.parse('$baseUrl/sync/goats'),
-        headers: headers,
-        body: json.encode({'goats': goatsData}),
-      );
-      
-      return ApiResponse.fromHttpResponse(response);
-    } catch (e) {
-      return ApiResponse.error('Sync goats error: $e');
+Future<ApiResponse> syncGoats(List<Map<String, dynamic>> goatsData) async {
+  try {
+    debugPrint('🔄 SYNC GOATS STARTED =========================');
+    debugPrint('📱 Number of goats to sync: ${goatsData.length}');
+    
+    // 1. GET HEADERS
+    final headers = await _getHeaders();
+    debugPrint('🔑 Headers check:');
+    debugPrint('   - Content-Type: ${headers['Content-Type']}');
+    debugPrint('   - Auth exists: ${headers.containsKey('Authorization')}');
+    
+    if (!headers.containsKey('Authorization')) {
+      debugPrint('❌ ERROR: No auth token found!');
+      return ApiResponse.error('Not authenticated. Please login again.');
     }
-  }
-  
-  Future<ApiResponse> syncEvents(List<Map<String, dynamic>> eventsData) async {
-    try {
-      final headers = await _getHeaders();
-      final response = await http.post(
-        Uri.parse('$baseUrl/sync/events'),
-        headers: headers,
-        body: json.encode({'events': eventsData}),
-      );
-      
-      return ApiResponse.fromHttpResponse(response);
-    } catch (e) {
-      return ApiResponse.error('Sync events error: $e');
+    
+    // 2. CHECK DATA
+    if (goatsData.isEmpty) {
+      debugPrint('ℹ️ No goats to sync');
+      return ApiResponse.success(message: 'No goats to sync');
     }
-  }
-  
-  Future<ApiResponse> syncMilkRecords(List<Map<String, dynamic>> milkRecordsData) async {
-    try {
-      final headers = await _getHeaders();
-      final response = await http.post(
-        Uri.parse('$baseUrl/sync/milk-records'),
-        headers: headers,
-        body: json.encode({'milk_records': milkRecordsData}),
-      );
-      
-      return ApiResponse.fromHttpResponse(response);
-    } catch (e) {
-      return ApiResponse.error('Sync milk records error: $e');
+    
+    // Show sample data
+    if (goatsData.isNotEmpty) {
+      debugPrint('📋 Sample goat data (first of ${goatsData.length}):');
+      final firstGoat = goatsData.first;
+      for (final key in firstGoat.keys) {
+        debugPrint('   - $key: ${firstGoat[key]}');
+      }
     }
+    
+    // 3. SEND REQUEST
+    final url = '$baseUrl/sync/goats';
+    debugPrint('🌐 Sending POST to: $url');
+    
+    final body = json.encode({'goats': goatsData});
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+    
+    // 4. ANALYZE RESPONSE
+    debugPrint('📥 Response:');
+    debugPrint('   - Status: ${response.statusCode}');
+    debugPrint('   - Body: ${response.body}');
+    
+    final result = ApiResponse.fromHttpResponse(response);
+    
+    debugPrint('📊 Result: ${result.success ? "✅" : "❌"} ${result.message}');
+    
+    if (!result.success) {
+      debugPrint('❌ ERROR: ${result.message}');
+      if (response.statusCode == 401) {
+        await clearToken();
+        debugPrint('⚠️ Token cleared due to 401');
+      }
+    }
+    
+    return result;
+    
+  } catch (e) {
+    debugPrint('💥 ERROR: $e');
+    
+    if (e is SocketException) {
+      return ApiResponse.error('Cannot connect to server. Check URL: $baseUrl');
+    }
+    if (e is FormatException) {
+      return ApiResponse.error('Invalid server response format');
+    }
+    
+    return ApiResponse.error('Sync failed: $e');
   }
+}
+
+
+// Additional sync methods for other data types
+ Future<ApiResponse> syncEvents(List<Map<String, dynamic>> eventsData) async {
+  try {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/sync/events'),
+      headers: headers,
+      body: json.encode({'events': eventsData}),
+    );
+    
+    return ApiResponse.fromHttpResponse(response);
+  } catch (e) {
+    return ApiResponse.error('Sync events error: $e');
+  }
+ }
   
+ Future<ApiResponse> syncMilkRecords(List<Map<String, dynamic>> milkRecordsData) async {
+  try {
+    final headers = await _getHeaders();
+    final response = await http.post(
+      Uri.parse('$baseUrl/sync/milk-records'),
+      headers: headers,
+      body: json.encode({'milk_records': milkRecordsData}),
+    );
+    
+    return ApiResponse.fromHttpResponse(response);
+  } catch (e) {
+    return ApiResponse.error('Sync milk records error: $e');
+  }
+}
+  
+
   Future<ApiResponse> syncTransactions(List<Map<String, dynamic>> incomesData, List<Map<String, dynamic>> expensesData) async {
     try {
       final headers = await _getHeaders();
@@ -521,6 +589,7 @@ class ApiService {
     }
   }
   
+
   Future<ApiResponse> syncFarmSetup(Map<String, dynamic> farmSetupData) async {
     try {
       final headers = await _getHeaders();
@@ -536,6 +605,7 @@ class ApiService {
     }
   }
   
+
   Future<ApiResponse> syncArchivedGoats(List<Map<String, dynamic>> archivedGoatsData) async {
     try {
       final headers = await _getHeaders();
@@ -551,6 +621,7 @@ class ApiService {
     }
   }
   
+
   // === DOWNLOAD/SYNC DATA FROM SERVER ===
   Future<ApiResponse> downloadAllData() async {
     try {
@@ -563,6 +634,23 @@ class ApiService {
       return ApiResponse.fromHttpResponse(response);
     } catch (e) {
       return ApiResponse.error('Download all data error: $e');
+    }
+  }
+  
+  
+  // === BULK SYNC METHOD (Alternative simpler approach) ===
+  Future<ApiResponse> bulkSyncGoats(List<Map<String, dynamic>> goatsData) async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.post(
+        Uri.parse('$baseUrl/goats/bulk-sync'),
+        headers: headers,
+        body: json.encode({'goats': goatsData}),
+      );
+      
+      return ApiResponse.fromHttpResponse(response);
+    } catch (e) {
+      return ApiResponse.error('Bulk sync goats error: $e');
     }
   }
   

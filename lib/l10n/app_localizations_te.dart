@@ -1024,7 +1024,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get editGroup => 'గ్రూప్ను సవరించండి';
 
   @override
-  String get transactionsReport => 'లావాదేవీలు';
+  String get transactionsReport => 'లావాదేవీ నివేదిక';
 
   @override
   String get milkReport => 'పాలు రిపోర్ట్';
@@ -1526,4 +1526,28 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get logout => 'లాగ్అవుట్';
+
+  @override
+  String get pleaseLoginToSync => 'సింక్ చేయడానికి దయచేసి లాగిన్ అవ్వండి';
+
+  @override
+  String get lineChart => 'లైన్ చార్ట్';
+
+  @override
+  String get dataSummary => 'డేటా సారాంశం';
+
+  @override
+  String get incomes => 'ఆదాయాలు';
+
+  @override
+  String get totalIncome => 'మొత్తం ఆదాయం';
+
+  @override
+  String get totalExpenses => 'మొత్తం ఖర్చులు';
+
+  @override
+  String get net => 'నికర';
+
+  @override
+  String get currentRange => 'ప్రస్తుత పరిధి';
 }

@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mygoatmanager/l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../models/goat.dart';
 import '../services/archive_service.dart';
+import '../models/event.dart';
+import 'add_event_page.dart';
 
 class EventsReportPage extends StatefulWidget {
   const EventsReportPage({super.key});
@@ -388,12 +390,15 @@ class _EventsReportPageState extends State<EventsReportPage> {
                 child: Column(
                   children: individualEventTypes.map((eventType) {
                     final count = _getIndividualEventCount(eventType, loc);
-                    return _buildEventRow(
-                      eventType: eventType,
-                      count: count,
-                      icon: _getEventIcon(eventType, loc),
-                      color: _getEventColor(eventType, loc),
-                      context: context,
+                    return InkWell(
+                      onTap: () => _showEventDetails(context, eventType, false),
+                      child: _buildEventRow(
+                        eventType: eventType,
+                        count: count,
+                        icon: _getEventIcon(eventType, loc),
+                        color: _getEventColor(eventType, loc),
+                        context: context,
+                      ),
                     );
                   }).toList(),
                 ),
@@ -413,11 +418,14 @@ class _EventsReportPageState extends State<EventsReportPage> {
                   runSpacing: 16,
                   children: massEventTypes.map((eventType) {
                     final count = _getMassEventCount(eventType, loc);
-                    return _buildMassEventCard(
-                      eventType: eventType,
-                      count: count,
-                      loc: loc,
-                      context: context,
+                    return InkWell(
+                      onTap: () => _showEventDetails(context, eventType, true),
+                      child: _buildMassEventCard(
+                        eventType: eventType,
+                        count: count,
+                        loc: loc,
+                        context: context,
+                      ),
                     );
                   }).toList(),
                 ),
@@ -814,61 +822,91 @@ class _EventsReportPageState extends State<EventsReportPage> {
     if (reason == 'lost') return loc.lost;
     return loc.other;
   }
+
+  void _showEventDetails(BuildContext context, String eventType, bool isMassEvent) {
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return;
+
+    // Filter events by type and mass/individual
+    final filteredEvents = _events.where((event) =>
+      event.eventType == eventType && event.isMassEvent == isMassEvent
+    ).toList();
+
+    // Sort by date descending (newest first)
+    filteredEvents.sort((a, b) => b.date.compareTo(a.date));
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('$eventType ${loc.events}'),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 400,
+          child: filteredEvents.isEmpty
+            ? Center(
+                child: Text(
+                  loc.noResultsFound,
+                  style: TextStyle(color: Colors.grey.shade600),
+                ),
+              )
+            : ListView.builder(
+                itemCount: filteredEvents.length,
+                itemBuilder: (context, index) {
+                  final event = filteredEvents[index];
+                  final goat = _goats.firstWhere(
+                    (g) => g.tagNo == event.tagNo,
+                    orElse: () => Goat(tagNo: event.tagNo, name: 'Unknown', gender: 'Unknown'),
+                  );
+
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: _getEventColor(eventType, loc).withAlpha(50),
+                        child: Icon(
+                          _getEventIcon(eventType, loc),
+                          color: _getEventColor(eventType, loc),
+                          size: 20,
+                        ),
+                      ),
+                      title: Text('${goat.name ?? 'Unknown'} (${event.tagNo})'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${loc.date}: ${_formatDate(event.date)}'),
+                          if (event.notes != null && event.notes!.isNotEmpty)
+                            Text('${loc.notes}: ${event.notes}'),
+                          if (event.weighedResult != null && event.weighedResult!.isNotEmpty)
+                            Text('Weight: ${event.weighedResult} kg'),
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.of(ctx).pop(); // Close the dialog
+                        // Navigate to add_event_page with the event data for viewing/editing
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddEventPage(
+                              goat: goat,
+                              existingEvent: event, // Pass the event data
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(loc.close),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 // Event class (same as in your EventsPage)
-class Event {
-  final DateTime date;
-  final String tagNo;
-  final String eventType;
-  final String? symptoms;
-  final String? diagnosis;
-  final String? technician;
-  final String? medicine;
-  final String? weighedResult;
-  final String? otherName;
-  final String? notes;
-  final bool isMassEvent;
-
-  Event({
-    required this.date,
-    required this.tagNo,
-    required this.eventType,
-    this.symptoms,
-    this.diagnosis,
-    this.technician,
-    this.medicine,
-    this.weighedResult,
-    this.otherName,
-    this.notes,
-    this.isMassEvent = false,
-  });
-
-  Map<String, dynamic> toJson() => {
-    'date': date.toIso8601String(),
-    'tagNo': tagNo,
-    'eventType': eventType,
-    'symptoms': symptoms,
-    'diagnosis': diagnosis,
-    'technician': technician,
-    'medicine': medicine,
-    'weighedResult': weighedResult,
-    'otherName': otherName,
-    'notes': notes,
-    'isMassEvent': isMassEvent,
-  };
-
-  factory Event.fromJson(Map<String, dynamic> json) => Event(
-    date: DateTime.parse(json['date'] as String),
-    tagNo: json['tagNo'] as String,
-    eventType: json['eventType'] as String,
-    symptoms: json['symptoms'] as String?,
-    diagnosis: json['diagnosis'] as String?,
-    technician: json['technician'] as String?,
-    medicine: json['medicine'] as String?,
-    weighedResult: json['weighedResult'] as String?,
-    otherName: json['otherName'] as String?,
-    notes: json['notes'] as String?,
-    isMassEvent: json['isMassEvent'] as bool? ?? false,
-  );
-}

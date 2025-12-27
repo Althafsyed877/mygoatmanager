@@ -530,5 +530,16 @@
  "username": "username",
  "syncFailed": "ಸಿಂಕ್ ವಿಫಲವಾಗಿದೆ",
  "syncCompletedWithErrors": "ಸಿಂಕ್ ದೋಷಗಳೊಂದಿಗೆ ಪೂರ್ಣಗೊಂಡಿದೆ",
- "logout": "ಲಾಗ್ಔಟ್"
+ "logout": "ಲಾಗ್ಔಟ್",
+ "pleaseLoginToSync": "ಸಿಂಕ್ ಮಾಡಲು ದಯವಿಟ್ಟು ಲಾಗಿನ್ ಆಗಿ",
+
+  "transactionsReport": "ವಹಿವಾಟು ವರದಿ",
+  "lineChart": "ರೆಖಾ ಚಾರ್ಟ್",
+  "dataSummary": "ಡೇಟಾ ಸಾರಾಂಶ",
+  "incomes": "ಆದಾಯಗಳು",
+  "expenses": "ಖರ್ಚುಗಳು",
+  "totalIncome": "ಒಟ್ಟು ಆದಾಯ",
+  "totalExpenses": "ಒಟ್ಟು ಖರ್ಚು",
+  "net": "ನಿಕರ",
+  "currentRange": "ಪ್ರಸ್ತುತ ವ್ಯಾಪ್ತಿ"
 }

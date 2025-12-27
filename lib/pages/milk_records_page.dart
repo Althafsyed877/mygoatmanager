@@ -6,7 +6,7 @@ import 'package:printing/printing.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'add_milk_page.dart';
-import 'package:mygoatmanager/l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 class MilkRecord {
   final DateTime date;

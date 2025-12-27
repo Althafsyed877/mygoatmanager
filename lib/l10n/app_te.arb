@@ -530,5 +530,16 @@
  "username": "username",
  "syncFailed": "సమకాలీకరణ విఫలమైంది",
  "syncCompletedWithErrors": "సమకాలీకరణ లోపాలతో పూర్తయింది",
- "logout": "లాగ్అవుట్"
+ "logout": "లాగ్అవుట్",
+ "pleaseLoginToSync": "సింక్ చేయడానికి దయచేసి లాగిన్ అవ్వండి",
+
+  "transactionsReport": "లావాదేవీ నివేదిక",
+  "lineChart": "లైన్ చార్ట్",
+  "dataSummary": "డేటా సారాంశం",
+  "incomes": "ఆదాయాలు",
+  "expenses": "ఖర్చులు",
+  "totalIncome": "మొత్తం ఆదాయం",
+  "totalExpenses": "మొత్తం ఖర్చులు",
+  "net": "నికర",
+  "currentRange": "ప్రస్తుత పరిధి"
 }

@@ -1038,7 +1038,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get editGroup => 'குழுவைத் திருத்தவும்';
 
   @override
-  String get transactionsReport => 'பரிவர்த்தனைகள்';
+  String get transactionsReport => 'பரிவர்த்தனை அறிக்கை';
 
   @override
   String get milkReport => 'பால் அறிக்கை';
@@ -1547,4 +1547,28 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get logout => 'வெளியேறு';
+
+  @override
+  String get pleaseLoginToSync => 'ஒத்திசைய உள்நுழையவும்';
+
+  @override
+  String get lineChart => 'வரைபடம்';
+
+  @override
+  String get dataSummary => 'தரவு சுருக்கம்';
+
+  @override
+  String get incomes => 'வருமானங்கள்';
+
+  @override
+  String get totalIncome => 'மொத்த வருமானம்';
+
+  @override
+  String get totalExpenses => 'மொத்த செலவுகள்';
+
+  @override
+  String get net => 'நிகர';
+
+  @override
+  String get currentRange => 'தற்போதைய வரம்பு';
 }

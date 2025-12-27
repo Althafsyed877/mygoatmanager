@@ -530,5 +530,16 @@
  "username": "username",
  "syncFailed": "सिंक विफल हुआ",
  "syncCompletedWithErrors": "सिंक त्रुटियों के साथ पूरा हुआ",
- "logout": "लॉगआउट"
+ "logout": "लॉगआउट",
+ "pleaseLoginToSync": "सिंक करने के लिए लॉगिन करें",
+
+  "transactionsReport": "लेन-देन रिपोर्ट",
+  "lineChart": "रेखा चार्ट",
+  "dataSummary": "डेटा सारांश",
+  "incomes": "आय",
+  "expenses": "खर्च",
+  "totalIncome": "कुल आय",
+  "totalExpenses": "कुल खर्च",
+  "net": "शुद्ध",
+  "currentRange": "वर्तमान सीमा"
 }

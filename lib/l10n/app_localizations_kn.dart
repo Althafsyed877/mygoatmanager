@@ -1026,7 +1026,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get editGroup => 'ಗ್ರೂಪ್ ಸಂಪಾದಿಸಿ';
 
   @override
-  String get transactionsReport => 'ವಹಿವಾಟುಗಳು';
+  String get transactionsReport => 'ವಹಿವಾಟು ವರದಿ';
 
   @override
   String get milkReport => 'ಹಾಲು ರಿಪೋರ್ಟ್';
@@ -1527,4 +1527,28 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get logout => 'ಲಾಗ್ಔಟ್';
+
+  @override
+  String get pleaseLoginToSync => 'ಸಿಂಕ್ ಮಾಡಲು ದಯವಿಟ್ಟು ಲಾಗಿನ್ ಆಗಿ';
+
+  @override
+  String get lineChart => 'ರೆಖಾ ಚಾರ್ಟ್';
+
+  @override
+  String get dataSummary => 'ಡೇಟಾ ಸಾರಾಂಶ';
+
+  @override
+  String get incomes => 'ಆದಾಯಗಳು';
+
+  @override
+  String get totalIncome => 'ಒಟ್ಟು ಆದಾಯ';
+
+  @override
+  String get totalExpenses => 'ಒಟ್ಟು ಖರ್ಚು';
+
+  @override
+  String get net => 'ನಿಕರ';
+
+  @override
+  String get currentRange => 'ಪ್ರಸ್ತುತ ವ್ಯಾಪ್ತಿ';
 }

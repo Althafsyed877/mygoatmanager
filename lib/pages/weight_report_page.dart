@@ -1,12 +1,14 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mygoatmanager/l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../models/goat.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart' as pdf;
 import 'package:printing/printing.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class WeightReportPage extends StatefulWidget {
   const WeightReportPage({super.key});
@@ -32,7 +34,6 @@ class _WeightReportPageState extends State<WeightReportPage> {
   }
   
   void _initializeDates() {
-    final now = DateTime.now();
     _fromDate = null; // Start with all time
     _toDate = null;
   }
@@ -48,11 +49,6 @@ class _WeightReportPageState extends State<WeightReportPage> {
       _allGoats.clear();
       _allGoats.addAll(decoded.map((item) => Goat.fromJson(item)).toList());
       _applyFilter();
-      
-      debugPrint('=== Weight Report Data ===');
-      debugPrint('Total goats: ${_allGoats.length}');
-      debugPrint('Goats WITH weight: ${_goatsWithWeight.length}');
-      debugPrint('Goats WITHOUT weight: ${_goatsWithoutWeight.length}');
     }
     
     setState(() { _isLoading = false; });
@@ -63,22 +59,17 @@ class _WeightReportPageState extends State<WeightReportPage> {
     _goatsWithoutWeight.clear();
     
     for (var goat in _allGoats) {
-      // Check if goat has weight (from the main weight field, not history)
       final hasWeight = goat.weight != null && goat.weight!.isNotEmpty;
       
       if (hasWeight) {
-        // For goats with weight, check if we need to filter by date
-        // Since we only have single weight, we'll use entry date or DOB
         DateTime? weightDate;
         
-        // Try to get a date associated with the weight
         if (goat.dateOfEntry != null && goat.dateOfEntry!.isNotEmpty) {
           weightDate = _parseDate(goat.dateOfEntry!);
         } else if (goat.dateOfBirth != null && goat.dateOfBirth!.isNotEmpty) {
           weightDate = _parseDate(goat.dateOfBirth!);
         }
         
-        // If no date filter is applied OR weight date is within range
         if (_fromDate == null || _toDate == null || 
             (weightDate != null && _isDateInRange(weightDate))) {
           
@@ -92,12 +83,10 @@ class _WeightReportPageState extends State<WeightReportPage> {
           });
         }
       } else {
-        // Goats without weight
         _goatsWithoutWeight.add(goat);
       }
     }
     
-    // Sort by weight value (highest first)
     _goatsWithWeight.sort((a, b) {
       final weightA = double.tryParse(a['weight'].toString().replaceAll(RegExp(r'[^\d.]'), ''));
       final weightB = double.tryParse(b['weight'].toString().replaceAll(RegExp(r'[^\d.]'), ''));
@@ -106,16 +95,14 @@ class _WeightReportPageState extends State<WeightReportPage> {
       if (weightA == null) return 1;
       if (weightB == null) return -1;
       
-      return weightB.compareTo(weightA); // Descending order
+      return weightB.compareTo(weightA);
     });
     
     _goatsWithoutWeight.sort((a, b) => a.tagNo.compareTo(b.tagNo));
   }
   
   bool _isDateInRange(DateTime date) {
-    if (_fromDate == null || _toDate == null) {
-      return true;
-    }
+    if (_fromDate == null || _toDate == null) return true;
     
     final checkDate = DateTime(date.year, date.month, date.day);
     final startDate = DateTime(_fromDate!.year, _fromDate!.month, _fromDate!.day);
@@ -133,7 +120,6 @@ class _WeightReportPageState extends State<WeightReportPage> {
       return DateTime.parse(dateStr);
     } catch (_) {}
     
-    // Try common date formats
     final formats = [
       'yyyy-MM-dd',
       'dd/MM/yyyy',
@@ -478,63 +464,173 @@ class _WeightReportPageState extends State<WeightReportPage> {
       });
     }
   }
-  
-  Future<void> _exportToPdf(BuildContext context) async {
-    try {
-      final pdfDoc = pw.Document();
-      final greenColor = pdf.PdfColor.fromInt(0xFF00FF00);
-      final blackColor = pdf.PdfColor.fromInt(0xFF000000);
-      final redColor = pdf.PdfColor.fromInt(0xFFFF0000);
-      final now = DateTime.now();
-      final dateRange = _getFormattedDateRange();
+ Future<void> _exportToPdf(BuildContext context) async {
+  try {
+    final pdfDoc = pw.Document();
+    final greenColor = pdf.PdfColor.fromInt(0xFF00FF00);
+    final blackColor = pdf.PdfColor.fromInt(0xFF000000);
+    final redColor = pdf.PdfColor.fromInt(0xFFFF0000);
+    final now = DateTime.now();
+    final dateRange = _getFormattedDateRange();
 
-      pdfDoc.addPage(
-        pw.MultiPage(
-          pageFormat: pdf.PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(20),
-          build: (pw.Context context) {
-            List<pw.Widget> widgets = [];
-            // Header with logo and farm info
-            widgets.add(
-              pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.center,
-                children: [
-                  pw.SizedBox(height: 10),
+    // Load goat image
+    Uint8List? logoBytes;
+    try {
+      final data = await rootBundle.load('assets/images/goat.png');
+      logoBytes = data.buffer.asUint8List();
+    } catch (_) {
+      logoBytes = null;
+    }
+
+    pdfDoc.addPage(
+      pw.MultiPage(
+        pageFormat: pdf.PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(20),
+        build: (pw.Context context) {
+          List<pw.Widget> widgets = [];
+          
+          // Header with goat image
+          widgets.add(
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              children: [
+                pw.SizedBox(height: 10),
+                if (logoBytes != null)
+                  pw.Center(
+                    child: pw.Image(pw.MemoryImage(logoBytes), width: 48, height: 48),
+                  )
+                else
                   pw.Center(
                     child: pw.Text('🐐', style: pw.TextStyle(fontSize: 40)),
                   ),
-                  pw.SizedBox(height: 10),
-                  pw.Center(
-                    child: pw.Text("Set farm's logo under app settings!", style: pw.TextStyle(fontSize: 14)),
-                  ),
-                  pw.Center(
-                    child: pw.Text('Set farm name under app settings!', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
-                  ),
-                  pw.Center(
-                    child: pw.Text('Set farm location under app settings!', style: pw.TextStyle(fontSize: 14)),
-                  ),
-                  pw.SizedBox(height: 10),
-                  pw.Center(
-                    child: pw.Text('Weight Report', style: pw.TextStyle(fontSize: 16)),
-                  ),
-                  pw.Center(
-                    child: pw.Text('Goat: All', style: pw.TextStyle(fontSize: 14)),
-                  ),
-                  pw.Center(
-                    child: pw.Text('Last 12 Months', style: pw.TextStyle(fontSize: 14)),
-                  ),
-                  pw.Center(
-                    child: pw.Text('($dateRange)', style: pw.TextStyle(fontSize: 12)),
-                  ),
-                  pw.SizedBox(height: 6),
-                  pw.Center(
-                    child: pw.Text('Date: ${DateFormat('MMMM d, yyyy HH:mm').format(now)}', style: pw.TextStyle(fontSize: 16, color: redColor, fontWeight: pw.FontWeight.bold)),
-                  ),
-                  pw.SizedBox(height: 16),
-                ],
+                pw.SizedBox(height: 10),
+                pw.Center(
+                  child: pw.Text('Weight Report', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                ),
+                pw.Center(
+                  child: pw.Text('Goat: All', style: pw.TextStyle(fontSize: 14)),
+                ),
+                pw.Center(
+                  child: pw.Text('Last 12 Months', style: pw.TextStyle(fontSize: 14)),
+                ),
+                pw.Center(
+                  child: pw.Text('($dateRange)', style: pw.TextStyle(fontSize: 12)),
+                ),
+                pw.SizedBox(height: 6),
+                pw.Center(
+                  child: pw.Text('Date: ${DateFormat('MMMM d, yyyy HH:mm').format(now)}', style: pw.TextStyle(fontSize: 16, color: redColor, fontWeight: pw.FontWeight.bold)),
+                ),
+                pw.SizedBox(height: 16),
+              ],
+            ),
+          );
+
+          // Use actual weight history data instead of test data
+          List<Map<String, dynamic>> weightReportData = [];
+          
+          for (var item in _goatsWithWeight) {
+            final goat = item['goat'] as Goat;
+            
+            List<Map<String, dynamic>> historyRecords = [];
+            
+            if (goat.weightHistory != null && goat.weightHistory!.isNotEmpty) {
+              // Use existing weightHistory
+              historyRecords = List<Map<String, dynamic>>.from(goat.weightHistory!);
+            } else if (goat.weight != null && goat.weight!.isNotEmpty) {
+              // If no weightHistory but has current weight, create an entry
+              // Use dateOfEntry or dateOfBirth as the date for the initial weight
+              String weightDate = '';
+              if (goat.dateOfEntry != null && goat.dateOfEntry!.isNotEmpty) {
+                weightDate = goat.dateOfEntry!;
+              } else if (goat.dateOfBirth != null && goat.dateOfBirth!.isNotEmpty) {
+                weightDate = goat.dateOfBirth!;
+              } else {
+                // If no dates available, use today's date
+                weightDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+              }
+              
+              historyRecords = [{
+                'date': weightDate,
+                'weight': double.tryParse(goat.weight!.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0.0,
+              }];
+            }
+            
+            if (historyRecords.isNotEmpty) {
+              // Sort weight history by date
+              historyRecords.sort((a, b) {
+                final dateA = _parseDate(a['date'] as String? ?? '');
+                final dateB = _parseDate(b['date'] as String? ?? '');
+                if (dateA == null && dateB == null) return 0;
+                if (dateA == null) return 1;
+                if (dateB == null) return -1;
+                return dateA.compareTo(dateB);
+              });
+              
+              // Create rows for each weight record
+              List<Map<String, dynamic>> goatRows = [];
+                
+                for (int j = 0; j < historyRecords.length; j++) {
+                  final record = historyRecords[j];
+                  final recordDate = _parseDate(record['date'] as String? ?? '');
+                  final weight = (record['weight'] as num?)?.toDouble() ?? 0.0;
+                  
+                  if (recordDate != null && weight > 0) {
+                    // Calculate age from birth date or entry date
+                    final birthDate = _parseDate(goat.dateOfBirth ?? goat.dateOfEntry ?? '');
+                    final ageDays = birthDate != null ? recordDate.difference(birthDate).inDays : 0;
+                    
+                    double? gain;
+                    int? daysPassed;
+                    double? avgDailyGain;
+                    
+                    if (j > 0) {
+                      // Calculate from previous record
+                      final prevRecord = historyRecords[j - 1];
+                      final prevWeight = (prevRecord['weight'] as num?)?.toDouble() ?? 0.0;
+                      final prevDate = _parseDate(prevRecord['date'] as String? ?? '');
+                      
+                      if (prevDate != null) {
+                        gain = weight - prevWeight;
+                        daysPassed = recordDate.difference(prevDate).inDays;
+                        avgDailyGain = daysPassed > 0 ? gain / daysPassed : 0.0;
+                      }
+                    }
+                    
+                    goatRows.add({
+                      'date': DateFormat('dd MMM yyyy').format(recordDate),
+                      'age': '$ageDays days',
+                      'result': weight.toStringAsFixed(2),
+                      'gain': j == 0 ? '-' : gain?.toStringAsFixed(2) ?? '-',
+                      'daysPassed': j == 0 ? '-' : daysPassed?.toString() ?? '-',
+                      'avgDailyGain': j == 0 ? '-' : avgDailyGain?.toStringAsFixed(2) ?? '-',
+                    });
+                  }
+                }
+                
+                if (goatRows.isNotEmpty) {
+                  weightReportData.add({
+                    'goat': goat,
+                    'rows': goatRows,
+                  });
+                }
+              }
+            }
+          
+          // Sort by tag number
+          weightReportData.sort((a, b) {
+            final goatA = a['goat'] as Goat;
+            final goatB = b['goat'] as Goat;
+            return goatA.tagNo.compareTo(goatB.tagNo);
+          });
+
+          if (weightReportData.isEmpty) {
+            widgets.add(
+              pw.Center(
+                child: pw.Text('No weight records found', 
+                  style: pw.TextStyle(fontSize: 14, color: blackColor)),
               ),
             );
-
+          } else {
             widgets.add(
               pw.Align(
                 alignment: pw.Alignment.centerLeft,
@@ -543,23 +639,12 @@ class _WeightReportPageState extends State<WeightReportPage> {
             );
             widgets.add(pw.SizedBox(height: 8));
 
-            // For each goat with weight events, build a table
-            for (int i = 0; i < _goatsWithWeight.length; i++) {
-              final item = _goatsWithWeight[i];
+            // For each goat with weight history, build a table
+            for (int i = 0; i < weightReportData.length; i++) {
+              final item = weightReportData[i];
               final goat = item['goat'] as Goat;
-              final weightHistory = goat.weightHistory ?? [];
-              // Compose rows for this goat
-              List<List<String>> rows = [];
-              for (var event in weightHistory) {
-                rows.add([
-                  event['date'] ?? '',
-                  event['age'] ?? '',
-                  event['result']?.toString() ?? '',
-                  event['gain']?.toString() ?? '-',
-                  event['daysPassed']?.toString() ?? '-',
-                  event['avgDailyGain']?.toString() ?? '-',
-                ]);
-              }
+              final goatRows = item['rows'] as List<Map<String, dynamic>>;
+              
               // Table header
               widgets.add(
                 pw.Container(
@@ -610,12 +695,20 @@ class _WeightReportPageState extends State<WeightReportPage> {
                         ),
                       ],
                     ),
-                    ...rows.map((row) => pw.TableRow(
-                      children: List.generate(row.length, (j) {
-                        final isRed = (j == 5 && (row[j] == '-' || row[j] == '0' || row[j] == '0.00'));
+                    ...goatRows.map((row) => pw.TableRow(
+                      children: List.generate(6, (j) {
+                        final cellValue = [
+                          row['date'],
+                          row['age'],
+                          row['result'],
+                          row['gain'],
+                          row['daysPassed'],
+                          row['avgDailyGain'],
+                        ][j];
+                        final isRed = (j == 5 && (cellValue == '-' || cellValue == '0' || cellValue == '0.00'));
                         return pw.Padding(
                           padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text(row[j], style: pw.TextStyle(color: isRed ? redColor : blackColor)),
+                          child: pw.Text(cellValue, style: pw.TextStyle(color: isRed ? redColor : blackColor)),
                         );
                       }),
                     )),
@@ -624,126 +717,125 @@ class _WeightReportPageState extends State<WeightReportPage> {
               );
               widgets.add(pw.SizedBox(height: 12));
             }
+          }
 
-            // Goats with no weight event records
-            if (_goatsWithoutWeight.isNotEmpty) {
-              widgets.add(pw.SizedBox(height: 16));
-              widgets.add(
-                pw.Container(
-                  width: double.infinity,
-                  color: greenColor,
-                  padding: const pw.EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  child: pw.Text('Active goats with no weight event records in the selected period', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                ),
-              );
-              widgets.add(
-                pw.Table(
-                  border: pw.TableBorder.all(),
-                  columnWidths: {
-                    0: const pw.FlexColumnWidth(2),
-                    1: const pw.FlexColumnWidth(3),
-                    2: const pw.FlexColumnWidth(2),
-                    3: const pw.FlexColumnWidth(2),
-                  },
-                  children: [
-                    pw.TableRow(
-                      decoration: pw.BoxDecoration(color: greenColor),
-                      children: [
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text('Tag.', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text('Name', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text('Gender', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text('Stage', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                    ..._goatsWithoutWeight.map((goat) => pw.TableRow(
-                      children: [
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text(goat.tagNo),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text(goat.name ?? ''),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text(goat.gender),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text(goat.goatStage ?? ''),
-                        ),
-                      ],
-                    )),
-                    pw.TableRow(
-                      children: [
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text('Total', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        ),
-                        pw.SizedBox(),
-                        pw.SizedBox(),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(4),
-                          child: pw.Text('${_goatsWithoutWeight.length}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            }
+          // Goats with no weight event records
+          if (_goatsWithoutWeight.isNotEmpty) {
+            widgets.add(pw.SizedBox(height: 16));
+            widgets.add(
+              pw.Container(
+                width: double.infinity,
+                color: greenColor,
+                padding: const pw.EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                child: pw.Text('Active goats with no weight event records in the selected period', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              ),
+            );
+            widgets.add(
+              pw.Table(
+                border: pw.TableBorder.all(),
+                columnWidths: {
+                  0: const pw.FlexColumnWidth(2),
+                  1: const pw.FlexColumnWidth(3),
+                  2: const pw.FlexColumnWidth(2),
+                  3: const pw.FlexColumnWidth(2),
+                },
+                children: [
+                  pw.TableRow(
+                    decoration: pw.BoxDecoration(color: greenColor),
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text('Tag.', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text('Name', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text('Gender', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text('Stage', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                  ..._goatsWithoutWeight.map((goat) => pw.TableRow(
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(goat.tagNo),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(goat.name ?? ''),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(goat.gender),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(goat.goatStage ?? ''),
+                      ),
+                    ],
+                  )),
+                  pw.TableRow(
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text('Total', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      ),
+                      pw.SizedBox(),
+                      pw.SizedBox(),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text('${_goatsWithoutWeight.length}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }
 
-            return widgets;
-          },
-          footer: (pw.Context context) => pw.Container(
-            alignment: pw.Alignment.centerRight,
-            margin: const pw.EdgeInsets.only(top: 10),
-            child: pw.Text('page ${context.pageNumber}', style: pw.TextStyle(fontSize: 10)),
-          ),
+          return widgets;
+        },
+        footer: (pw.Context context) => pw.Container(
+          alignment: pw.Alignment.centerRight,
+          margin: const pw.EdgeInsets.only(top: 10),
+          child: pw.Text('page ${context.pageNumber}', style: pw.TextStyle(fontSize: 10)),
+        ),
+      ),
+    );
+
+    final pdfBytes = await pdfDoc.save();
+    await Printing.sharePdf(
+      bytes: pdfBytes,
+      filename: 'Weight_Report_${DateFormat('yyyyMMdd_HHmm').format(now)}.pdf',
+    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('PDF exported successfully'),
+          backgroundColor: Colors.green,
         ),
       );
-
-      final pdfBytes = await pdfDoc.save();
-      await Printing.sharePdf(
-        bytes: pdfBytes,
-        filename: 'Weight_Report_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.pdf',
+    }
+  } catch (e) {
+    debugPrint('PDF Export Error: $e');
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error exporting PDF: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('PDF exported successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      debugPrint('PDF Export Error: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error exporting PDF: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
     }
   }
-  
-  // _buildPdfSummaryItem removed (no longer used)
-  
+}
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
@@ -781,7 +873,6 @@ class _WeightReportPageState extends State<WeightReportPage> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // Date range card
                 Card(
                   margin: const EdgeInsets.all(16),
                   elevation: 2,
@@ -824,7 +915,6 @@ class _WeightReportPageState extends State<WeightReportPage> {
                   ),
                 ),
                 
-                // Summary stats
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
@@ -865,7 +955,6 @@ class _WeightReportPageState extends State<WeightReportPage> {
                   child: Divider(),
                 ),
                 
-                // Tab bar for viewing data
                 Expanded(
                   child: DefaultTabController(
                     length: 2,
@@ -886,7 +975,6 @@ class _WeightReportPageState extends State<WeightReportPage> {
                         Expanded(
                           child: TabBarView(
                             children: [
-                              // Tab 1: Goats with weight
                               _goatsWithWeight.isEmpty
                                   ? Center(
                                       child: Column(
@@ -992,7 +1080,6 @@ class _WeightReportPageState extends State<WeightReportPage> {
                                       },
                                     ),
                               
-                              // Tab 2: Goats without weight
                               _goatsWithoutWeight.isEmpty
                                   ? Center(
                                       child: Column(

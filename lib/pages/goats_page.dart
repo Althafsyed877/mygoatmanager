@@ -7,13 +7,14 @@ import 'package:pdf/pdf.dart' as pdf;
 import 'package:printing/printing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'add_goat_page.dart';
-import 'package:mygoatmanager/l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../models/goat.dart';
 import 'view_goat_page.dart';
 import 'edit_goat_page.dart';
 import 'add_event_page.dart';
 import 'goat_preview_page.dart';
 import '../services/archive_service.dart'; // Add this import
+import '../services/local_storage_service.dart';
 
 class GoatsPage extends StatefulWidget {
   const GoatsPage({super.key});
@@ -39,6 +40,15 @@ class _GoatsPageState extends State<GoatsPage> {
     _loadBreedsAndGroups();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Update breeds and groups when locale changes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateLocalizedBreedsAndGroups();
+    });
+  }
+
   Future<void> _loadGoats() async {
     final prefs = await SharedPreferences.getInstance();
     final String? goatsJson = prefs.getString('goats');
@@ -59,9 +69,61 @@ class _GoatsPageState extends State<GoatsPage> {
     final groupsData = prefs.getStringList('goatGroups') ?? [];
     
     setState(() {
-      _breeds = [AppLocalizations.of(context)!.allBreeds, ...breedsData];
-      _groups = [AppLocalizations.of(context)!.allGroups, ...groupsData];
+      _breeds = breedsData;
+      _groups = groupsData;
     });
+    _updateLocalizedBreedsAndGroups();
+  }
+
+  void _updateLocalizedBreedsAndGroups() {
+    final loc = AppLocalizations.of(context);
+    if (loc != null) {
+      setState(() {
+        // Update selected breed and group to localized version
+        selectedBreed = _getLocalizedSelectedBreed(selectedBreed);
+        selectedGroup = _getLocalizedSelectedGroup(selectedGroup);
+      });
+    }
+  }
+
+  String _getLocalizedSelectedBreed(String currentBreed) {
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return currentBreed;
+    
+    if (currentBreed == 'All Breeds' || currentBreed == loc.allBreeds) {
+      return loc.allBreeds;
+    }
+    
+    // Check if it's a standard breed
+    if (currentBreed == 'Alpine' || currentBreed == loc.alpine) return loc.alpine;
+    if (currentBreed == 'Boer' || currentBreed == loc.boer) return loc.boer;
+    if (currentBreed == 'Kiko' || currentBreed == loc.kiko) return loc.kiko;
+    if (currentBreed == 'Nubian' || currentBreed == loc.nubian) return loc.nubian;
+    
+    // For custom breeds, check if it's in our stored breeds
+    if (_breeds.contains(currentBreed)) {
+      return currentBreed;
+    }
+    
+    // If it's a localized version of a custom breed, find the English version
+    for (var breed in _breeds) {
+      if (_getLocalizedBreed(breed) == currentBreed) {
+        return currentBreed;
+      }
+    }
+    
+    return loc.allBreeds; // Default
+  }
+
+  String _getLocalizedSelectedGroup(String currentGroup) {
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return currentGroup;
+    
+    if (currentGroup == 'All Groups' || currentGroup == loc.allGroups) {
+      return loc.allGroups;
+    }
+    
+    return currentGroup;
   }
 
   Future<void> _saveGoats() async {
@@ -70,17 +132,28 @@ class _GoatsPageState extends State<GoatsPage> {
     await prefs.setString('goats', goatsJson);
   }
 
-  List<String> get breeds => _breeds.isNotEmpty ? _breeds : [
-    AppLocalizations.of(context)!.allBreeds,
-    AppLocalizations.of(context)!.alpine,
-    AppLocalizations.of(context)!.boer,
-    AppLocalizations.of(context)!.kiko,
-    AppLocalizations.of(context)!.nubian,
-  ];
+  List<String> get breeds {
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return ['All Breeds', 'Alpine', 'Boer', 'Kiko', 'Nubian'];
+    
+    List<String> localizedBreeds = [loc.allBreeds, loc.alpine, loc.boer, loc.kiko, loc.nubian];
+    
+    // Add custom breeds and localize them
+    for (var customBreed in _breeds) {
+      if (!['Alpine', 'Boer', 'Kiko', 'Nubian'].contains(customBreed)) {
+        localizedBreeds.add(customBreed);
+      }
+    }
+    
+    return localizedBreeds;
+  }
 
-  List<String> get groups => _groups.isNotEmpty ? _groups : [
-    AppLocalizations.of(context)!.allGroups,
-  ];
+  List<String> get groups {
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return ['All Groups'];
+    
+    return [loc.allGroups, ..._groups];
+  }
 
   List<Goat> get filteredGoats {
     List<Goat> filtered = List.from(goats);
@@ -97,9 +170,11 @@ class _GoatsPageState extends State<GoatsPage> {
 
     // Apply breed filter
     if (selectedBreed != (loc?.allBreeds ?? 'All Breeds')) {
+      // Convert localized breed back to English for comparison
+      String englishBreed = _getEnglishBreed(selectedBreed);
+      
       filtered = filtered.where((goat) {
-        final localizedBreed = _getLocalizedBreed(goat.breed ?? '');
-        return localizedBreed == selectedBreed;
+        return goat.breed == englishBreed;
       }).toList();
     }
 
@@ -120,8 +195,20 @@ class _GoatsPageState extends State<GoatsPage> {
       case 'Boer': return loc.boer;
       case 'Kiko': return loc.kiko;
       case 'Nubian': return loc.nubian;
-      default: return englishBreed;
+      default: return englishBreed; // Custom breeds are stored as-is
     }
+  }
+
+  String _getEnglishBreed(String localizedBreed) {
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return localizedBreed;
+    
+    if (localizedBreed == loc.alpine) return 'Alpine';
+    if (localizedBreed == loc.boer) return 'Boer';
+    if (localizedBreed == loc.kiko) return 'Kiko';
+    if (localizedBreed == loc.nubian) return 'Nubian';
+    if (localizedBreed == loc.allBreeds) return 'All Breeds';
+    return localizedBreed; // Custom breeds or already English
   }
 
   void _showBreedPicker() {
@@ -149,29 +236,6 @@ class _GoatsPageState extends State<GoatsPage> {
                     ),
                   ),
                 ),
-                // Search field
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)!.searchHint,
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
                 // Breed list
                 Flexible(
                   child: ListView.builder(
@@ -263,29 +327,6 @@ class _GoatsPageState extends State<GoatsPage> {
                     ),
                   ),
                 ),
-                // Search field
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)!.searchHint,
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
                 // Group list
                 Flexible(
                   child: ListView.builder(
@@ -387,6 +428,11 @@ class _GoatsPageState extends State<GoatsPage> {
                   hintStyle: const TextStyle(color: Colors.white70),
                   border: InputBorder.none,
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    // Trigger UI update when search text changes
+                  });
+                },
               )
             : Text(
                 AppLocalizations.of(context)!.goatsTitle,
@@ -591,14 +637,18 @@ class _GoatsPageState extends State<GoatsPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Color(0xFF424242),
-                fontWeight: FontWeight.w500,
+            Expanded(
+              child: Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFF424242),
+                  fontWeight: FontWeight.w500,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 8),
             const Icon(
               Icons.arrow_drop_down,
               color: Color(0xFF4CAF50),
@@ -611,7 +661,20 @@ class _GoatsPageState extends State<GoatsPage> {
   }
 
   Widget _buildGoatCard(Goat goat) {
-    final isMale = goat.gender.toLowerCase() == AppLocalizations.of(context)!.male.toLowerCase();
+    // Fix: Check if gender stored in English matches either English or localized male/female
+    final genderText = goat.gender.toLowerCase();
+    final loc = AppLocalizations.of(context)!;
+    
+    bool isMale;
+    if (genderText == 'male' || genderText == loc.male.toLowerCase()) {
+      isMale = true;
+    } else if (genderText == 'female' || genderText == loc.female.toLowerCase()) {
+      isMale = false;
+    } else {
+      // Default to male if unknown
+      isMale = true;
+    }
+    
     final genderColor = isMale ? const Color(0xFF4CAF50) : const Color(0xFFFFA726);
     final isSelected = selectedGoats.contains(goat.tagNo);
 
@@ -716,7 +779,8 @@ class _GoatsPageState extends State<GoatsPage> {
                 border: Border.all(color: genderColor, width: 1.5),
               ),
               child: Text(
-                goat.gender,
+                // Show localized gender text
+                isMale ? loc.male : loc.female,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -992,43 +1056,6 @@ class _GoatsPageState extends State<GoatsPage> {
       );
     }
   }
-
-  // OLD: Delete Dialog (now replaced by archive dialog)
-  // void _showDeleteDialog(Goat goat) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text(AppLocalizations.of(context)!.deleteGoatTitle),
-  //         content: Text('${AppLocalizations.of(context)!.deleteGoatConfirm} ${goat.tagNo}?'),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.pop(context);
-  //             },
-  //             child: Text(AppLocalizations.of(context)!.cancel),
-  //           ),
-  //           TextButton(
-  //             onPressed: () async {
-  //               setState(() {
-  //                 goats.removeWhere((g) => g.tagNo == goat.tagNo);
-  //               });
-  //               await _saveGoats();
-  //               Navigator.pop(context);
-  //               ScaffoldMessenger.of(context).showSnackBar(
-  //                 SnackBar(
-  //                   content: Text('${AppLocalizations.of(context)!.deleteGoatDeleted} ${goat.tagNo}'),
-  //                   backgroundColor: Colors.red,
-  //                 ),
-  //               );
-  //             },
-  //             child: Text(AppLocalizations.of(context)!.delete, style: const TextStyle(color: Colors.red)),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
   DateTime? _tryParseDate(String? s) {
     if (s == null) return null;

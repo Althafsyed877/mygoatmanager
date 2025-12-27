@@ -2099,7 +2099,7 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsReport.
   ///
   /// In en, this message translates to:
-  /// **'Transactions'**
+  /// **'Transactions Report'**
   String get transactionsReport;
 
   /// No description provided for @milkReport.
@@ -3073,6 +3073,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logout'**
   String get logout;
+
+  /// No description provided for @pleaseLoginToSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Please login to sync'**
+  String get pleaseLoginToSync;
+
+  /// No description provided for @lineChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Line Chart'**
+  String get lineChart;
+
+  /// No description provided for @dataSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Summary'**
+  String get dataSummary;
+
+  /// No description provided for @incomes.
+  ///
+  /// In en, this message translates to:
+  /// **'Incomes'**
+  String get incomes;
+
+  /// No description provided for @totalIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Income'**
+  String get totalIncome;
+
+  /// No description provided for @totalExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Expenses'**
+  String get totalExpenses;
+
+  /// No description provided for @net.
+  ///
+  /// In en, this message translates to:
+  /// **'Net'**
+  String get net;
+
+  /// No description provided for @currentRange.
+  ///
+  /// In en, this message translates to:
+  /// **'current range'**
+  String get currentRange;
 }
 
 class _AppLocalizationsDelegate

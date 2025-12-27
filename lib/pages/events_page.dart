@@ -5,7 +5,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../models/goat.dart';
 import 'view_goat_page.dart';
-import 'package:mygoatmanager/l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 class Event {
   final DateTime date;
@@ -109,6 +109,74 @@ class _EventsPageState extends State<EventsPage> {
     final prefs = await SharedPreferences.getInstance();
     final jsonList = _events.map((e) => e.toJson()).toList();
     await prefs.setString('events', jsonEncode(jsonList));
+  }
+
+  Future<void> _updateGoatWeightForEvent(Event event) async {
+    if (event.eventType.toLowerCase() != 'weighed' && event.weighedResult == null) {
+      return;
+    }
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final goatsJson = prefs.getString('goats');
+      
+      if (goatsJson == null) return;
+
+      final List<dynamic> decodedList = jsonDecode(goatsJson);
+      List<Map<String, dynamic>> goatsData = List<Map<String, dynamic>>.from(decodedList);
+      
+      // Find the goat
+      int goatIndex = -1;
+      for (int i = 0; i < goatsData.length; i++) {
+        if (goatsData[i]['tagNo'] == event.tagNo) {
+          goatIndex = i;
+          break;
+        }
+      }
+      
+      if (goatIndex == -1) return;
+
+      // Get or initialize weightHistory
+      List<Map<String, dynamic>> weightHistory = [];
+      if (goatsData[goatIndex]['weightHistory'] != null) {
+        try {
+          weightHistory = List<Map<String, dynamic>>.from(goatsData[goatIndex]['weightHistory']);
+        } catch (e) {
+          weightHistory = [];
+        }
+      }
+
+      // Format date
+      final dateStr = event.date.toIso8601String().split('T')[0]; // YYYY-MM-DD format
+      
+      // Parse weight
+      final weightText = event.weighedResult!.trim();
+      final weight = double.tryParse(weightText.replaceAll(',', '.')) ?? 0.0;
+      
+      // Check if this date already exists in history
+      final existingIndex = weightHistory.indexWhere((entry) => entry['date'] == dateStr);
+      if (existingIndex >= 0) {
+        // Update existing entry
+        weightHistory[existingIndex]['weight'] = weight;
+      } else {
+        // Add new entry
+        weightHistory.add({
+          'date': dateStr,
+          'weight': weight,
+        });
+      }
+
+      // Update goat data
+      goatsData[goatIndex]['weightHistory'] = weightHistory;
+      goatsData[goatIndex]['weight'] = weightText;
+      
+      // Save back to SharedPreferences
+      final updatedJson = jsonEncode(goatsData);
+      await prefs.setString('goats', updatedJson);
+      
+    } catch (e) {
+      // Ignore errors to prevent breaking the event save
+    }
   }
 
   Future<void> _loadGoats() async {
@@ -584,6 +652,8 @@ class _EventsPageState extends State<EventsPage> {
             _events[actualIndex] = updated;
           });
           await _saveEvents();
+          // Update goat weight if this is a weighed event
+          await _updateGoatWeightForEvent(updated);
         }
         break;
       
@@ -1024,6 +1094,8 @@ class _EventsPageState extends State<EventsPage> {
                                                 _events.insert(0, newEvent);
                                               });
                                               _saveEvents();
+                                              // Update goat weight if this is a weighed event
+                                              _updateGoatWeightForEvent(newEvent);
                                             }
                                           });
                                         },

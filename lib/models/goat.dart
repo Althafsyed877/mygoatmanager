@@ -47,15 +47,34 @@ class Goat {
     this.kiddingDueDate,
   });
 
+// In your Goat model, fix date format:
   Map<String, dynamic> toJson() {
+    // Convert dates from DD/MM/YYYY to YYYY-MM-DD
+    String? formatDate(String? dateStr) {
+      if (dateStr == null) return null;
+      try {
+        // If it's already YYYY-MM-DD, keep it
+        if (dateStr.contains('-')) return dateStr;
+        
+        // Convert DD/MM/YYYY to YYYY-MM-DD
+        final parts = dateStr.split('/');
+        if (parts.length == 3) {
+          return '${parts[2]}-${parts[1]}-${parts[0]}'; // YYYY-MM-DD
+        }
+        return dateStr;
+      } catch (e) {
+        return null;
+      }
+    }
+    
     return {
       'tagNo': tagNo,
       'name': name,
       'breed': breed,
       'gender': gender,
       'goatStage': goatStage,
-      'dateOfBirth': dateOfBirth,
-      'dateOfEntry': dateOfEntry,
+      'dateOfBirth': formatDate(dateOfBirth), // Fixed
+      'dateOfEntry': formatDate(dateOfEntry), // Fixed
       'weight': weight,
       'group': group,
       'obtained': obtained,
@@ -64,13 +83,11 @@ class Goat {
       'notes': notes,
       'photoPath': photoPath,
       'weightHistory': weightHistory,
-      
-      // Only breeding fields
       'breedingStatus': breedingStatus,
-      'breedingDate': breedingDate,
+      'breedingDate': formatDate(breedingDate), // Fixed
       'breedingPartner': breedingPartner,
       'kiddingHistory': kiddingHistory,
-      'kiddingDueDate': kiddingDueDate,
+      'kiddingDueDate': formatDate(kiddingDueDate), // Fixed
     };
   }
 
@@ -105,3 +122,4 @@ class Goat {
     );
   }
 }
+// In your Goat model, fix date format:

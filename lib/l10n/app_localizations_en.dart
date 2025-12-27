@@ -1021,7 +1021,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editGroup => 'Edit Group';
 
   @override
-  String get transactionsReport => 'Transactions';
+  String get transactionsReport => 'Transactions Report';
 
   @override
   String get milkReport => 'Milk Report';
@@ -1523,4 +1523,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logout => 'Logout';
+
+  @override
+  String get pleaseLoginToSync => 'Please login to sync';
+
+  @override
+  String get lineChart => 'Line Chart';
+
+  @override
+  String get dataSummary => 'Data Summary';
+
+  @override
+  String get incomes => 'Incomes';
+
+  @override
+  String get totalIncome => 'Total Income';
+
+  @override
+  String get totalExpenses => 'Total Expenses';
+
+  @override
+  String get net => 'Net';
+
+  @override
+  String get currentRange => 'current range';
 }

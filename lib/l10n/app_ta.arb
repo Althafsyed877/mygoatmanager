@@ -530,5 +530,16 @@
  "username": "username",
  "syncFailed": "ஒத்திசைவு தோல்வியுற்றது",
  "syncCompletedWithErrors": "ஒத்திசைவு பிழைகளுடன் நிறைவடைந்தது",
- "logout": "வெளியேறு"
+ "logout": "வெளியேறு",
+ "pleaseLoginToSync": "ஒத்திசைய உள்நுழையவும்",
+
+  "transactionsReport": "பரிவர்த்தனை அறிக்கை",
+  "lineChart": "வரைபடம்",
+  "dataSummary": "தரவு சுருக்கம்",
+  "incomes": "வருமானங்கள்",
+  "expenses": "செலவுகள்",
+  "totalIncome": "மொத்த வருமானம்",
+  "totalExpenses": "மொத்த செலவுகள்",
+  "net": "நிகர",
+  "currentRange": "தற்போதைய வரம்பு"
 }

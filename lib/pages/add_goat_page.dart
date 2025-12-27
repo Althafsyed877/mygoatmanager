@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mygoatmanager/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
+import '../l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/goat.dart';
 
@@ -724,13 +725,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isMale = selectedGender?.toLowerCase().contains('male') ?? false;
-    final breedingStatusLabel = selectedBreedingStatus ?? 'Not Bred';
-
-    // Ensure breeding status has a default value
-    if (selectedBreedingStatus == null) {
-      selectedBreedingStatus = 'Not Bred';
-    }
+    final breedingStatusLabel = selectedBreedingStatus ??= 'Not Bred';
 
     return Scaffold(
       appBar: AppBar(
@@ -765,6 +760,19 @@ class _AddGoatPageState extends State<AddGoatPage> {
                 return;
               }
 
+              // Create weightHistory if weight is provided
+              List<Map<String, dynamic>>? initialWeightHistory;
+              if (weightController.text.isNotEmpty) {
+                final weightDate = entryDateController.text.isNotEmpty 
+                    ? entryDateController.text 
+                    : (dobController.text.isNotEmpty ? dobController.text : DateFormat('yyyy-MM-dd').format(DateTime.now()));
+                
+                initialWeightHistory = [{
+                  'date': weightDate,
+                  'weight': double.tryParse(weightController.text.replaceAll(',', '.')) ?? 0.0,
+                }];
+              }
+
               // Create Goat object
               final goat = Goat(
                 tagNo: tagController.text,
@@ -781,7 +789,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
                 fatherTag: fatherTagController.text.isEmpty ? null : fatherTagController.text,
                 notes: notesController.text.isEmpty ? null : notesController.text,
                 photoPath: null,
-                weightHistory: null,
+                weightHistory: initialWeightHistory,
                 // NEW: Breeding fields
                 breedingStatus: selectedBreedingStatus,
                 breedingDate: null,

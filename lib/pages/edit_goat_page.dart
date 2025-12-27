@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/goat.dart';
 
 class EditGoatPage extends StatefulWidget {
@@ -445,6 +446,27 @@ class _EditGoatPageState extends State<EditGoatPage> {
 
   void _saveGoat() {
     if (_formKey.currentState!.validate()) {
+      // Handle weightHistory update if weight changed
+      List<Map<String, dynamic>>? updatedWeightHistory = widget.goat.weightHistory;
+      final newWeight = _weightController.text.isEmpty ? null : _weightController.text;
+      final oldWeight = widget.goat.weight;
+      
+      // If weight changed, add new entry to weightHistory
+      if (newWeight != oldWeight && newWeight != null && newWeight.isNotEmpty) {
+        updatedWeightHistory = updatedWeightHistory != null 
+            ? List<Map<String, dynamic>>.from(updatedWeightHistory)
+            : [];
+        
+        // Add new weight entry with today's date
+        final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        final weightValue = double.tryParse(newWeight.replaceAll(',', '.')) ?? 0.0;
+        
+        updatedWeightHistory.add({
+          'date': today,
+          'weight': weightValue,
+        });
+      }
+
       final updatedGoat = Goat(
         tagNo: _tagNoController.text,
         name: _nameController.text.isEmpty ? null : _nameController.text,
@@ -454,7 +476,7 @@ class _EditGoatPageState extends State<EditGoatPage> {
         dateOfBirth: _dobController.text.isEmpty ? null : _dobController.text,
         dateOfEntry:
             _entryDateController.text.isEmpty ? null : _entryDateController.text,
-        weight: _weightController.text.isEmpty ? null : _weightController.text,
+        weight: newWeight,
         group: _selectedGroup,
         obtained: _selectedObtained,
         motherTag:
@@ -463,6 +485,7 @@ class _EditGoatPageState extends State<EditGoatPage> {
             _fatherTagController.text.isEmpty ? null : _fatherTagController.text,
         notes: _notesController.text.isEmpty ? null : _notesController.text,
         photoPath: widget.goat.photoPath,
+        weightHistory: updatedWeightHistory,
         breedingStatus: _selectedBreedingStatus,
         breedingDate: widget.goat.breedingDate,
         breedingPartner: widget.goat.breedingPartner,

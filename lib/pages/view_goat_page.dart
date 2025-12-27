@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
-import 'package:mygoatmanager/l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../models/goat.dart';
 import '../models/event.dart';
 import 'edit_goat_page.dart';
@@ -85,6 +85,29 @@ class _ViewGoatPageState extends State<ViewGoatPage>
             (event.isMassEvent && event.tagNo.contains(widget.goat.tagNo))
           ).toList();
         });
+      }
+    } catch (e) {
+      // ignore errors
+    }
+  }
+
+  Future<void> _reloadGoatData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final goatsJson = prefs.getString('goats');
+      if (goatsJson != null) {
+        final List<dynamic> decodedList = jsonDecode(goatsJson);
+        final updatedGoat = decodedList
+            .map((item) => Goat.fromJson(item))
+            .where((goat) => goat.tagNo == widget.goat.tagNo)
+            .cast<Goat?>()
+            .firstWhere((goat) => goat != null, orElse: () => null);
+        
+        if (updatedGoat != null) {
+          setState(() {
+            _currentGoat = updatedGoat;
+          });
+        }
       }
     } catch (e) {
       // ignore errors
@@ -1440,6 +1463,7 @@ class _ViewGoatPageState extends State<ViewGoatPage>
     
     if (event != null && mounted) {
       _loadGoatEvents();
+      _reloadGoatData(); // Reload goat data since weight may have changed
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
