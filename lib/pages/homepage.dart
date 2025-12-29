@@ -13,6 +13,7 @@ import 'package:mygoatmanager/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mygoatmanager/services/local_storage_service.dart';
 import '../models/goat.dart';
+import '../models/sync_data.dart';
 
 class Homepage extends StatefulWidget {
   final Function(Locale)? onLocaleChanged;
@@ -940,259 +941,56 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
     );
   }
 
-    Future<void> _syncData() async {
-      try {
-        final appLocalizations = AppLocalizations.of(context);
-        final localStorage = LocalStorageService();
-        final apiService = ApiService();
-        
-        // Check authentication
-        final isAuthenticated = await apiService.isAuthenticated();
-        if (!isAuthenticated) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(appLocalizations?.pleaseLoginToSync ?? 'Please login to sync data'),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-          return;
-        }
+Future<void> _syncData() async {
+    final appLocalizations = AppLocalizations.of(context);
 
-        // Show loading
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: [
-                  CircularProgressIndicator(color: Colors.white),
-                  SizedBox(width: 12),
-                  Text(appLocalizations?.syncingData ?? 'Syncing data...'),
-                ],
-              ),
-              duration: Duration(seconds: 30),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
+    // SHOW LOADING
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: const [
+            CircularProgressIndicator(color: Colors.white),
+            SizedBox(width: 12),
+            Text('Syncing data...'),
+          ],
+        ),
+        duration: const Duration(seconds: 30),
+      ),
+    );
 
-        bool hasErrors = false;
-        String errorMessage = '';
+    final result = await SyncService().syncData();
 
-        // ========== 1. SYNC GOATS ==========
-        try {
-          final localGoats = await localStorage.getGoats();
-          debugPrint('🔄 Syncing ${localGoats.length} goats...');
-          
-          if (localGoats.isNotEmpty) {
-            final localGoatsJson = localGoats.map((goat) => goat.toJson()).toList();
-            final response = await apiService.syncGoats(localGoatsJson);
-            
-            if (response.success) {
-              debugPrint('✅ Goats synced: ${response.data?['created'] ?? 0} created, ${response.data?['updated'] ?? 0} updated');
-            } else {
-              hasErrors = true;
-              errorMessage += 'Goats: ${response.message}\n';
-            }
-          }
-        } catch (e) {
-          hasErrors = true;
-          errorMessage += 'Goats error: $e\n';
-          debugPrint('❌ Goats sync error: $e');
-        }
+    if (!mounted) return;
 
-        // ========== 2. SYNC EVENTS ==========
-        try {
-          final localEvents = await localStorage.getEvents();
-          debugPrint('🔄 Syncing ${localEvents.length} events...');
-          
-          if (localEvents.isNotEmpty) {
-            // FIX DATE FORMAT for events
-            final fixedEvents = localEvents.map((event) {
-              final fixed = Map<String, dynamic>.from(event);
-              
-              // Fix date format: DD/MM/YYYY → YYYY-MM-DD
-              if (fixed['event_date'] != null) {
-                final dateStr = fixed['event_date'].toString();
-                if (dateStr.contains('/')) {
-                  final parts = dateStr.split('/');
-                  if (parts.length == 3) {
-                    fixed['event_date'] = '${parts[2]}-${parts[1]}-${parts[0]}';
-                  }
-                }
-              }
-              
-              // Ensure event_type is valid
-              if (fixed['event_type'] == null) {
-                fixed['event_type'] = 'Other';
-              }
-              
-              return fixed;
-            }).toList();
-            
-            final response = await apiService.syncEvents(fixedEvents);
-            
-            if (response.success) {
-              debugPrint('✅ Events synced: ${response.data?['created'] ?? 0} created');
-            } else {
-              hasErrors = true;
-              errorMessage += 'Events: ${response.message}\n';
-            }
-          }
-        } catch (e) {
-          hasErrors = true;
-          errorMessage += 'Events error: $e\n';
-          debugPrint('❌ Events sync error: $e');
-        }
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-        // ========== 3. SYNC MILK RECORDS ==========
-        try {
-          final localMilkRecords = await localStorage.getMilkRecords();
-          debugPrint('🔄 Syncing ${localMilkRecords.length} milk records...');
-          
-          if (localMilkRecords.isNotEmpty) {
-            // FIX DATE FORMAT for milk records
-            final fixedMilkRecords = localMilkRecords.map((record) {
-              final fixed = Map<String, dynamic>.from(record);
-              
-              // Fix date format
-              if (fixed['milking_date'] != null) {
-                final dateStr = fixed['milking_date'].toString();
-                if (dateStr.contains('/')) {
-                  final parts = dateStr.split('/');
-                  if (parts.length == 3) {
-                    fixed['milking_date'] = '${parts[2]}-${parts[1]}-${parts[0]}';
-                  }
-                }
-              }
-              
-              // Ensure goat_id is string
-              if (fixed['goat_id'] != null) {
-                fixed['goat_id'] = fixed['goat_id'].toString();
-              }
-              
-              return fixed;
-            }).toList();
-            
-            final response = await apiService.syncMilkRecords(fixedMilkRecords);
-            
-            if (response.success) {
-              debugPrint('✅ Milk records synced: ${response.data?['created'] ?? 0} created');
-            } else {
-              hasErrors = true;
-              errorMessage += 'Milk: ${response.message}\n';
-            }
-          }
-        } catch (e) {
-          hasErrors = true;
-          errorMessage += 'Milk error: $e\n';
-          debugPrint('❌ Milk sync error: $e');
-        }
-
-        // ========== 4. SYNC TRANSACTIONS ==========
-        try {
-          final localIncomes = await localStorage.getIncomes();
-          final localExpenses = await localStorage.getExpenses();
-          debugPrint('🔄 Syncing ${localIncomes.length} incomes, ${localExpenses.length} expenses...');
-          
-          if (localIncomes.isNotEmpty || localExpenses.isNotEmpty) {
-            // FIX DATE FORMAT for incomes
-            final fixedIncomes = localIncomes.map((income) {
-              final fixed = Map<String, dynamic>.from(income);
-              
-              if (fixed['transaction_date'] != null) {
-                final dateStr = fixed['transaction_date'].toString();
-                if (dateStr.contains('/')) {
-                  final parts = dateStr.split('/');
-                  if (parts.length == 3) {
-                    fixed['transaction_date'] = '${parts[2]}-${parts[1]}-${parts[0]}';
-                  }
-                }
-              }
-              
-              // Ensure income_type is valid
-              if (fixed['income_type'] == null) {
-                fixed['income_type'] = 'Other';
-              }
-              
-              return fixed;
-            }).toList();
-            
-            // FIX DATE FORMAT for expenses
-            final fixedExpenses = localExpenses.map((expense) {
-              final fixed = Map<String, dynamic>.from(expense);
-              
-              if (fixed['transaction_date'] != null) {
-                final dateStr = fixed['transaction_date'].toString();
-                if (dateStr.contains('/')) {
-                  final parts = dateStr.split('/');
-                  if (parts.length == 3) {
-                    fixed['transaction_date'] = '${parts[2]}-${parts[1]}-${parts[0]}';
-                  }
-                }
-              }
-              
-              // Ensure expense_type is valid
-              if (fixed['expense_type'] == null) {
-                fixed['expense_type'] = 'Other';
-              }
-              
-              return fixed;
-            }).toList();
-            
-            final response = await apiService.syncTransactions(fixedIncomes, fixedExpenses);
-            
-            if (response.success) {
-              debugPrint('✅ Transactions synced: ${response.data?['incomesCreated'] ?? 0} incomes, ${response.data?['expensesCreated'] ?? 0} expenses');
-            } else {
-              hasErrors = true;
-              errorMessage += 'Transactions: ${response.message}\n';
-            }
-          }
-        } catch (e) {
-          hasErrors = true;
-          errorMessage += 'Transactions error: $e\n';
-          debugPrint('❌ Transactions sync error: $e');
-        }
-
-        // Update sync time
-        await localStorage.setLastSyncTime(DateTime.now());
-
-        // Hide loading
-        if (mounted) {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        }
-
-        // Show result
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                hasErrors 
-                  ? '${appLocalizations?.syncCompletedWithErrors ?? 'Sync completed with errors'}:\n$errorMessage'
-                  : appLocalizations?.dataSyncedSuccessfully ?? 'Data synced successfully!',
-              ),
-              backgroundColor: hasErrors ? Colors.orange : Colors.green,
-              duration: Duration(seconds: hasErrors ? 5 : 3),
-            ),
-          );
-        }
-        
-      } catch (e) {
-        debugPrint('💥 Main sync error: $e');
-        
-        if (mounted) {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${AppLocalizations.of(context)?.syncFailed ?? 'Sync failed'}: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
+    if (result.errorMessage == 'NOT_AUTHENTICATED') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            appLocalizations?.pleaseLoginToSync ?? 'Please login to sync data',
+          ),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          result.hasErrors
+              ? '${appLocalizations?.syncCompletedWithErrors}\n${result.errorMessage}'
+              : appLocalizations?.dataSyncedSuccessfully ??
+                  'Data synced successfully!',
+        ),
+        backgroundColor:
+            result.hasErrors ? Colors.orange : Colors.green,
+      ),
+    );
+  }
+
+
 Future<void> _loadLocalData() async {
   try {
     final localStorage = LocalStorageService();

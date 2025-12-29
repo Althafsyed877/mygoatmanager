@@ -19,12 +19,13 @@ class AddEventPage extends StatefulWidget {
 class _AddEventPageState extends State<AddEventPage> {
   DateTime? _eventDate;
   String? _eventType;
+  String? _eventTagNo;
   final TextEditingController _notesController = TextEditingController();
   final TextEditingController _symptomsController = TextEditingController();
   final TextEditingController _diagnosisController = TextEditingController();
+  final TextEditingController _technicianController = TextEditingController();
   final TextEditingController _weighedController = TextEditingController();
   final TextEditingController _otherEventController = TextEditingController();
-  final TextEditingController _technicianController = TextEditingController();
   final TextEditingController _medicineController = TextEditingController();
 
   final List<String> _eventTypes = [
@@ -49,6 +50,7 @@ class _AddEventPageState extends State<AddEventPage> {
       // Populate fields from existing event
       final event = widget.existingEvent!;
       _eventDate = event.date;
+      _eventTagNo = widget.goat.tagNo;
       _eventType = event.eventType;
       _notesController.text = event.notes ?? '';
       _symptomsController.text = event.symptoms ?? '';

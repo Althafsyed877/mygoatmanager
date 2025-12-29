@@ -23,7 +23,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   bool _isLoading = false;
 
   // Form controllers
-  final _loginNameController = TextEditingController();
+  final _loginEmailController = TextEditingController();
   final _loginPasswordController = TextEditingController();
   final _signupNameController = TextEditingController();
   final _signupEmailController = TextEditingController();
@@ -55,7 +55,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   @override
   void dispose() {
     _tabController.dispose();
-    _loginNameController.dispose();
+    _loginEmailController.dispose();
     _loginPasswordController.dispose();
     _signupNameController.dispose();
     _signupEmailController.dispose();
@@ -392,17 +392,14 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
             mainAxisSize: MainAxisSize.min,
             children: [
             _buildTextField(
-              controller: _loginNameController,
-              label: AppLocalizations.of(context)!.username,
+              controller: _loginEmailController,
+              label: AppLocalizations.of(context)!.emailAddress,
               icon: Icons.person_outline,
               keyboardType: TextInputType.text,
               screenWidth: availableWidth,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter username';
-                }
-                if (!value.contains(RegExp(r'^[a-zA-Z0-9_]+$'))) {
-                  return 'Username can only contain letters, numbers, and underscores';
+                  return 'Please enter email';
                 }
                 return null;
               },
@@ -996,7 +993,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
 
   // === API CALL METHODS ===
 
- Future<void> _login() async {
+Future<void> _login() async {
   if (!_loginFormKey.currentState!.validate()) return;
 
   setState(() {
@@ -1004,11 +1001,14 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   });
 
   try {
-    final result = await _authService.login(
-      _loginNameController.text.trim(),
-      _loginPasswordController.text.trim(),
-    );
-    
+    final result = await _authService.login({
+    'email': _loginEmailController.text.trim().toLowerCase(),
+    'password': _loginPasswordController.text.trim(),
+    });
+
+
+    if (!mounted) return;
+
     setState(() {
       _isLoading = false;
     });
@@ -1018,42 +1018,43 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
         AppLocalizations.of(context)!.loginSuccessful,
         const Color(0xFF4CAF50),
       );
-      
-      // **Call the callback if provided**
+
+      // Callback (if parent widget handles navigation)
       if (widget.onLoginSuccess != null) {
         widget.onLoginSuccess!();
-      } else {
-        // **CRITICAL FIX: Use MaterialPageRoute instead of pushReplacementNamed**
-        if (mounted) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Homepage(
-                currentLocale: const Locale('en'), // Provide required parameters
-                onLocaleChanged: (locale) {}, // Provide empty callback
-              ),
-            ),
-            (route) => false, // Remove all routes
-          );
-        }
+        return;
       }
+
+      // Default navigation
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Homepage(
+            currentLocale: const Locale('en'),
+            onLocaleChanged: (_) {},
+          ),
+        ),
+        (_) => false,
+      );
     } else {
       _showSnackBar(
-        result.message,
+        result.message ?? 'Invalid email or password',
         Colors.red,
       );
     }
   } catch (e) {
+    if (!mounted) return;
+
     setState(() {
       _isLoading = false;
     });
+
     _showSnackBar(
-      'Login error: $e',
+      'Login failed. Please try again.',
       Colors.red,
     );
   }
 }
-
   Future<void> _signup() async {
   if (!_signupFormKey.currentState!.validate()) return;
 

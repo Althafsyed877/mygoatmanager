@@ -1,4 +1,3 @@
-// lib/models/event.dart
 class Event {
   final DateTime date;
   final String tagNo;
@@ -26,7 +25,8 @@ class Event {
     this.isMassEvent = false,
   });
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() {
+    return {
         'date': date.toIso8601String(),
         'tagNo': tagNo,
         'eventType': eventType,
@@ -39,6 +39,7 @@ class Event {
         'notes': notes,
         'isMassEvent': isMassEvent,
       };
+    }
 
   factory Event.fromJson(Map<String, dynamic> json) => Event(
         date: DateTime.parse(json['date'] as String),

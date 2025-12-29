@@ -59,39 +59,43 @@ class ApiService {
   }
   
   // === AUTHENTICATION ENDPOINTS ===
-  Future<ApiResponse> login(String username, String password) async {
+  Future<ApiResponse> login(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'username': username,
+          'email': email.toLowerCase().trim(),
           'password': password,
         }),
       );
-      
+
       debugPrint('Login request to: $baseUrl/auth/login');
       debugPrint('Response status: ${response.statusCode}');
       debugPrint('Response body: ${response.body}');
-      
+
       final result = ApiResponse.fromHttpResponse(response);
-      
+
       if (result.success && result.data?['token'] != null) {
         await saveToken(result.data!['token']);
-        
-        // Also save user data if provided
+
+        // Save user data if provided
         if (result.data?['user'] != null) {
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('user_data', json.encode(result.data!['user']));
+          await prefs.setString(
+            'user_data',
+            json.encode(result.data!['user']),
+          );
         }
       }
-      
+
       return result;
     } catch (e) {
-      return ApiResponse.error('Login error: $e');
+      debugPrint('Login exception: $e');
+      return ApiResponse.error('Login failed. Please try again.');
     }
   }
-  
+    
   Future<ApiResponse> register(Map<String, dynamic> userData) async {
     try {
       final response = await http.post(
@@ -465,14 +469,13 @@ class ApiService {
   // === SYNC DATA METHODS ===
 Future<ApiResponse> syncGoats(List<Map<String, dynamic>> goatsData) async {
   try {
-    debugPrint('🔄 SYNC GOATS STARTED =========================');
-    debugPrint('📱 Number of goats to sync: ${goatsData.length}');
+    // debugPrint('🔄 SYNC GOATS STARTED =========================');
+    // debugPrint('📱 Number of goats to sync: ${goatsData.length}');
     
     // 1. GET HEADERS
     final headers = await _getHeaders();
-    debugPrint('🔑 Headers check:');
-    debugPrint('   - Content-Type: ${headers['Content-Type']}');
-    debugPrint('   - Auth exists: ${headers.containsKey('Authorization')}');
+    // debugPrint('   - Content-Type: ${headers['Content-Type']}');
+    // debugPrint('   - Auth exists: ${headers.containsKey('Authorization')}');
     
     if (!headers.containsKey('Authorization')) {
       debugPrint('❌ ERROR: No auth token found!');

@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/goat.dart';  // ADD THIS IMPORT
+import '../models/event.dart';
 
 class LocalStorageService {
   static final LocalStorageService _instance = LocalStorageService._internal();
@@ -56,7 +57,7 @@ class LocalStorageService {
   }
 
   // ========== EVENTS ==========
-  Future<List<Map<String, dynamic>>> getEvents() async {
+  Future<List<Event>> getEvents() async {
     final prefs = await _prefs;
     final eventsData = prefs.getString('events');
     
@@ -66,7 +67,7 @@ class LocalStorageService {
     
     try {
       final List<dynamic> jsonList = jsonDecode(eventsData);
-      return jsonList.map((json) => Map<String, dynamic>.from(json)).toList();
+      return jsonList.map((json) => Event.fromJson(json)).toList();
     } catch (e) {
       print('Error parsing events from local storage: $e');
       return [];

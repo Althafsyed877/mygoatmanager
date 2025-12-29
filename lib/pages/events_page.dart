@@ -6,62 +6,7 @@ import 'package:printing/printing.dart';
 import '../models/goat.dart';
 import 'view_goat_page.dart';
 import '../l10n/app_localizations.dart';
-
-class Event {
-  final DateTime date;
-  final String tagNo;
-  final String eventType;
-  final String? symptoms;
-  final String? diagnosis;
-  final String? technician;
-  final String? medicine;
-  final String? weighedResult;
-  final String? otherName;
-  final String? notes;
-  final bool isMassEvent;
-
-  Event({
-    required this.date,
-    required this.tagNo,
-    required this.eventType,
-    this.symptoms,
-    this.diagnosis,
-    this.technician,
-    this.medicine,
-    this.weighedResult,
-    this.otherName,
-    this.notes,
-    this.isMassEvent = false,
-  });
-
-  Map<String, dynamic> toJson() => {
-        'date': date.toIso8601String(),
-        'tagNo': tagNo,
-        'eventType': eventType,
-        'symptoms': symptoms,
-        'diagnosis': diagnosis,
-        'technician': technician,
-        'medicine': medicine,
-        'weighedResult': weighedResult,
-        'otherName': otherName,
-        'notes': notes,
-        'isMassEvent': isMassEvent,
-      };
-
-  factory Event.fromJson(Map<String, dynamic> json) => Event(
-        date: DateTime.parse(json['date'] as String),
-        tagNo: json['tagNo'] as String,
-        eventType: json['eventType'] as String,
-        symptoms: json['symptoms'] as String?,
-        diagnosis: json['diagnosis'] as String?,
-        technician: json['technician'] as String?,
-        medicine: json['medicine'] as String?,
-        weighedResult: json['weighedResult'] as String?,
-        otherName: json['otherName'] as String?,
-        notes: json['notes'] as String?,
-        isMassEvent: json['isMassEvent'] as bool? ?? false,
-      );
-}
+import '../models/event.dart';
 
 class EventsPage extends StatefulWidget {
   const EventsPage({super.key});
@@ -92,16 +37,35 @@ class _EventsPageState extends State<EventsPage> {
 
   Future<void> _loadEvents() async {
     final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString('events');
-    if (data != null) {
+    final String? eventData = prefs.getString('events');
+    if (eventData != null && eventData.isNotEmpty) {
       try {
-        final List<dynamic> list = jsonDecode(data) as List<dynamic>;
+        final List<dynamic> decodedList = jsonDecode(eventData);
         setState(() {
-          _events = list.map((e) => Event.fromJson(e as Map<String, dynamic>)).toList();
+          _events = decodedList
+            .map((item) {
+              try {
+                return Event.fromJson(item as Map<String, dynamic>);
+              } catch (e) {
+                print('Error parsing event: $e'); // FIXED: Added error handling
+                return null;
+              }
+            })
+            .where((event) => event != null && event.tagNo.isNotEmpty)
+            .cast<Event>()
+            .toList();
         });
       } catch (e) {
-        // ignore
+        print('Error loading events: $e'); // FIXED: Added error logging
+        // If there's an error, initialize with empty list
+        setState(() {
+          _events = [];
+        });
       }
+    } else {
+      setState(() {
+        _events = []; // FIXED: Initialize empty list if no data
+      });
     }
   }
 
@@ -175,7 +139,7 @@ class _EventsPageState extends State<EventsPage> {
       await prefs.setString('goats', updatedJson);
       
     } catch (e) {
-      // Ignore errors to prevent breaking the event save
+      print('Error updating goat weight: $e'); // FIXED: Added error logging
     }
   }
 
@@ -189,9 +153,16 @@ class _EventsPageState extends State<EventsPage> {
           _goats = list.map((e) => Goat.fromJson(e as Map<String, dynamic>)).toList();
         });
       } catch (e) {
-        // ignore json errors
+        print('Error loading goats: $e'); // FIXED: Added error logging
       }
     }
+  }
+
+  // Refresh events when coming back to the page
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadEvents(); // FIXED: Reload events when page becomes visible again
   }
 
   // SIMPLE PDF EXPORT - NO ERRORS
@@ -635,7 +606,7 @@ class _EventsPageState extends State<EventsPage> {
         setState(() {
           _events.removeAt(actualIndex);
         });
-        await _saveEvents();
+        await _saveEvents(); // FIXED: Save after deleting
         break;
       
       case 'edit':
@@ -651,7 +622,7 @@ class _EventsPageState extends State<EventsPage> {
           setState(() {
             _events[actualIndex] = updated;
           });
-          await _saveEvents();
+          await _saveEvents(); // FIXED: Save after editing
           // Update goat weight if this is a weighed event
           await _updateGoatWeightForEvent(updated);
         }
@@ -1005,12 +976,12 @@ class _EventsPageState extends State<EventsPage> {
       MaterialPageRoute(builder: (ctx) => NewEventPage(
         isMassEvent: true,
       )),
-    ).then((result) {
+    ).then((result) async { // FIXED: Added async
       if (result != null && result is Event) {
         setState(() {
           _events.insert(0, result);
         });
-        _saveEvents();
+        await _saveEvents(); // FIXED: Save after adding mass event
       }
     });
   }
@@ -1088,12 +1059,12 @@ class _EventsPageState extends State<EventsPage> {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(builder: (ctx) => NewEventPage(goat: goat)),
-                                          ).then((newEvent) {
+                                          ).then((newEvent) async { // FIXED: Added async
                                             if (newEvent != null && newEvent is Event) {
                                               setState(() {
                                                 _events.insert(0, newEvent);
                                               });
-                                              _saveEvents();
+                                              await _saveEvents(); // FIXED: Save after adding individual event
                                               // Update goat weight if this is a weighed event
                                               _updateGoatWeightForEvent(newEvent);
                                             }

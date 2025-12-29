@@ -75,10 +75,11 @@ Future<bool> validateSession() async {
 }
 
   // === LOGIN ===
-  Future<ApiResponse> login(String username, String password) async {
+  Future<ApiResponse> login(Map<String, dynamic> credentials) async {
     try {
-      final response = await _apiService.login(username, password);
-      
+      final email = credentials['email'];
+      final password = credentials['password'];
+      final response = await _apiService.login(email, password);
       if (response.success && response.data?['token'] != null) {
         await saveToken(response.data!['token']);
         
@@ -113,6 +114,7 @@ Future<bool> validateSession() async {
     } catch (e) {
       return ApiResponse.error('Registration error: $e');
     }
+    
   }
 
   // === GOOGLE LOGIN ===
