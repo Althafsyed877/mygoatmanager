@@ -3,7 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
-import 'milk_records_page.dart';
 import '../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -12,6 +11,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:share_plus/share_plus.dart';
+import '../models/milk_record.dart';
 
 class MilkReportPage extends StatefulWidget {
   const MilkReportPage({super.key});
@@ -85,88 +85,88 @@ class _MilkReportPageState extends State<MilkReportPage> {
 
     setState(() {
       _filteredRecords = _allRecords.where((record) {
-        final recordDate = DateTime(record.date.year, record.date.month, record.date.day);
-        return !recordDate.isBefore(_fromDate) && !recordDate.isAfter(_toDate);
+        final recordDate = DateTime(record.milkingDate.year, record.milkingDate.month, record.milkingDate.day);
+        final fromDate = DateTime(_fromDate.year, _fromDate.month, _fromDate.day);
+        final toDate = DateTime(_toDate.year, _toDate.month, _toDate.day);
+        return recordDate.isAtSameMomentAs(fromDate) ||
+               recordDate.isAtSameMomentAs(toDate) ||
+               (recordDate.isAfter(fromDate) && recordDate.isBefore(toDate));
       }).toList();
-      
       _calculateSummary();
       _prepareChartData();
     });
   }
 
   void _prepareChartData() {
-    final Map<String, Map<String, int>> dailyRecords = {};
-    
-    for (var record in _filteredRecords) {
-      final dateKey = DateFormat('MMM dd').format(record.date);
-      if (!dailyRecords.containsKey(dateKey)) {
-        dailyRecords[dateKey] = {'produced': 0, 'used': 0};
-      }
-      dailyRecords[dateKey]!['produced'] = dailyRecords[dateKey]!['produced']! + record.total;
-      dailyRecords[dateKey]!['used'] = dailyRecords[dateKey]!['used']! + record.used;
-    }
-
-    final sortedDates = dailyRecords.keys.toList()
-      ..sort((a, b) => DateFormat('MMM dd').parse(a).compareTo(DateFormat('MMM dd').parse(b)));
-
-    _chartData = sortedDates.map((date) {
-      return {
-        'date': date,
-        'produced': dailyRecords[date]!['produced']!,
-        'used': dailyRecords[date]!['used']!,
-      };
-    }).toList();
-  }
-
-  void _calculateSummary() {
-    if (_filteredRecords.isEmpty) {
-      setState(() {
-        _summaryData = {
-          'dailyAverage': 0,
-          'totalProduced': 0,
-          'totalUsed': 0,
-          'mostProductiveGoat': null,
-          'leastProductiveGoat': null,
-          'hasData': false,
-          'totalRecords': _filteredRecords.length,
-        };
-      });
-      return;
-    }
-
-    int totalProduced = 0;
-    int totalUsed = 0;
-    final Map<String, int> goatProduction = {};
-
-    for (var record in _filteredRecords) {
-      totalProduced += record.total;
-      totalUsed += record.used;
+      final Map<String, Map<String, double>> dailyRecords = {}; // Changed to double
       
-      if (record.milkType != '- Select milk type -' && record.milkType.isNotEmpty) {
-        goatProduction[record.milkType] = (goatProduction[record.milkType] ?? 0) + record.total;
+      for (var record in _filteredRecords) {
+        final dateKey = DateFormat('MMM dd').format(record.milkingDate);
+        if (!dailyRecords.containsKey(dateKey)) {
+          dailyRecords[dateKey] = {'produced': 0.0, 'used': 0.0}; // Changed to 0.0
+        }
+        dailyRecords[dateKey]!['produced'] = dailyRecords[dateKey]!['produced']! + record.total;
+        // Used is not available in MilkRecord model
       }
+
+      final sortedDates = dailyRecords.keys.toList()
+        ..sort((a, b) => DateFormat('MMM dd').parse(a).compareTo(DateFormat('MMM dd').parse(b)));
+
+      _chartData = sortedDates.map((date) {
+        return {
+          'date': date,
+          'produced': dailyRecords[date]!['produced']!,
+          'used': dailyRecords[date]!['used']!,
+        };
+      }).toList();
     }
+
+ void _calculateSummary() {
+  if (_filteredRecords.isEmpty) {
+    setState(() {
+      _summaryData = {
+        'dailyAverage': 0.0, // Changed from 0 to 0.0
+        'totalProduced': 0.0, // Changed from 0 to 0.0
+        'totalUsed': 0.0, // Changed from 0 to 0.0
+        'mostProductiveGoat': null,
+        'leastProductiveGoat': null,
+        'hasData': false,
+        'totalRecords': _filteredRecords.length,
+      };
+    });
+    return;
+  }
+    double totalProduced = 0.0;
+    double totalUsed = 0.0; // Note: "used" is not stored in MilkRecord model
+    final Map<String, double> goatProduction = {};
 
     String? mostProductiveGoat;
     String? leastProductiveGoat;
-    int maxProduction = 0;
-    int minProduction = goatProduction.isEmpty ? 0 : 999999;
+    double maxProduction = 0.0;
+    double minProduction = goatProduction.isEmpty ? 0.0 : double.maxFinite;
+
+  for (var record in _filteredRecords) {
+    totalProduced += record.total;    
+    if (!record.isWholeFarm && record.tagNo != 'FARM') {
+      goatProduction[record.tagNo] = (goatProduction[record.tagNo] ?? 0.0) + record.total;
+    }
+  }
 
     goatProduction.forEach((goat, production) {
-      if (production > maxProduction) {
-        maxProduction = production;
-        mostProductiveGoat = goat;
-      }
-      if (production < minProduction) {
-        minProduction = production;
-        leastProductiveGoat = goat;
-      }
-    });
+    if (production > maxProduction) {
+      maxProduction = production;
+      mostProductiveGoat = goat;
+    }
+    if (production < minProduction) {
+      minProduction = production;
+      leastProductiveGoat = goat;
+    }
+  });
 
-    final daysInRange = _toDate.difference(_fromDate).inDays + 1;
-    final dailyAverage = daysInRange > 0 ? (totalProduced / daysInRange).round() : 0;
+      final daysInRange = _toDate.difference(_fromDate).inDays + 1;
+      final dailyAverage = daysInRange > 0 ? (totalProduced / daysInRange) : 0.0; // Keep as double
 
-    setState(() {
+   setState(() {
       _summaryData = {
         'dailyAverage': dailyAverage,
         'totalProduced': totalProduced,
@@ -792,7 +792,7 @@ class _MilkReportPageState extends State<MilkReportPage> {
                         children: [
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(DateFormat('yyyy-MM-dd').format(record.date)),
+                            child: pw.Text(DateFormat('yyyy-MM-dd').format(record.milkingDate)),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
@@ -800,11 +800,11 @@ class _MilkReportPageState extends State<MilkReportPage> {
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(record.total.toString()),
+                            child: pw.Text(record.total.toStringAsFixed(2)),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(record.used.toString()),
+                            child: pw.Text(record.available.toStringAsFixed(2)),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
@@ -885,15 +885,15 @@ class _MilkReportPageState extends State<MilkReportPage> {
   Widget _buildRecordsTable(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     
-    final Map<String, Map<String, int>> dailyRecords = {};
+    final Map<String, Map<String, double>> dailyRecords = {};
     
     for (var record in _filteredRecords) {
-      final dateKey = '${record.date.month.toString().padLeft(2, '0')}-${record.date.day.toString().padLeft(2, '0')}';
+      final dateKey = '${record.milkingDate.month.toString().padLeft(2, '0')}-${record.milkingDate.day.toString().padLeft(2, '0')}';
       if (!dailyRecords.containsKey(dateKey)) {
-        dailyRecords[dateKey] = {'produced': 0, 'used': 0};
+        dailyRecords[dateKey] = {'produced': 0.0, 'used': 0.0}; // Change to 0.0 (double)
       }
       dailyRecords[dateKey]!['produced'] = dailyRecords[dateKey]!['produced']! + record.total;
-      dailyRecords[dateKey]!['used'] = dailyRecords[dateKey]!['used']! + record.used;
+      dailyRecords[dateKey]!['used'] = dailyRecords[dateKey]!['used']! + record.available;
     }
 
     final sortedDates = dailyRecords.keys.toList()
@@ -1263,14 +1263,14 @@ class _MilkReportPageState extends State<MilkReportPage> {
                               _buildSummaryCard(
                                 context,
                                 'dailyAverage',
-                                _summaryData['dailyAverage']?.toString() ?? '0',
+                                (_summaryData['dailyAverage'] as double?)?.toStringAsFixed(1) ?? '0.0',
                                 Icons.local_drink,
                                 const Color(0xFF2196F3),
                               ),
                               _buildSummaryCard(
                                 context,
                                 'totalProduced',
-                                _summaryData['totalProduced']?.toString() ?? '0',
+                                (_summaryData['totalProduced']as double?)?.toStringAsFixed(1) ?? '0.0',
                                 Icons.bar_chart,
                                 const Color(0xFF4CAF50),
                               ),

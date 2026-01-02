@@ -27,8 +27,20 @@ class TransactionsLineChart extends StatelessWidget {
     }
 
     try {
-      final maxY = _getMaxYValue();
-      final minY = _getMinYValue();
+      // Validate data before rendering
+      final validIncomeSpots = _validateSpots(incomeSpots);
+      final validExpenseSpots = _validateSpots(expenseSpots);
+      
+      if (validIncomeSpots.isEmpty && validExpenseSpots.isEmpty) {
+        return _buildEmptyState();
+      }
+
+      final maxY = _getMaxYValue(validIncomeSpots, validExpenseSpots);
+      final minY = _getMinYValue(validIncomeSpots, validExpenseSpots);
+      
+      // Ensure minY is not greater than maxY
+      final adjustedMinY = minY < maxY ? minY : 0.0;
+      final adjustedMaxY = maxY > 0 ? maxY * 1.1 : 100.0;
       
       return Container(
         padding: const EdgeInsets.all(16),
@@ -46,7 +58,7 @@ class TransactionsLineChart extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(context, maxY, l10n),
+            _buildHeader(context, adjustedMaxY, l10n),
             const SizedBox(height: 16),
             
             Container(
@@ -57,180 +69,12 @@ class TransactionsLineChart extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: LineChart(
-                LineChartData(
-                  gridData: FlGridData(
-                    show: true,
-                    drawHorizontalLine: true,
-                    drawVerticalLine: false,
-                    horizontalInterval: _getGridInterval(maxY),
-                    getDrawingHorizontalLine: (value) {
-                      return FlLine(
-                        color: Colors.grey.shade300,
-                        strokeWidth: 1,
-                        dashArray: [5, 5],
-                      );
-                    },
-                  ),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 30,
-                        interval: _getTitleInterval(),
-                        getTitlesWidget: (value, meta) {
-                          if (value.toInt() >= 0 && value.toInt() < dates.length) {
-                            final dateStr = dates[value.toInt()];
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Text(
-                                _formatDateForDisplay(dateStr),
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 50,
-                        interval: _getLeftTitleInterval(maxY),
-                        getTitlesWidget: (value, meta) {
-                          if (value == meta.min || value == meta.max) return const SizedBox();
-                          
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Text(
-                              '₹${_formatAmount(value)}',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey.shade600,
-                              ),
-                              textAlign: TextAlign.right,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  borderData: FlBorderData(
-                    show: true,
-                    border: Border.all(
-                      color: Colors.grey.shade300,
-                      width: 1,
-                    ),
-                  ),
-                  minY: minY - (maxY - minY) * 0.1,
-                  maxY: maxY + (maxY - minY) * 0.1,
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: incomeSpots,
-                      isCurved: true,
-                      color: const Color(0xFF4CAF50),
-                      barWidth: 3,
-                      isStrokeCapRound: true,
-                      dotData: FlDotData(
-                        show: true,
-                        getDotPainter: (spot, percent, barData, index) {
-                          return FlDotCirclePainter(
-                            radius: 4,
-                            color: const Color(0xFF4CAF50),
-                            strokeWidth: 2,
-                            strokeColor: Colors.white,
-                          );
-                        },
-                      ),
-                      belowBarData: BarAreaData(
-                        show: true,
-                        color: const Color(0xFF4CAF50).withOpacity(0.1),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            const Color(0xFF4CAF50).withOpacity(0.3),
-                            const Color(0xFF4CAF50).withOpacity(0.05),
-                          ],
-                        ),
-                      ),
-                      dashArray: [0, 0],
-                    ),
-                    LineChartBarData(
-                      spots: expenseSpots,
-                      isCurved: true,
-                      color: const Color(0xFFFF9800),
-                      barWidth: 3,
-                      isStrokeCapRound: true,
-                      dotData: FlDotData(
-                        show: true,
-                        getDotPainter: (spot, percent, barData, index) {
-                          return FlDotCirclePainter(
-                            radius: 4,
-                            color: const Color(0xFFFF9800),
-                            strokeWidth: 2,
-                            strokeColor: Colors.white,
-                          );
-                        },
-                      ),
-                      belowBarData: BarAreaData(
-                        show: true,
-                        color: const Color(0xFFFF9800).withOpacity(0.1),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            const Color(0xFFFF9800).withOpacity(0.3),
-                            const Color(0xFFFF9800).withOpacity(0.05),
-                          ],
-                        ),
-                      ),
-                      dashArray: [0, 0],
-                    ),
-                  ],
-                  lineTouchData: LineTouchData(
-                    touchTooltipData: LineTouchTooltipData(
-                      tooltipBgColor: Colors.white,
-                      tooltipRoundedRadius: 8,
-                      getTooltipItems: (touchedSpots) {
-                        return touchedSpots.map((touchedSpot) {
-                          final index = touchedSpot.spotIndex;
-                          final date = index < dates.length ? dates[index] : '';
-                          final value = touchedSpot.y;
-                          final color = touchedSpot.barIndex == 0
-                              ? const Color(0xFF4CAF50)
-                              : const Color(0xFFFF9800);
-                          final label = touchedSpot.barIndex == 0 ? 'Income' : 'Expense';
-                          
-                          return LineTooltipItem(
-                            '$label\n${_formatDateForTooltip(date)}\n₹${_formatAmount(value)}',
-                            TextStyle(
-                              color: color,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          );
-                        }).toList();
-                      },
-                    ),
-                    handleBuiltInTouches: true,
-                  ),
-                ),
+                _buildChartData(validIncomeSpots, validExpenseSpots, adjustedMinY, adjustedMaxY),
               ),
             ),
             const SizedBox(height: 20),
             
-            _buildLegendAndSummary(context),
+            _buildLegendAndSummary(context, validIncomeSpots, validExpenseSpots),
           ],
         ),
       );
@@ -238,40 +82,244 @@ class TransactionsLineChart extends StatelessWidget {
       debugPrint('Error building TransactionsLineChart: $e');
       debugPrint('Stack trace: $stackTrace');
       
-      return Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+      return _buildErrorState();
+    }
+  }
+
+  Widget _buildEmptyState() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.bar_chart, size: 48, color: Colors.grey.shade400),
+            const SizedBox(height: 16),
+            Text(
+              'No chart data available',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Add transactions to see the chart',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey.shade500,
+              ),
+            ),
+          ],
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error_outline,
-                size: 48,
-                color: Colors.red,
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 48,
+              color: Colors.red,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Unable to load chart',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 16),
-              const Text(
-                'Unable to load chart',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Error: ${e.toString()}',
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.grey),
-              ),
-            ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Please try again later',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  LineChartData _buildChartData(
+    List<FlSpot> validIncomeSpots,
+    List<FlSpot> validExpenseSpots,
+    double minY,
+    double maxY,
+  ) {
+    final List<LineChartBarData> bars = [];
+    
+    // Add income line if we have valid data
+    if (validIncomeSpots.isNotEmpty) {
+      bars.add(LineChartBarData(
+        spots: validIncomeSpots,
+        isCurved: validIncomeSpots.length > 2,
+        color: const Color(0xFF4CAF50),
+        barWidth: 3,
+        isStrokeCapRound: true,
+        dotData: FlDotData(
+          show: validIncomeSpots.length <= 20,
+          getDotPainter: (spot, percent, barData, index) {
+            return FlDotCirclePainter(
+              radius: 3,
+              color: const Color(0xFF4CAF50),
+              strokeWidth: 1.5,
+              strokeColor: Colors.white,
+            );
+          },
+        ),
+        belowBarData: BarAreaData(
+          show: true,
+          color: const Color(0xFF4CAF50).withOpacity(0.1),
+        ),
+      ));
+    }
+    
+    // Add expense line if we have valid data
+    if (validExpenseSpots.isNotEmpty) {
+      bars.add(LineChartBarData(
+        spots: validExpenseSpots,
+        isCurved: validExpenseSpots.length > 2,
+        color: const Color(0xFFFF9800),
+        barWidth: 3,
+        isStrokeCapRound: true,
+        dotData: FlDotData(
+          show: validExpenseSpots.length <= 20,
+          getDotPainter: (spot, percent, barData, index) {
+            return FlDotCirclePainter(
+              radius: 3,
+              color: const Color(0xFFFF9800),
+              strokeWidth: 1.5,
+              strokeColor: Colors.white,
+            );
+          },
+        ),
+        belowBarData: BarAreaData(
+          show: true,
+          color: const Color(0xFFFF9800).withOpacity(0.1),
+        ),
+      ));
+    }
+    
+    return LineChartData(
+      gridData: FlGridData(
+        show: true,
+        drawHorizontalLine: true,
+        drawVerticalLine: false,
+        horizontalInterval: _getGridInterval(maxY),
+        getDrawingHorizontalLine: (value) {
+          return FlLine(
+            color: Colors.grey.shade300,
+            strokeWidth: 0.5,
+          );
+        },
+      ),
+      titlesData: FlTitlesData(
+        show: true,
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        topTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 30,
+            interval: _getTitleInterval(),
+            getTitlesWidget: (value, meta) {
+              final index = value.toInt();
+              if (index >= 0 && index < dates.length) {
+                final dateStr = dates[index];
+                return Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Text(
+                    _formatDateForDisplay(dateStr),
+                    style: TextStyle(
+                      fontSize: 9,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox();
+            },
           ),
         ),
-      );
-    }
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 40,
+            interval: _getLeftTitleInterval(maxY),
+            getTitlesWidget: (value, meta) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 4.0),
+                child: Text(
+                  '₹${_formatAmount(value)}',
+                  style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.grey.shade600,
+                  ),
+                  textAlign: TextAlign.right,
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+      borderData: FlBorderData(
+        show: true,
+        border: Border.all(
+          color: Colors.grey.shade300,
+          width: 0.5,
+        ),
+      ),
+      minY: minY,
+      maxY: maxY,
+      lineBarsData: bars,
+      lineTouchData: LineTouchData(
+        touchTooltipData: LineTouchTooltipData(
+          tooltipBgColor: Colors.white,
+          tooltipRoundedRadius: 4,
+          getTooltipItems: (touchedSpots) {
+            return touchedSpots.map((touchedSpot) {
+              final index = touchedSpot.spotIndex;
+              final date = index < dates.length ? dates[index] : '';
+              final value = touchedSpot.y;
+              final color = touchedSpot.barIndex == 0
+                  ? const Color(0xFF4CAF50)
+                  : const Color(0xFFFF9800);
+              final label = touchedSpot.barIndex == 0 ? 'Income' : 'Expense';
+              
+              return LineTooltipItem(
+                '$label\n${_formatDateForTooltip(date)}\n₹${value.toStringAsFixed(0)}',
+                TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                ),
+              );
+            }).toList();
+          },
+        ),
+        handleBuiltInTouches: true,
+      ),
+    );
   }
 
   Widget _buildHeader(BuildContext context, double maxY, AppLocalizations l10n) {
@@ -302,71 +350,69 @@ class TransactionsLineChart extends StatelessWidget {
               ),
           ],
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.green.shade50,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.green.shade200),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.auto_graph, size: 16, color: Colors.green.shade700),
-              const SizedBox(width: 6),
-              Text(
-                'Max: ₹${_formatAmount(maxY)}',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.green.shade700,
-                ),
+        if (maxY > 0)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.green.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.green.shade200),
+            ),
+            child: Text(
+              'Max: ₹${_formatAmount(maxY)}',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Colors.green.shade700,
               ),
-            ],
+            ),
           ),
-        ),
       ],
     );
   }
 
-  Widget _buildLegendAndSummary(BuildContext context) {
-    final incomeMax = _getMaxValue(incomeSpots);
-    final expenseMax = _getMaxValue(expenseSpots);
-    final incomeAvg = _getAverageValue(incomeSpots);
-    final expenseAvg = _getAverageValue(expenseSpots);
+  Widget _buildLegendAndSummary(BuildContext context, List<FlSpot> validIncomeSpots, List<FlSpot> validExpenseSpots) {
+    final incomeMax = _getMaxValue(validIncomeSpots);
+    final expenseMax = _getMaxValue(validExpenseSpots);
+    final incomeAvg = _getAverageValue(validIncomeSpots);
+    final expenseAvg = _getAverageValue(validExpenseSpots);
+    
+    final hasIncomeData = validIncomeSpots.isNotEmpty;
+    final hasExpenseData = validExpenseSpots.isNotEmpty;
+    
+    if (!hasIncomeData && !hasExpenseData) {
+      return const SizedBox();
+    }
     
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem(
+          if (hasIncomeData) _buildStatItem(
             label: 'Income Peak',
             value: '₹${_formatAmount(incomeMax)}',
             color: const Color(0xFF4CAF50),
-            icon: Icons.trending_up,
-          ),
-          _buildStatItem(
+          ) else const SizedBox(width: 40),
+          if (hasExpenseData) _buildStatItem(
             label: 'Expense Peak',
             value: '₹${_formatAmount(expenseMax)}',
             color: const Color(0xFFFF9800),
-            icon: Icons.trending_up,
-          ),
-          _buildStatItem(
+          ) else const SizedBox(width: 40),
+          if (hasIncomeData) _buildStatItem(
             label: 'Income Avg',
             value: '₹${_formatAmount(incomeAvg)}',
             color: const Color(0xFF4CAF50),
-            icon: Icons.bar_chart,
-          ),
-          _buildStatItem(
+          ) else const SizedBox(width: 40),
+          if (hasExpenseData) _buildStatItem(
             label: 'Expense Avg',
             value: '₹${_formatAmount(expenseAvg)}',
             color: const Color(0xFFFF9800),
-            icon: Icons.bar_chart,
-          ),
+          ) else const SizedBox(width: 40),
         ],
       ),
     );
@@ -376,23 +422,13 @@ class TransactionsLineChart extends StatelessWidget {
     required String label,
     required String value,
     required Color color,
-    required IconData icon,
   }) {
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, size: 16, color: color),
-        ),
-        const SizedBox(height: 8),
         Text(
           label,
           style: TextStyle(
-            fontSize: 10,
+            fontSize: 9,
             color: Colors.grey.shade600,
           ),
         ),
@@ -400,7 +436,7 @@ class TransactionsLineChart extends StatelessWidget {
         Text(
           value,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: FontWeight.bold,
             color: color,
           ),
@@ -409,34 +445,69 @@ class TransactionsLineChart extends StatelessWidget {
     );
   }
 
-  double _getMaxYValue() {
+  List<FlSpot> _validateSpots(List<FlSpot> spots) {
+    final List<FlSpot> validSpots = [];
+    
+    for (var spot in spots) {
+      // Check if spot values are valid numbers
+      if (spot.x.isFinite && spot.y.isFinite && !spot.x.isNaN && !spot.y.isNaN) {
+        validSpots.add(spot);
+      }
+    }
+    
+    return validSpots;
+  }
+
+  double _getMaxYValue(List<FlSpot> incomeSpots, List<FlSpot> expenseSpots) {
     final incomeMax = _getMaxValue(incomeSpots);
     final expenseMax = _getMaxValue(expenseSpots);
     final maxValue = incomeMax > expenseMax ? incomeMax : expenseMax;
-    return maxValue > 0 ? maxValue * 1.1 : 100;
+    return maxValue > 0 ? maxValue : 100;
   }
 
-  double _getMinYValue() {
+  double _getMinYValue(List<FlSpot> incomeSpots, List<FlSpot> expenseSpots) {
     final incomeMin = _getMinValue(incomeSpots);
     final expenseMin = _getMinValue(expenseSpots);
-    final minValue = incomeMin < expenseMin ? incomeMin : expenseMin;
+    
+    double minValue = 0;
+    if (incomeSpots.isNotEmpty && expenseSpots.isNotEmpty) {
+      minValue = incomeMin < expenseMin ? incomeMin : expenseMin;
+    } else if (incomeSpots.isNotEmpty) {
+      minValue = incomeMin;
+    } else if (expenseSpots.isNotEmpty) {
+      minValue = expenseMin;
+    }
+    
+    // Ensure min is not negative unless we have negative values
     return minValue > 0 ? minValue * 0.9 : 0;
   }
 
   double _getMaxValue(List<FlSpot> spots) {
     if (spots.isEmpty) return 0;
-    return spots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b);
+    try {
+      return spots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b);
+    } catch (e) {
+      return 0;
+    }
   }
 
   double _getMinValue(List<FlSpot> spots) {
     if (spots.isEmpty) return 0;
-    return spots.map((spot) => spot.y).reduce((a, b) => a < b ? a : b);
+    try {
+      return spots.map((spot) => spot.y).reduce((a, b) => a < b ? a : b);
+    } catch (e) {
+      return 0;
+    }
   }
 
   double _getAverageValue(List<FlSpot> spots) {
     if (spots.isEmpty) return 0;
-    final sum = spots.fold(0.0, (total, spot) => total + spot.y);
-    return sum / spots.length;
+    try {
+      final sum = spots.fold(0.0, (total, spot) => total + spot.y);
+      return sum / spots.length;
+    } catch (e) {
+      return 0;
+    }
   }
 
   double _getGridInterval(double maxY) {
@@ -444,9 +515,7 @@ class TransactionsLineChart extends StatelessWidget {
     if (maxY <= 5000) return 1000;
     if (maxY <= 10000) return 2000;
     if (maxY <= 50000) return 10000;
-    if (maxY <= 100000) return 20000;
-    if (maxY <= 500000) return 100000;
-    return 200000;
+    return 20000;
   }
 
   double _getLeftTitleInterval(double maxY) {
@@ -454,9 +523,7 @@ class TransactionsLineChart extends StatelessWidget {
     if (maxY <= 5000) return 1000;
     if (maxY <= 10000) return 2000;
     if (maxY <= 50000) return 10000;
-    if (maxY <= 100000) return 20000;
-    if (maxY <= 500000) return 100000;
-    return 200000;
+    return 20000;
   }
 
   double _getTitleInterval() {

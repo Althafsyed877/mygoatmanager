@@ -94,567 +94,566 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
       }
     }
   }
-
-  Future<void> _generateAndPreviewPDF() async {
-    try {
-      List<Map<String, dynamic>> filteredIncomes = _incomes;
-      List<Map<String, dynamic>> filteredExpenses = _expenses;
-      
-      if (_selectedRange != null) {
-        filteredIncomes = _incomes.where((item) {
-          final dateStr = item['date']?.toString() ?? '';
-          if (dateStr.isEmpty) return false;
-          
-          try {
-            final date = DateTime.parse(dateStr);
-            return date.isAtSameMomentAs(_selectedRange!.start) ||
-                   (date.isAfter(_selectedRange!.start) && date.isBefore(_selectedRange!.end)) ||
-                   date.isAtSameMomentAs(_selectedRange!.end);
-          } catch (e) {
-            debugPrint('Error parsing date in PDF filter: $e');
-            return false;
-          }
-        }).toList();
+   Future<void> _generateAndPreviewPDF() async {
+  try {
+    List<Map<String, dynamic>> filteredIncomes = _incomes;
+    List<Map<String, dynamic>> filteredExpenses = _expenses;
+    
+    if (_selectedRange != null) {
+      filteredIncomes = _incomes.where((item) {
+        final dateStr = item['date']?.toString() ?? '';
+        if (dateStr.isEmpty) return false;
         
-        filteredExpenses = _expenses.where((item) {
-          final dateStr = item['date']?.toString() ?? '';
-          if (dateStr.isEmpty) return false;
-          
-          try {
-            final date = DateTime.parse(dateStr);
-            return date.isAtSameMomentAs(_selectedRange!.start) ||
-                   (date.isAfter(_selectedRange!.start) && date.isBefore(_selectedRange!.end)) ||
-                   date.isAtSameMomentAs(_selectedRange!.end);
-          } catch (e) {
-            debugPrint('Error parsing date in PDF filter: $e');
-            return false;
-          }
-        }).toList();
-      }
+        try {
+          final date = DateTime.parse(dateStr);
+          return date.isAtSameMomentAs(_selectedRange!.start) ||
+                 (date.isAfter(_selectedRange!.start) && date.isBefore(_selectedRange!.end)) ||
+                 date.isAtSameMomentAs(_selectedRange!.end);
+        } catch (e) {
+          debugPrint('Error parsing date in PDF filter: $e');
+          return false;
+        }
+      }).toList();
       
-      final double pdfTotalIncome = filteredIncomes.fold(0.0, (sum, item) {
-        final amount = double.tryParse(item['amount']?.toString() ?? '0') ?? 0.0;
-        return sum + amount;
-      });
-      
-      final double pdfTotalExpense = filteredExpenses.fold(0.0, (sum, item) {
-        final amount = double.tryParse(item['amount']?.toString() ?? '0') ?? 0.0;
-        return sum + amount;
-      });
-      
-      final double net = pdfTotalIncome - pdfTotalExpense;
-      final double profitPercentage = pdfTotalIncome > 0 ? (net / pdfTotalIncome) * 100 : 0.0;
-      
-      final pdf = pw.Document();
-      pw.ImageProvider? goatImage;
-      
-      try {
-        final data = await rootBundle.load('assets/images/goat.png');
-        final bytes = data.buffer.asUint8List();
-        goatImage = pw.MemoryImage(bytes);
-      } catch (_) {
-        goatImage = null;
-      }
-      
-      PdfColor createPdfColorWithOpacity(PdfColor color, double opacity) {
-        return PdfColor(
-          color.red / 255.0,
-          color.green / 255.0,
-          color.blue / 255.0,
-          opacity,
-        );
-      }
-      
-      final headerStyle = pw.TextStyle(
-        fontSize: 28,
-        fontWeight: pw.FontWeight.bold,
-        color: PdfColors.black,
+      filteredExpenses = _expenses.where((item) {
+        final dateStr = item['date']?.toString() ?? '';
+        if (dateStr.isEmpty) return false;
+        
+        try {
+          final date = DateTime.parse(dateStr);
+          return date.isAtSameMomentAs(_selectedRange!.start) ||
+                 (date.isAfter(_selectedRange!.start) && date.isBefore(_selectedRange!.end)) ||
+                 date.isAtSameMomentAs(_selectedRange!.end);
+        } catch (e) {
+          debugPrint('Error parsing date in PDF filter: $e');
+          return false;
+        }
+      }).toList();
+    }
+    
+    final double pdfTotalIncome = filteredIncomes.fold(0.0, (sum, item) {
+      final amount = double.tryParse(item['amount']?.toString() ?? '0') ?? 0.0;
+      return sum + amount;
+    });
+    
+    final double pdfTotalExpense = filteredExpenses.fold(0.0, (sum, item) {
+      final amount = double.tryParse(item['amount']?.toString() ?? '0') ?? 0.0;
+      return sum + amount;
+    });
+    
+    final double net = pdfTotalIncome - pdfTotalExpense;
+    final double profitPercentage = pdfTotalIncome > 0 ? (net / pdfTotalIncome) * 100 : 0.0;
+    
+    final pdf = pw.Document();
+    pw.ImageProvider? goatImage;
+    
+    try {
+      final data = await rootBundle.load('assets/images/goat.png');
+      final bytes = data.buffer.asUint8List();
+      goatImage = pw.MemoryImage(bytes);
+    } catch (_) {
+      goatImage = null;
+    }
+    
+    PdfColor createPdfColorWithOpacity(PdfColor color, double opacity) {
+      return PdfColor(
+        color.red / 255.0,
+        color.green / 255.0,
+        color.blue / 255.0,
+        opacity,
       );
-      
-      final subtitleStyle = pw.TextStyle(
-        fontSize: 12,
-        color: PdfColors.grey600,
-      );
-      
-      final sectionHeaderStyle = pw.TextStyle(
-        fontSize: 18,
-        fontWeight: pw.FontWeight.bold,
-        color: PdfColor.fromInt(0xFF4CAF50),
-      );
-      
-      final metricValueStyle = pw.TextStyle(
-        fontSize: 22,
-        fontWeight: pw.FontWeight.bold,
-      );
-      
-      final metricLabelStyle = pw.TextStyle(
-        fontSize: 12,
-        color: PdfColors.grey700,
-      );
-      
-      final tableHeaderStyle = pw.TextStyle(
-        fontSize: 11,
-        fontWeight: pw.FontWeight.bold,
-        color: PdfColors.white,
-      );
-      
-      final tableCellStyle = pw.TextStyle(
-        fontSize: 10,
-      );
-      
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(36),
-          build: (pw.Context context) {
-            return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: pw.CrossAxisAlignment.center,
-                  children: [
-                    if (goatImage != null)
-                      pw.Image(goatImage, width: 60, height: 60),
-                    pw.SizedBox(width: 20),
-                    pw.Expanded(
-                      child: pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: [
-                          pw.Text(
-                            'Farm Financial Report',
-                            style: headerStyle,
-                          ),
-                          pw.SizedBox(height: 4),
-                          pw.Text(
-                            'Transaction Analysis & Summary',
-                            style: subtitleStyle,
-                          ),
-                          if (_selectedRange != null)
-                            pw.Padding(
-                              padding: const pw.EdgeInsets.only(top: 4),
-                              child: pw.Text(
-                                'Date Range: ${_formatDateForPDF(_selectedRange!.start)} to ${_formatDateForPDF(_selectedRange!.end)}',
-                                style: pw.TextStyle(
-                                  fontSize: 10,
-                                  color: PdfColors.grey500,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.end,
+    }
+    
+    final headerStyle = pw.TextStyle(
+      fontSize: 28,
+      fontWeight: pw.FontWeight.bold,
+      color: PdfColors.black,
+    );
+    
+    final subtitleStyle = pw.TextStyle(
+      fontSize: 12,
+      color: PdfColors.grey600,
+    );
+    
+    final sectionHeaderStyle = pw.TextStyle(
+      fontSize: 18,
+      fontWeight: pw.FontWeight.bold,
+      color: PdfColor.fromInt(0xFF4CAF50),
+    );
+    
+    final metricValueStyle = pw.TextStyle(
+      fontSize: 22,
+      fontWeight: pw.FontWeight.bold,
+    );
+    
+    final metricLabelStyle = pw.TextStyle(
+      fontSize: 12,
+      color: PdfColors.grey700,
+    );
+    
+    final tableHeaderStyle = pw.TextStyle(
+      fontSize: 11,
+      fontWeight: pw.FontWeight.bold,
+      color: PdfColors.white,
+    );
+    
+    final tableCellStyle = pw.TextStyle(
+      fontSize: 10,
+    );
+    
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(36),
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                children: [
+                  if (goatImage != null)
+                    pw.Image(goatImage, width: 60, height: 60),
+                  pw.SizedBox(width: 20),
+                  pw.Expanded(
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Text(
-                          'Generated: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}',
-                          style: subtitleStyle,
+                          'Farm Financial Report',
+                          style: headerStyle,
                         ),
+                        pw.SizedBox(height: 4),
                         pw.Text(
-                          'Time: ${DateFormat('HH:mm:ss').format(DateTime.now())}',
+                          'Transaction Analysis & Summary',
                           style: subtitleStyle,
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-                
-                pw.SizedBox(height: 24),
-                
-                pw.Container(
-                  decoration: pw.BoxDecoration(
-                    color: PdfColor.fromInt(0xFFF8F9FA),
-                    borderRadius: pw.BorderRadius.circular(12),
-                    border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
-                  ),
-                  padding: const pw.EdgeInsets.all(20),
-                  child: pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                    children: [
-                      pw.Expanded(
-                        child: pw.Container(
-                          decoration: pw.BoxDecoration(
-                            color: PdfColors.white,
-                            borderRadius: pw.BorderRadius.circular(10),
-                            border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
-                          ),
-                          padding: const pw.EdgeInsets.all(16),
-                          child: pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.center,
-                            children: [
-                              pw.Text(
-                                '₹${pdfTotalIncome.toStringAsFixed(2)}',
-                                style: metricValueStyle.copyWith(
-                                  color: PdfColor.fromInt(0xFF4CAF50),
-                                ),
+                        if (_selectedRange != null)
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.only(top: 4),
+                            child: pw.Text(
+                              'Date Range: ${_formatDateForPDF(_selectedRange!.start)} to ${_formatDateForPDF(_selectedRange!.end)}',
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                color: PdfColors.grey500,
                               ),
-                              pw.SizedBox(height: 8),
-                              pw.Text(
-                                'Total Income',
-                                style: metricLabelStyle,
-                              ),
-                              pw.SizedBox(height: 4),
-                              pw.Container(
-                                height: 4,
-                                width: 40,
-                                decoration: pw.BoxDecoration(
-                                  color: PdfColor.fromInt(0xFF4CAF50),
-                                  borderRadius: pw.BorderRadius.circular(2),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      
-                      pw.SizedBox(width: 16),
-                      
-                      pw.Expanded(
-                        child: pw.Container(
-                          decoration: pw.BoxDecoration(
-                            color: PdfColors.white,
-                            borderRadius: pw.BorderRadius.circular(10),
-                            border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
-                          ),
-                          padding: const pw.EdgeInsets.all(16),
-                          child: pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.center,
-                            children: [
-                              pw.Text(
-                                '₹${pdfTotalExpense.toStringAsFixed(2)}',
-                                style: metricValueStyle.copyWith(
-                                  color: PdfColor.fromInt(0xFFFF9800),
-                                ),
-                              ),
-                              pw.SizedBox(height: 8),
-                              pw.Text(
-                                'Total Expenses',
-                                style: metricLabelStyle,
-                              ),
-                              pw.SizedBox(height: 4),
-                              pw.Container(
-                                height: 4,
-                                width: 40,
-                                decoration: pw.BoxDecoration(
-                                  color: PdfColor.fromInt(0xFFFF9800),
-                                  borderRadius: pw.BorderRadius.circular(2),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      
-                      pw.SizedBox(width: 16),
-                      
-                      pw.Expanded(
-                        child: pw.Container(
-                          decoration: pw.BoxDecoration(
-                            color: net >= 0 
-                                ? PdfColor.fromInt(0xFFE8F5E9)
-                                : PdfColor.fromInt(0xFFFFEBEE),
-                            borderRadius: pw.BorderRadius.circular(10),
-                            border: pw.Border.all(
-                              color: net >= 0 
-                                  ? createPdfColorWithOpacity(PdfColor.fromInt(0xFF4CAF50), 0.3)
-                                  : createPdfColorWithOpacity(PdfColor.fromInt(0xFFF44336), 0.3),
-                              width: 1,
                             ),
                           ),
-                          padding: const pw.EdgeInsets.all(16),
-                          child: pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.center,
-                            children: [
-                              pw.Text(
-                                '₹${net.toStringAsFixed(2)}',
-                                style: metricValueStyle.copyWith(
-                                  color: net >= 0 
-                                      ? PdfColor.fromInt(0xFF2E7D32)
-                                      : PdfColor.fromInt(0xFFC62828),
-                                ),
-                              ),
-                              pw.SizedBox(height: 8),
-                              pw.Text(
-                                net >= 0 ? 'Net Profit' : 'Net Loss',
-                                style: metricLabelStyle,
-                              ),
-                              pw.SizedBox(height: 4),
-                              pw.Text(
-                                '${profitPercentage.toStringAsFixed(1)}% ${net >= 0 ? 'profit' : 'loss'}',
-                                style: pw.TextStyle(
-                                  fontSize: 9,
-                                  color: net >= 0 ? PdfColors.green : PdfColors.red,
-                                  fontStyle: pw.FontStyle.italic,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      ],
+                    ),
+                  ),
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.end,
+                    children: [
+                      pw.Text(
+                        'Generated: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}',
+                        style: subtitleStyle,
+                      ),
+                      pw.Text(
+                        'Time: ${DateFormat('HH:mm:ss').format(DateTime.now())}',
+                        style: subtitleStyle,
                       ),
                     ],
                   ),
+                ],
+              ),
+              
+              pw.SizedBox(height: 24),
+              
+              pw.Container(
+                decoration: pw.BoxDecoration(
+                  color: PdfColor.fromInt(0xFFF8F9FA),
+                  borderRadius: pw.BorderRadius.circular(12),
+                  border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
                 ),
-                
-                pw.SizedBox(height: 32),
-                
-                pw.Text('Income Transactions', style: sectionHeaderStyle),
-                pw.SizedBox(height: 12),
-                
-                if (filteredIncomes.isEmpty)
-                  pw.Container(
-                    padding: const pw.EdgeInsets.all(20),
-                    decoration: pw.BoxDecoration(
-                      color: PdfColor.fromInt(0xFFF5F5F5),
-                      borderRadius: pw.BorderRadius.circular(8),
-                    ),
-                    child: pw.Center(
-                      child: pw.Text(
-                        'No income transactions in selected period',
-                        style: pw.TextStyle(
-                          fontSize: 12,
-                          color: PdfColors.grey600,
-                          fontStyle: pw.FontStyle.italic,
+                padding: const pw.EdgeInsets.all(20),
+                child: pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Expanded(
+                      child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          color: PdfColors.white,
+                          borderRadius: pw.BorderRadius.circular(10),
+                          border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
+                        ),
+                        padding: const pw.EdgeInsets.all(16),
+                        child: pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.center,
+                          children: [
+                            pw.Text(
+                              'Rs. ${pdfTotalIncome.toStringAsFixed(2)}',
+                              style: metricValueStyle.copyWith(
+                                color: PdfColor.fromInt(0xFF4CAF50),
+                              ),
+                            ),
+                            pw.SizedBox(height: 8),
+                            pw.Text(
+                              'Total Income',
+                              style: metricLabelStyle,
+                            ),
+                            pw.SizedBox(height: 4),
+                            pw.Container(
+                              height: 4,
+                              width: 40,
+                              decoration: pw.BoxDecoration(
+                                color: PdfColor.fromInt(0xFF4CAF50),
+                                borderRadius: pw.BorderRadius.circular(2),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  )
-                else
-                  pw.Container(
-                    decoration: pw.BoxDecoration(
-                      border: pw.Border.all(color: PdfColors.grey300, width: 0.8),
-                      borderRadius: pw.BorderRadius.circular(8),
-                    ),
-                    child: pw.TableHelper.fromTextArray(
-                      context: context,
-                      border: null,
-                      headerDecoration: pw.BoxDecoration(
-                        color: PdfColor.fromInt(0xFF4CAF50),
-                        borderRadius: const pw.BorderRadius.only(
-                          topLeft: pw.Radius.circular(8),
-                          topRight: pw.Radius.circular(8),
+                    
+                    pw.SizedBox(width: 16),
+                    
+                    pw.Expanded(
+                      child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          color: PdfColors.white,
+                          borderRadius: pw.BorderRadius.circular(10),
+                          border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
+                        ),
+                        padding: const pw.EdgeInsets.all(16),
+                        child: pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.center,
+                          children: [
+                            pw.Text(
+                              'Rs. ${pdfTotalExpense.toStringAsFixed(2)}',
+                              style: metricValueStyle.copyWith(
+                                color: PdfColor.fromInt(0xFFFF9800),
+                              ),
+                            ),
+                            pw.SizedBox(height: 8),
+                            pw.Text(
+                              'Total Expenses',
+                              style: metricLabelStyle,
+                            ),
+                            pw.SizedBox(height: 4),
+                            pw.Container(
+                              height: 4,
+                              width: 40,
+                              decoration: pw.BoxDecoration(
+                                color: PdfColor.fromInt(0xFFFF9800),
+                                borderRadius: pw.BorderRadius.circular(2),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      headerStyle: tableHeaderStyle,
-                      cellStyle: tableCellStyle,
-                      cellAlignments: {
-                        0: pw.Alignment.centerLeft,
-                        1: pw.Alignment.centerLeft,
-                        2: pw.Alignment.centerRight,
-                        3: pw.Alignment.centerRight,
-                        4: pw.Alignment.centerLeft,
-                      },
-                      headers: ['Date', 'Source', 'Quantity', 'Amount', 'Notes'],
-                      data: filteredIncomes.map((item) {
-                        final dateStr = item['date']?.toString() ?? '';
-                        String formattedDate = 'Unknown';
-                        try {
-                          final date = DateTime.parse(dateStr);
-                          formattedDate = DateFormat('yyyy-MM-dd').format(date);
-                        } catch (_) {}
-                        
-                        final type = item['type']?.toString() ?? '';
-                        final qty = item['quantity']?.toString() ?? '-';
-                        final amount = double.tryParse(item['amount']?.toString() ?? '0') ?? 0.0;
-                        final notes = item['notes']?.toString() ?? '';
-                        
-                        return [
-                          formattedDate,
-                          type,
-                          qty,
-                          '₹${amount.toStringAsFixed(2)}',
-                          notes.length > 30 ? '${notes.substring(0, 30)}...' : notes,
-                        ];
-                      }).toList(),
+                    ),
+                    
+                    pw.SizedBox(width: 16),
+                    
+                    pw.Expanded(
+                      child: pw.Container(
+                        decoration: pw.BoxDecoration(
+                          color: net >= 0 
+                              ? PdfColor.fromInt(0xFFE8F5E9)
+                              : PdfColor.fromInt(0xFFFFEBEE),
+                          borderRadius: pw.BorderRadius.circular(10),
+                          border: pw.Border.all(
+                            color: net >= 0 
+                                ? createPdfColorWithOpacity(PdfColor.fromInt(0xFF4CAF50), 0.3)
+                                : createPdfColorWithOpacity(PdfColor.fromInt(0xFFF44336), 0.3),
+                            width: 1,
+                          ),
+                        ),
+                        padding: const pw.EdgeInsets.all(16),
+                        child: pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.center,
+                          children: [
+                            pw.Text(
+                              'Rs. ${net.toStringAsFixed(2)}',
+                              style: metricValueStyle.copyWith(
+                                color: net >= 0 
+                                    ? PdfColor.fromInt(0xFF2E7D32)
+                                    : PdfColor.fromInt(0xFFC62828),
+                              ),
+                            ),
+                            pw.SizedBox(height: 8),
+                            pw.Text(
+                              net >= 0 ? 'Net Profit' : 'Net Loss',
+                              style: metricLabelStyle,
+                            ),
+                            pw.SizedBox(height: 4),
+                            pw.Text(
+                              '${profitPercentage.toStringAsFixed(1)}% ${net >= 0 ? 'profit' : 'loss'}',
+                              style: pw.TextStyle(
+                                fontSize: 9,
+                                color: net >= 0 ? PdfColors.green : PdfColors.red,
+                                fontStyle: pw.FontStyle.italic,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              pw.SizedBox(height: 32),
+              
+              pw.Text('Income Transactions', style: sectionHeaderStyle),
+              pw.SizedBox(height: 12),
+              
+              if (filteredIncomes.isEmpty)
+                pw.Container(
+                  padding: const pw.EdgeInsets.all(20),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColor.fromInt(0xFFF5F5F5),
+                    borderRadius: pw.BorderRadius.circular(8),
+                  ),
+                  child: pw.Center(
+                    child: pw.Text(
+                      'No income transactions in selected period',
+                      style: pw.TextStyle(
+                        fontSize: 12,
+                        color: PdfColors.grey600,
+                        fontStyle: pw.FontStyle.italic,
+                      ),
                     ),
                   ),
-                
-                pw.SizedBox(height: 32),
-                
-                pw.Text('Expense Transactions', style: sectionHeaderStyle.copyWith(
-                  color: PdfColor.fromInt(0xFFFF9800),
-                )),
-                pw.SizedBox(height: 12),
-                
-                if (filteredExpenses.isEmpty)
-                  pw.Container(
-                    padding: const pw.EdgeInsets.all(20),
-                    decoration: pw.BoxDecoration(
-                      color: PdfColor.fromInt(0xFFF5F5F5),
-                      borderRadius: pw.BorderRadius.circular(8),
-                    ),
-                    child: pw.Center(
-                      child: pw.Text(
-                        'No expense transactions in selected period',
-                        style: pw.TextStyle(
-                          fontSize: 12,
-                          color: PdfColors.grey600,
-                          fontStyle: pw.FontStyle.italic,
-                        ),
-                      ),
-                    ),
-                  )
-                else
-                  pw.Container(
-                    decoration: pw.BoxDecoration(
-                      border: pw.Border.all(color: PdfColors.grey300, width: 0.8),
-                      borderRadius: pw.BorderRadius.circular(8),
-                    ),
-                    child: pw.TableHelper.fromTextArray(
-                      context: context,
-                      border: null,
-                      headerDecoration: pw.BoxDecoration(
-                        color: PdfColor.fromInt(0xFFFF9800),
-                        borderRadius: const pw.BorderRadius.only(
-                          topLeft: pw.Radius.circular(8),
-                          topRight: pw.Radius.circular(8),
-                        ),
-                      ),
-                      headerStyle: tableHeaderStyle,
-                      cellStyle: tableCellStyle,
-                      cellAlignments: {
-                        0: pw.Alignment.centerLeft,
-                        1: pw.Alignment.centerLeft,
-                        2: pw.Alignment.centerRight,
-                        3: pw.Alignment.centerRight,
-                        4: pw.Alignment.centerLeft,
-                      },
-                      headers: ['Date', 'Category/Type', 'Quantity', 'Amount', 'Notes'],
-                      data: filteredExpenses.map((item) {
-                        final dateStr = item['date']?.toString() ?? '';
-                        String formattedDate = 'Unknown';
-                        try {
-                          final date = DateTime.parse(dateStr);
-                          formattedDate = DateFormat('yyyy-MM-dd').format(date);
-                        } catch (_) {}
-                        
-                        final type = item['type']?.toString() ?? '';
-                        final qty = item['quantity']?.toString() ?? '-';
-                        final amount = double.tryParse(item['amount']?.toString() ?? '0') ?? 0.0;
-                        final notes = item['notes']?.toString() ?? '';
-                        
-                        return [
-                          formattedDate,
-                          type,
-                          qty,
-                          '₹${amount.toStringAsFixed(2)}',
-                          notes.length > 30 ? '${notes.substring(0, 30)}...' : notes,
-                        ];
-                      }).toList(),
-                    ),
-                  ),
-                
-                pw.SizedBox(height: 32),
-                
+                )
+              else
                 pw.Container(
                   decoration: pw.BoxDecoration(
-                    color: PdfColor.fromInt(0xFFF8F9FA),
+                    border: pw.Border.all(color: PdfColors.grey300, width: 0.8),
                     borderRadius: pw.BorderRadius.circular(8),
-                    border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
                   ),
-                  padding: const pw.EdgeInsets.all(16),
-                  child: pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                    children: [
-                      pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: [
-                          pw.Text(
-                            'Summary',
-                            style: pw.TextStyle(
-                              fontSize: 14,
-                              fontWeight: pw.FontWeight.bold,
-                            ),
-                          ),
-                          pw.SizedBox(height: 8),
-                          pw.Text(
-                            'Total Income: ₹${pdfTotalIncome.toStringAsFixed(2)}',
-                            style: pw.TextStyle(
-                              fontSize: 11,
-                              color: PdfColors.green,
-                            ),
-                          ),
-                          pw.Text(
-                            'Total Expenses: ₹${pdfTotalExpense.toStringAsFixed(2)}',
-                            style: pw.TextStyle(
-                              fontSize: 11,
-                              color: PdfColors.orange,
-                            ),
-                          ),
-                          pw.Text(
-                            'Net ${net >= 0 ? 'Profit' : 'Loss'}: ₹${net.abs().toStringAsFixed(2)}',
-                            style: pw.TextStyle(
-                              fontSize: 11,
-                              color: net >= 0 ? PdfColors.green : PdfColors.red,
-                              fontWeight: pw.FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                  child: pw.TableHelper.fromTextArray(
+                    context: context,
+                    border: null,
+                    headerDecoration: pw.BoxDecoration(
+                      color: PdfColor.fromInt(0xFF4CAF50),
+                      borderRadius: const pw.BorderRadius.only(
+                        topLeft: pw.Radius.circular(8),
+                        topRight: pw.Radius.circular(8),
                       ),
-                      pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: pw.BoxDecoration(
-                          color: net >= 0 ? PdfColors.green : PdfColors.red,
-                          borderRadius: pw.BorderRadius.circular(20),
-                        ),
-                        child: pw.Text(
-                          net >= 0 ? 'PROFITABLE' : 'IN LOSS',
+                    ),
+                    headerStyle: tableHeaderStyle,
+                    cellStyle: tableCellStyle,
+                    cellAlignments: {
+                      0: pw.Alignment.centerLeft,
+                      1: pw.Alignment.centerLeft,
+                      2: pw.Alignment.centerRight,
+                      3: pw.Alignment.centerRight,
+                      4: pw.Alignment.centerLeft,
+                    },
+                    headers: ['Date', 'Source', 'Quantity', 'Amount', 'Notes'],
+                    data: filteredIncomes.map((item) {
+                      final dateStr = item['date']?.toString() ?? '';
+                      String formattedDate = 'Unknown';
+                      try {
+                        final date = DateTime.parse(dateStr);
+                        formattedDate = DateFormat('yyyy-MM-dd').format(date);
+                      } catch (_) {}
+                      
+                      final type = item['type']?.toString() ?? '';
+                      final qty = item['quantity']?.toString() ?? '-';
+                      final amount = double.tryParse(item['amount']?.toString() ?? '0') ?? 0.0;
+                      final notes = item['notes']?.toString() ?? '';
+                      
+                      return [
+                        formattedDate,
+                        type,
+                        qty,
+                        'Rs. ${amount.toStringAsFixed(2)}',
+                        notes.length > 30 ? '${notes.substring(0, 30)}...' : notes,
+                      ];
+                    }).toList(),
+                  ),
+                ),
+              
+              pw.SizedBox(height: 32),
+              
+              pw.Text('Expense Transactions', style: sectionHeaderStyle.copyWith(
+                color: PdfColor.fromInt(0xFFFF9800),
+              )),
+              pw.SizedBox(height: 12),
+              
+              if (filteredExpenses.isEmpty)
+                pw.Container(
+                  padding: const pw.EdgeInsets.all(20),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColor.fromInt(0xFFF5F5F5),
+                    borderRadius: pw.BorderRadius.circular(8),
+                  ),
+                  child: pw.Center(
+                    child: pw.Text(
+                      'No expense transactions in selected period',
+                      style: pw.TextStyle(
+                        fontSize: 12,
+                        color: PdfColors.grey600,
+                        fontStyle: pw.FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                pw.Container(
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey300, width: 0.8),
+                    borderRadius: pw.BorderRadius.circular(8),
+                  ),
+                  child: pw.TableHelper.fromTextArray(
+                    context: context,
+                    border: null,
+                    headerDecoration: pw.BoxDecoration(
+                      color: PdfColor.fromInt(0xFFFF9800),
+                      borderRadius: const pw.BorderRadius.only(
+                        topLeft: pw.Radius.circular(8),
+                        topRight: pw.Radius.circular(8),
+                      ),
+                    ),
+                    headerStyle: tableHeaderStyle,
+                    cellStyle: tableCellStyle,
+                    cellAlignments: {
+                      0: pw.Alignment.centerLeft,
+                      1: pw.Alignment.centerLeft,
+                      2: pw.Alignment.centerRight,
+                      3: pw.Alignment.centerRight,
+                      4: pw.Alignment.centerLeft,
+                    },
+                    headers: ['Date', 'Category/Type', 'Quantity', 'Amount', 'Notes'],
+                    data: filteredExpenses.map((item) {
+                      final dateStr = item['date']?.toString() ?? '';
+                      String formattedDate = 'Unknown';
+                      try {
+                        final date = DateTime.parse(dateStr);
+                        formattedDate = DateFormat('yyyy-MM-dd').format(date);
+                      } catch (_) {}
+                      
+                      final type = item['type']?.toString() ?? '';
+                      final qty = item['quantity']?.toString() ?? '-';
+                      final amount = double.tryParse(item['amount']?.toString() ?? '0') ?? 0.0;
+                      final notes = item['notes']?.toString() ?? '';
+                      
+                      return [
+                        formattedDate,
+                        type,
+                        qty,
+                        'Rs. ${amount.toStringAsFixed(2)}',
+                        notes.length > 30 ? '${notes.substring(0, 30)}...' : notes,
+                      ];
+                    }).toList(),
+                  ),
+                ),
+              
+              pw.SizedBox(height: 32),
+              
+              pw.Container(
+                decoration: pw.BoxDecoration(
+                  color: PdfColor.fromInt(0xFFF8F9FA),
+                  borderRadius: pw.BorderRadius.circular(8),
+                  border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
+                ),
+                padding: const pw.EdgeInsets.all(16),
+                child: pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(
+                          'Summary',
                           style: pw.TextStyle(
-                            fontSize: 10,
-                            color: PdfColors.white,
+                            fontSize: 14,
                             fontWeight: pw.FontWeight.bold,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                pw.SizedBox(height: 20),
-                
-                pw.Container(
-                  height: 1,
-                  color: PdfColors.grey300,
-                ),
-                pw.SizedBox(height: 12),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text(
-                      'Farm Management System',
-                      style: pw.TextStyle(
-                        fontSize: 9,
-                        color: PdfColors.grey600,
-                      ),
+                        pw.SizedBox(height: 8),
+                        pw.Text(
+                          'Total Income: Rs. ${pdfTotalIncome.toStringAsFixed(2)}',
+                          style: pw.TextStyle(
+                            fontSize: 11,
+                            color: PdfColors.green,
+                          ),
+                        ),
+                        pw.Text(
+                          'Total Expenses: Rs. ${pdfTotalExpense.toStringAsFixed(2)}',
+                          style: pw.TextStyle(
+                            fontSize: 11,
+                            color: PdfColors.orange,
+                          ),
+                        ),
+                        pw.Text(
+                          'Net ${net >= 0 ? 'Profit' : 'Loss'}: Rs. ${net.abs().toStringAsFixed(2)}',
+                          style: pw.TextStyle(
+                            fontSize: 11,
+                            color: net >= 0 ? PdfColors.green : PdfColors.red,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                    pw.Text(
-                      'Page 1 of 1',
-                      style: pw.TextStyle(
-                        fontSize: 9,
-                        color: PdfColors.grey600,
+                    pw.Container(
+                      padding: const pw.EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: pw.BoxDecoration(
+                        color: net >= 0 ? PdfColors.green : PdfColors.red,
+                        borderRadius: pw.BorderRadius.circular(20),
+                      ),
+                      child: pw.Text(
+                        net >= 0 ? 'PROFITABLE' : 'IN LOSS',
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColors.white,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ],
-            );
-          },
+              ),
+              
+              pw.SizedBox(height: 20),
+              
+              pw.Container(
+                height: 1,
+                color: PdfColors.grey300,
+              ),
+              pw.SizedBox(height: 12),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text(
+                    'Farm Management System',
+                    style: pw.TextStyle(
+                      fontSize: 9,
+                      color: PdfColors.grey600,
+                    ),
+                  ),
+                  pw.Text(
+                    'Page 1 of 1',
+                    style: pw.TextStyle(
+                      fontSize: 9,
+                      color: PdfColors.grey600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
+    
+    await Printing.layoutPdf(onLayout: (format) async => pdf.save());
+  } catch (e) {
+    debugPrint('Error generating PDF: $e');
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error generating PDF: ${e.toString()}'),
+          backgroundColor: Colors.red,
         ),
       );
-      
-      await Printing.layoutPdf(onLayout: (format) async => pdf.save());
-    } catch (e) {
-      debugPrint('Error generating PDF: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error generating PDF: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
     }
   }
+}
 
   Future<void> _showDateRangePicker() async {
     try {
@@ -678,49 +677,75 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
   List<FlSpot> _prepareIncomeChartData(List<Map<String, dynamic>> incomes) {
     final Map<String, double> dailyIncome = {};
     
-    for (var income in incomes) {
-      final dateStr = income['date']?.toString() ?? '';
-      if (dateStr.isNotEmpty) {
-        try {
-          final date = DateTime.parse(dateStr);
-          final dateKey = DateFormat('yyyy-MM-dd').format(date);
-          final amount = double.tryParse(income['amount']?.toString() ?? '0') ?? 0.0;
-          dailyIncome[dateKey] = (dailyIncome[dateKey] ?? 0.0) + amount;
-        } catch (e) {
-          debugPrint('Error parsing income date: $e');
+    try {
+      for (var income in incomes) {
+        final dateStr = income['date']?.toString() ?? '';
+        if (dateStr.isNotEmpty && dateStr != 'null') {
+          try {
+            final date = DateTime.parse(dateStr);
+            final dateKey = DateFormat('yyyy-MM-dd').format(date);
+            final amount = double.tryParse(income['amount']?.toString() ?? '0') ?? 0.0;
+            dailyIncome[dateKey] = (dailyIncome[dateKey] ?? 0.0) + amount;
+          } catch (e) {
+            debugPrint('Error parsing income date: $e');
+          }
         }
       }
+      
+      final sortedDates = dailyIncome.keys.toList()..sort();
+      final List<FlSpot> spots = [];
+      
+      for (int i = 0; i < sortedDates.length; i++) {
+        final date = sortedDates[i];
+        final amount = dailyIncome[date] ?? 0.0;
+        // Ensure valid values for FlSpot
+        final x = i.toDouble();
+        final y = amount.isFinite ? amount : 0.0;
+        spots.add(FlSpot(x, y));
+      }
+      
+      return spots;
+    } catch (e) {
+      debugPrint('Error in _prepareIncomeChartData: $e');
+      return [];
     }
-    
-    final sortedDates = dailyIncome.keys.toList()..sort();
-    return sortedDates.asMap().entries.map((entry) {
-      final idx = entry.key;
-      return FlSpot(idx.toDouble(), dailyIncome[entry.value]!);
-    }).toList();
   }
 
   List<FlSpot> _prepareExpenseChartData(List<Map<String, dynamic>> expenses) {
     final Map<String, double> dailyExpense = {};
     
-    for (var expense in expenses) {
-      final dateStr = expense['date']?.toString() ?? '';
-      if (dateStr.isNotEmpty) {
-        try {
-          final date = DateTime.parse(dateStr);
-          final dateKey = DateFormat('yyyy-MM-dd').format(date);
-          final amount = double.tryParse(expense['amount']?.toString() ?? '0') ?? 0.0;
-          dailyExpense[dateKey] = (dailyExpense[dateKey] ?? 0.0) + amount;
-        } catch (e) {
-          debugPrint('Error parsing expense date: $e');
+    try {
+      for (var expense in expenses) {
+        final dateStr = expense['date']?.toString() ?? '';
+        if (dateStr.isNotEmpty && dateStr != 'null') {
+          try {
+            final date = DateTime.parse(dateStr);
+            final dateKey = DateFormat('yyyy-MM-dd').format(date);
+            final amount = double.tryParse(expense['amount']?.toString() ?? '0') ?? 0.0;
+            dailyExpense[dateKey] = (dailyExpense[dateKey] ?? 0.0) + amount;
+          } catch (e) {
+            debugPrint('Error parsing expense date: $e');
+          }
         }
       }
+      
+      final sortedDates = dailyExpense.keys.toList()..sort();
+      final List<FlSpot> spots = [];
+      
+      for (int i = 0; i < sortedDates.length; i++) {
+        final date = sortedDates[i];
+        final amount = dailyExpense[date] ?? 0.0;
+        // Ensure valid values for FlSpot
+        final x = i.toDouble();
+        final y = amount.isFinite ? amount : 0.0;
+        spots.add(FlSpot(x, y));
+      }
+      
+      return spots;
+    } catch (e) {
+      debugPrint('Error in _prepareExpenseChartData: $e');
+      return [];
     }
-    
-    final sortedDates = dailyExpense.keys.toList()..sort();
-    return sortedDates.asMap().entries.map((entry) {
-      final idx = entry.key;
-      return FlSpot(idx.toDouble(), dailyExpense[entry.value]!);
-    }).toList();
   }
 
   List<String> _getSortedDates(
@@ -729,22 +754,27 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
   ) {
     final allDates = <String>{};
     
-    for (var income in incomes) {
-      final dateStr = income['date']?.toString() ?? '';
-      if (dateStr.isNotEmpty) {
-        allDates.add(dateStr);
+    try {
+      for (var income in incomes) {
+        final dateStr = income['date']?.toString() ?? '';
+        if (dateStr.isNotEmpty && dateStr != 'null') {
+          allDates.add(dateStr);
+        }
       }
-    }
-    
-    for (var expense in expenses) {
-      final dateStr = expense['date']?.toString() ?? '';
-      if (dateStr.isNotEmpty) {
-        allDates.add(dateStr);
+      
+      for (var expense in expenses) {
+        final dateStr = expense['date']?.toString() ?? '';
+        if (dateStr.isNotEmpty && dateStr != 'null') {
+          allDates.add(dateStr);
+        }
       }
+      
+      final sortedDates = allDates.toList()..sort();
+      return sortedDates;
+    } catch (e) {
+      debugPrint('Error in _getSortedDates: $e');
+      return [];
     }
-    
-    final sortedDates = allDates.toList()..sort();
-    return sortedDates;
   }
 
   String _formatDateForPDF(DateTime date) {
@@ -829,6 +859,24 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
       final expenseChartData = _prepareExpenseChartData(filteredExpenses);
       final dates = _getSortedDates(filteredIncomes, filteredExpenses);
       
+      // Debug logging
+      debugPrint('=== CHART DATA DEBUG ===');
+      debugPrint('Income spots: ${incomeChartData.length}');
+      debugPrint('Expense spots: ${expenseChartData.length}');
+      debugPrint('Dates: ${dates.length}');
+      
+      for (var spot in incomeChartData) {
+        if (!spot.x.isFinite || !spot.y.isFinite) {
+          debugPrint('Invalid income spot: x=${spot.x}, y=${spot.y}');
+        }
+      }
+      
+      for (var spot in expenseChartData) {
+        if (!spot.x.isFinite || !spot.y.isFinite) {
+          debugPrint('Invalid expense spot: x=${spot.x}, y=${spot.y}');
+        }
+      }
+      
       return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -848,7 +896,7 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
               onPressed: _generateAndPreviewPDF,
             ),
             IconButton(
-              icon: const Icon(Icons.filter_alt, color: Colors.white),
+              icon: const Icon(Icons.filter_list, color: Colors.white),
               tooltip: 'Filter',
               onPressed: _showDateRangePicker,
             ),
@@ -1087,35 +1135,49 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
                         ),
                         elevation: 0,
                       ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Scaffold(
-                              appBar: AppBar(
-                                title: Text(l10n.lineChart),
-                                backgroundColor: const Color(0xFF4CAF50),
-                                actions: [
-                                  IconButton(
-                                    icon: const Icon(Icons.filter_alt),
-                                    onPressed: _showDateRangePicker,
-                                    tooltip: 'Filter by Date',
-                                  ),
-                                ],
+                      onPressed: () async {
+                        try {
+                          // Validate data before navigating
+                          if (incomeChartData.isEmpty && expenseChartData.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('No chart data available'),
+                                backgroundColor: Colors.orange,
                               ),
-                              body: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: TransactionsLineChart(
-                                  incomeSpots: incomeChartData,
-                                  expenseSpots: expenseChartData,
-                                  dates: dates,
-                                  title: 'Financial Trends',
-                                  dateRange: _selectedRange,
+                            );
+                            return;
+                          }
+                          
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Scaffold(
+                                appBar: AppBar(
+                                  title: Text(l10n.lineChart),
+                                  backgroundColor: const Color(0xFF4CAF50),
+                                ),
+                                body: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: TransactionsLineChart(
+                                    incomeSpots: incomeChartData,
+                                    expenseSpots: expenseChartData,
+                                    dates: dates,
+                                    title: 'Financial Trends',
+                                    dateRange: _selectedRange,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
+                          );
+                        } catch (e) {
+                          debugPrint('Error opening line chart: $e');
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error loading chart'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       },
                     ),
                   ],
@@ -1387,6 +1449,5 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
         ],
       ), 
     );
-    }
   }
-
+}

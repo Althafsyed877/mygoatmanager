@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mygoatmanager/services/local_storage_service.dart';
 import '../models/goat.dart';
 import '../models/sync_data.dart';
+import '../models/milk_record.dart';
 
 class Homepage extends StatefulWidget {
   final Function(Locale)? onLocaleChanged;
@@ -278,7 +279,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 10,
                 spreadRadius: 5,
               ),
@@ -328,7 +329,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF4CAF50).withOpacity(0.1) : Colors.grey[100],
+                      color: isSelected ? const Color(0xFF4CAF50).withValues(alpha: 0.1) : Colors.grey[100],
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isSelected ? const Color(0xFF4CAF50) : Colors.transparent,
@@ -357,7 +358,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                         languageData['nativeName'] ?? '',
                         style: TextStyle(
                           fontSize: 14,
-                          color: isSelected ? const Color(0xFF4CAF50).withOpacity(0.8) : Colors.grey[600],
+                          color: isSelected ? const Color(0xFF4CAF50).withValues(alpha: 0.8) : Colors.grey[600],
                         ),
                       ),
                     ],
@@ -1063,7 +1064,7 @@ Future<void> _downloadDataFromServer() async {
       
       final localMilkRecords = await localStorage.getMilkRecords();
       if (localMilkRecords.isEmpty && data['milk_records'] != null) {
-        await localStorage.saveMilkRecords(List<Map<String, dynamic>>.from(data['milk_records']));
+        await localStorage.saveMilkRecords(List<MilkRecord>.from(data['milk_records']));
       }
       
       final localIncomes = await localStorage.getIncomes();

@@ -1,5 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import 'package:pdf/pdf.dart';
+import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../l10n/app_localizations.dart';
 import '../models/goat.dart';
@@ -17,9 +22,9 @@ class EventsReportPage extends StatefulWidget {
 class _EventsReportPageState extends State<EventsReportPage> {
   List<Event> _events = [];
   List<Goat> _goats = [];
-  DateTime _selectedMonth = DateTime.now();
-  
-  // Archive counts
+  DateTime? _fromDate;
+  DateTime? _toDate;
+  bool _showFilterOptions = false;
   int _soldGoatsCount = 0;
   int _deadGoatsCount = 0;
   int _lostGoatsCount = 0;
@@ -32,7 +37,6 @@ class _EventsReportPageState extends State<EventsReportPage> {
   }
 
   Future<void> _loadData() async {
-    debugPrint('=== LOADING EVENTS REPORT DATA ===');
     await _loadEvents();
     await _loadGoats();
     await _loadArchiveCounts();
@@ -57,40 +61,14 @@ class _EventsReportPageState extends State<EventsReportPage> {
     final prefs = await SharedPreferences.getInstance();
     final data = prefs.getString('events');
     
-    debugPrint('=== LOADING EVENTS FROM SHAREDPREFS ===');
-    debugPrint('Data exists: ${data != null}');
-    
     if (data != null) {
       try {
         final List<dynamic> list = jsonDecode(data) as List<dynamic>;
         _events = list.map((e) => Event.fromJson(e as Map<String, dynamic>)).toList();
-        
-        // DEBUG: Print all event types
-        debugPrint('Total events loaded: ${_events.length}');
-        debugPrint('Event types found:');
-        final typeCounts = <String, int>{};
-        for (var event in _events) {
-          final type = event.eventType;
-          typeCounts[type] = (typeCounts[type] ?? 0) + 1;
-        }
-        typeCounts.forEach((type, count) {
-          debugPrint('  "$type": $count events');
-        });
-        
-        // Print current month events
-        final monthEvents = _monthEvents;
-        debugPrint('Current month events (${_formatDate(_firstDayOfMonth)} - ${_formatDate(_lastDayOfMonth)}): ${monthEvents.length}');
-        for (var event in monthEvents) {
-          debugPrint('  - ${event.tagNo}: ${event.eventType} on ${event.date}');
-        }
-        
       } catch (e) {
         debugPrint('Error loading events: $e');
       }
-    } else {
-      debugPrint('No events data found in SharedPreferences');
     }
-    debugPrint('===================================');
   }
 
   Future<void> _loadGoats() async {
@@ -106,25 +84,263 @@ class _EventsReportPageState extends State<EventsReportPage> {
     }
   }
 
-  // Get first and last day of current month
-  DateTime get _firstDayOfMonth => DateTime(_selectedMonth.year, _selectedMonth.month, 1);
-  DateTime get _lastDayOfMonth => DateTime(_selectedMonth.year, _selectedMonth.month + 1, 0, 23, 59, 59);
+  Future<void> _selectFromDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _fromDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _fromDate) {
+      setState(() {
+        _fromDate = picked;
+      });
+    }
+  }
 
-  // Format date
+  Future<void> _selectToDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _toDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _toDate) {
+      setState(() {
+        _toDate = picked;
+      });
+    }
+  }
+
+  // Filtered events by date range
+  List<Event> get _filteredEvents {
+    if (_fromDate == null || _toDate == null) return _events;
+    final from = DateTime(_fromDate!.year, _fromDate!.month, _fromDate!.day);
+    final to = DateTime(_toDate!.year, _toDate!.month, _toDate!.day, 23, 59, 59);
+    return _events.where((event) {
+      final eventDate = event.date;
+      return (eventDate.isAtSameMomentAs(from) || eventDate.isAfter(from)) &&
+             (eventDate.isAtSameMomentAs(to) || eventDate.isBefore(to));
+    }).toList();
+  }
+
+  // Format date for PDF
+  String _formatPdfDate(DateTime date) {
+    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${months[date.month - 1]} ${date.day}, ${date.year}';
+  }
+
+  // Format date for UI
   String _formatDate(DateTime date) {
     final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 
-  // Get events for current month - FIXED VERSION
-  List<Event> get _monthEvents => _events.where((event) {
-    final eventDate = event.date;
-    final startOfMonth = DateTime(_selectedMonth.year, _selectedMonth.month, 1);
-    final endOfMonth = DateTime(_selectedMonth.year, _selectedMonth.month + 1, 0, 23, 59, 59);
-    
-    return (eventDate.isAtSameMomentAs(startOfMonth) || eventDate.isAfter(startOfMonth)) &&
-           (eventDate.isAtSameMomentAs(endOfMonth) || eventDate.isBefore(endOfMonth));
-  }).toList();
+  Future<void> _generatePdf() async {
+    try {
+      final pdf = pw.Document();
+      final ByteData imageData = await rootBundle.load('assets/images/events.png');
+      final Uint8List imageBytes = imageData.buffer.asUint8List();
+
+      final filteredEvents = _filteredEvents;
+      final individualEvents = filteredEvents.where((e) => !e.isMassEvent).toList();
+      final massEvents = filteredEvents.where((e) => e.isMassEvent).toList();
+      final archives = await ArchiveService.getAllArchives();
+
+      // First page - Header, Individual Events, and Mass Events
+      pdf.addPage(
+        pw.Page(
+          pageTheme: pw.PageTheme(
+            margin: const pw.EdgeInsets.all(32),
+            theme: pw.ThemeData.withFont(
+              base: await PdfGoogleFonts.openSansRegular(),
+              bold: await PdfGoogleFonts.openSansBold(),
+            ),
+          ),
+          build: (context) {
+            return pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                // Header
+                pw.Center(
+                  child: pw.Image(pw.MemoryImage(imageBytes), width: 120, height: 120),
+                ),
+                pw.SizedBox(height: 8),
+                pw.Center(
+                  child: pw.Text(
+                    'Events Report',
+                    style: pw.TextStyle(
+                      fontSize: 28,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.indigo,
+                    ),
+                  ),
+                ),
+                pw.SizedBox(height: 4),
+                pw.Center(
+                  child: pw.Text(
+                    'Date Range: ${_fromDate != null && _toDate != null ? '${_formatPdfDate(_fromDate!)} - ${_formatPdfDate(_toDate!)}' : 'All Dates'}',
+                    style: pw.TextStyle(
+                      fontSize: 13,
+                      color: PdfColors.grey800,
+                    ),
+                  ),
+                ),
+                pw.Divider(thickness: 1.2, color: PdfColors.indigo),
+                pw.SizedBox(height: 12),
+
+                // Individual Events Section
+                pw.Text(
+                  'Individual Events',
+                  style: pw.TextStyle(
+                    fontSize: 18,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.blue800,
+                  ),
+                ),
+                pw.SizedBox(height: 8),
+                if (individualEvents.isEmpty)
+                  pw.Text(
+                    'No individual events found.',
+                    style: pw.TextStyle(color: PdfColors.grey600),
+                  )
+                else
+                  pw.Table.fromTextArray(
+                    headers: ['Event', 'Date', 'Goat', 'Notes'],
+                    headerStyle: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.white,
+                    ),
+                    headerDecoration: pw.BoxDecoration(color: PdfColors.blue600),
+                    cellAlignment: pw.Alignment.centerLeft,
+                    cellStyle: pw.TextStyle(fontSize: 10),
+                    data: individualEvents
+                        .map((e) => [e.eventType, _formatPdfDate(e.date), e.tagNo, e.notes ?? ''])
+                        .toList(),
+                  ),
+
+                pw.SizedBox(height: 20),
+
+                // Mass Events Section
+                pw.Text(
+                  'Mass Events',
+                  style: pw.TextStyle(
+                    fontSize: 18,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.green800,
+                  ),
+                ),
+                pw.SizedBox(height: 8),
+                if (massEvents.isEmpty)
+                  pw.Text(
+                    'No mass events found.',
+                    style: pw.TextStyle(color: PdfColors.grey600),
+                  )
+                else
+                  pw.Table.fromTextArray(
+                    headers: ['Event', 'Date', 'Goat', 'Notes'],
+                    headerStyle: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.white,
+                    ),
+                    headerDecoration: pw.BoxDecoration(color: PdfColors.green600),
+                    cellAlignment: pw.Alignment.centerLeft,
+                    cellStyle: pw.TextStyle(fontSize: 10),
+                    data: massEvents
+                        .map((e) => [e.eventType, _formatPdfDate(e.date), e.tagNo, e.notes ?? ''])
+                        .toList(),
+                  ),
+              ],
+            );
+          },
+        ),
+      );
+
+      // Second page - Archives
+      pdf.addPage(
+        pw.Page(
+          pageTheme: pw.PageTheme(
+            margin: const pw.EdgeInsets.all(32),
+            theme: pw.ThemeData.withFont(
+              base: await PdfGoogleFonts.openSansRegular(),
+              bold: await PdfGoogleFonts.openSansBold(),
+            ),
+          ),
+          build: (context) {
+            return pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                // Archives Header
+                pw.Text(
+                  'Archives',
+                  style: pw.TextStyle(
+                    fontSize: 24,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.red800,
+                  ),
+                ),
+                pw.SizedBox(height: 4),
+                pw.Text(
+                  'Date Range: ${_fromDate != null && _toDate != null ? '${_formatPdfDate(_fromDate!)} - ${_formatPdfDate(_toDate!)}' : 'All Dates'}',
+                  style: pw.TextStyle(
+                    fontSize: 12,
+                    color: PdfColors.grey800,
+                  ),
+                ),
+                pw.Divider(thickness: 1, color: PdfColors.grey400),
+                pw.SizedBox(height: 12),
+
+                if (archives.isEmpty)
+                  pw.Text(
+                    'No archives found.',
+                    style: pw.TextStyle(color: PdfColors.grey600),
+                  )
+                else
+                  pw.Table.fromTextArray(
+                    headers: ['Tag No', 'Name', 'Breed', 'Reason', 'Date', 'Notes'],
+                    headerStyle: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.white,
+                    ),
+                    headerDecoration: pw.BoxDecoration(color: PdfColors.red600),
+                    cellAlignment: pw.Alignment.centerLeft,
+                    cellStyle: pw.TextStyle(fontSize: 9),
+                    data: archives
+                        .map((a) => [
+                              a.tagNo,
+                              a.goatData['name'] ?? '',
+                              a.goatData['breed'] ?? '',
+                              a.reason,
+                              _formatPdfDate(a.archiveDate),
+                              a.notes ?? ''
+                            ])
+                        .toList(),
+                  ),
+              ],
+            );
+          },
+        ),
+      );
+
+      final pdfBytes = await pdf.save();
+      await Printing.sharePdf(
+        bytes: pdfBytes,
+        filename: 'events_report_${DateTime.now().millisecondsSinceEpoch}.pdf',
+        subject: 'Events Report',
+        body: 'Please find attached the generated events report PDF.',
+      );
+    } catch (e) {
+      debugPrint('Error generating PDF: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error generating PDF: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   // Helper to get possible English event types for a localized string
   List<String> _getPossibleEnglishEventTypes(String localizedEventType, AppLocalizations loc) {
@@ -148,35 +364,24 @@ class _EventsReportPageState extends State<EventsReportPage> {
     return localizedToEnglish[localizedEventType] ?? [localizedEventType];
   }
 
-  // Get count for individual event type - UPDATED VERSION
+  // Get count for individual event type
   int _getIndividualEventCount(String localizedEventType, AppLocalizations loc) {
-    final monthEvents = _monthEvents;
+    final filteredEvents = _filteredEvents;
     
-    // Get all English event types that map to this localized string
     final possibleEnglishTypes = _getPossibleEnglishEventTypes(localizedEventType, loc);
     
-    final filtered = monthEvents.where((event) => 
+    return filteredEvents.where((event) => 
       !event.isMassEvent && possibleEnglishTypes.contains(event.eventType)
-    ).toList();
-    
-    debugPrint('DEBUG: Checking "$localizedEventType" (English variants: $possibleEnglishTypes) - Found ${filtered.length} events');
-    if (filtered.isNotEmpty) {
-      for (var event in filtered) {
-        debugPrint('  - ${event.tagNo}: ${event.eventType} on ${event.date}');
-      }
-    }
-    
-    return filtered.length;
+    ).length;
   }
 
-  // Get count for mass event type - UPDATED VERSION
+  // Get count for mass event type
   int _getMassEventCount(String localizedEventType, AppLocalizations loc) {
-    final monthEvents = _monthEvents;
+    final filteredEvents = _filteredEvents;
     
-    // Get all English event types that map to this localized string
     final possibleEnglishTypes = _getPossibleEnglishEventTypes(localizedEventType, loc);
     
-    return monthEvents.where((event) => 
+    return filteredEvents.where((event) => 
       event.isMassEvent && possibleEnglishTypes.contains(event.eventType)
     ).length;
   }
@@ -224,11 +429,9 @@ class _EventsReportPageState extends State<EventsReportPage> {
                               onPressed: () async {
                                 final restoredGoat = await ArchiveService.restoreGoat(archive.tagNo);
                                 if (restoredGoat != null) {
-                                  // Add back to active goats
                                   setState(() {
                                     _goats.add(restoredGoat);
                                   });
-                                  // Save goats
                                   final prefs = await SharedPreferences.getInstance();
                                   final updatedJson = _goats.map((g) => g.toJson()).toList();
                                   await prefs.setString('goats', jsonEncode(updatedJson));
@@ -263,12 +466,259 @@ class _EventsReportPageState extends State<EventsReportPage> {
     }
   }
 
+  // Date filter chips and custom range UI
+  Widget _buildFilterOptions(BuildContext context, AppLocalizations loc) {
+    final bool isSmallScreen = MediaQuery.of(context).size.width < 600;
+    
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.all(isSmallScreen ? 12.0 : 16.0),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.filterByDate,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: isSmallScreen ? 14 : 16,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 6.0,
+              runSpacing: 6.0,
+              children: [
+                _buildDateChip(loc.today, isSmallScreen, loc),
+                _buildDateChip(loc.yesterday, isSmallScreen, loc),
+                _buildDateChip(loc.lastWeek, isSmallScreen, loc),
+                _buildDateChip(loc.currentMonth, isSmallScreen, loc),
+                _buildDateChip(loc.lastMonth, isSmallScreen, loc),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              loc.customDateRange,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: isSmallScreen ? 13 : 14,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Column(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(loc.from, style: TextStyle(fontSize: isSmallScreen ? 12 : 14)),
+                    const SizedBox(height: 4),
+                    GestureDetector(
+                      onTap: () => _selectFromDate(context),
+                      child: Container(
+                        padding: EdgeInsets.all(isSmallScreen ? 10.0 : 12.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                            SizedBox(width: isSmallScreen ? 6 : 8),
+                            Expanded(
+                              child: Text(
+                                _fromDate != null
+                                    ? '${_fromDate!.day}/${_fromDate!.month}/${_fromDate!.year}'
+                                    : loc.selectDate,
+                                style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(loc.to, style: TextStyle(fontSize: isSmallScreen ? 12 : 14)),
+                    const SizedBox(height: 4),
+                    GestureDetector(
+                      onTap: () => _selectToDate(context),
+                      child: Container(
+                        padding: EdgeInsets.all(isSmallScreen ? 10.0 : 12.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                            SizedBox(width: isSmallScreen ? 6 : 8),
+                            Expanded(
+                              child: Text(
+                                _toDate != null
+                                    ? '${_toDate!.day}/${_toDate!.month}/${_toDate!.year}'
+                                    : loc.selectDate,
+                                style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => setState(() => _showFilterOptions = false),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF4CAF50),
+                      padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 10 : 12),
+                    ),
+                    child: Text(
+                      loc.apply,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isSmallScreen ? 12 : 14,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: isSmallScreen ? 6 : 8),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      setState(() {
+                        _fromDate = null;
+                        _toDate = null;
+                        _showFilterOptions = false;
+                      });
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 10 : 12),
+                    ),
+                    child: Text(
+                      loc.clear,
+                      style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateChip(String label, bool isSmallScreen, AppLocalizations loc) {
+    bool isSelected = false;
+    final now = DateTime.now();
+    switch (label) {
+      case 'Today':
+      case 'आज':
+        isSelected = _fromDate != null && _toDate != null &&
+            _fromDate!.year == now.year && _fromDate!.month == now.month && _fromDate!.day == now.day &&
+            _toDate!.year == now.year && _toDate!.month == now.month && _toDate!.day == now.day;
+        break;
+      case 'Yesterday':
+      case 'कल':
+        final yest = now.subtract(const Duration(days: 1));
+        isSelected = _fromDate != null && _toDate != null &&
+            _fromDate!.year == yest.year && _fromDate!.month == yest.month && _fromDate!.day == yest.day &&
+            _toDate!.year == yest.year && _toDate!.month == yest.month && _toDate!.day == yest.day;
+        break;
+      case 'Last Week':
+      case 'पिछला सप्ताह':
+        final lastWeek = now.subtract(const Duration(days: 7));
+        isSelected = _fromDate != null && _toDate != null &&
+            _fromDate!.year == lastWeek.year && _fromDate!.month == lastWeek.month && _fromDate!.day == lastWeek.day &&
+            _toDate!.year == now.year && _toDate!.month == now.month && _toDate!.day == now.day;
+        break;
+      case 'Current Month':
+      case 'वर्तमान माह':
+        final first = DateTime(now.year, now.month, 1);
+        final last = DateTime(now.year, now.month + 1, 0);
+        isSelected = _fromDate != null && _toDate != null &&
+            _fromDate!.year == first.year && _fromDate!.month == first.month && _fromDate!.day == first.day &&
+            _toDate!.year == last.year && _toDate!.month == last.month && _toDate!.day == last.day;
+        break;
+      case 'Last Month':
+      case 'पिछला माह':
+        final first = DateTime(now.year, now.month - 1, 1);
+        final last = DateTime(now.year, now.month, 0);
+        isSelected = _fromDate != null && _toDate != null &&
+            _fromDate!.year == first.year && _fromDate!.month == first.month && _fromDate!.day == first.day &&
+            _toDate!.year == last.year && _toDate!.month == last.month && _toDate!.day == last.day;
+        break;
+    }
+    return ChoiceChip(
+      label: Text(
+        label,
+        style: TextStyle(fontSize: isSmallScreen ? 11 : 13),
+      ),
+      selected: isSelected,
+      onSelected: (selected) {
+        setState(() {
+          final now = DateTime.now();
+          switch (label) {
+            case 'Today':
+            case 'आज':
+              _fromDate = now;
+              _toDate = now;
+              break;
+            case 'Yesterday':
+            case 'कल':
+              final yest = now.subtract(const Duration(days: 1));
+              _fromDate = yest;
+              _toDate = yest;
+              break;
+            case 'Last Week':
+            case 'पिछला सप्ताह':
+              final lastWeek = now.subtract(const Duration(days: 7));
+              _fromDate = lastWeek;
+              _toDate = now;
+              break;
+            case 'Current Month':
+            case 'वर्तमान माह':
+              _fromDate = DateTime(now.year, now.month, 1);
+              _toDate = DateTime(now.year, now.month + 1, 0);
+              break;
+            case 'Last Month':
+            case 'पिछला माह':
+              _fromDate = DateTime(now.year, now.month - 1, 1);
+              _toDate = DateTime(now.year, now.month, 0);
+              break;
+          }
+        });
+      },
+      backgroundColor: Colors.white,
+      selectedColor: const Color(0xFF4CAF50),
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : Colors.black,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     
-    // Initialize localized event types HERE in build method
     final individualEventTypes = [
       loc.treated,
       loc.weighed,
@@ -302,15 +752,17 @@ class _EventsReportPageState extends State<EventsReportPage> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: const Icon(Icons.calendar_month),
-            onPressed: () => _selectMonth(context),
+            icon: const Icon(Icons.filter_list),
+            onPressed: () {
+              setState(() {
+                _showFilterOptions = !_showFilterOptions;
+              });
+            },
           ),
           IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              debugPrint('=== MANUAL REFRESH TRIGGERED ===');
-              _loadData();
-            },
+            icon: const Icon(Icons.picture_as_pdf),
+            onPressed: _generatePdf,
+            tooltip: 'Export PDF',
           ),
           IconButton(
             icon: const Icon(Icons.archive),
@@ -323,6 +775,8 @@ class _EventsReportPageState extends State<EventsReportPage> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            if (_showFilterOptions) _buildFilterOptions(context, loc),
+            
             // Header Section
             Card(
               elevation: 3,
@@ -345,7 +799,7 @@ class _EventsReportPageState extends State<EventsReportPage> {
                         const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
                         const SizedBox(width: 8),
                         Text(
-                          loc.currentMonth,
+                          loc.filterByDate,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -354,22 +808,23 @@ class _EventsReportPageState extends State<EventsReportPage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '(${_formatDate(_firstDayOfMonth)} - ${_formatDate(_lastDayOfMonth)})',
+                      _fromDate != null && _toDate != null
+                          ? '(${_formatDate(_fromDate!)} - ${_formatDate(_toDate!)})'
+                          : loc.selectDate,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: Colors.grey.shade700,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Total Events: ${_monthEvents.length}',
+                      'Total Events: ${_filteredEvents.length}',
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF4CAF50),
                       ),
                     ),
-                    // Debug info
                     Text(
-                      'Total All Events: ${_events.length}',
+                      'Showing: ${_fromDate != null && _toDate != null ? 'Date Range' : 'All Events'}',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: Colors.grey,
                       ),
@@ -497,22 +952,6 @@ class _EventsReportPageState extends State<EventsReportPage> {
             const SizedBox(height: 40),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          debugPrint('=== DEBUG INFO ===');
-          debugPrint('Total events in memory: ${_events.length}');
-          debugPrint('Current month: ${_selectedMonth.month}/${_selectedMonth.year}');
-          debugPrint('Month events: ${_monthEvents.length}');
-          debugPrint('Weighed events count: ${_getIndividualEventCount(loc.weighed, loc)}');
-          debugPrint('All event types:');
-          for (var type in individualEventTypes) {
-            debugPrint('  $type: ${_getIndividualEventCount(type, loc)}');
-          }
-          debugPrint('==================');
-        },
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.bug_report),
       ),
     );
   }
@@ -697,24 +1136,6 @@ class _EventsReportPageState extends State<EventsReportPage> {
     return Colors.grey;
   }
 
-  Future<void> _selectMonth(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedMonth,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
-      initialEntryMode: DatePickerEntryMode.calendarOnly,
-      initialDatePickerMode: DatePickerMode.year,
-    );
-    
-    if (picked != null && picked != _selectedMonth) {
-      setState(() {
-        _selectedMonth = picked;
-      });
-      print('Month changed to: ${_formatDate(picked)}');
-    }
-  }
-
   // Function to show all archives
   void _showAllArchives(BuildContext context) async {
     final loc = AppLocalizations.of(context)!;
@@ -762,11 +1183,9 @@ class _EventsReportPageState extends State<EventsReportPage> {
                               onPressed: () async {
                                 final restoredGoat = await ArchiveService.restoreGoat(archive.tagNo);
                                 if (restoredGoat != null) {
-                                  // Add back to active goats
                                   setState(() {
                                     _goats.add(restoredGoat);
                                   });
-                                  // Save goats
                                   final prefs = await SharedPreferences.getInstance();
                                   final updatedJson = _goats.map((g) => g.toJson()).toList();
                                   await prefs.setString('goats', jsonEncode(updatedJson));
@@ -824,15 +1243,14 @@ class _EventsReportPageState extends State<EventsReportPage> {
   }
 
   void _showEventDetails(BuildContext context, String eventType, bool isMassEvent) {
-    final loc = AppLocalizations.of(context);
-    if (loc == null) return;
+    final loc = AppLocalizations.of(context)!;
 
-    // Filter events by type and mass/individual
-    final filteredEvents = _events.where((event) =>
-      event.eventType == eventType && event.isMassEvent == isMassEvent
+    final possibleEnglishTypes = _getPossibleEnglishEventTypes(eventType, loc);
+
+    final filteredEvents = _filteredEvents.where((event) =>
+      possibleEnglishTypes.contains(event.eventType) && event.isMassEvent == isMassEvent
     ).toList();
 
-    // Sort by date descending (newest first)
     filteredEvents.sort((a, b) => b.date.compareTo(a.date));
 
     showDialog(
@@ -881,14 +1299,13 @@ class _EventsReportPageState extends State<EventsReportPage> {
                         ],
                       ),
                       onTap: () {
-                        Navigator.of(ctx).pop(); // Close the dialog
-                        // Navigate to add_event_page with the event data for viewing/editing
+                        Navigator.of(ctx).pop();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => AddEventPage(
                               goat: goat,
-                              existingEvent: event, // Pass the event data
+                              existingEvent: event,
                             ),
                           ),
                         );
@@ -908,5 +1325,3 @@ class _EventsReportPageState extends State<EventsReportPage> {
     );
   }
 }
-
-// Event class (same as in your EventsPage)

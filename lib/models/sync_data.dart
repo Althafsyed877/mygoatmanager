@@ -59,54 +59,69 @@ class SyncService {
       }
 
       // ========== 2. SYNC EVENTS ==========
+     try {
+  final localEvents = await localStorage.getEvents();
+  debugPrint('🔄 [SYNC_DATA] Found ${localEvents.length} events in local storage');
+  
+  // SHOW WHAT EVENTS WE HAVE
+  if (localEvents.isNotEmpty) {
+    debugPrint('📋 [SYNC_DATA] Event details:');
+    for (int i = 0; i < localEvents.length; i++) {
+      final event = localEvents[i];
+    }
+  } else {
+    debugPrint('⚠️ [SYNC_DATA] NO EVENTS FOUND! Are events being saved locally?');
+  }
+
+  String? formatDate(dynamic date) {
+    if (date == null) return null;
+
+    if (date is DateTime) {
+      return date.toIso8601String().split('T').first;
+    }
+
+    if (date is String) {
       try {
-        final localEvents = await localStorage.getEvents();
-        debugPrint('🔄 Syncing ${localEvents.length} events...');
-
-        String? formatDate(dynamic date) {
-          if (date == null) return null;
-
-          if (date is DateTime) {
-            return date.toIso8601String().split('T').first; // Returns YYYY-MM-DD
-          }
-
-          if (date is String) {
-            try {
-              final parsed = DateTime.parse(date);
-              return parsed.toIso8601String().split('T').first; // Returns YYYY-MM-DD
-            } catch (_) {
-              return null;
-            }
-          }
-          return null;
-        }
-
-        if (localEvents.isNotEmpty) {
-          final localEventsJson = localEvents.map((event) {
-            // Get the original JSON
-            final eventJson = event.toJson();
-            
-            // Format the date field to YYYY-MM-DD
-            eventJson['date'] = formatDate(event.date) ?? 
-                                formatDate(eventJson['date']) ?? 
-                                eventJson['date'];
-            
-            return eventJson;
-          }).toList();
-
-          final response = await apiService.syncEvents(localEventsJson);
-
-          if (!response.success) {
-            hasErrors = true;
-            errorMessage += 'Events: ${response.message}\n';
-          }
-        }
-      } catch (e) {
-        hasErrors = true;
-        errorMessage += 'Events error: $e\n';
-        debugPrint('❌ Events sync error: $e');
+        final parsed = DateTime.parse(date);
+        return parsed.toIso8601String().split('T').first;
+      } catch (_) {
+        return null;
       }
+    }
+    return null;
+  }
 
+  if (localEvents.isNotEmpty) {
+    final localEventsJson = localEvents.map((event) {
+      final eventJson = event.toJson();
+      
+      // Format the date field to YYYY-MM-DD
+      eventJson['date'] = formatDate(event.date) ?? 
+                          formatDate(eventJson['date']) ?? 
+                          eventJson['date'];
+      
+      debugPrint('📝 [SYNC_DATA] Event JSON: ${eventJson['tagNo']} - ${eventJson['date']}');
+      return eventJson;
+    }).toList();
+
+    debugPrint('📤 [SYNC_DATA] Calling apiService.syncEvents()...');
+    final response = await apiService.syncEvents(localEventsJson);
+    
+    debugPrint('📥 [SYNC_DATA] Events sync response: ${response.success} - ${response.message}');
+
+    if (!response.success) {
+      hasErrors = true;
+      errorMessage += 'Events: ${response.message}\n';
+      debugPrint('❌ [SYNC_DATA] Events sync failed: ${response.message}');
+    } else {
+      debugPrint('✅ [SYNC_DATA] Events sync successful!');
+    }
+  }
+} catch (e) {
+  hasErrors = true;
+  errorMessage += 'Events error: $e\n';
+  debugPrint('❌ [SYNC_DATA] Events sync error: $e');
+}
       // ========== 3. SYNC MILK RECORDS ==========
       try {
         final localMilkRecords = await localStorage.getMilkRecords();
@@ -114,7 +129,7 @@ class SyncService {
 
         if (localMilkRecords.isNotEmpty) {
           final fixedMilkRecords = localMilkRecords.map((record) {
-            final fixed = Map<String, dynamic>.from(record);
+            final fixed = record.toJson();
 
             if (fixed['milking_date'] != null) {
               final dateStr = fixed['milking_date'].toString();

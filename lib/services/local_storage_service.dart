@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/goat.dart';  // ADD THIS IMPORT
 import '../models/event.dart';
+import '../models/milk_record.dart';
 
 class LocalStorageService {
   static final LocalStorageService _instance = LocalStorageService._internal();
@@ -80,27 +81,43 @@ class LocalStorageService {
   }
 
   // ========== MILK RECORDS ==========
-  Future<List<Map<String, dynamic>>> getMilkRecords() async {
-    final prefs = await _prefs;
-    final milkData = prefs.getString('milk_records');
-    
-    if (milkData == null || milkData.isEmpty) {
-      return [];
-    }
-    
-    try {
-      final List<dynamic> jsonList = jsonDecode(milkData);
-      return jsonList.map((json) => Map<String, dynamic>.from(json)).toList();
-    } catch (e) {
-      print('Error parsing milk records from local storage: $e');
-      return [];
-    }
-  }
 
-  Future<void> saveMilkRecords(List<Map<String, dynamic>> records) async {
-    final prefs = await _prefs;
-    await prefs.setString('milk_records', jsonEncode(records));
+Future<List<MilkRecord>> getMilkRecords() async {
+  final prefs = await _prefs;
+  final milkData = prefs.getString('milk_records');
+  
+  if (milkData == null || milkData.isEmpty) {
+    return [];
   }
+  
+  try {
+    final List<dynamic> jsonList = jsonDecode(milkData);
+    return jsonList.map((json) => MilkRecord.fromJson(json)).toList();
+  } catch (e) {
+    print('Error parsing milk records from local storage: $e');
+    return [];
+  }
+}
+
+Future<void> saveMilkRecords(List<MilkRecord> records) async {
+  final prefs = await _prefs;
+  final recordsJson = records.map((record) => record.toJson()).toList();
+  await prefs.setString('milk_records', jsonEncode(recordsJson));
+}
+
+Future<void> addOrUpdateMilkRecord(MilkRecord record) async {
+  final records = await getMilkRecords();
+  final index = records.indexWhere((r) => 
+    r.milkingDate == record.milkingDate && r.tagNo == record.tagNo);
+  
+  if (index >= 0) {
+    records[index] = record;
+  } else {
+    records.add(record);
+  }
+  
+  await saveMilkRecords(records);
+}
 
   // ========== TRANSACTIONS ==========
   Future<List<Map<String, dynamic>>> getIncomes() async {

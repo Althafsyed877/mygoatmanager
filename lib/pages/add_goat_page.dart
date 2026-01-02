@@ -12,6 +12,7 @@ class AddGoatPage extends StatefulWidget {
 }
 
 class _AddGoatPageState extends State<AddGoatPage> {
+  // Controllers
   final TextEditingController tagController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
@@ -20,14 +21,20 @@ class _AddGoatPageState extends State<AddGoatPage> {
   final TextEditingController motherTagController = TextEditingController();
   final TextEditingController fatherTagController = TextEditingController();
   final TextEditingController notesController = TextEditingController();
+  final TextEditingController _breedSearchController = TextEditingController();
+  final TextEditingController _groupSearchController = TextEditingController();
+  final TextEditingController _newGroupController = TextEditingController();
+  final TextEditingController _newBreedController = TextEditingController();
 
+  // State variables
   String? selectedBreed;
   String? selectedGender;
   String? selectedGoatStage;
   String? selectedGroup;
   String? selectedObtained;
-  String? selectedBreedingStatus = 'Not Bred'; // New: Breeding status
-
+  String? selectedBreedingStatus = 'Not Bred';
+  String _breedSearchQuery = '';
+  String _groupSearchQuery = '';
   List<String> _breeds = [];
   List<String> _groups = [];
 
@@ -35,23 +42,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
   void initState() {
     super.initState();
     _loadBreedsAndGroups();
-  }
-
-  Future<void> _loadBreedsAndGroups() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedBreeds = prefs.getStringList('goatBreeds') ?? [];
-    final savedGroups = prefs.getStringList('goatGroups') ?? [];
-    
-    setState(() {
-      _breeds = [
-        AppLocalizations.of(context)!.alpine,
-        AppLocalizations.of(context)!.boer,
-        AppLocalizations.of(context)!.kiko,
-        AppLocalizations.of(context)!.nubian,
-        ...savedBreeds,
-      ];
-      _groups = savedGroups;
-    });
   }
 
   @override
@@ -64,170 +54,307 @@ class _AddGoatPageState extends State<AddGoatPage> {
     motherTagController.dispose();
     fatherTagController.dispose();
     notesController.dispose();
+    _breedSearchController.dispose();
+    _groupSearchController.dispose();
+    _newGroupController.dispose();
+    _newBreedController.dispose();
     super.dispose();
   }
 
+  Future<void> _loadBreedsAndGroups() async {
+    // Get context before async gap
+    final currentContext = context;
+    if (!mounted) return;
+    
+    final prefs = await SharedPreferences.getInstance();
+    final savedBreeds = prefs.getStringList('goatBreeds') ?? [];
+    final savedGroups = prefs.getStringList('goatGroups') ?? [];
+    
+    if (!mounted) return;
+    setState(() {
+      _breeds = [
+        AppLocalizations.of(currentContext)!.alpine,
+        AppLocalizations.of(currentContext)!.boer,
+        AppLocalizations.of(currentContext)!.kiko,
+        AppLocalizations.of(currentContext)!.nubian,
+        ...savedBreeds,
+      ];
+      _groups = savedGroups;
+    });
+  }
+
+  Future<void> _showCreateNewGroupDialog(BuildContext context) async {
+    final loc = AppLocalizations.of(context)!;
+    _newGroupController.clear();
+    await showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(loc.newGroup, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _newGroupController,
+                decoration: InputDecoration(
+                  hintText: loc.enterGroupName,
+                  border: const UnderlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA726)),
+                    child: Text(loc.cancel, style: const TextStyle(color: Colors.white)),
+                  ),
+                  const SizedBox(width: 12),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final newGroup = _newGroupController.text.trim();
+                      if (newGroup.isNotEmpty && !_groups.contains(newGroup)) {
+                        if (!mounted) return;
+                        setState(() {
+                          _groups.add(newGroup);
+                          selectedGroup = newGroup;
+                        });
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setStringList('goatGroups', _groups);
+                        Navigator.pop(ctx);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4CAF50)),
+                    child: Text(loc.save, style: const TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showCreateNewBreedDialog(BuildContext context) async {
+    final loc = AppLocalizations.of(context)!;
+    _newBreedController.clear();
+    await showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(loc.createNewBreed, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _newBreedController,
+                decoration: InputDecoration(
+                  hintText: loc.enterBreedName,
+                  border: const UnderlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA726)),
+                    child: Text(loc.cancel, style: const TextStyle(color: Colors.white)),
+                  ),
+                  const SizedBox(width: 12),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final newBreed = _newBreedController.text.trim();
+                      if (newBreed.isNotEmpty && !_breeds.contains(newBreed)) {
+                        if (!mounted) return;
+                        setState(() {
+                          _breeds.add(newBreed);
+                          selectedBreed = newBreed;
+                        });
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setStringList('goatBreeds', _breeds);
+                        Navigator.pop(ctx);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4CAF50)),
+                    child: Text(loc.save, style: const TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _showBreedPicker() {
+    _breedSearchController.text = '';
+    _breedSearchQuery = '';
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Container(
-            constraints: const BoxConstraints(maxHeight: 500),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Dialog Title
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Text(
-                    AppLocalizations.of(context)!.breedOptional,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF424242),
-                    ),
-                  ),
-                ),
-                // Search field
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)!.searchHint,
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            final filteredBreeds = _breeds
+                .where((breed) => breed.toLowerCase().contains(_breedSearchQuery.toLowerCase()))
+                .toList();
+            
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                constraints: const BoxConstraints(maxHeight: 500),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        AppLocalizations.of(context)!.breedOptional,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF424242),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // Breed list
-                Flexible(
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      // Breed (optional) - first item
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectedBreed = null;
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        controller: _breedSearchController,
+                        onChanged: (val) {
+                          setStateDialog(() {
+                            _breedSearchQuery = val;
                           });
-                          Navigator.pop(context);
                         },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.searchHint,
+                          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Colors.grey.shade200,
-                                width: 1,
-                              ),
-                            ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
-                          child: Text(
-                            AppLocalizations.of(context)!.breedOptional2,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Color(0xFF424242),
-                            ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
                           ),
                         ),
                       ),
-                      // Breed options
-                      ..._getBreeds().map((breed) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              selectedBreed = breed;
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 16,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: Colors.grey.shade200,
-                                  width: 1,
+                    ),
+                    const SizedBox(height: 8),
+                    Flexible(
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          if (filteredBreeds.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(
+                                'No results found',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            )
+                          else
+                            ...filteredBreeds.map((breed) {
+                              return InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    selectedBreed = breed;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.grey.shade200,
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    breed,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Color(0xFF424242),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                          InkWell(
+                            onTap: () async {
+                              Navigator.pop(context);
+                              await _showCreateNewBreedDialog(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 16,
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.createNewBreed,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Color(0xFF424242),
                                 ),
                               ),
                             ),
-                            child: Text(
-                              breed,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Color(0xFF424242),
-                              ),
-                            ),
                           ),
-                        );
-                      }),
-                      // Create new breed option
-                      InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                          // TODO: Show create new breed dialog
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.createNewBreed,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Color(0xFF424242),
-                            ),
-                          ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                // Close button
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)!.close.toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.teal[700],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.close.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.teal[700],
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
@@ -246,7 +373,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Dialog Title
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Text(
@@ -259,13 +385,12 @@ class _AddGoatPageState extends State<AddGoatPage> {
                   ),
                 ),
                 const Divider(height: 1),
-                // Gender options
                 ..._getGenders().map((gender) {
                   return InkWell(
                     onTap: () {
                       setState(() {
                         selectedGender = gender;
-                        selectedGoatStage = null; // Reset goat stage when gender changes
+                        selectedGoatStage = null;
                       });
                       Navigator.pop(context);
                     },
@@ -294,166 +419,159 @@ class _AddGoatPageState extends State<AddGoatPage> {
   }
 
   void _showGroupPicker() {
+    _groupSearchController.text = '';
+    _groupSearchQuery = '';
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Container(
-            constraints: const BoxConstraints(maxHeight: 500),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Dialog Title
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Text(
-                    AppLocalizations.of(context)!.groupOptional,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF424242),
-                    ),
-                  ),
-                ),
-                // Search field
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)!.searchHint,
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            final filteredGroups = _groups
+                .where((group) => group.toLowerCase().contains(_groupSearchQuery.toLowerCase()))
+                .toList();
+            
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                constraints: const BoxConstraints(maxHeight: 500),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        AppLocalizations.of(context)!.groupOptional,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF424242),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // Group list
-                Flexible(
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      // Group (optional) - first item
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectedGroup = null;
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        controller: _groupSearchController,
+                        onChanged: (val) {
+                          setStateDialog(() {
+                            _groupSearchQuery = val;
                           });
-                          Navigator.pop(context);
                         },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.searchHint,
+                          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Colors.grey.shade200,
-                                width: 1,
-                              ),
-                            ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
-                          child: Text(
-                            AppLocalizations.of(context)!.groupOptional2,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Color(0xFF424242),
-                            ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
                           ),
                         ),
                       ),
-                      // Group options from farm setup
-                      ..._getGroups().map((group) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              selectedGroup = group;
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 16,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: Colors.grey.shade200,
-                                  width: 1,
+                    ),
+                    const SizedBox(height: 8),
+                    Flexible(
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          if (filteredGroups.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(
+                                'No results found',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            )
+                          else
+                            ...filteredGroups.map((group) {
+                              return InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    selectedGroup = group;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.grey.shade200,
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    group,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Color(0xFF424242),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                          InkWell(
+                            onTap: () async {
+                              Navigator.pop(context);
+                              await _showCreateNewGroupDialog(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 16,
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.createNewGroup,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Color(0xFF424242),
                                 ),
                               ),
                             ),
-                            child: Text(
-                              group,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Color(0xFF424242),
-                              ),
-                            ),
                           ),
-                        );
-                      }),
-                      // Create new group option
-                      InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                          // TODO: Show create new group dialog
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.createNewGroup,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Color(0xFF424242),
-                            ),
-                          ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                // Close button
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)!.close.toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.teal[700],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.close.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.teal[700],
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
@@ -472,7 +590,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Dialog Title
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Text(
@@ -485,7 +602,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
                   ),
                 ),
                 const Divider(height: 1),
-                // Obtained options
                 ..._getObtainedOptions().map((option) {
                   return InkWell(
                     onTap: () {
@@ -531,7 +647,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Dialog Title
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Text(
@@ -544,7 +659,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
                   ),
                 ),
                 const Divider(height: 1),
-                // Goat stage options - Gender specific
                 ..._getGenderSpecificGoatStages().map((stage) {
                   return InkWell(
                     onTap: () {
@@ -577,7 +691,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
     );
   }
 
-  // NEW: Breeding Status Picker
   void _showBreedingStatusPicker() {
     final breedingOptions = [
       'Not Bred',
@@ -599,7 +712,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Dialog Title
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Text(
@@ -612,7 +724,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
                   ),
                 ),
                 const Divider(height: 1),
-                // Breeding status options
                 ...breedingOptions.map((status) {
                   return InkWell(
                     onTap: () {
@@ -645,7 +756,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
                     ),
                   );
                 }),
-                // Close button
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Align(
@@ -673,20 +783,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
     );
   }
 
-  // Helper methods to get localized lists
-  List<String> _getBreeds() {
-    return _breeds.isNotEmpty ? _breeds : [
-      AppLocalizations.of(context)!.alpine,
-      AppLocalizations.of(context)!.boer,
-      AppLocalizations.of(context)!.kiko,
-      AppLocalizations.of(context)!.nubian,
-    ];
-  }
-
-  List<String> _getGroups() {
-    return _groups;
-  }
-
   List<String> _getGenders() {
     return [
       AppLocalizations.of(context)!.male,
@@ -694,7 +790,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
     ];
   }
 
-  // Gender-specific goat stages
   List<String> _getGenderSpecificGoatStages() {
     final loc = AppLocalizations.of(context)!;
     if (selectedGender == loc.male) {
@@ -725,7 +820,7 @@ class _AddGoatPageState extends State<AddGoatPage> {
 
   @override
   Widget build(BuildContext context) {
-    final breedingStatusLabel = selectedBreedingStatus ??= 'Not Bred';
+    final breedingStatusLabel = selectedBreedingStatus ?? 'Not Bred';
 
     return Scaffold(
       appBar: AppBar(
@@ -749,7 +844,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
           IconButton(
             icon: const Icon(Icons.check, color: Colors.white, size: 28),
             onPressed: () {
-              // Validate required fields
               if (tagController.text.isEmpty || selectedGender == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -760,7 +854,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
                 return;
               }
 
-              // Create weightHistory if weight is provided
               List<Map<String, dynamic>>? initialWeightHistory;
               if (weightController.text.isNotEmpty) {
                 final weightDate = entryDateController.text.isNotEmpty 
@@ -773,7 +866,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
                 }];
               }
 
-              // Create Goat object
               final goat = Goat(
                 tagNo: tagController.text,
                 name: nameController.text.isEmpty ? null : nameController.text,
@@ -790,7 +882,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
                 notes: notesController.text.isEmpty ? null : notesController.text,
                 photoPath: null,
                 weightHistory: initialWeightHistory,
-                // NEW: Breeding fields
                 breedingStatus: selectedBreedingStatus,
                 breedingDate: null,
                 breedingPartner: null,
@@ -800,7 +891,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
 
               debugPrint('Goat created: ${goat.tagNo}, ${goat.gender}, Breeding Status: ${goat.breedingStatus}');
 
-              // Return goat to previous page
               Navigator.pop(context, goat);
             },
           ),
@@ -823,7 +913,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // Breed dropdown (optional)
               InkWell(
                 onTap: _showBreedPicker,
                 child: Container(
@@ -838,9 +927,9 @@ class _AddGoatPageState extends State<AddGoatPage> {
                     children: [
                       Text(
                         selectedBreed ?? AppLocalizations.of(context)!.breedOptional2,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
-                          color: selectedBreed == null ? Colors.black87 : Colors.black87,
+                          color: Colors.black87,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -855,7 +944,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
               ),
               const SizedBox(height: 16),
 
-              // Tag no. *
               _buildTextField(
                 controller: tagController,
                 label: AppLocalizations.of(context)!.tagNoRequired,
@@ -863,7 +951,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
               ),
               const SizedBox(height: 16),
 
-              // Name
               _buildTextField(
                 controller: nameController,
                 label: AppLocalizations.of(context)!.nameLabel,
@@ -871,7 +958,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
               ),
               const SizedBox(height: 16),
 
-              // Select Gender *
               InkWell(
                 onTap: _showGenderPicker,
                 child: Container(
@@ -903,7 +989,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
               ),
               const SizedBox(height: 16),
 
-              // Goat Stage (only show if gender is selected)
               if (selectedGender != null)
                 Column(
                   children: [
@@ -921,9 +1006,9 @@ class _AddGoatPageState extends State<AddGoatPage> {
                           children: [
                             Text(
                               selectedGoatStage ?? AppLocalizations.of(context)!.selectGoatStage,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
-                                color: selectedGoatStage == null ? Colors.black87 : Colors.black87,
+                                color: Colors.black87,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -940,7 +1025,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
                   ],
                 ),
 
-              // Date of birth
               _buildTextField(
                 controller: dobController,
                 label: AppLocalizations.of(context)!.dateOfBirthLabel,
@@ -949,7 +1033,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
               ),
               const SizedBox(height: 16),
 
-              // Date of entry on the farm
               _buildTextField(
                 controller: entryDateController,
                 label: AppLocalizations.of(context)!.dateOfEntryLabel,
@@ -958,7 +1041,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
               ),
               const SizedBox(height: 16),
 
-              // Weight
               _buildTextField(
                 controller: weightController,
                 label: AppLocalizations.of(context)!.weightLabel,
@@ -967,7 +1049,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
               ),
               const SizedBox(height: 16),
 
-              // Group (optional)
               InkWell(
                 onTap: _showGroupPicker,
                 child: Container(
@@ -982,9 +1063,9 @@ class _AddGoatPageState extends State<AddGoatPage> {
                     children: [
                       Text(
                         selectedGroup ?? AppLocalizations.of(context)!.groupOptional2,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
-                          color: selectedGroup == null ? Colors.black87 : Colors.black87,
+                          color: Colors.black87,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -999,7 +1080,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
               ),
               const SizedBox(height: 16),
 
-              // Select how the goat was obtained *
               InkWell(
                 onTap: _showObtainedPicker,
                 child: Container(
@@ -1040,7 +1120,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
               ),
               const SizedBox(height: 16),
 
-              // NEW: Breeding Status (only show if gender is selected)
               if (selectedGender != null)
                 Column(
                   children: [
@@ -1077,7 +1156,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
                   ],
                 ),
 
-              // Mother's tag no.
               _buildTextField(
                 controller: motherTagController,
                 label: AppLocalizations.of(context)!.motherTagLabel,
@@ -1085,7 +1163,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
               ),
               const SizedBox(height: 16),
 
-              // Father's tag no.
               _buildTextField(
                 controller: fatherTagController,
                 label: AppLocalizations.of(context)!.fatherTagLabel,
@@ -1093,7 +1170,6 @@ class _AddGoatPageState extends State<AddGoatPage> {
               ),
               const SizedBox(height: 16),
 
-              // Notes
               _buildTextField(
                 controller: notesController,
                 label: AppLocalizations.of(context)!.notesLabel,

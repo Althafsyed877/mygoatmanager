@@ -1,3 +1,4 @@
+// lib/pages/milk_records_page.dart
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -7,31 +8,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'add_milk_page.dart';
 import '../l10n/app_localizations.dart';
-
-class MilkRecord {
-  final DateTime date;
-  final String milkType;
-  final int total;
-  final int used;
-  final String? notes;
-  MilkRecord({required this.date, required this.milkType, required this.total, required this.used, this.notes});
-
-  Map<String, dynamic> toJson() => {
-    'date': date.toIso8601String(),
-    'milkType': milkType,
-    'total': total,
-    'used': used,
-    'notes': notes,
-  };
-
-  factory MilkRecord.fromJson(Map<String, dynamic> json) => MilkRecord(
-    date: DateTime.parse(json['date'] as String),
-    milkType: json['milkType'] as String? ?? '- Select milk type -',
-    total: json['total'] as int,
-    used: json['used'] as int,
-    notes: json['notes'] as String?,
-  );
-}
+import '../models/milk_record.dart'; // Import the model
 
 class MilkRecordsPage extends StatefulWidget {
   const MilkRecordsPage({super.key});
@@ -41,7 +18,7 @@ class MilkRecordsPage extends StatefulWidget {
 }
 
 class _MilkRecordsPageState extends State<MilkRecordsPage> {
-  final List<MilkRecord> _records = [];
+  List<MilkRecord> _records = []; // Use MilkRecord model
   String _searchQuery = '';
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
@@ -67,8 +44,7 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
     if (data != null) {
       final List<dynamic> jsonList = jsonDecode(data);
       setState(() {
-        _records.clear();
-        _records.addAll(jsonList.map((e) => MilkRecord.fromJson(e as Map<String, dynamic>)));
+        _records = jsonList.map((e) => MilkRecord.fromJson(e as Map<String, dynamic>)).toList();
       });
     }
   }
@@ -81,33 +57,36 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
 
   List<MilkRecord> _filteredRecords() {
     List<MilkRecord> filtered = _records;
+    
     // Apply date filter if set
     if (_filterStartDate != null && _filterEndDate != null) {
       filtered = filtered.where((r) =>
-        !r.date.isBefore(_filterStartDate!) && !r.date.isAfter(_filterEndDate!)
+        !r.milkingDate.isBefore(_filterStartDate!) && !r.milkingDate.isAfter(_filterEndDate!)
       ).toList();
     }
+    
     // Apply milk type filter if set
     if (_filterMilkType != null && _filterMilkType!.isNotEmpty) {
       filtered = filtered.where((r) => r.milkType == _filterMilkType).toList();
     }
+    
     // Apply search filter
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
       filtered = filtered.where((r) =>
         r.milkType.toLowerCase().contains(q) ||
         r.total.toString().contains(q) ||
-        r.used.toString().contains(q) ||
         (r.notes ?? '').toLowerCase().contains(q) ||
-        r.date.toIso8601String().contains(q)
+        r.milkingDate.toIso8601String().contains(q) ||
+        r.tagNo.toLowerCase().contains(q)
       ).toList();
     }
+    
     return filtered;
   }
 
   Future<void> _showMilkTypeFilterDialog() async {
     final loc = AppLocalizations.of(context)!;
-    // Show fixed radio options as in the screenshot: All Types, Whole Farm, Individual Goat
     String? tmp = _filterMilkType;
     await showDialog<void>(
       context: context,
@@ -126,13 +105,13 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                 ),
                 RadioListTile<String?>(
                   title: Text(loc.wholeFarm),
-                  value: loc.wholeFarm,
+                  value: 'Whole Farm Milk',
                   groupValue: tmp,
                   onChanged: (v) => setStateDialog(() => tmp = v),
                 ),
                 RadioListTile<String?>(
                   title: Text(loc.individualGoat),
-                  value: loc.individualGoat,
+                  value: 'Individual Goat Milk',
                   groupValue: tmp,
                   onChanged: (v) => setStateDialog(() => tmp = v),
                 ),
@@ -146,7 +125,6 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
               TextButton(
                 onPressed: () {
                   setState(() {
-                    // treat null as All Types (no filter)
                     _filterMilkType = tmp;
                   });
                   Navigator.of(ctx).pop();
@@ -165,7 +143,7 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
     final pdf = pw.Document();
     final records = _filteredRecords();
 
-    // Try to load the milk image asset; if not available, continue without image
+    // Try to load the milk image asset
     pw.Widget? headerImage;
     try {
       final data = await rootBundle.load('assets/images/milk.png');
@@ -181,13 +159,12 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
         pageFormat: PdfPageFormat.a4,
         build: (context) {
           final List<pw.Widget> items = [];
-          // add centered milk image if available
+          
           if (headerImage != null) {
             items.add(headerImage);
             items.add(pw.SizedBox(height: 8));
           }
 
-          // Title and generated timestamp with improved styling
           items.add(pw.Container(
             alignment: pw.Alignment.center,
             child: pw.Text(loc.milkRecords, style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold)),
@@ -202,17 +179,15 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
           if (records.isEmpty) {
             items.add(pw.Center(child: pw.Text(loc.noRecordsToExport, style: pw.TextStyle(fontSize: 12))));
           } else {
-            // Wrap table with a light border and padding
             items.add(
               pw.Container(
                 decoration: pw.BoxDecoration(border: pw.Border.all(color: PdfColors.grey400, width: 0.8)),
                 padding: const pw.EdgeInsets.all(6),
                 child: pw.TableHelper.fromTextArray(
-                  headers: [loc.date, loc.milkType, loc.total, loc.used, loc.available, loc.notes],
+                  headers: [loc.date, loc.milkType, loc.total, loc.available, loc.notes],
                   data: records.map((r) {
-                    final available = (r.total - r.used).toString();
-                    final dateStr = '${r.date.year}-${r.date.month.toString().padLeft(2, '0')}-${r.date.day.toString().padLeft(2, '0')}';
-                    return [dateStr, r.milkType, r.total.toString(), r.used.toString(), available, r.notes ?? ''];
+                    final dateStr = r.formattedDate;
+                    return [dateStr, r.milkType, r.total.toStringAsFixed(2), r.available.toStringAsFixed(2), r.notes ?? ''];
                   }).toList(),
                   cellAlignment: pw.Alignment.centerLeft,
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11),
@@ -224,16 +199,14 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                     1: pw.Alignment.centerLeft,
                     2: pw.Alignment.center,
                     3: pw.Alignment.center,
-                    4: pw.Alignment.center,
-                    5: pw.Alignment.centerLeft,
+                    4: pw.Alignment.centerLeft,
                   },
                   columnWidths: {
                     0: const pw.FlexColumnWidth(2),
                     1: const pw.FlexColumnWidth(2),
                     2: const pw.FlexColumnWidth(1),
                     3: const pw.FlexColumnWidth(1),
-                    4: const pw.FlexColumnWidth(1),
-                    5: const pw.FlexColumnWidth(3),
+                    4: const pw.FlexColumnWidth(3),
                   },
                 ),
               ),
@@ -289,7 +262,6 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                   if (picked != null) {
                     setState(() {
                       tempStart = picked;
-                      // If end date is before start, reset end
                       if (tempEnd != null && tempEnd!.isBefore(picked)) {
                         tempEnd = null;
                       }
@@ -468,7 +440,7 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
               itemCount: _filteredRecords().length,
               itemBuilder: (context, index) {
                 final record = _filteredRecords()[index];
-                final available = record.total - record.used;
+                final available = record.available;
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   child: Padding(
@@ -485,7 +457,7 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                                   Text('${loc.farm} (1)', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                                   const SizedBox(width: 16),
                                   Text(
-                                    '${record.date.year}-${record.date.month.toString().padLeft(2, '0')}-${record.date.day.toString().padLeft(2, '0')}',
+                                    record.formattedDate,
                                     style: const TextStyle(color: Colors.green, fontSize: 15),
                                   ),
                                 ],
@@ -495,13 +467,13 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                               const SizedBox(height: 8),
                               Row(
                                 children: [
-                                  Text('${record.total}', style: const TextStyle(color: Colors.green, fontSize: 20)),
+                                  Text('${record.total.toStringAsFixed(2)}', style: const TextStyle(color: Colors.green, fontSize: 20)),
                                   const SizedBox(width: 4),
                                   Text(loc.total),
                                   const SizedBox(width: 24),
-                                  Text('${record.used}', style: const TextStyle(color: Colors.orange, fontSize: 20)),
+                                  Text('${record.tagNo}', style: const TextStyle(color: Colors.orange, fontSize: 20)),
                                   const SizedBox(width: 4),
-                                  Text(loc.used),
+                                  Text(loc.goat),
                                 ],
                               ),
                               const SizedBox(height: 8),
@@ -522,10 +494,10 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => AddMilkPage(
-                                    initialDate: record.date,
+                                    initialDate: record.milkingDate,
                                     initialMilkType: record.milkType,
-                                    initialTotalProduced: record.total.toString(),
-                                    initialTotalUsed: record.used.toString(),
+                                    initialTotalProduced: record.total.toStringAsFixed(2),
+                                    initialTotalUsed: '0', // Used not stored in record
                                     initialNotes: record.notes,
                                     isEdit: true,
                                   ),
@@ -533,21 +505,14 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                               );
                               if (editResult != null && editResult is Map<String, dynamic>) {
                                 setState(() {
-                                  // Find the index in the original list
-                                  final origIndex = _records.indexWhere((r) =>
-                                    r.date == record.date &&
-                                    r.milkType == record.milkType &&
-                                    r.total == record.total &&
-                                    r.used == record.used &&
-                                    r.notes == record.notes);
-                                  if (origIndex != -1) {
-                                    _records[origIndex] = MilkRecord(
-                                      date: editResult['date'] as DateTime,
-                                      milkType: editResult['milkType'] as String? ?? loc.selectMilkType,
-                                      total: int.tryParse(editResult['total']?.toString() ?? '0') ?? 0,
-                                      used: int.tryParse(editResult['used']?.toString() ?? '0') ?? 0,
-                                      notes: editResult['notes'] as String?,
-                                    );
+                                  // Create new MilkRecord from UI data
+                                  final newRecord = MilkRecord.fromUIMap(editResult);
+                                  // Find and replace the existing record
+                                  final index = _records.indexWhere((r) => 
+                                    r.milkingDate == record.milkingDate && 
+                                    r.tagNo == record.tagNo);
+                                  if (index != -1) {
+                                    _records[index] = newRecord;
                                   }
                                 });
                                 await _saveRecords();
@@ -573,16 +538,9 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                               
                               if (confirmDelete == true && mounted) {
                                 setState(() {
-                                  // Find the index in the original list
-                                  final origIndex = _records.indexWhere((r) =>
-                                    r.date == record.date &&
-                                    r.milkType == record.milkType &&
-                                    r.total == record.total &&
-                                    r.used == record.used &&
-                                    r.notes == record.notes);
-                                  if (origIndex != -1) {
-                                    _records.removeAt(origIndex);
-                                  }
+                                  _records.removeWhere((r) => 
+                                    r.milkingDate == record.milkingDate && 
+                                    r.tagNo == record.tagNo);
                                 });
                                 await _saveRecords();
                                 if (mounted) {
@@ -618,15 +576,9 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
           );
           if (result != null && result is Map<String, dynamic>) {
             setState(() {
-              _records.add(
-                MilkRecord(
-                  date: result['date'] as DateTime,
-                  milkType: result['milkType'] as String? ?? loc.selectMilkType,
-                  total: int.tryParse(result['total']?.toString() ?? '0') ?? 0,
-                  used: int.tryParse(result['used']?.toString() ?? '0') ?? 0,
-                  notes: result['notes'] as String?,
-                ),
-              );
+              // Convert UI data to MilkRecord model
+              final newRecord = MilkRecord.fromUIMap(result);
+              _records.add(newRecord);
             });
             await _saveRecords();
           }
@@ -642,59 +594,6 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _MilkTypeRadioGroup extends StatefulWidget {
-  final List<String> milkTypes;
-  final String? selectedType;
-  final ValueChanged<String?> onSelected;
-  const _MilkTypeRadioGroup({required this.milkTypes, required this.selectedType, required this.onSelected});
-
-  @override
-  State<_MilkTypeRadioGroup> createState() => _MilkTypeRadioGroupState();
-}
-
-class _MilkTypeRadioGroupState extends State<_MilkTypeRadioGroup> {
-  String? _selectedType;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedType = widget.selectedType;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        RadioListTile<String?>(
-          title: Text(loc.all),
-          value: null,
-          groupValue: _selectedType,
-          onChanged: (value) {
-            setState(() {
-              _selectedType = value;
-            });
-            widget.onSelected(value);
-          },
-        ),
-        ...widget.milkTypes.map((type) => RadioListTile<String?>(
-          title: Text(type),
-          value: type,
-          groupValue: _selectedType,
-          onChanged: (value) {
-            setState(() {
-              _selectedType = value;
-            });
-            widget.onSelected(value);
-          },
-        )),
-      ],
     );
   }
 }

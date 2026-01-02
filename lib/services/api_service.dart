@@ -543,33 +543,184 @@ Future<ApiResponse> syncGoats(List<Map<String, dynamic>> goatsData) async {
 
 
 // Additional sync methods for other data types
- Future<ApiResponse> syncEvents(List<Map<String, dynamic>> eventsData) async {
+Future<ApiResponse> syncEvents(List<Map<String, dynamic>> eventsData) async {
   try {
+    // ========== ADD THESE DEBUG LOGS ==========
+    debugPrint('🔄 [EVENTS SYNC] STARTING ========================');
+    debugPrint('📱 Number of events to sync: ${eventsData.length}');
+    
+    // Show all events being sent
+    for (int i = 0; i < eventsData.length; i++) {
+      final event = eventsData[i];
+      debugPrint('📋 Event ${i + 1}:');
+      debugPrint('   - Tag No: ${event['tagNo']}');
+      debugPrint('   - Event Type: ${event['eventType']}');
+      debugPrint('   - Date: ${event['date']}');
+      debugPrint('   - Medicine: ${event['medicine']}');
+      debugPrint('   - Notes: ${event['notes']}');
+      debugPrint('   - Is Mass Event: ${event['isMassEvent']}');
+    }
+    
+    // Check authentication
     final headers = await _getHeaders();
+    
+    if (!headers.containsKey('Authorization')) {
+      debugPrint('❌ NO AUTH TOKEN FOUND! User might be logged out.');
+      return ApiResponse.error('Not authenticated. Please login again.');
+    }
+    
+    debugPrint('🔑 Auth token exists: YES');
+    
+    // Prepare request
+    final url = '$baseUrl/sync/events';
+    debugPrint('🌐 Calling URL: $url');
+    
+    final body = json.encode({'events': eventsData});
+    debugPrint('📦 Request body size: ${body.length} bytes');
+    
+    // Send request
     final response = await http.post(
-      Uri.parse('$baseUrl/sync/events'),
+      Uri.parse(url),
       headers: headers,
-      body: json.encode({'events': eventsData}),
+      body: body,
     );
     
-    return ApiResponse.fromHttpResponse(response);
+    debugPrint('📥 Response Status Code: ${response.statusCode}');
+    debugPrint('📥 Response Body: ${response.body}');
+    
+    final result = ApiResponse.fromHttpResponse(response);
+    
+    if (result.success) {
+      debugPrint('✅ EVENTS SYNC SUCCESSFUL!');
+      if (result.data != null) {
+        debugPrint('   - Synced: ${result.data!['synced_count']}');
+        debugPrint('   - Failed: ${result.data!['skipped_count']}');
+      }
+    } else {
+      debugPrint('❌ EVENTS SYNC FAILED: ${result.message}');
+      if (response.statusCode == 401) {
+        debugPrint('⚠️ Token expired - clearing token');
+        await clearToken();
+      }
+    }
+    
+    debugPrint('===============================================');
+    return result;
+    
   } catch (e) {
-    return ApiResponse.error('Sync events error: $e');
+    debugPrint('💥 CRITICAL ERROR in syncEvents:');
+    debugPrint('   - Error: $e');
+    debugPrint('   - Type: ${e.runtimeType}');
+    
+    if (e is SocketException) {
+      debugPrint('   - SocketException: Cannot connect to server');
+      return ApiResponse.error('Cannot connect to server. Check internet.');
+    }
+    if (e is FormatException) {
+      debugPrint('   - FormatException: Invalid response from server');
+      return ApiResponse.error('Server returned invalid data.');
+    }
+    
+    return ApiResponse.error('Events sync failed: $e');
   }
- }
+}
   
- Future<ApiResponse> syncMilkRecords(List<Map<String, dynamic>> milkRecordsData) async {
+// In ApiService.dart, update the syncMilkRecords method:
+
+Future<ApiResponse> syncMilkRecords(List<Map<String, dynamic>> milkRecordsData) async {
   try {
+    debugPrint('🔄 [MILK RECORDS SYNC] STARTING ========================');
+    debugPrint('📱 Number of milk records to sync: ${milkRecordsData.length}');
+    
+    // Show all milk records being sent
+    for (int i = 0; i < milkRecordsData.length; i++) {
+      final record = milkRecordsData[i];
+      debugPrint('📋 Milk Record ${i + 1}:');
+      debugPrint('   - Date: ${record['milking_date'] ?? record['date']}');
+      debugPrint('   - Tag No: ${record['tag_no'] ?? record['tagNo']}');
+      debugPrint('   - Morning Quantity: ${record['morning_quantity'] ?? record['morningQuantity']}');
+      debugPrint('   - Evening Quantity: ${record['evening_quantity'] ?? record['eveningQuantity']}');
+      debugPrint('   - Total: ${record['total']}');
+      debugPrint('   - Notes: ${record['notes']}');
+      debugPrint('   - Is Whole Farm: ${record['is_whole_farm'] ?? record['isWholeFarm']}');
+    }
+    
+    // Check authentication
     final headers = await _getHeaders();
+    
+    if (!headers.containsKey('Authorization')) {
+      debugPrint('❌ NO AUTH TOKEN FOUND! User might be logged out.');
+      return ApiResponse.error('Not authenticated. Please login again.');
+    }
+    
+    debugPrint('🔑 Auth token exists: YES');
+    
+    // Prepare request
+    final url = '$baseUrl/sync/milk-records';
+    debugPrint('🌐 Calling URL: $url');
+    
+    // Convert data to proper format for server
+    final List<Map<String, dynamic>> formattedRecords = milkRecordsData.map((record) {
+      return {
+        'milking_date': record['milking_date'] ?? record['date'],
+        'tag_no': record['tag_no'] ?? record['tagNo'] ?? 'FARM',
+        'morning_quantity': record['morning_quantity'] ?? record['morningQuantity'] ?? 0,
+        'evening_quantity': record['evening_quantity'] ?? record['eveningQuantity'] ?? 0,
+        'total': record['total'] ?? 0,
+        'notes': record['notes'],
+        'is_whole_farm': record['is_whole_farm'] ?? record['isWholeFarm'] ?? false,
+      };
+    }).toList();
+    
+    final body = json.encode({'milk_records': formattedRecords});
+    debugPrint('📦 Request body size: ${body.length} bytes');
+    
+    // Send request
     final response = await http.post(
-      Uri.parse('$baseUrl/sync/milk-records'),
+      Uri.parse(url),
       headers: headers,
-      body: json.encode({'milk_records': milkRecordsData}),
+      body: body,
     );
     
-    return ApiResponse.fromHttpResponse(response);
+    debugPrint('📥 Response Status Code: ${response.statusCode}');
+    debugPrint('📥 Response Body: ${response.body}');
+    
+    final result = ApiResponse.fromHttpResponse(response);
+    
+    if (result.success) {
+      debugPrint('✅ MILK RECORDS SYNC SUCCESSFUL!');
+      if (result.data != null) {
+        debugPrint('   - Created: ${result.data!['created']}');
+        debugPrint('   - Updated: ${result.data!['updated']}');
+        debugPrint('   - Skipped: ${result.data!['skipped']}');
+        debugPrint('   - Synced: ${result.data!['synced_count']}');
+      }
+    } else {
+      debugPrint('❌ MILK RECORDS SYNC FAILED: ${result.message}');
+      if (response.statusCode == 401) {
+        debugPrint('⚠️ Token expired - clearing token');
+        await clearToken();
+      }
+    }
+    
+    debugPrint('===============================================');
+    return result;
+    
   } catch (e) {
-    return ApiResponse.error('Sync milk records error: $e');
+    debugPrint('💥 CRITICAL ERROR in syncMilkRecords:');
+    debugPrint('   - Error: $e');
+    debugPrint('   - Type: ${e.runtimeType}');
+    
+    if (e is SocketException) {
+      debugPrint('   - SocketException: Cannot connect to server');
+      return ApiResponse.error('Cannot connect to server. Check internet.');
+    }
+    if (e is FormatException) {
+      debugPrint('   - FormatException: Invalid response from server');
+      return ApiResponse.error('Server returned invalid data.');
+    }
+    
+    return ApiResponse.error('Milk records sync failed: $e');
   }
 }
   
