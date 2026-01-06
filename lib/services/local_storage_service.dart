@@ -108,7 +108,7 @@ Future<void> saveMilkRecords(List<MilkRecord> records) async {
 Future<void> addOrUpdateMilkRecord(MilkRecord record) async {
   final records = await getMilkRecords();
   final index = records.indexWhere((r) => 
-    r.milkingDate == record.milkingDate && r.tagNo == record.tagNo);
+    r.milkingDate == record.milkingDate);
   
   if (index >= 0) {
     records[index] = record;

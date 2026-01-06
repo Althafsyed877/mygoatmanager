@@ -18,7 +18,7 @@ class MilkRecordsPage extends StatefulWidget {
 }
 
 class _MilkRecordsPageState extends State<MilkRecordsPage> {
-  List<MilkRecord> _records = []; // Use MilkRecord model
+  List<MilkRecord> _records = [];
   String _searchQuery = '';
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
@@ -77,8 +77,7 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
         r.milkType.toLowerCase().contains(q) ||
         r.total.toString().contains(q) ||
         (r.notes ?? '').toLowerCase().contains(q) ||
-        r.milkingDate.toIso8601String().contains(q) ||
-        r.tagNo.toLowerCase().contains(q)
+        r.milkingDate.toIso8601String().contains(q)
       ).toList();
     }
     
@@ -104,13 +103,13 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                   onChanged: (v) => setStateDialog(() => tmp = v),
                 ),
                 RadioListTile<String?>(
-                  title: Text(loc.wholeFarm),
+                  title: Text('Whole Farm Milk'),
                   value: 'Whole Farm Milk',
                   groupValue: tmp,
                   onChanged: (v) => setStateDialog(() => tmp = v),
                 ),
                 RadioListTile<String?>(
-                  title: Text(loc.individualGoat),
+                  title: Text('Individual Goat Milk'),
                   value: 'Individual Goat Milk',
                   groupValue: tmp,
                   onChanged: (v) => setStateDialog(() => tmp = v),
@@ -184,10 +183,18 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                 decoration: pw.BoxDecoration(border: pw.Border.all(color: PdfColors.grey400, width: 0.8)),
                 padding: const pw.EdgeInsets.all(6),
                 child: pw.TableHelper.fromTextArray(
-                  headers: [loc.date, loc.milkType, loc.total, loc.available, loc.notes],
+                  headers: [loc.date, loc.milkType, 'Morning', 'Evening', loc.total, loc.available, loc.notes],
                   data: records.map((r) {
                     final dateStr = r.formattedDate;
-                    return [dateStr, r.milkType, r.total.toStringAsFixed(2), r.available.toStringAsFixed(2), r.notes ?? ''];
+                    return [
+                      dateStr,
+                      r.milkType,
+                      r.morningQuantity.toStringAsFixed(2),
+                      r.eveningQuantity.toStringAsFixed(2),
+                      r.total.toStringAsFixed(2),
+                      r.available.toStringAsFixed(2),
+                      r.notes ?? ''
+                    ];
                   }).toList(),
                   cellAlignment: pw.Alignment.centerLeft,
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11),
@@ -199,14 +206,18 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                     1: pw.Alignment.centerLeft,
                     2: pw.Alignment.center,
                     3: pw.Alignment.center,
-                    4: pw.Alignment.centerLeft,
+                    4: pw.Alignment.center,
+                    5: pw.Alignment.center,
+                    6: pw.Alignment.centerLeft,
                   },
                   columnWidths: {
                     0: const pw.FlexColumnWidth(2),
                     1: const pw.FlexColumnWidth(2),
                     2: const pw.FlexColumnWidth(1),
                     3: const pw.FlexColumnWidth(1),
-                    4: const pw.FlexColumnWidth(3),
+                    4: const pw.FlexColumnWidth(1),
+                    5: const pw.FlexColumnWidth(1),
+                    6: const pw.FlexColumnWidth(3),
                   },
                 ),
               ),
@@ -454,7 +465,10 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                             children: [
                               Row(
                                 children: [
-                                  Text('${loc.farm} (1)', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                  Text(
+                                    record.milkType,
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  ),
                                   const SizedBox(width: 16),
                                   Text(
                                     record.formattedDate,
@@ -463,21 +477,50 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              Text(record.milkType, style: const TextStyle(color: Colors.black87, fontSize: 16)),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text('${record.morningQuantity.toStringAsFixed(2)}', style: const TextStyle(color: Colors.blue, fontSize: 16)),
+                                            const SizedBox(width: 4),
+                                            Text('Morning'),
+                                            const SizedBox(width: 12),
+                                            Text('${record.eveningQuantity.toStringAsFixed(2)}', style: const TextStyle(color: Colors.purple, fontSize: 16)),
+                                            const SizedBox(width: 4),
+                                            Text('Evening'),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Text('${record.total.toStringAsFixed(2)}', style: const TextStyle(color: Colors.green, fontSize: 18)),
+                                            const SizedBox(width: 4),
+                                            Text('Produced'),
+                                            const SizedBox(width: 16),
+                                            Text('${record.used.toStringAsFixed(2)}', style: const TextStyle(color: Colors.orange, fontSize: 18)),
+                                            const SizedBox(width: 4),
+                                            Text('Used'),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
                               const SizedBox(height: 8),
                               Row(
                                 children: [
-                                  Text('${record.total.toStringAsFixed(2)}', style: const TextStyle(color: Colors.green, fontSize: 20)),
+                                  Text('${record.available.toStringAsFixed(2)}', style: const TextStyle(color: Colors.blue, fontSize: 18)),
                                   const SizedBox(width: 4),
-                                  Text(loc.total),
-                                  const SizedBox(width: 24),
-                                  Text('${record.tagNo}', style: const TextStyle(color: Colors.orange, fontSize: 20)),
-                                  const SizedBox(width: 4),
-                                  Text(loc.goat),
+                                  Text('Remaining'),
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              Text('$available', style: const TextStyle(color: Colors.green, fontSize: 22, fontWeight: FontWeight.bold)),
                               if (record.notes != null && record.notes!.isNotEmpty)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 8.0),
@@ -493,26 +536,16 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                               final editResult = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AddMilkPage(
-                                    initialDate: record.milkingDate,
-                                    initialMilkType: record.milkType,
-                                    initialTotalProduced: record.total.toStringAsFixed(2),
-                                    initialTotalUsed: '0', // Used not stored in record
-                                    initialNotes: record.notes,
-                                    isEdit: true,
-                                  ),
+                                  builder: (context) => AddMilkPage(existingRecord: record),
                                 ),
                               );
-                              if (editResult != null && editResult is Map<String, dynamic>) {
+                              if (editResult != null && editResult is MilkRecord) {
                                 setState(() {
-                                  // Create new MilkRecord from UI data
-                                  final newRecord = MilkRecord.fromUIMap(editResult);
                                   // Find and replace the existing record
                                   final index = _records.indexWhere((r) => 
-                                    r.milkingDate == record.milkingDate && 
-                                    r.tagNo == record.tagNo);
+                                    r.milkingDate == record.milkingDate);
                                   if (index != -1) {
-                                    _records[index] = newRecord;
+                                    _records[index] = editResult;
                                   }
                                 });
                                 await _saveRecords();
@@ -539,8 +572,7 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                               if (confirmDelete == true && mounted) {
                                 setState(() {
                                   _records.removeWhere((r) => 
-                                    r.milkingDate == record.milkingDate && 
-                                    r.tagNo == record.tagNo);
+                                    r.milkingDate == record.milkingDate);
                                 });
                                 await _saveRecords();
                                 if (mounted) {
@@ -572,13 +604,13 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
         onPressed: () async {
           final result = await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddMilkPage()),
+            MaterialPageRoute(
+              builder: (context) => const AddMilkPage(),
+            ),
           );
-          if (result != null && result is Map<String, dynamic>) {
+          if (result != null && result is MilkRecord) {
             setState(() {
-              // Convert UI data to MilkRecord model
-              final newRecord = MilkRecord.fromUIMap(result);
-              _records.add(newRecord);
+              _records.add(result);
             });
             await _saveRecords();
           }

@@ -3,35 +3,46 @@ import 'package:intl/intl.dart';
 
 class MilkRecord {
   final DateTime milkingDate;
-  final String tagNo;
   final double morningQuantity;
   final double eveningQuantity;
   final double total;
+  final double used;
   final String? notes;
-  final bool isWholeFarm;
   final String milkType;
 
   MilkRecord({
     required this.milkingDate,
-    required this.tagNo,
-    this.morningQuantity = 0.0,
-    this.eveningQuantity = 0.0,
-    this.total = 0.0,
+    required this.morningQuantity,
+    required this.eveningQuantity,
+    required this.total,
+    required this.used,
     this.notes,
-    this.isWholeFarm = false,
     required this.milkType,
   });
 
-  // Factory constructor for creating from your UI data
+  // Factory constructor for creating from UI data
   factory MilkRecord.fromUIMap(Map<String, dynamic> map) {
+    // Parse milk type
     final milkType = map['milkType'] as String? ?? '- Select milk type -';
-    final total = (map['total'] is String) ? double.tryParse(map['total'] as String) ?? 0.0 : (map['total'] as num?)?.toDouble() ?? 0.0;
-    final used = (map['used'] is String) ? double.tryParse(map['used'] as String) ?? 0.0 : (map['used'] as num?)?.toDouble() ?? 0.0;
     
-    // For whole farm, tagNo should be 'FARM'
-    final isWholeFarm = milkType == 'Whole Farm Milk';
-    final tagNo = isWholeFarm ? 'FARM' : (map['tagNo'] as String? ?? 'UNKNOWN');
-    
+    // Parse quantities - accept various input formats
+    double parseQuantity(dynamic value) {
+      if (value == null || (value is String && value.trim().isEmpty)) {
+        return 0.0;
+      } else if (value is String) {
+        return double.tryParse(value) ?? 0.0;
+      } else if (value is num) {
+        return value.toDouble();
+      } else {
+        return 0.0;
+      }
+    }
+
+    final morningQuantity = parseQuantity(map['morningQuantity']);
+    final eveningQuantity = parseQuantity(map['eveningQuantity']);
+    final total = parseQuantity(map['total'] ?? (morningQuantity + eveningQuantity));
+    final used = parseQuantity(map['used']);
+
     // Parse date
     DateTime milkingDate;
     if (map['date'] is DateTime) {
@@ -41,75 +52,61 @@ class MilkRecord {
     } else {
       milkingDate = DateTime.now();
     }
-    
-    // Split total into morning/evening (simple logic - can be adjusted)
-    final morningQuantity = total * 0.6; // 60% morning
-    final eveningQuantity = total * 0.4; // 40% evening
-    
+
     return MilkRecord(
       milkingDate: milkingDate,
-      tagNo: tagNo,
       morningQuantity: morningQuantity,
       eveningQuantity: eveningQuantity,
       total: total,
+      used: used,
       notes: map['notes'] as String?,
-      isWholeFarm: isWholeFarm,
       milkType: milkType,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'milking_date': milkingDate.toIso8601String(),
-      'date': milkingDate.toIso8601String(), // Keep both for compatibility
-      'tag_no': tagNo,
-      'tagNo': tagNo, // Keep both for compatibility
-      'morning_quantity': morningQuantity,
-      'evening_quantity': eveningQuantity,
+      'milkingDate': milkingDate.toIso8601String(),
+      'morningQuantity': morningQuantity,
+      'eveningQuantity': eveningQuantity,
       'total': total,
-      'used': 0, // Not used in your current UI
+      'used': used,
       'notes': notes,
-      'is_whole_farm': isWholeFarm,
-      'isWholeFarm': isWholeFarm, // Keep both for compatibility
-      'milk_type': milkType,
-      'milkType': milkType, // Keep both for compatibility
+      'milkType': milkType,
     };
   }
 
   factory MilkRecord.fromJson(Map<String, dynamic> json) {
     // Parse date
     DateTime milkingDate;
-    if (json['milking_date'] != null) {
-      milkingDate = DateTime.parse(json['milking_date'] as String);
-    } else if (json['date'] != null) {
-      milkingDate = DateTime.parse(json['date'] as String);
+    if (json['milkingDate'] != null) {
+      milkingDate = DateTime.parse(json['milkingDate'] as String);
     } else {
       milkingDate = DateTime.now();
     }
-    
+
     // Parse quantities
-    final morningQuantity = (json['morning_quantity'] as num?)?.toDouble() ?? 0.0;
-    final eveningQuantity = (json['evening_quantity'] as num?)?.toDouble() ?? 0.0;
-    final total = morningQuantity + eveningQuantity;
-    
-    // Determine milk type
-    final bool isWholeFarm = json['is_whole_farm'] as bool? ?? json['isWholeFarm'] as bool? ?? false;
-    final milkType = isWholeFarm ? 'Whole Farm Milk' : 'Individual Goat Milk';
-    
+    final morningQuantity = (json['morningQuantity'] as num?)?.toDouble() ?? 0.0;
+    final eveningQuantity = (json['eveningQuantity'] as num?)?.toDouble() ?? 0.0;
+    final total = (json['total'] as num?)?.toDouble() ?? (morningQuantity + eveningQuantity);
+    final used = (json['used'] as num?)?.toDouble() ?? 0.0;
+
+    // Parse milk type directly from JSON
+    final milkType = json['milkType'] as String? ?? 'Individual Goat Milk';
+
     return MilkRecord(
       milkingDate: milkingDate,
-      tagNo: json['tag_no'] as String? ?? json['tagNo'] as String? ?? 'UNKNOWN',
       morningQuantity: morningQuantity,
       eveningQuantity: eveningQuantity,
       total: total,
+      used: used,
       notes: json['notes'] as String?,
-      isWholeFarm: isWholeFarm,
       milkType: milkType,
     );
   }
 
   // Helper getters
-  double get available => total; // In your UI, available = total - used
+  double get available => total - used;
   String get formattedDate => DateFormat('yyyy-MM-dd').format(milkingDate);
   String get displayDate => DateFormat('MMM dd, yyyy').format(milkingDate);
 }

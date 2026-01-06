@@ -1550,4 +1550,10 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get currentRange => 'ప్రస్తుత పరిధి';
+
+  @override
+  String get dontHaveAccount => 'ఖాతా లేదా?';
+
+  @override
+  String get alreadyHaveAccount => 'ఇప్పటికే ఖాతా ఉందా?';
 }

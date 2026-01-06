@@ -1551,4 +1551,10 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get currentRange => 'ಪ್ರಸ್ತುತ ವ್ಯಾಪ್ತಿ';
+
+  @override
+  String get dontHaveAccount => 'ಖಾತೆ ಇಲ್ಲವೇ?';
+
+  @override
+  String get alreadyHaveAccount => 'ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ?';
 }

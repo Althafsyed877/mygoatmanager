@@ -6,6 +6,7 @@ import 'package:mygoatmanager/services/auth_service.dart';
 import 'pages/homepage.dart';
 import 'pages/auth_page.dart';
 
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/goat.dart';
 import '../l10n/app_localizations.dart';
+import '../services/local_storage_service.dart';
 
 class StageTrackingPage extends StatefulWidget {
   final List<Goat> goats;
@@ -12,6 +13,8 @@ class StageTrackingPage extends StatefulWidget {
 }
 
 class _StageTrackingPageState extends State<StageTrackingPage> {
+  // Use the singleton instance
+  final _localStorageService = LocalStorageService();
   Set<String> selectedGoats = {};
 
   // Get goats that need stage updates (Kids that can progress to Does/Bucks)
@@ -328,32 +331,51 @@ class _StageTrackingPageState extends State<StageTrackingPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(loc.updateStages),
-        content: Text('${loc.updateGoatsQuestion(selectedGoats.length)}'),
+        content: Text(loc.updateGoatsQuestion(selectedGoats.length)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(loc.cancel),
           ),
           ElevatedButton(
-            onPressed: () {
-              // Update logic here
+            onPressed: () async {
               for (final tagNo in selectedGoats) {
                 final goat = widget.goats.firstWhere((g) => g.tagNo == tagNo);
                 final newStage = _getNextStage(goat.gender, context);
-                
-                // Update the goat stage (in real app, save to database)
-                debugPrint('Updating ${goat.tagNo} from Kid to $newStage');
+                final updatedGoat = Goat(
+                  tagNo: goat.tagNo,
+                  name: goat.name,
+                  breed: goat.breed,
+                  gender: goat.gender,
+                  goatStage: newStage,
+                  dateOfBirth: goat.dateOfBirth,
+                  dateOfEntry: goat.dateOfEntry,
+                  weight: goat.weight,
+                  group: goat.group,
+                  obtained: goat.obtained,
+                  motherTag: goat.motherTag,
+                  fatherTag: goat.fatherTag,
+                  notes: goat.notes,
+                  photoPath: goat.photoPath,
+                  weightHistory: goat.weightHistory,
+                  breedingStatus: goat.breedingStatus,
+                  breedingDate: goat.breedingDate,
+                  breedingPartner: goat.breedingPartner,
+                  kiddingHistory: goat.kiddingHistory,
+                  kiddingDueDate: goat.kiddingDueDate,
+                );
+                await _localStorageService.addOrUpdateGoat(updatedGoat);
+                debugPrint('Updated ${goat.tagNo} from Kid to $newStage');
               }
-              
+              if (!mounted) return;
               Navigator.pop(context);
+              if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${loc.updatedGoatsSuccessfully(selectedGoats.length)}'),
+                  content: Text(loc.updatedGoatsSuccessfully(selectedGoats.length)),
                   backgroundColor: Colors.green,
                 )
               );
-              
-              // Clear selection
               setState(() {
                 selectedGoats.clear();
               });

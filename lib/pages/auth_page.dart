@@ -5,11 +5,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mygoatmanager/pages/homepage.dart';
 import '../services/auth_service.dart';
 
-
 class AuthPage extends StatefulWidget {
-final VoidCallback? onLoginSuccess;
+  final VoidCallback? onLoginSuccess;
 
- const AuthPage({super.key, this.onLoginSuccess});
+  const AuthPage({super.key, this.onLoginSuccess});
 
   @override
   State<AuthPage> createState() => _AuthPageState();
@@ -39,11 +38,9 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   final AuthService _authService = AuthService();
 
   // Google Sign In
-
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-  // No clientId parameter for Android!
-  scopes: ['email', 'profile'],
-);
+    scopes: ['email', 'profile'],
+  );
 
   @override
   void initState() {
@@ -66,15 +63,15 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   }
 
   Future<void> _checkExistingSession() async {
-  final isAuthenticated = await _authService.validateSession();
-  if (isAuthenticated && mounted) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, '/homepage');
-      }
-    });
+    final isAuthenticated = await _authService.validateSession();
+    if (isAuthenticated && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/homepage');
+        }
+      });
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +101,6 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                       child: Column(
                         children: [
                           _buildHeader(context, availableWidth, availableHeight),
-                          
                           Expanded(
                             child: _buildAuthCard(context, availableWidth, availableHeight),
                           ),
@@ -112,10 +108,9 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                       ),
                     ),
                   ),
-                  
                   if (_isLoading)
                     Container(
-                      color: Colors.black.withValues(alpha: 0.5),
+                      color: Colors.black.withOpacity(0.5),
                       child: const Center(
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
@@ -156,16 +151,16 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                   : availableWidth * 0.20,
             padding: EdgeInsets.all(isSmallPhone ? 8 : 12),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
+              color: Colors.white.withOpacity(0.15),
               borderRadius: BorderRadius.circular(isSmallPhone ? 50 : 60),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: Colors.white.withOpacity(0.3),
                 width: isSmallPhone ? 2 : 3,
               ),
             ),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Colors.white.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(isSmallPhone ? 45 : 50),
               ),
               child: Center(
@@ -183,9 +178,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
               ),
             ),
           ),
-          
           SizedBox(height: availableHeight * 0.02),
-          
           Text(
             AppLocalizations.of(context)!.welcomeToGoatManager,
             style: TextStyle(
@@ -200,15 +193,13 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
             textAlign: TextAlign.center,
             maxLines: 2,
           ),
-          
           SizedBox(height: availableHeight * 0.01),
-          
           Padding(
             padding: EdgeInsets.symmetric(horizontal: isSmallPhone ? 10 : 20),
             child: Text(
               AppLocalizations.of(context)!.manageYourFarmEfficiently,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
+                color: Colors.white.withOpacity(0.9),
                 fontSize: isSmallPhone 
                     ? availableWidth * 0.035
                     : isLargePhone
@@ -229,7 +220,6 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
     final cardMargin = isSmallPhone 
         ? availableWidth * 0.03
         : availableWidth * 0.04;
-        
     final cardPadding = isSmallPhone
         ? availableWidth * 0.04
         : availableWidth * 0.045;
@@ -242,7 +232,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
         borderRadius: BorderRadius.circular(isSmallPhone ? 16 : 20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: isSmallPhone ? 10 : 15,
             spreadRadius: isSmallPhone ? 2 : 3,
             offset: const Offset(0, 5),
@@ -265,8 +255,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                   colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)],
                 ),
                 borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
-                // Added padding to the indicator to increase the border space
-                border: Border.all(color: Colors.transparent, width: 10), // Adjust width as needed
+                border: Border.all(color: Colors.transparent, width: 10),
               ),
               labelColor: Colors.white,
               unselectedLabelColor: Colors.grey[700],
@@ -287,9 +276,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
               ],
             ),
           ),
-          
           SizedBox(height: availableHeight * 0.02),
-
           Flexible(
             child: TabBarView(
               controller: _tabController,
@@ -299,84 +286,144 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
               ],
             ),
           ),
-
+          // Common section for both tabs
+          SizedBox(height: availableHeight * 0.02),
+          _buildCommonSection(context, availableWidth, availableHeight),
           SizedBox(height: availableHeight * 0.015),
-          _buildDividerWithText(
-            context,
-            AppLocalizations.of(context)!.orContinueWith,
-            availableWidth,
-          ),
-          SizedBox(height: availableHeight * 0.015),
-
-          _buildSocialLoginButtons(context, availableWidth),
-
-          if (_tabController.index == 1)
-            Padding(
-              padding: EdgeInsets.only(top: availableHeight * 0.015),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: availableWidth * 0.05),
-                    child: Text(
-                      AppLocalizations.of(context)!.bySigningUpYouAgree,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: isSmallPhone 
-                            ? availableWidth * 0.028
-                            : availableWidth * 0.03,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                    ),
-                  ),
-                  SizedBox(height: availableHeight * 0.008),
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 2,
-                    alignment: WrapAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () => _showSnackBar('Terms of Service', Colors.blue),
-                        child: Text(
-                          AppLocalizations.of(context)!.termsOfService,
-                          style: TextStyle(
-                            color: const Color(0xFF4CAF50),
-                            fontSize: isSmallPhone 
-                                ? availableWidth * 0.028
-                                : availableWidth * 0.03,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.and,
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: isSmallPhone 
-                              ? availableWidth * 0.028
-                              : availableWidth * 0.03,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => _showSnackBar('Privacy Policy', Colors.blue),
-                        child: Text(
-                          AppLocalizations.of(context)!.privacyPolicy,
-                          style: TextStyle(
-                            color: const Color(0xFF4CAF50),
-                            fontSize: isSmallPhone 
-                                ? availableWidth * 0.028
-                                : availableWidth * 0.03,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCommonSection(BuildContext context, double availableWidth, double availableHeight) {
+    final isSmallPhone = availableWidth < 360;
+    
+    return Column(
+      children: [
+        // Show regular login button in login tab (after Google login)
+        if (_tabController.index == 0) ...[
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _isLoading ? null : _login,
+              child: Text(
+                AppLocalizations.of(context)!.login,
+                style: TextStyle(
+                  fontSize: isSmallPhone ? availableWidth * 0.045 : availableWidth * 0.05,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4CAF50),
+                padding: EdgeInsets.symmetric(vertical: isSmallPhone ? 12 : 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+                ),
+                elevation: 3,
+              ),
+            ),
+          ),
+          SizedBox(height: availableHeight * 0.015),
+        ],
+        
+        // Switch tab button
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              _tabController.index == 0 
+                  ? AppLocalizations.of(context)!.dontHaveAccount
+                  : AppLocalizations.of(context)!.alreadyHaveAccount,
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: isSmallPhone ? availableWidth * 0.032 : availableWidth * 0.035,
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                _tabController.animateTo(_tabController.index == 0 ? 1 : 0);
+              },
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                _tabController.index == 0 
+                    ? AppLocalizations.of(context)!.signup
+                    : AppLocalizations.of(context)!.login,
+                style: TextStyle(
+                  color: const Color(0xFF4CAF50),
+                  fontSize: isSmallPhone ? availableWidth * 0.032 : availableWidth * 0.035,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        
+        // Terms and conditions only for signup tab
+        if (_tabController.index == 1) ...[
+          SizedBox(height: availableHeight * 0.01),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: availableWidth * 0.05),
+            child: Text(
+              AppLocalizations.of(context)!.bySigningUpYouAgree,
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: isSmallPhone 
+                    ? availableWidth * 0.028
+                    : availableWidth * 0.03,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+            ),
+          ),
+          SizedBox(height: availableHeight * 0.008),
+          Wrap(
+            spacing: 4,
+            runSpacing: 2,
+            alignment: WrapAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () => _showSnackBar('Terms of Service', Colors.blue),
+                child: Text(
+                  AppLocalizations.of(context)!.termsOfService,
+                  style: TextStyle(
+                    color: const Color(0xFF4CAF50),
+                    fontSize: isSmallPhone 
+                        ? availableWidth * 0.028
+                        : availableWidth * 0.03,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Text(
+                AppLocalizations.of(context)!.and,
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: isSmallPhone 
+                      ? availableWidth * 0.028
+                      : availableWidth * 0.03,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => _showSnackBar('Privacy Policy', Colors.blue),
+                child: Text(
+                  AppLocalizations.of(context)!.privacyPolicy,
+                  style: TextStyle(
+                    color: const Color(0xFF4CAF50),
+                    fontSize: isSmallPhone 
+                        ? availableWidth * 0.028
+                        : availableWidth * 0.03,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
     );
   }
 
@@ -391,137 +438,126 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-            _buildTextField(
-              controller: _loginEmailController,
-              label: AppLocalizations.of(context)!.emailAddress,
-              icon: Icons.person_outline,
-              keyboardType: TextInputType.text,
-              screenWidth: availableWidth,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter email';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: availableHeight * 0.015),
-
-            _buildPasswordField(
-              controller: _loginPasswordController,
-              label: AppLocalizations.of(context)!.password,
-              isVisible: _isPasswordVisible,
-              onToggleVisibility: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
-              },
-              screenWidth: availableWidth,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context)!.pleaseEnterPassword;
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: availableHeight * 0.015),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    SizedBox(
-                      width: isSmallPhone ? 20 : 24,
-                      height: isSmallPhone ? 20 : 24,
-                      child: Checkbox(
-                        value: _rememberMe,
-                        onChanged: (value) {
-                          setState(() {
-                            _rememberMe = value ?? false;
-                          });
-                        },
-                        activeColor: const Color(0xFF4CAF50),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              _buildTextField(
+                controller: _loginEmailController,
+                label: AppLocalizations.of(context)!.emailAddress,
+                icon: Icons.person_outline,
+                keyboardType: TextInputType.text,
+                screenWidth: availableWidth,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppLocalizations.of(context)!.pleaseEnterEmail;
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: availableHeight * 0.015),
+              _buildPasswordField(
+                controller: _loginPasswordController,
+                label: AppLocalizations.of(context)!.password,
+                isVisible: _isPasswordVisible,
+                onToggleVisibility: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+                screenWidth: availableWidth,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppLocalizations.of(context)!.pleaseEnterPassword;
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: availableHeight * 0.015),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: isSmallPhone ? 20 : 24,
+                        height: isSmallPhone ? 20 : 24,
+                        child: Checkbox(
+                          value: _rememberMe,
+                          onChanged: (value) {
+                            setState(() {
+                              _rememberMe = value ?? false;
+                            });
+                          },
+                          activeColor: const Color(0xFF4CAF50),
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
                       ),
+                      SizedBox(width: isSmallPhone ? 4 : 6),
+                      Text(
+                        AppLocalizations.of(context)!.rememberMe,
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                          fontSize: isSmallPhone 
+                              ? availableWidth * 0.032
+                              : availableWidth * 0.035,
+                        ),
+                      ),
+                    ],
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      _showForgotPasswordDialog(context, availableWidth);
+                    },
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    SizedBox(width: isSmallPhone ? 4 : 6),
-                    Text(
-                      AppLocalizations.of(context)!.rememberMe,
+                    child: Text(
+                      AppLocalizations.of(context)!.forgotPassword,
                       style: TextStyle(
-                        color: Colors.grey[700],
+                        color: const Color(0xFF4CAF50),
                         fontSize: isSmallPhone 
                             ? availableWidth * 0.032
                             : availableWidth * 0.035,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ],
-                ),
-
-                TextButton(
-                  onPressed: () {
-                    _showForgotPasswordDialog(context, availableWidth);
-                  },
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  child: Text(
-                    AppLocalizations.of(context)!.forgotPassword,
+                ],
+              ),
+              SizedBox(height: availableHeight * 0.02),
+              // SWAPPED: Google login button comes first (in the main form area)
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _isLoading ? null : _socialLogin,
+                  icon: Icon(
+                    Icons.g_mobiledata,
+                    color: Colors.white,
+                    size: isSmallPhone ? 20 : 24,
+                  ),
+                  label: Text(
+                    'Login with Google',
                     style: TextStyle(
-                      color: const Color(0xFF4CAF50),
-                      fontSize: isSmallPhone 
-                          ? availableWidth * 0.032
-                          : availableWidth * 0.035,
+                      color: Colors.white,
+                      fontSize: isSmallPhone ? availableWidth * 0.04 : availableWidth * 0.045,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: availableHeight * 0.02),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _login,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4CAF50),
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                    vertical: isSmallPhone 
-                        ? availableHeight * 0.018
-                        : availableHeight * 0.02,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFDB4437),
+                    padding: EdgeInsets.symmetric(vertical: isSmallPhone ? 12 : 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
+                    ),
+                    elevation: 3,
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
-                  ),
-                  elevation: 3,
                 ),
-                child: _isLoading
-                    ? SizedBox(
-                        height: isSmallPhone ? 20 : 24,
-                        width: isSmallPhone ? 20 : 24,
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : Text(
-                        AppLocalizations.of(context)!.login,
-                        style: TextStyle(
-                          fontSize: isSmallPhone 
-                              ? availableWidth * 0.038
-                              : availableWidth * 0.04,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
               ),
-            ),
-          ],
+              SizedBox(height: availableHeight * 0.02),
+            ],
+          ),
         ),
       ),
-    ) );
+    );
   }
 
   Widget _buildSignupForm(BuildContext context, double availableWidth, double availableHeight) {
@@ -535,138 +571,134 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-            _buildTextField(
-              controller: _signupNameController,
-              label: AppLocalizations.of(context)!.fullName,
-              icon: Icons.person_outline,
-              screenWidth: availableWidth,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context)!.pleaseEnterName;
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: availableHeight * 0.015),
-
-            _buildTextField(
-              controller: _signupEmailController,
-              label: AppLocalizations.of(context)!.emailAddress,
-              icon: Icons.email_outlined,
-              keyboardType: TextInputType.emailAddress,
-              screenWidth: availableWidth,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context)!.pleaseEnterEmail;
-                }
-                if (!value.contains('@')) {
-                  return AppLocalizations.of(context)!.enterValidEmail;
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: availableHeight * 0.015),
-
-            _buildTextField(
-              controller: _signupPhoneController,
-              label: AppLocalizations.of(context)!.phoneNumber,
-              icon: Icons.phone_outlined,
-              keyboardType: TextInputType.phone,
-              screenWidth: availableWidth,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context)!.pleaseEnterPhone;
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: availableHeight * 0.015),
-
-            _buildPasswordField(
-              controller: _signupPasswordController,
-              label: AppLocalizations.of(context)!.password,
-              isVisible: _isPasswordVisible,
-              onToggleVisibility: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
-              },
-              screenWidth: availableWidth,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context)!.pleaseEnterPassword;
-                }
-                if (value.length < 6) {
-                  return AppLocalizations.of(context)!.passwordMinLength;
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: availableHeight * 0.015),
-
-            _buildPasswordField(
-              controller: _signupConfirmPasswordController,
-              label: AppLocalizations.of(context)!.confirmPassword,
-              isVisible: _isConfirmPasswordVisible,
-              onToggleVisibility: () {
-                setState(() {
-                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                });
-              },
-              screenWidth: availableWidth,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context)!.pleaseConfirmPassword;
-                }
-                if (value != _signupPasswordController.text) {
-                  return AppLocalizations.of(context)!.passwordsDoNotMatch;
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: availableHeight * 0.02),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _signup,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4CAF50),
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                    vertical: isSmallPhone 
-                        ? availableHeight * 0.018
-                        : availableHeight * 0.02,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
-                  ),
-                  elevation: 3,
-                ),
-                child: _isLoading
-                    ? SizedBox(
-                        height: isSmallPhone ? 20 : 24,
-                        width: isSmallPhone ? 20 : 24,
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : Text(
-                        AppLocalizations.of(context)!.createAccount,
-                        style: TextStyle(
-                          fontSize: isSmallPhone 
-                              ? availableWidth * 0.038
-                              : availableWidth * 0.04,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+              _buildTextField(
+                controller: _signupNameController,
+                label: AppLocalizations.of(context)!.fullName,
+                icon: Icons.person_outline,
+                screenWidth: availableWidth,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppLocalizations.of(context)!.pleaseEnterName;
+                  }
+                  return null;
+                },
               ),
-            ),
-          ],
+              SizedBox(height: availableHeight * 0.015),
+              _buildTextField(
+                controller: _signupEmailController,
+                label: AppLocalizations.of(context)!.emailAddress,
+                icon: Icons.email_outlined,
+                keyboardType: TextInputType.emailAddress,
+                screenWidth: availableWidth,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppLocalizations.of(context)!.pleaseEnterEmail;
+                  }
+                  if (!value.contains('@')) {
+                    return AppLocalizations.of(context)!.enterValidEmail;
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: availableHeight * 0.015),
+              _buildTextField(
+                controller: _signupPhoneController,
+                label: AppLocalizations.of(context)!.phoneNumber,
+                icon: Icons.phone_outlined,
+                keyboardType: TextInputType.phone,
+                screenWidth: availableWidth,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppLocalizations.of(context)!.pleaseEnterPhone;
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: availableHeight * 0.015),
+              _buildPasswordField(
+                controller: _signupPasswordController,
+                label: AppLocalizations.of(context)!.password,
+                isVisible: _isPasswordVisible,
+                onToggleVisibility: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+                screenWidth: availableWidth,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppLocalizations.of(context)!.pleaseEnterPassword;
+                  }
+                  if (value.length < 6) {
+                    return AppLocalizations.of(context)!.passwordMinLength;
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: availableHeight * 0.015),
+              _buildPasswordField(
+                controller: _signupConfirmPasswordController,
+                label: AppLocalizations.of(context)!.confirmPassword,
+                isVisible: _isConfirmPasswordVisible,
+                onToggleVisibility: () {
+                  setState(() {
+                    _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                  });
+                },
+                screenWidth: availableWidth,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppLocalizations.of(context)!.pleaseConfirmPassword;
+                  }
+                  if (value != _signupPasswordController.text) {
+                    return AppLocalizations.of(context)!.passwordsDoNotMatch;
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: availableHeight * 0.02),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _signup,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4CAF50),
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      vertical: isSmallPhone 
+                          ? availableHeight * 0.018
+                          : availableHeight * 0.02,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 12),
+                    ),
+                    elevation: 3,
+                  ),
+                  child: _isLoading
+                      ? SizedBox(
+                          height: isSmallPhone ? 20 : 24,
+                          width: isSmallPhone ? 20 : 24,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : Text(
+                          AppLocalizations.of(context)!.createAccount,
+                          style: TextStyle(
+                            fontSize: isSmallPhone 
+                                ? availableWidth * 0.038
+                                : availableWidth * 0.04,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    ) );
+    );
   }
 
   Widget _buildTextField({
@@ -799,75 +831,6 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget _buildDividerWithText(BuildContext context, String text, double screenWidth) {
-    final isSmallPhone = screenWidth < 360;
-    
-    return Row(
-      children: [
-        Expanded(
-          child: Divider(
-            color: Colors.grey[300],
-            thickness: 1,
-            height: 1,
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: isSmallPhone ? 8 : 12),
-          child: Text(
-            text,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: isSmallPhone ? screenWidth * 0.03 : screenWidth * 0.032,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Divider(
-            color: Colors.grey[300],
-            thickness: 1,
-            height: 1,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSocialLoginButtons(BuildContext context, double screenWidth) {
-    final isSmallPhone = screenWidth < 360;
-    
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: _isLoading ? null : _socialLogin,
-            icon: Icon(
-              Icons.g_mobiledata,
-              color: Colors.white,
-              size: isSmallPhone ? 20 : 24,
-            ),
-            label: Text(
-              _tabController.index == 0 ? 'Login with Google' : 'Sign up with Google',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: isSmallPhone ? screenWidth * 0.04 : screenWidth * 0.045,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFDB4437),
-              padding: EdgeInsets.symmetric(vertical: isSmallPhone ? 12 : 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(isSmallPhone ? 8 : 10),
-              ),
-              elevation: 3,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   void _showForgotPasswordDialog(BuildContext context, double screenWidth) {
     final emailController = TextEditingController();
     final isSmallPhone = screenWidth < 360;
@@ -993,172 +956,174 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
 
   // === API CALL METHODS ===
 
-Future<void> _login() async {
-  if (!_loginFormKey.currentState!.validate()) return;
-
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    final result = await _authService.login({
-    'email': _loginEmailController.text.trim().toLowerCase(),
-    'password': _loginPasswordController.text.trim(),
-    });
-
-
-    if (!mounted) return;
+  Future<void> _login() async {
+    if (!_loginFormKey.currentState!.validate()) return;
 
     setState(() {
-      _isLoading = false;
+      _isLoading = true;
     });
 
-    if (result.success) {
-      _showSnackBar(
-        AppLocalizations.of(context)!.loginSuccessful,
-        const Color(0xFF4CAF50),
-      );
+    try {
+      final result = await _authService.login({
+        'email': _loginEmailController.text.trim().toLowerCase(),
+        'password': _loginPasswordController.text.trim(),
+      });
 
-      // Callback (if parent widget handles navigation)
-      if (widget.onLoginSuccess != null) {
-        widget.onLoginSuccess!();
-        return;
-      }
+      if (!mounted) return;
 
-      // Default navigation
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Homepage(
-            currentLocale: const Locale('en'),
-            onLocaleChanged: (_) {},
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (result.success) {
+        _showSnackBar(
+          AppLocalizations.of(context)!.loginSuccessful,
+          const Color(0xFF4CAF50),
+        );
+
+        // Callback (if parent widget handles navigation)
+        if (widget.onLoginSuccess != null) {
+          widget.onLoginSuccess!();
+          return;
+        }
+
+        // Default navigation
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Homepage(
+              currentLocale: const Locale('en'),
+              onLocaleChanged: (_) {},
+            ),
           ),
-        ),
-        (_) => false,
-      );
-    } else {
-      _showSnackBar(
-        result.message ?? 'Invalid email or password',
-        Colors.red,
-      );
-    }
-  } catch (e) {
-    if (!mounted) return;
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    _showSnackBar(
-      'Login failed. Please try again.',
-      Colors.red,
-    );
-  }
-}
-  Future<void> _signup() async {
-  if (!_signupFormKey.currentState!.validate()) return;
-
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    final result = await _authService.register({
-      'username': _signupNameController.text.trim(),
-      'email': _signupEmailController.text.trim(),
-      'phone': _signupPhoneController.text.trim(),
-      'password': _signupPasswordController.text.trim(),
-    });
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (result.success) {
-      _showSnackBar(
-        AppLocalizations.of(context)!.accountCreatedSuccessfully,
-        const Color(0xFF4CAF50),
-      );
-      
-      _tabController.animateTo(0);
-      _clearSignupFields();
-    } else {
-      _showSnackBar(
-        result.message,
-        Colors.red,
-      );
-    }
-  } catch (e) {
-    setState(() {
-      _isLoading = false;
-    });
-    _showSnackBar(
-      'Registration error: $e',
-      Colors.red,
-    );
-  }
-}
-Future<void> _resetPassword(String email) async {
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    final result = await _authService.forgotPassword(email);
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    _showSnackBar(
-      result.message,
-      result.success ? const Color(0xFF4CAF50) : Colors.red,
-    );
-  } catch (e) {
-    setState(() {
-      _isLoading = false;
-    });
-    _showSnackBar(
-      'Reset password error: $e',
-      Colors.red,
-    );
-  }
-}
-  void _socialLogin() async {
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    final result = await _authService.loginWithGoogle();
-
-    if (result.success) {
-      _showSnackBar(
-        AppLocalizations.of(context)!.loginSuccessful,
-        const Color(0xFF4CAF50),
-      );
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, '/homepage');
+          (_) => false,
+        );
+      } else {
+        _showSnackBar(
+          result.message ?? 'Invalid email or password',
+          Colors.red,
+        );
       }
-    } else {
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isLoading = false;
+      });
+
       _showSnackBar(
-        result.message,
+        'Login failed. Please try again.',
         Colors.red,
       );
     }
-  } catch (e) {
-    _showSnackBar(
-      'Google login failed: $e',
-      Colors.red,
-    );
-  } finally {
-    setState(() {
-      _isLoading = false;
-    });
   }
-}
 
-      void _clearSignupFields() {
+  Future<void> _signup() async {
+    if (!_signupFormKey.currentState!.validate()) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await _authService.register({
+        'username': _signupNameController.text.trim(),
+        'email': _signupEmailController.text.trim(),
+        'phone': _signupPhoneController.text.trim(),
+        'password': _signupPasswordController.text.trim(),
+      });
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (result.success) {
+        _showSnackBar(
+          AppLocalizations.of(context)!.accountCreatedSuccessfully,
+          const Color(0xFF4CAF50),
+        );
+        
+        _tabController.animateTo(0);
+        _clearSignupFields();
+      } else {
+        _showSnackBar(
+          result.message,
+          Colors.red,
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      _showSnackBar(
+        'Registration error: $e',
+        Colors.red,
+      );
+    }
+  }
+
+  Future<void> _resetPassword(String email) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await _authService.forgotPassword(email);
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      _showSnackBar(
+        result.message,
+        result.success ? const Color(0xFF4CAF50) : Colors.red,
+      );
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      _showSnackBar(
+        'Reset password error: $e',
+        Colors.red,
+      );
+    }
+  }
+
+  void _socialLogin() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await _authService.loginWithGoogle();
+
+      if (result.success) {
+        _showSnackBar(
+          AppLocalizations.of(context)!.loginSuccessful,
+          const Color(0xFF4CAF50),
+        );
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/homepage');
+        }
+      } else {
+        _showSnackBar(
+          result.message,
+          Colors.red,
+        );
+      }
+    } catch (e) {
+      _showSnackBar(
+        'Google login failed: $e',
+        Colors.red,
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _clearSignupFields() {
     _signupNameController.clear();
     _signupEmailController.clear();
     _signupPhoneController.clear();

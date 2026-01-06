@@ -1571,4 +1571,10 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get currentRange => 'தற்போதைய வரம்பு';
+
+  @override
+  String get dontHaveAccount => 'கணக்கு இல்லையா?';
+
+  @override
+  String get alreadyHaveAccount => 'ஏற்கனவே கணக்கு உள்ளதா?';
 }

@@ -98,82 +98,69 @@ class _MilkReportPageState extends State<MilkReportPage> {
   }
 
   void _prepareChartData() {
-      final Map<String, Map<String, double>> dailyRecords = {}; // Changed to double
-      
-      for (var record in _filteredRecords) {
-        final dateKey = DateFormat('MMM dd').format(record.milkingDate);
-        if (!dailyRecords.containsKey(dateKey)) {
-          dailyRecords[dateKey] = {'produced': 0.0, 'used': 0.0}; // Changed to 0.0
-        }
-        dailyRecords[dateKey]!['produced'] = dailyRecords[dateKey]!['produced']! + record.total;
-        // Used is not available in MilkRecord model
+    final Map<String, Map<String, double>> dailyRecords = {};
+    
+    for (var record in _filteredRecords) {
+      final dateKey = DateFormat('MMM dd').format(record.milkingDate);
+      if (!dailyRecords.containsKey(dateKey)) {
+        dailyRecords[dateKey] = {'produced': 0.0, 'used': 0.0};
       }
-
-      final sortedDates = dailyRecords.keys.toList()
-        ..sort((a, b) => DateFormat('MMM dd').parse(a).compareTo(DateFormat('MMM dd').parse(b)));
-
-      _chartData = sortedDates.map((date) {
-        return {
-          'date': date,
-          'produced': dailyRecords[date]!['produced']!,
-          'used': dailyRecords[date]!['used']!,
-        };
-      }).toList();
+      dailyRecords[dateKey]!['produced'] = dailyRecords[dateKey]!['produced']! + record.total;
+      dailyRecords[dateKey]!['used'] = dailyRecords[dateKey]!['used']! + record.used;
     }
 
- void _calculateSummary() {
-  if (_filteredRecords.isEmpty) {
-    setState(() {
-      _summaryData = {
-        'dailyAverage': 0.0, // Changed from 0 to 0.0
-        'totalProduced': 0.0, // Changed from 0 to 0.0
-        'totalUsed': 0.0, // Changed from 0 to 0.0
-        'mostProductiveGoat': null,
-        'leastProductiveGoat': null,
-        'hasData': false,
-        'totalRecords': _filteredRecords.length,
+    final sortedDates = dailyRecords.keys.toList()
+      ..sort((a, b) => DateFormat('MMM dd').parse(a).compareTo(DateFormat('MMM dd').parse(b)));
+
+    _chartData = sortedDates.map((date) {
+      return {
+        'date': date,
+        'produced': dailyRecords[date]!['produced']!,
+        'used': dailyRecords[date]!['used']!,
       };
-    });
-    return;
+    }).toList();
   }
+
+  void _calculateSummary() {
+    if (_filteredRecords.isEmpty) {
+      setState(() {
+        _summaryData = {
+          'dailyAverage': 0.0,
+          'totalProduced': 0.0,
+          'totalUsed': 0.0,
+          'averageMorning': 0.0,
+          'averageEvening': 0.0,
+          'hasData': false,
+          'totalRecords': _filteredRecords.length,
+        };
+      });
+      return;
+    }
+    
     double totalProduced = 0.0;
-    double totalUsed = 0.0; // Note: "used" is not stored in MilkRecord model
-    final Map<String, double> goatProduction = {};
-
-    String? mostProductiveGoat;
-    String? leastProductiveGoat;
-    double maxProduction = 0.0;
-    double minProduction = goatProduction.isEmpty ? 0.0 : double.maxFinite;
-
-  for (var record in _filteredRecords) {
-    totalProduced += record.total;    
-    if (!record.isWholeFarm && record.tagNo != 'FARM') {
-      goatProduction[record.tagNo] = (goatProduction[record.tagNo] ?? 0.0) + record.total;
+    double totalUsed = 0.0;
+    double totalMorning = 0.0;
+    double totalEvening = 0.0;
+    
+    for (var record in _filteredRecords) {
+      totalProduced += record.total;
+      totalUsed += record.used;
+      totalMorning += record.morningQuantity;
+      totalEvening += record.eveningQuantity;
     }
-  }
 
-    goatProduction.forEach((goat, production) {
-    if (production > maxProduction) {
-      maxProduction = production;
-      mostProductiveGoat = goat;
-    }
-    if (production < minProduction) {
-      minProduction = production;
-      leastProductiveGoat = goat;
-    }
-  });
+    final daysInRange = _toDate.difference(_fromDate).inDays + 1;
+    final dailyAverage = daysInRange > 0 ? (totalProduced / daysInRange) : 0.0;
+    final averageMorning = _filteredRecords.isNotEmpty ? (totalMorning / _filteredRecords.length) : 0.0;
+    final averageEvening = _filteredRecords.isNotEmpty ? (totalEvening / _filteredRecords.length) : 0.0;
 
-      final daysInRange = _toDate.difference(_fromDate).inDays + 1;
-      final dailyAverage = daysInRange > 0 ? (totalProduced / daysInRange) : 0.0; // Keep as double
-
-   setState(() {
+    setState(() {
       _summaryData = {
         'dailyAverage': dailyAverage,
         'totalProduced': totalProduced,
         'totalUsed': totalUsed,
-        'mostProductiveGoat': mostProductiveGoat,
-        'leastProductiveGoat': leastProductiveGoat,
-        'goatProduction': goatProduction,
+        'averageMorning': averageMorning,
+        'averageEvening': averageEvening,
         'hasData': totalProduced > 0 || totalUsed > 0,
         'totalRecords': _filteredRecords.length,
       };
@@ -469,11 +456,11 @@ class _MilkReportPageState extends State<MilkReportPage> {
       case 'totalUsed':
         title = loc.totalForKidsUsed;
         break;
-      case 'mostProductiveGoat':
-        title = loc.mostProductiveGoat;
+      case 'averageMorning':
+        title = 'Average Morning';
         break;
-      case 'leastProductiveGoat':
-        title = loc.leastProductiveGoat;
+      case 'averageEvening':
+        title = 'Average Evening';
         break;
       default:
         title = titleKey;
@@ -534,10 +521,13 @@ class _MilkReportPageState extends State<MilkReportPage> {
     }
   }
 
-  Future<void> _generatePDF(BuildContext context) async {
+  Future<void> _generatePDF() async {
+    if (!mounted) return;
+    
     final loc = AppLocalizations.of(context)!;
     
     if (!_summaryData['hasData']) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(loc.noDataToExport),
@@ -548,6 +538,7 @@ class _MilkReportPageState extends State<MilkReportPage> {
     }
 
     // Show loading
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(loc.pdfGenerating),
@@ -673,12 +664,12 @@ class _MilkReportPageState extends State<MilkReportPage> {
                         children: [
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text('Daily milk average.',
+                            child: pw.Text('Daily milk average',
                               style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(_summaryData['dailyAverage'].toString()),
+                            child: pw.Text('${(_summaryData['dailyAverage'] as double).toStringAsFixed(1)} L'),
                           ),
                         ],
                       ),
@@ -686,12 +677,12 @@ class _MilkReportPageState extends State<MilkReportPage> {
                         children: [
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text('Total milk produced.',
+                            child: pw.Text('Total milk produced',
                               style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(_summaryData['totalProduced'].toString()),
+                            child: pw.Text('${(_summaryData['totalProduced'] as double).toStringAsFixed(1)} L'),
                           ),
                         ],
                       ),
@@ -699,12 +690,38 @@ class _MilkReportPageState extends State<MilkReportPage> {
                         children: [
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text('Total for kids/used.',
+                            child: pw.Text('Total for kids/used',
                               style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(_summaryData['totalUsed'].toString()),
+                            child: pw.Text('${(_summaryData['totalUsed'] as double).toStringAsFixed(1)} L'),
+                          ),
+                        ],
+                      ),
+                      pw.TableRow(
+                        children: [
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text('Average morning milk',
+                              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text('${(_summaryData['averageMorning'] as double).toStringAsFixed(1)} L'),
+                          ),
+                        ],
+                      ),
+                      pw.TableRow(
+                        children: [
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text('Average evening milk',
+                              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text('${(_summaryData['averageEvening'] as double).toStringAsFixed(1)} L'),
                           ),
                         ],
                       ),
@@ -728,7 +745,8 @@ class _MilkReportPageState extends State<MilkReportPage> {
                       1: const pw.FlexColumnWidth(1.5),
                       2: const pw.FlexColumnWidth(1),
                       3: const pw.FlexColumnWidth(1),
-                      4: const pw.FlexColumnWidth(2),
+                      4: const pw.FlexColumnWidth(1),
+                      5: const pw.FlexColumnWidth(2),
                     },
                     children: [
                       // Table header
@@ -747,6 +765,7 @@ class _MilkReportPageState extends State<MilkReportPage> {
                               ),
                             ),
                           ),
+                          pw.Container(),
                           pw.Container(),
                           pw.Container(),
                           pw.Container(),
@@ -770,6 +789,16 @@ class _MilkReportPageState extends State<MilkReportPage> {
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text('Morning',
+                              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text('Evening',
+                              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
                             child: pw.Text('Total',
                               style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                           ),
@@ -778,97 +807,104 @@ class _MilkReportPageState extends State<MilkReportPage> {
                             child: pw.Text('Used',
                               style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                           ),
-                          pw.Padding(
-                            padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text('Notes',
-                              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                          ),
-                      ],
-                    ),
-                    
-                    // Table data rows
-                    ..._filteredRecords.map((record) {
-                      return pw.TableRow(
+                        ],
+                      ),
+                      
+                      // Table data rows
+                      ..._filteredRecords.map((record) {
+                        return pw.TableRow(
+                          children: [
+                            pw.Padding(
+                              padding: const pw.EdgeInsets.all(8),
+                              child: pw.Text(DateFormat('yyyy-MM-dd').format(record.milkingDate)),
+                            ),
+                            pw.Padding(
+                              padding: const pw.EdgeInsets.all(8),
+                              child: pw.Text(record.milkType),
+                            ),
+                            pw.Padding(
+                              padding: const pw.EdgeInsets.all(8),
+                              child: pw.Text(record.morningQuantity.toStringAsFixed(1)),
+                            ),
+                            pw.Padding(
+                              padding: const pw.EdgeInsets.all(8),
+                              child: pw.Text(record.eveningQuantity.toStringAsFixed(1)),
+                            ),
+                            pw.Padding(
+                              padding: const pw.EdgeInsets.all(8),
+                              child: pw.Text(record.total.toStringAsFixed(1)),
+                            ),
+                            pw.Padding(
+                              padding: const pw.EdgeInsets.all(8),
+                              child: pw.Text(record.used.toStringAsFixed(1)),
+                            ),
+                          ],
+                        );
+                      }),
+                      
+                      // Total row
+                      pw.TableRow(
+                        decoration: const pw.BoxDecoration(color: PdfColors.grey200),
                         children: [
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(DateFormat('yyyy-MM-dd').format(record.milkingDate)),
+                            child: pw.Text('Total',
+                              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(record.milkType),
+                            child: pw.Text(''),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(record.total.toStringAsFixed(2)),
+                            child: pw.Text((_summaryData['averageMorning'] as double).toStringAsFixed(1),
+                              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(record.available.toStringAsFixed(2)),
+                            child: pw.Text((_summaryData['averageEvening'] as double).toStringAsFixed(1),
+                              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(record.notes ?? ''),
+                            child: pw.Text((_summaryData['totalProduced'] as double).toStringAsFixed(1),
+                              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text((_summaryData['totalUsed'] as double).toStringAsFixed(1),
+                              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                           ),
                         ],
-                      );
-                    }).toList(),
-                    
-                    // Total row
-                    pw.TableRow(
-                      decoration: const pw.BoxDecoration(color: PdfColors.grey200),
-                      children: [
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Total',
-                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(''),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(_summaryData['totalProduced'].toString(),
-                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(_summaryData['totalUsed'].toString(),
-                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(''),
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
+              ],
+            );
+          },
+        ),
+      );
 
-    // Save PDF to file
-    final output = await getTemporaryDirectory();
-    final file = File("${output.path}/milk_report_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf");
-    await file.writeAsBytes(await pdf.save());
+      // Save PDF to file
+      final output = await getTemporaryDirectory();
+      final file = File("${output.path}/milk_report_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf");
+      await file.writeAsBytes(await pdf.save());
 
-    // Share PDF
-    await Share.shareXFiles([XFile(file.path)], text: 'Milk Report - $_farmName');
+      // Share PDF
+      await Share.shareXFiles([XFile(file.path)], text: 'Milk Report - $_farmName');
 
-    // Success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('PDF generated successfully!'),
-        backgroundColor: Colors.green,
-      ),
-    );
+      // Success message
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('PDF generated successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
 
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error generating PDF: $e'),
@@ -890,10 +926,10 @@ class _MilkReportPageState extends State<MilkReportPage> {
     for (var record in _filteredRecords) {
       final dateKey = '${record.milkingDate.month.toString().padLeft(2, '0')}-${record.milkingDate.day.toString().padLeft(2, '0')}';
       if (!dailyRecords.containsKey(dateKey)) {
-        dailyRecords[dateKey] = {'produced': 0.0, 'used': 0.0}; // Change to 0.0 (double)
+        dailyRecords[dateKey] = {'produced': 0.0, 'used': 0.0};
       }
       dailyRecords[dateKey]!['produced'] = dailyRecords[dateKey]!['produced']! + record.total;
-      dailyRecords[dateKey]!['used'] = dailyRecords[dateKey]!['used']! + record.available;
+      dailyRecords[dateKey]!['used'] = dailyRecords[dateKey]!['used']! + record.used;
     }
 
     final sortedDates = dailyRecords.keys.toList()
@@ -962,14 +998,14 @@ class _MilkReportPageState extends State<MilkReportPage> {
                       cells: [
                         DataCell(Text(date)),
                         DataCell(Text(
-                          records['produced']! > 0 ? records['produced'].toString() : '-',
+                            (records['produced'] != null && records['produced']! > 0) ? records['produced']!.toStringAsFixed(1) : '-',
                           style: TextStyle(
                             color: records['produced']! > 0 ? Colors.green : Colors.grey,
                             fontWeight: FontWeight.w500,
                           ),
                         )),
                         DataCell(Text(
-                          records['used']! > 0 ? records['used'].toString() : '-',
+                            (records['used'] != null && records['used']! > 0) ? records['used']!.toStringAsFixed(1) : '-',
                           style: TextStyle(
                             color: records['used']! > 0 ? Colors.orange : Colors.grey,
                             fontWeight: FontWeight.w500,
@@ -1030,6 +1066,15 @@ class _MilkReportPageState extends State<MilkReportPage> {
     final loc = AppLocalizations.of(context)!;
     final isSmallScreen = MediaQuery.of(context).size.width < 400;
     
+    // Helper function to safely get summary value
+    String getSummaryValue(String key) {
+      final value = _summaryData[key];
+      if (value is double) {
+        return '${value.toStringAsFixed(1)} L';
+      }
+      return '0.0 L';
+    }
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -1077,7 +1122,7 @@ class _MilkReportPageState extends State<MilkReportPage> {
                   tooltip: _showLineChart ? 'Show Table' : 'Show Chart',
                 ),
                 IconButton(
-                  onPressed: () => _generatePDF(context),
+                  onPressed: _generatePDF,
                   icon: const Icon(Icons.picture_as_pdf, color: Colors.white, size: 28),
                   tooltip: loc.exportPDF,
                 ),
@@ -1263,37 +1308,37 @@ class _MilkReportPageState extends State<MilkReportPage> {
                               _buildSummaryCard(
                                 context,
                                 'dailyAverage',
-                                (_summaryData['dailyAverage'] as double?)?.toStringAsFixed(1) ?? '0.0',
+                                getSummaryValue('dailyAverage'),
                                 Icons.local_drink,
                                 const Color(0xFF2196F3),
                               ),
                               _buildSummaryCard(
                                 context,
                                 'totalProduced',
-                                (_summaryData['totalProduced']as double?)?.toStringAsFixed(1) ?? '0.0',
+                                getSummaryValue('totalProduced'),
                                 Icons.bar_chart,
                                 const Color(0xFF4CAF50),
                               ),
                               _buildSummaryCard(
                                 context,
                                 'totalUsed',
-                                _summaryData['totalUsed']?.toString() ?? '0',
+                                getSummaryValue('totalUsed'),
                                 Icons.child_care,
                                 const Color(0xFFFF9800),
                               ),
                               _buildSummaryCard(
                                 context,
-                                'mostProductiveGoat',
-                                _summaryData['mostProductiveGoat']?.toString() ?? loc.notAvailable,
-                                Icons.trending_up,
-                                const Color(0xFF4CAF50),
+                                'averageMorning',
+                                getSummaryValue('averageMorning'),
+                                Icons.wb_sunny,
+                                const Color(0xFFFF9800),
                               ),
                               _buildSummaryCard(
                                 context,
-                                'leastProductiveGoat',
-                                _summaryData['leastProductiveGoat']?.toString() ?? loc.notAvailable,
-                                Icons.trending_down,
-                                const Color(0xFFF44336),
+                                'averageEvening',
+                                getSummaryValue('averageEvening'),
+                                Icons.nights_stay,
+                                const Color(0xFF2196F3),
                               ),
                             ],
                           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mygoatmanager/pages/settings_page.dart';
 import 'dart:convert';
 import '../l10n/app_localizations.dart';
 import 'package:mygoatmanager/pages/auth_page.dart';
@@ -663,10 +664,10 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 icon: Icons.settings,
                 title: appLocalizations?.settings ?? 'Settings',
                 onTap: () {
-                  Navigator.pop(context);
-                  _showComingSoonSnackbar();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
                 },
               ),
+              
               _buildDrawerItem(
                 icon: Icons.note,
                 title: appLocalizations?.farmNotes ?? 'Farm Notes',

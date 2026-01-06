@@ -541,5 +541,7 @@
   "totalIncome": "மொத்த வருமானம்",
   "totalExpenses": "மொத்த செலவுகள்",
   "net": "நிகர",
-  "currentRange": "தற்போதைய வரம்பு"
+  "currentRange": "தற்போதைய வரம்பு",
+  "dontHaveAccount": "கணக்கு இல்லையா?",
+  "alreadyHaveAccount": "ஏற்கனவே கணக்கு உள்ளதா?"
 }

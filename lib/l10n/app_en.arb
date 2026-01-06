@@ -570,5 +570,7 @@
   "totalIncome": "Total Income",
   "totalExpenses": "Total Expenses",
   "net": "Net",
-  "currentRange": "current range"
+  "currentRange": "current range",
+  "dontHaveAccount": "Don't have an account?",
+  "alreadyHaveAccount": "Already have an account?"
 }

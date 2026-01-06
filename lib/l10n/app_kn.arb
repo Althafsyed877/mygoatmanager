@@ -541,5 +541,7 @@
   "totalIncome": "ಒಟ್ಟು ಆದಾಯ",
   "totalExpenses": "ಒಟ್ಟು ಖರ್ಚು",
   "net": "ನಿಕರ",
-  "currentRange": "ಪ್ರಸ್ತುತ ವ್ಯಾಪ್ತಿ"
+  "currentRange": "ಪ್ರಸ್ತುತ ವ್ಯಾಪ್ತಿ",
+  "dontHaveAccount": "ಖಾತೆ ಇಲ್ಲವೇ?",
+  "alreadyHaveAccount": "ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ?"
 }

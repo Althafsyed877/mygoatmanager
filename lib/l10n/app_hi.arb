@@ -541,5 +541,7 @@
   "totalIncome": "कुल आय",
   "totalExpenses": "कुल खर्च",
   "net": "शुद्ध",
-  "currentRange": "वर्तमान सीमा"
+  "currentRange": "वर्तमान सीमा",
+  "dontHaveAccount": "खाता नहीं है?",
+  "alreadyHaveAccount": "पहले से ही खाता है?"
 }

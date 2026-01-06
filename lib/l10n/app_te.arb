@@ -541,5 +541,7 @@
   "totalIncome": "మొత్తం ఆదాయం",
   "totalExpenses": "మొత్తం ఖర్చులు",
   "net": "నికర",
-  "currentRange": "ప్రస్తుత పరిధి"
+  "currentRange": "ప్రస్తుత పరిధి",
+  "dontHaveAccount": "ఖాతా లేదా?",
+  "alreadyHaveAccount": "ఇప్పటికే ఖాతా ఉందా?"
 }

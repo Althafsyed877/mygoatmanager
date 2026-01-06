@@ -1547,4 +1547,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currentRange => 'current range';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account?';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account?';
 }

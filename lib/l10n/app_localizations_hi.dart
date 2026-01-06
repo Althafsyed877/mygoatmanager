@@ -1551,4 +1551,10 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get currentRange => 'वर्तमान सीमा';
+
+  @override
+  String get dontHaveAccount => 'खाता नहीं है?';
+
+  @override
+  String get alreadyHaveAccount => 'पहले से ही खाता है?';
 }
