@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mygoatmanager/pages/settings_page.dart';
+import 'package:mygoatmanager/pages_of_drawers/contactOurTeam_page.dart';
+import 'package:mygoatmanager/pages_of_drawers/privacyPolicy_page.dart';
+import 'package:mygoatmanager/pages_of_drawers/settings_page.dart';
 import 'dart:convert';
 import '../l10n/app_localizations.dart';
 import 'package:mygoatmanager/pages/auth_page.dart';
@@ -710,8 +712,8 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 icon: Icons.contact_support,
                 title: appLocalizations?.contactOurTeam ?? 'Contact Our Team',
                 onTap: () {
-                  Navigator.pop(context);
-                  _showComingSoonSnackbar();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ContactourteamPage()));
+                  
                 },
               ),
             ],
@@ -740,8 +742,7 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 icon: Icons.privacy_tip,
                 title: appLocalizations?.privacyPolicy ?? 'Privacy Policy',
                 onTap: () {
-                  Navigator.pop(context);
-                  _showComingSoonSnackbar();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacypolicyPage()));
                 },
               ),
             ],

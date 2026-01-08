@@ -39,7 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
             leading: const Icon(Icons.lock),
             title: const Text('Change Password'),
             onTap: () {
-              // Handle password change
+              // Navigate to change password page
             },
           ),
           Divider(color:  Colors.black),
