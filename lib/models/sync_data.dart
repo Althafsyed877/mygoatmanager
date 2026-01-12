@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mygoatmanager/services/api_service.dart';
 import 'package:mygoatmanager/services/local_storage_service.dart';
 import 'package:flutter/foundation.dart';
+import '../models//transaction.dart';
+// REMOVE this import since it's unused: import 'package:mygoatmanager/models/milk_record.dart';
 
 class SyncResult {
   final bool success;
@@ -59,165 +61,146 @@ class SyncService {
       }
 
       // ========== 2. SYNC EVENTS ==========
-     try {
-  final localEvents = await localStorage.getEvents();
-  debugPrint('🔄 [SYNC_DATA] Found ${localEvents.length} events in local storage');
-  
-  // SHOW WHAT EVENTS WE HAVE
-  if (localEvents.isNotEmpty) {
-    debugPrint('📋 [SYNC_DATA] Event details:');
-    for (int i = 0; i < localEvents.length; i++) {
-      final event = localEvents[i];
-    }
-  } else {
-    debugPrint('⚠️ [SYNC_DATA] NO EVENTS FOUND! Are events being saved locally?');
-  }
-
-  String? formatDate(dynamic date) {
-    if (date == null) return null;
-
-    if (date is DateTime) {
-      return date.toIso8601String().split('T').first;
-    }
-
-    if (date is String) {
       try {
-        final parsed = DateTime.parse(date);
-        return parsed.toIso8601String().split('T').first;
-      } catch (_) {
-        return null;
+        final localEvents = await localStorage.getEvents();
+        debugPrint('🔄 [SYNC_DATA] Found ${localEvents.length} events in local storage');
+        
+        if (localEvents.isNotEmpty) {
+          debugPrint('📋 [SYNC_DATA] Event details:');
+          for (int i = 0; i < localEvents.length; i++) {
+            final event = localEvents[i];
+            debugPrint('   Event ${i + 1}: ${event.eventType} for ${event.tagNo}');
+          }
+        } else {
+          debugPrint('⚠️ [SYNC_DATA] NO EVENTS FOUND!');
+        }
+
+        String? formatDate(dynamic date) {
+          if (date == null) return null;
+
+          if (date is DateTime) {
+            return date.toIso8601String().split('T').first;
+          }
+
+          if (date is String) {
+            try {
+              final parsed = DateTime.parse(date);
+              return parsed.toIso8601String().split('T').first;
+            } catch (_) {
+              return null;
+            }
+          }
+          return null;
+        }
+
+        if (localEvents.isNotEmpty) {
+          final localEventsJson = localEvents.map((event) {
+            final eventJson = event.toJson();
+            
+            eventJson['date'] = formatDate(event.date) ?? 
+                                formatDate(eventJson['date']) ?? 
+                                eventJson['date'];
+            
+            debugPrint('📝 [SYNC_DATA] Event JSON: ${eventJson['tagNo']} - ${eventJson['date']}');
+            return eventJson;
+          }).toList();
+
+          debugPrint('📤 [SYNC_DATA] Calling apiService.syncEvents()...');
+          final response = await apiService.syncEvents(localEventsJson);
+          
+          debugPrint('📥 [SYNC_DATA] Events sync response: ${response.success} - ${response.message}');
+
+          if (!response.success) {
+            hasErrors = true;
+            errorMessage += 'Events: ${response.message}\n';
+            debugPrint('❌ [SYNC_DATA] Events sync failed: ${response.message}');
+          } else {
+            debugPrint('✅ [SYNC_DATA] Events sync successful!');
+          }
+        }
+      } catch (e) {
+        hasErrors = true;
+        errorMessage += 'Events error: $e\n';
+        debugPrint('❌ [SYNC_DATA] Events sync error: $e');
       }
-    }
-    return null;
-  }
 
-  if (localEvents.isNotEmpty) {
-    final localEventsJson = localEvents.map((event) {
-      final eventJson = event.toJson();
-      
-      // Format the date field to YYYY-MM-DD
-      eventJson['date'] = formatDate(event.date) ?? 
-                          formatDate(eventJson['date']) ?? 
-                          eventJson['date'];
-      
-      debugPrint('📝 [SYNC_DATA] Event JSON: ${eventJson['tagNo']} - ${eventJson['date']}');
-      return eventJson;
-    }).toList();
-
-    debugPrint('📤 [SYNC_DATA] Calling apiService.syncEvents()...');
-    final response = await apiService.syncEvents(localEventsJson);
-    
-    debugPrint('📥 [SYNC_DATA] Events sync response: ${response.success} - ${response.message}');
-
-    if (!response.success) {
-      hasErrors = true;
-      errorMessage += 'Events: ${response.message}\n';
-      debugPrint('❌ [SYNC_DATA] Events sync failed: ${response.message}');
-    } else {
-      debugPrint('✅ [SYNC_DATA] Events sync successful!');
-    }
-  }
-} catch (e) {
-  hasErrors = true;
-  errorMessage += 'Events error: $e\n';
-  debugPrint('❌ [SYNC_DATA] Events sync error: $e');
-}
       // ========== 3. SYNC MILK RECORDS ==========
       try {
         final localMilkRecords = await localStorage.getMilkRecords();
         debugPrint('🔄 Syncing ${localMilkRecords.length} milk records...');
 
         if (localMilkRecords.isNotEmpty) {
-          final fixedMilkRecords = localMilkRecords.map((record) {
-            final fixed = record.toJson();
-
-            if (fixed['milking_date'] != null) {
-              final dateStr = fixed['milking_date'].toString();
-              if (dateStr.contains('/')) {
-                final parts = dateStr.split('/');
-                if (parts.length == 3) {
-                  fixed['milking_date'] =
-                      '${parts[2]}-${parts[1]}-${parts[0]}';
-                }
-              }
-            }
-
-            if (fixed['goat_id'] != null) {
-              fixed['goat_id'] = fixed['goat_id'].toString();
-            }
-
-            return fixed;
+          // Convert to List<Map<String, dynamic>> for the API
+          final milkRecordsJson = localMilkRecords.map((record) {
+            return {
+              'milking_date': record.formattedDate,
+              'morning_quantity': record.morningQuantity,
+              'evening_quantity': record.eveningQuantity,
+              'total_quantity': record.total,
+              'used_quantity': record.used,
+              'notes': record.notes,
+              'milk_type': record.milkType,
+            };
           }).toList();
 
-          final response =
-              await apiService.syncMilkRecords(fixedMilkRecords);
+          debugPrint('📤 Calling apiService.syncMilkRecords()...');
+          // If this still gives error, check the ApiService method signature
+          final response = await apiService.syncMilkRecords(milkRecordsJson);
+          
+          debugPrint('📥 Milk sync response: ${response.success} - ${response.message}');
 
           if (!response.success) {
             hasErrors = true;
-            errorMessage += 'Milk: ${response.message}\n';
+            errorMessage += 'Milk Records: ${response.message}\n';
+            debugPrint('❌ Milk records sync failed: ${response.message}');
+          } else {
+            debugPrint('✅ Milk records sync successful!');
           }
+        } else {
+          debugPrint('ℹ️ No milk records to sync');
         }
       } catch (e) {
         hasErrors = true;
-        errorMessage += 'Milk error: $e\n';
-        debugPrint('❌ Milk sync error: $e');
+        errorMessage += 'Milk Records error: $e\n';
+        debugPrint('❌ Milk records sync error: $e');
       }
 
       // ========== 4. SYNC TRANSACTIONS ==========
       try {
-        final localIncomes = await localStorage.getIncomes();
-        final localExpenses = await localStorage.getExpenses();
+        // Migrate old data first
+        await localStorage.migrateOldTransactions();
+        
+        final localTransactions = await localStorage.getTransactions();
+        debugPrint('🔄 Syncing ${localTransactions.length} transactions...');
 
-        debugPrint(
-          '🔄 Syncing ${localIncomes.length} incomes, ${localExpenses.length} expenses...',
-        );
+        if (localTransactions.isNotEmpty) {
+          // Convert to old format for current backend compatibility
+          final oldFormatData = localTransactions.map((t) => t.toOldFormat()).toList();
+          
+          // Separate incomes and expenses
+          final incomesData = oldFormatData
+              .where((map) => map['kind'] == 'income')
+              .toList();
+          
+          final expensesData = oldFormatData
+              .where((map) => map['kind'] == 'expense')
+              .toList();
+          
+          debugPrint('   - Incomes: ${incomesData.length}');
+          debugPrint('   - Expenses: ${expensesData.length}');
 
-        if (localIncomes.isNotEmpty || localExpenses.isNotEmpty) {
-          final fixedIncomes = localIncomes.map((income) {
-            final fixed = Map<String, dynamic>.from(income);
-
-            if (fixed['transaction_date'] != null) {
-              final dateStr = fixed['transaction_date'].toString();
-              if (dateStr.contains('/')) {
-                final parts = dateStr.split('/');
-                if (parts.length == 3) {
-                  fixed['transaction_date'] =
-                      '${parts[2]}-${parts[1]}-${parts[0]}';
-                }
-              }
-            }
-
-            fixed['income_type'] ??= 'Other';
-            return fixed;
-          }).toList();
-
-          final fixedExpenses = localExpenses.map((expense) {
-            final fixed = Map<String, dynamic>.from(expense);
-
-            if (fixed['transaction_date'] != null) {
-              final dateStr = fixed['transaction_date'].toString();
-              if (dateStr.contains('/')) {
-                final parts = dateStr.split('/');
-                if (parts.length == 3) {
-                  fixed['transaction_date'] =
-                      '${parts[2]}-${parts[1]}-${parts[0]}';
-                }
-              }
-            }
-
-            fixed['expense_type'] ??= 'Other';
-            return fixed;
-          }).toList();
-
-          final response = await apiService.syncTransactions(
-            fixedIncomes,
-            fixedExpenses,
-          );
-
+          // Use the combined sync endpoint
+          final response = await apiService.syncTransactions(localTransactions);
+          
           if (!response.success) {
             hasErrors = true;
             errorMessage += 'Transactions: ${response.message}\n';
+            debugPrint('❌ Transactions sync failed: ${response.message}');
+          } else {
+            debugPrint('✅ Transactions sync successful!');
           }
+        } else {
+          debugPrint('ℹ️ No transactions to sync');
         }
       } catch (e) {
         hasErrors = true;
@@ -235,7 +218,6 @@ class SyncService {
       );
     } catch (e) {
       debugPrint('💥 Main sync error: $e');
-
       return SyncResult(
         success: false,
         hasErrors: true,

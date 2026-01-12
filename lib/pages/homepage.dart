@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mygoatmanager/pages_of_drawers/contactOurTeam_page.dart';
 import 'package:mygoatmanager/pages_of_drawers/privacyPolicy_page.dart';
 import 'package:mygoatmanager/pages_of_drawers/settings_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import '../l10n/app_localizations.dart';
 import 'package:mygoatmanager/pages/auth_page.dart';
@@ -37,6 +38,23 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
   late AnimationController _animationController;
   late Animation<double> _animation;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+   // URLs for social media and contact
+  final String youtube = 'https://youtube.com/@proddaturithub?si=zsGdkyW85BqJNrGR';
+  final String website = 'https://www.myqrmart.com';
+
+
+  // Function to launch URLs
+  Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch $url')),
+      );
+    }
+  }
   
   // Current selected language
   String _selectedLanguage = 'English';
@@ -666,7 +684,8 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
                 icon: Icons.settings,
                 title: appLocalizations?.settings ?? 'Settings',
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+                  Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => SettingsPage()));
                 },
               ),
               
@@ -681,19 +700,12 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               _buildDrawerItem(
                 icon: Icons.apps,
                 title: appLocalizations?.seeAllOurApps ?? 'See All Our Apps',
-                onTap: () {
-                  Navigator.pop(context);
-                  _showComingSoonSnackbar();
-                },
+                onTap:  () => _launchUrl(website),
               ),
               _buildDrawerItem(
                 icon: Icons.school,
                 title: appLocalizations?.farmingKnowledge ?? 'Farming Knowledge',
-                onTap: () {
-                  Navigator.pop(context);
-                  _showComingSoonSnackbar();
-                },
-              ),
+                onTap: () => _launchUrl(youtube) , ),
             ],
           ),
 
@@ -703,16 +715,14 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               _buildDrawerItem(
                 icon: Icons.help_outline,
                 title: appLocalizations?.howToUseThisApp ?? 'How to Use This App',
-                onTap: () {
-                  Navigator.pop(context);
-                  _showComingSoonSnackbar();
-                },
+                onTap: () => _launchUrl(website),
               ),
               _buildDrawerItem(
                 icon: Icons.contact_support,
                 title: appLocalizations?.contactOurTeam ?? 'Contact Our Team',
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ContactourteamPage()));
+                  Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => ContactourteamPage()));
                   
                 },
               ),
@@ -725,12 +735,12 @@ class _HomepageState extends State<Homepage> with SingleTickerProviderStateMixin
               _buildDrawerItem(
                 icon: Icons.share,
                 title: appLocalizations?.shareAppWithFriends ?? 'Share App with Friends',
-                onTap: _shareApp,
+                onTap:  () => _launchUrl(website),
               ),
               _buildDrawerItem(
                 icon: Icons.star,
                 title: appLocalizations?.rateAppInPlayStore ?? 'Rate App in Play Store',
-                onTap: _rateApp,
+                onTap:  () => _launchUrl(website), 
               ),
             ],
           ),
@@ -1130,43 +1140,7 @@ Future<void> _downloadDataFromServer() async {
     }
   }
 }
-  void _shareApp() {
-    Navigator.pop(context);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.share, color: Colors.white),
-              SizedBox(width: 8),
-              Text('Share app functionality coming soon!'),
-            ],
-          ),
-          backgroundColor: Color(0xFF4CAF50),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
-  }
 
-  void _rateApp() {
-    Navigator.pop(context);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.star, color: Colors.white),
-              SizedBox(width: 8),
-              Text('Rate app functionality coming soon!'),
-            ],
-          ),
-          backgroundColor: Color(0xFF4CAF50),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
-  }
 
   void _showComingSoonSnackbar() {
     if (mounted) {

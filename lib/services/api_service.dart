@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/goat.dart';  // Your Goat model
-import '../models/event.dart'; // Your Event model
+import '../models/event.dart'; 
+import '../models/milk_record.dart';// Your Event model
 import 'dart:io';
-import 'dart:math';
+import '../models/transaction.dart';
+// Remove unused import: import 'dart:math';
 
 class ApiService {
   // === CONFIGURATION - UPDATE THESE FOR YOUR GOAT MANAGER ===
@@ -356,36 +358,137 @@ class ApiService {
   
 
   // === MILK RECORDS ===
-  Future<ApiResponse> getMilkRecords() async {
-    try {
-      final headers = await _getHeaders();
-      final response = await http.get(
-        Uri.parse('$baseUrl/milk-records'),
-        headers: headers,
-      );
-      
-      return ApiResponse.fromHttpResponse(response);
-    } catch (e) {
-      return ApiResponse.error('Get milk records error: $e');
+
+// GET milk records with proper conversion
+Future<ApiResponse> getMilkRecords() async {
+  try {
+    final headers = await _getHeaders();
+    final response = await http.get(
+      Uri.parse('$baseUrl/milk-records'),
+      headers: headers,
+    );
+    
+    final result = ApiResponse.fromHttpResponse(response);
+    
+    // Convert API data to MilkRecord models if successful
+    if (result.success && result.data?['milk_records'] is List) {
+      try {
+        final milkRecordsList = (result.data!['milk_records'] as List)
+            .map((json) {
+              // Create MilkRecord from API JSON
+              return MilkRecord(
+                milkingDate: DateTime.parse(json['milking_date'] ?? json['date']),
+                morningQuantity: (json['morning_quantity'] ?? json['morningQuantity'] ?? 0).toDouble(),
+                eveningQuantity: (json['evening_quantity'] ?? json['eveningQuantity'] ?? 0).toDouble(),
+                total: (json['total'] ?? 0).toDouble(),
+                used: (json['used'] ?? 0).toDouble(),
+                notes: json['notes'],
+                milkType: json['milk_type'] ?? json['milkType'] ?? 'Individual Goat Milk',
+              );
+            })
+            .toList();
+        result.data = {'milk_records': milkRecordsList};
+      } catch (e) {
+        debugPrint('Error converting milk records: $e');
+        return ApiResponse.error('Error processing milk records data: $e');
+      }
     }
+    
+    return result;
+  } catch (e) {
+    debugPrint('Get milk records error: $e');
+    return ApiResponse.error('Get milk records error: $e');
   }
-  
-  Future<ApiResponse> createMilkRecord(Map<String, dynamic> milkData) async {
-    try {
-      final headers = await _getHeaders();
-      final response = await http.post(
-        Uri.parse('$baseUrl/milk-records'),
-        headers: headers,
-        body: json.encode(milkData),
+}
+
+// CREATE milk record with proper mapping
+Future<ApiResponse> createMilkRecord(MilkRecord milkRecord) async {
+  try {
+    final headers = await _getHeaders();
+    
+    // Map your MilkRecord model to API expected format
+    final milkData = {
+      'milking_date': milkRecord.milkingDate.toIso8601String(),
+      'morning_quantity': milkRecord.morningQuantity,
+      'evening_quantity': milkRecord.eveningQuantity,
+      'total': milkRecord.total,
+      'used': milkRecord.used,
+      'notes': milkRecord.notes,
+      'milk_type': milkRecord.milkType,
+      'is_whole_farm': milkRecord.milkType == 'Whole Farm Milk', // Convert to boolean
+    };
+    
+    final response = await http.post(
+      Uri.parse('$baseUrl/milk-records'),
+      headers: headers,
+      body: json.encode(milkData),
+    );
+    
+    final result = ApiResponse.fromHttpResponse(response);
+    
+    if (result.success && result.data?['milk_record'] != null) {
+      // Convert back to MilkRecord if needed
+      final createdRecord = MilkRecord(
+        milkingDate: DateTime.parse(result.data!['milk_record']['milking_date']),
+        morningQuantity: (result.data!['milk_record']['morning_quantity'] ?? 0).toDouble(),
+        eveningQuantity: (result.data!['milk_record']['evening_quantity'] ?? 0).toDouble(),
+        total: (result.data!['milk_record']['total'] ?? 0).toDouble(),
+        used: (result.data!['milk_record']['used'] ?? 0).toDouble(),
+        notes: result.data!['milk_record']['notes'],
+        milkType: result.data!['milk_record']['milk_type'] ?? 'Individual Goat Milk',
       );
-      
-      return ApiResponse.fromHttpResponse(response);
-    } catch (e) {
-      return ApiResponse.error('Create milk record error: $e');
+      result.data = {'milk_record': createdRecord};
     }
+    
+    return result;
+  } catch (e) {
+    return ApiResponse.error('Create milk record error: $e');
   }
+}
+
+// UPDATE milk record
+Future<ApiResponse> updateMilkRecord(String id, MilkRecord milkRecord) async {
+  try {
+    final headers = await _getHeaders();
+    
+    final milkData = {
+      'milking_date': milkRecord.milkingDate.toIso8601String(),
+      'morning_quantity': milkRecord.morningQuantity,
+      'evening_quantity': milkRecord.eveningQuantity,
+      'total_quantity': milkRecord.total,
+      'used_quantity': milkRecord.used,
+      'notes': milkRecord.notes,
+      'milk_type': milkRecord.milkType,
+    };
+    
+    final response = await http.put(
+      Uri.parse('$baseUrl/milk-records/$id'),
+      headers: headers,
+      body: json.encode(milkData),
+    );
+    
+    return ApiResponse.fromHttpResponse(response);
+  } catch (e) {
+    return ApiResponse.error('Update milk record error: $e');
+  }
+}
+
+// DELETE milk record
+Future<ApiResponse> deleteMilkRecord(String id) async {
+  try {
+    final headers = await _getHeaders();
+    final response = await http.delete(
+      Uri.parse('$baseUrl/milk-records/$id'),
+      headers: headers,
+    );
+    
+    return ApiResponse.fromHttpResponse(response);
+  } catch (e) {
+    return ApiResponse.error('Delete milk record error: $e');
+  }
+}
   
-  
+
   // === PREGNANCIES ===
   Future<ApiResponse> getPregnancies() async {
     try {
@@ -423,45 +526,246 @@ class ApiService {
     try {
       final headers = await _getHeaders();
       final response = await http.get(
-        Uri.parse('$baseUrl/transactions'),
+        Uri.parse('$baseUrl/transactions'), // This endpoint needs to be created
         headers: headers,
       );
       
-      return ApiResponse.fromHttpResponse(response);
+      final result = ApiResponse.fromHttpResponse(response);
+      
+      if (result.success && result.data?['transactions'] is List) {
+        try {
+          final transactionsList = (result.data!['transactions'] as List)
+              .map((json) => Transaction.fromJson(json))
+              .toList();
+          result.data = {'transactions': transactionsList};
+        } catch (e) {
+          debugPrint('Error converting transactions: $e');
+          return ApiResponse.error('Error processing transactions: $e');
+        }
+      }
+      
+      return result;
     } catch (e) {
+      debugPrint('Get transactions error: $e');
       return ApiResponse.error('Get transactions error: $e');
     }
   }
-  
 
-  Future<ApiResponse> createIncome(Map<String, dynamic> incomeData) async {
+  // GET incomes only
+  Future<ApiResponse> getIncomes() async {
     try {
       final headers = await _getHeaders();
-      final response = await http.post(
+      final response = await http.get(
         Uri.parse('$baseUrl/incomes'),
         headers: headers,
-        body: json.encode(incomeData),
       );
       
-      return ApiResponse.fromHttpResponse(response);
+      final result = ApiResponse.fromHttpResponse(response);
+      
+      if (result.success && result.data?['incomes'] is List) {
+        try {
+          final incomesList = (result.data!['incomes'] as List)
+              .map((json) => Transaction.fromJson(json))
+              .toList();
+          result.data = {'incomes': incomesList};
+        } catch (e) {
+          debugPrint('Error converting incomes: $e');
+          return ApiResponse.error('Error processing incomes: $e');
+        }
+      }
+      
+      return result;
     } catch (e) {
-      return ApiResponse.error('Create income error: $e');
+      debugPrint('Get incomes error: $e');
+      return ApiResponse.error('Get incomes error: $e');
     }
   }
-  
 
-  Future<ApiResponse> createExpense(Map<String, dynamic> expenseData) async {
+  // GET expenses only
+  Future<ApiResponse> getExpenses() async {
     try {
       final headers = await _getHeaders();
-      final response = await http.post(
+      final response = await http.get(
         Uri.parse('$baseUrl/expenses'),
         headers: headers,
-        body: json.encode(expenseData),
+      );
+      
+      final result = ApiResponse.fromHttpResponse(response);
+      
+      if (result.success && result.data?['expenses'] is List) {
+        try {
+          final expensesList = (result.data!['expenses'] as List)
+              .map((json) => Transaction.fromJson(json))
+              .toList();
+          result.data = {'expenses': expensesList};
+        } catch (e) {
+          debugPrint('Error converting expenses: $e');
+          return ApiResponse.error('Error processing expenses: $e');
+        }
+      }
+      
+      return result;
+    } catch (e) {
+      debugPrint('Get expenses error: $e');
+      return ApiResponse.error('Get expenses error: $e');
+    }
+  }
+
+  // CREATE transaction
+  Future<ApiResponse> createTransaction(Transaction transaction) async {
+    try {
+      final headers = await _getHeaders();
+      
+      final transactionData = transaction.toJson();
+      
+      final url = transaction.type == TransactionType.income 
+          ? '$baseUrl/incomes'
+          : '$baseUrl/expenses';
+      
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: json.encode(transactionData),
+      );
+      
+      final result = ApiResponse.fromHttpResponse(response);
+      
+      if (result.success && result.data != null) {
+        final key = transaction.type == TransactionType.income ? 'income' : 'expense';
+        if (result.data![key] != null) {
+          final createdTransaction = Transaction.fromJson(result.data![key]);
+          result.data = {key: createdTransaction};
+        }
+      }
+      
+      return result;
+    } catch (e) {
+      return ApiResponse.error('Create transaction error: $e');
+    }
+  }
+
+  // UPDATE transaction
+  Future<ApiResponse> updateTransaction(Transaction transaction) async {
+    try {
+      if (transaction.id == null) {
+        return ApiResponse.error('Transaction ID is required for update');
+      }
+      
+      final headers = await _getHeaders();
+      
+      final transactionData = transaction.toJson();
+      
+      final url = transaction.type == TransactionType.income 
+          ? '$baseUrl/incomes/${transaction.id}'
+          : '$baseUrl/expenses/${transaction.id}';
+      
+      final response = await http.put(
+        Uri.parse(url),
+        headers: headers,
+        body: json.encode(transactionData),
       );
       
       return ApiResponse.fromHttpResponse(response);
     } catch (e) {
-      return ApiResponse.error('Create expense error: $e');
+      return ApiResponse.error('Update transaction error: $e');
+    }
+  }
+
+  // DELETE transaction
+  Future<ApiResponse> deleteTransaction(Transaction transaction) async {
+    try {
+      if (transaction.id == null) {
+        return ApiResponse.error('Transaction ID is required for delete');
+      }
+      
+      final headers = await _getHeaders();
+      
+      final url = transaction.type == TransactionType.income 
+          ? '$baseUrl/incomes/${transaction.id}'
+          : '$baseUrl/expenses/${transaction.id}';
+      
+      final response = await http.delete(
+        Uri.parse(url),
+        headers: headers,
+      );
+      
+      return ApiResponse.fromHttpResponse(response);
+    } catch (e) {
+      return ApiResponse.error('Delete transaction error: $e');
+    }
+  }
+
+  // SYNC transactions
+  Future<ApiResponse> syncTransactions(List<Transaction> transactions) async {
+    try {
+      debugPrint('🔄 [TRANSACTIONS SYNC] Starting sync...');
+      
+      // Separate incomes and expenses
+      final incomes = transactions
+          .where((t) => t.type == TransactionType.income)
+          .map((t) => t.toJson())
+          .toList();
+      
+      final expenses = transactions
+          .where((t) => t.type == TransactionType.expense)
+          .map((t) => t.toJson())
+          .toList();
+      
+      debugPrint('📱 Number of incomes to sync: ${incomes.length}');
+      debugPrint('📱 Number of expenses to sync: ${expenses.length}');
+      
+      // Check authentication
+      final headers = await _getHeaders();
+      
+      if (!headers.containsKey('Authorization')) {
+        debugPrint('❌ NO AUTH TOKEN FOUND!');
+        return ApiResponse.error('Not authenticated. Please login again.');
+      }
+      
+      // Prepare request
+      final url = '$baseUrl/sync/transactions';
+      debugPrint('🌐 Calling URL: $url');
+      
+      final body = json.encode({
+        'incomes': incomes,
+        'expenses': expenses,
+      });
+      
+      // Send request
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: body,
+      );
+      
+      debugPrint('📥 Response Status Code: ${response.statusCode}');
+      debugPrint('📥 Response Body: ${response.body}');
+      
+      final result = ApiResponse.fromHttpResponse(response);
+      
+      if (result.success) {
+        debugPrint('✅ TRANSACTIONS SYNC SUCCESSFUL!');
+      } else {
+        debugPrint('❌ TRANSACTIONS SYNC FAILED: ${result.message}');
+        if (response.statusCode == 401) {
+          debugPrint('⚠️ Token expired - clearing token');
+          await clearToken();
+        }
+      }
+      
+      return result;
+      
+    } catch (e) {
+      debugPrint('💥 CRITICAL ERROR in syncTransactions: $e');
+      
+      if (e is SocketException) {
+        return ApiResponse.error('Cannot connect to server. Check internet.');
+      }
+      if (e is FormatException) {
+        return ApiResponse.error('Server returned invalid data.');
+      }
+      
+      return ApiResponse.error('Transactions sync failed: $e');
     }
   }
   
@@ -625,8 +929,7 @@ Future<ApiResponse> syncEvents(List<Map<String, dynamic>> eventsData) async {
   }
 }
   
-// In ApiService.dart, update the syncMilkRecords method:
-
+// FIXED: syncMilkRecords method
 Future<ApiResponse> syncMilkRecords(List<Map<String, dynamic>> milkRecordsData) async {
   try {
     debugPrint('🔄 [MILK RECORDS SYNC] STARTING ========================');
@@ -636,13 +939,13 @@ Future<ApiResponse> syncMilkRecords(List<Map<String, dynamic>> milkRecordsData) 
     for (int i = 0; i < milkRecordsData.length; i++) {
       final record = milkRecordsData[i];
       debugPrint('📋 Milk Record ${i + 1}:');
-      debugPrint('   - Date: ${record['milking_date'] ?? record['date']}');
-      debugPrint('   - Tag No: ${record['tag_no'] ?? record['tagNo']}');
+      debugPrint('   - Date: ${record['milking_date'] ?? record['date'] ?? record['milkingDate']}');
       debugPrint('   - Morning Quantity: ${record['morning_quantity'] ?? record['morningQuantity']}');
       debugPrint('   - Evening Quantity: ${record['evening_quantity'] ?? record['eveningQuantity']}');
       debugPrint('   - Total: ${record['total']}');
+      debugPrint('   - Used: ${record['used']}');
       debugPrint('   - Notes: ${record['notes']}');
-      debugPrint('   - Is Whole Farm: ${record['is_whole_farm'] ?? record['isWholeFarm']}');
+      debugPrint('   - Milk Type: ${record['milk_type'] ?? record['milkType']}');
     }
     
     // Check authentication
@@ -659,16 +962,16 @@ Future<ApiResponse> syncMilkRecords(List<Map<String, dynamic>> milkRecordsData) 
     final url = '$baseUrl/sync/milk-records';
     debugPrint('🌐 Calling URL: $url');
     
-    // Convert data to proper format for server
+    // Ensure correct field names:
     final List<Map<String, dynamic>> formattedRecords = milkRecordsData.map((record) {
       return {
-        'milking_date': record['milking_date'] ?? record['date'],
-        'tag_no': record['tag_no'] ?? record['tagNo'] ?? 'FARM',
+        'milking_date': record['milking_date'] ?? record['date'] ?? record['milkingDate'],
         'morning_quantity': record['morning_quantity'] ?? record['morningQuantity'] ?? 0,
         'evening_quantity': record['evening_quantity'] ?? record['eveningQuantity'] ?? 0,
-        'total': record['total'] ?? 0,
+        'total_quantity': record['total'] ?? record['total_quantity'] ?? 0, // Accept both
+        'used_quantity': record['used'] ?? record['used_quantity'] ?? 0,   // Accept both
         'notes': record['notes'],
-        'is_whole_farm': record['is_whole_farm'] ?? record['isWholeFarm'] ?? false,
+        'milk_type': record['milk_type'] ?? record['milkType'] ?? 'Individual Goat Milk',
       };
     }).toList();
     
@@ -723,25 +1026,6 @@ Future<ApiResponse> syncMilkRecords(List<Map<String, dynamic>> milkRecordsData) 
     return ApiResponse.error('Milk records sync failed: $e');
   }
 }
-  
-
-  Future<ApiResponse> syncTransactions(List<Map<String, dynamic>> incomesData, List<Map<String, dynamic>> expensesData) async {
-    try {
-      final headers = await _getHeaders();
-      final response = await http.post(
-        Uri.parse('$baseUrl/sync/transactions'),
-        headers: headers,
-        body: json.encode({
-          'incomes': incomesData,
-          'expenses': expensesData
-        }),
-      );
-      
-      return ApiResponse.fromHttpResponse(response);
-    } catch (e) {
-      return ApiResponse.error('Sync transactions error: $e');
-    }
-  }
   
 
   Future<ApiResponse> syncFarmSetup(Map<String, dynamic> farmSetupData) async {

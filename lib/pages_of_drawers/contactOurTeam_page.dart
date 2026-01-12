@@ -12,7 +12,7 @@ class ContactourteamPage extends StatefulWidget {
 class _ContactourteamPageState extends State<ContactourteamPage> {
   // URLs for social media and contact
   final String phoneNumber = '9440871455';
-  final String email = 'syedAlthaf510@gmail.com';
+  final String email = 'support@myqrmart.com';
   final String website = 'https://www.myqrmart.com';
   final String location = 'Proddatur Rameswaram, ysr district, Andhra Pradesh, India';
   
@@ -20,7 +20,7 @@ class _ContactourteamPageState extends State<ContactourteamPage> {
     'whatsapp': 'https://wa.me/919440871455',
     'facebook': 'https://facebook.com/myqrmart',
     'instagram': 'https://instagram.com/myqrmart',
-    'youtube': 'https://www.youtube.com/@ProddaturITHub/shorts',
+    'youtube': 'https://youtube.com/@proddaturithub?si=zsGdkyW85BqJNrGR',
   };
 
   // Function to launch URLs

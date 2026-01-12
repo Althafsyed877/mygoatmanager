@@ -103,13 +103,13 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                   onChanged: (v) => setStateDialog(() => tmp = v),
                 ),
                 RadioListTile<String?>(
-                  title: Text('Whole Farm Milk'),
+                  title: const Text('Whole Farm Milk'),
                   value: 'Whole Farm Milk',
                   groupValue: tmp,
                   onChanged: (v) => setStateDialog(() => tmp = v),
                 ),
                 RadioListTile<String?>(
-                  title: Text('Individual Goat Milk'),
+                  title: const Text('Individual Goat Milk'),
                   value: 'Individual Goat Milk',
                   groupValue: tmp,
                   onChanged: (v) => setStateDialog(() => tmp = v),
@@ -451,7 +451,6 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
               itemCount: _filteredRecords().length,
               itemBuilder: (context, index) {
                 final record = _filteredRecords()[index];
-                final available = record.available;
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   child: Padding(
@@ -488,11 +487,11 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                                           children: [
                                             Text('${record.morningQuantity.toStringAsFixed(2)}', style: const TextStyle(color: Colors.blue, fontSize: 16)),
                                             const SizedBox(width: 4),
-                                            Text('Morning'),
+                                            const Text('Morning'),
                                             const SizedBox(width: 12),
                                             Text('${record.eveningQuantity.toStringAsFixed(2)}', style: const TextStyle(color: Colors.purple, fontSize: 16)),
                                             const SizedBox(width: 4),
-                                            Text('Evening'),
+                                            const Text('Evening'),
                                           ],
                                         ),
                                         const SizedBox(height: 4),
@@ -500,11 +499,11 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                                           children: [
                                             Text('${record.total.toStringAsFixed(2)}', style: const TextStyle(color: Colors.green, fontSize: 18)),
                                             const SizedBox(width: 4),
-                                            Text('Produced'),
+                                            const Text('Produced'),
                                             const SizedBox(width: 16),
                                             Text('${record.used.toStringAsFixed(2)}', style: const TextStyle(color: Colors.orange, fontSize: 18)),
                                             const SizedBox(width: 4),
-                                            Text('Used'),
+                                            const Text('Used'),
                                           ],
                                         ),
                                       ],
@@ -517,7 +516,7 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                                 children: [
                                   Text('${record.available.toStringAsFixed(2)}', style: const TextStyle(color: Colors.blue, fontSize: 18)),
                                   const SizedBox(width: 4),
-                                  Text('Remaining'),
+                                  const Text('Remaining'),
                                 ],
                               ),
                               const SizedBox(height: 8),
@@ -577,7 +576,7 @@ class _MilkRecordsPageState extends State<MilkRecordsPage> {
                                 await _saveRecords();
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(loc.recordDeleted))
+                                    SnackBar(content: Text(loc.recordDeleted))  // FIXED LINE 518
                                   );
                                 }
                               }

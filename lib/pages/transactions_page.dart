@@ -6,6 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import '../l10n/app_localizations.dart';
+import '../models/transaction.dart';
 
 class TransactionsPage extends StatefulWidget {
   const TransactionsPage({super.key});
@@ -77,6 +78,15 @@ class _TransactionsPageState extends State<TransactionsPage> {
   Future<void> _saveExpenses() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('saved_expenses', jsonEncode(_expenses));
+  }
+  // Helper to convert old maps to Transaction objects
+  Transaction _mapToTransaction(Map<String, dynamic> map) {
+    return Transaction.fromUIMap(map);
+  }
+  
+  // Helper to convert Transaction to old map format for saving
+  Map<String, dynamic> _transactionToOldMap(Transaction transaction) {
+    return transaction.toOldFormat();
   }
 
   @override

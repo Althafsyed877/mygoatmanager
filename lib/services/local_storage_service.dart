@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/goat.dart';  // ADD THIS IMPORT
 import '../models/event.dart';
 import '../models/milk_record.dart';
+import '../models/transaction.dart';
 
 class LocalStorageService {
   static final LocalStorageService _instance = LocalStorageService._internal();
@@ -120,46 +121,148 @@ Future<void> addOrUpdateMilkRecord(MilkRecord record) async {
 }
 
   // ========== TRANSACTIONS ==========
-  Future<List<Map<String, dynamic>>> getIncomes() async {
+ Future<List<Transaction>> getTransactions() async {
     final prefs = await _prefs;
-    final incomesData = prefs.getString('saved_incomes');
+    final transactionsData = prefs.getString('transactions');
     
-    if (incomesData == null || incomesData.isEmpty) {
+    if (transactionsData == null || transactionsData.isEmpty) {
       return [];
     }
     
     try {
-      final List<dynamic> jsonList = jsonDecode(incomesData);
-      return jsonList.map((json) => Map<String, dynamic>.from(json)).toList();
+      final List<dynamic> jsonList = jsonDecode(transactionsData);
+      return jsonList.map((json) => Transaction.fromJson(json)).toList();
     } catch (e) {
-      print('Error parsing incomes from local storage: $e');
+      print('Error parsing transactions from local storage: $e');
       return [];
     }
   }
 
+// Get incomes only
+  Future<List<Transaction>> getIncomes() async {
+    final transactions = await getTransactions();
+    return transactions
+        .where((t) => t.type == TransactionType.income)
+        .toList();
+  }
+
+  // Get expenses only
+  Future<List<Transaction>> getExpenses() async {
+    final transactions = await getTransactions();
+    return transactions
+        .where((t) => t.type == TransactionType.expense)
+        .toList();
+  }
+
+  // Save all transactions
+  Future<void> saveTransactions(List<Transaction> transactions) async {
+    final prefs = await _prefs;
+    final transactionsJson = transactions.map((t) => t.toJson()).toList();
+    await prefs.setString('transactions', jsonEncode(transactionsJson));
+  }
+
+  Future<void> saveExpenses(List<Map<String, dynamic>> expenses) async {
+    final prefs = await _prefs;
+    await prefs.setString('saved_expenses', jsonEncode(expenses));
+  }
   Future<void> saveIncomes(List<Map<String, dynamic>> incomes) async {
     final prefs = await _prefs;
     await prefs.setString('saved_incomes', jsonEncode(incomes));
   }
-
-  Future<List<Map<String, dynamic>>> getExpenses() async {
-    final prefs = await _prefs;
-    final expensesData = prefs.getString('saved_expenses');
+  // Add or update a transaction
+  Future<void> addOrUpdateTransaction(Transaction transaction) async {
+    final transactions = await getTransactions();
     
-    if (expensesData == null || expensesData.isEmpty) {
-      return [];
+    // If transaction has ID, update existing, otherwise add new
+    if (transaction.id != null) {
+      final index = transactions.indexWhere((t) => t.id == transaction.id);
+      if (index >= 0) {
+        transactions[index] = transaction;
+      } else {
+        transactions.add(transaction);
+      }
+    } else {
+      // For new transactions, check by date, type, amount
+      final index = transactions.indexWhere((t) =>
+          t.transactionDate == transaction.transactionDate &&
+          t.type == transaction.type &&
+          t.amount == transaction.amount &&
+          (t.category == transaction.category || t.subCategory == transaction.subCategory));
+      
+      if (index >= 0) {
+        transactions[index] = transaction;
+      } else {
+        transactions.add(transaction);
+      }
     }
     
-    try {
-      final List<dynamic> jsonList = jsonDecode(expensesData);
-      return jsonList.map((json) => Map<String, dynamic>.from(json)).toList();
-    } catch (e) {
-      print('Error parsing expenses from local storage: $e');
-      return [];
-    }
+    await saveTransactions(transactions);
   }
 
-  Future<void> saveExpenses(List<Map<String, dynamic>> expenses) async {
+  // Delete transaction
+  Future<void> deleteTransaction(int id) async {
+    final transactions = await getTransactions();
+    transactions.removeWhere((t) => t.id == id);
+    await saveTransactions(transactions);
+  }
+ // Backward compatibility: Convert old incomes/expenses to new Transaction format
+  Future<void> migrateOldTransactions() async {
+    final prefs = await _prefs;
+    
+    // Get old data
+    final oldIncomes = prefs.getString('saved_incomes');
+    final oldExpenses = prefs.getString('saved_expenses');
+    
+    if ((oldIncomes == null || oldIncomes.isEmpty) && 
+        (oldExpenses == null || oldExpenses.isEmpty)) {
+      return; // No old data to migrate
+    }
+    
+    final List<Transaction> allTransactions = [];
+    
+    // Migrate old incomes
+    if (oldIncomes != null && oldIncomes.isNotEmpty) {
+      try {
+        final List<dynamic> jsonList = jsonDecode(oldIncomes);
+        for (final json in jsonList) {
+          final map = Map<String, dynamic>.from(json);
+          final transaction = Transaction.fromUIMap(map);
+          allTransactions.add(transaction);
+        }
+      } catch (e) {
+        print('Error migrating old incomes: $e');
+      }
+    }
+    
+    // Migrate old expenses
+    if (oldExpenses != null && oldExpenses.isNotEmpty) {
+      try {
+        final List<dynamic> jsonList = jsonDecode(oldExpenses);
+        for (final json in jsonList) {
+          final map = Map<String, dynamic>.from(json);
+          final transaction = Transaction.fromUIMap(map);
+          allTransactions.add(transaction);
+        }
+      } catch (e) {
+        print('Error migrating old expenses: $e');
+      }
+    }
+
+    // Save as new format
+    if (allTransactions.isNotEmpty) {
+      await saveTransactions(allTransactions);
+      
+      // Optionally remove old data after migration
+      // await prefs.remove('saved_incomes');
+      // await prefs.remove('saved_expenses');
+    }
+  }
+    // Keep old methods for backward compatibility during transition
+  Future<void> saveIncomesOld(List<Map<String, dynamic>> incomes) async {
+    final prefs = await _prefs;
+    await prefs.setString('saved_incomes', jsonEncode(incomes));
+  }
+  Future<void> saveExpensesOld(List<Map<String, dynamic>> expenses) async {
     final prefs = await _prefs;
     await prefs.setString('saved_expenses', jsonEncode(expenses));
   }
