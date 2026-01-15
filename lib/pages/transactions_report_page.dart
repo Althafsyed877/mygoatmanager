@@ -37,43 +37,27 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
   Future<void> _loadTransactions() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final incomesStr = prefs.getString('saved_incomes');
-      final expensesStr = prefs.getString('saved_expenses');
+      final transactionsJson = prefs.getString('transactions') ?? '[]';
       double incomeSum = 0.0;
       double expenseSum = 0.0;
       final List<Map<String, dynamic>> incomes = [];
       final List<Map<String, dynamic>> expenses = [];
-      
-      if (incomesStr != null && incomesStr.isNotEmpty) {
-        try {
-          final List<dynamic> list = jsonDecode(incomesStr);
-          for (var item in list) {
-            if (item is Map<String, dynamic>) {
-              final amt = double.tryParse((item['amount'] ?? '0').toString()) ?? 0.0;
-              incomeSum += amt;
-              incomes.add(Map<String, dynamic>.from(item));
-            }
+
+      final List<dynamic> jsonList = jsonDecode(transactionsJson);
+      for (var item in jsonList) {
+        if (item is Map<String, dynamic>) {
+          final type = item['type']?.toString().toLowerCase() ?? '';
+          final amt = double.tryParse((item['amount'] ?? '0').toString()) ?? 0.0;
+          if (type == 'income') {
+            incomeSum += amt;
+            incomes.add(Map<String, dynamic>.from(item));
+          } else if (type == 'expense') {
+            expenseSum += amt;
+            expenses.add(Map<String, dynamic>.from(item));
           }
-        } catch (e) {
-          debugPrint('Error parsing incomes: $e');
         }
       }
-      
-      if (expensesStr != null && expensesStr.isNotEmpty) {
-        try {
-          final List<dynamic> list = jsonDecode(expensesStr);
-          for (var item in list) {
-            if (item is Map<String, dynamic>) {
-              final amt = double.tryParse((item['amount'] ?? '0').toString()) ?? 0.0;
-              expenseSum += amt;
-              expenses.add(Map<String, dynamic>.from(item));
-            }
-          }
-        } catch (e) {
-          debugPrint('Error parsing expenses: $e');
-        }
-      }
-      
+
       if (mounted) {
         setState(() {
           totalIncome = incomeSum;
@@ -676,10 +660,10 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
 
   List<FlSpot> _prepareIncomeChartData(List<Map<String, dynamic>> incomes) {
     final Map<String, double> dailyIncome = {};
-    
     try {
       for (var income in incomes) {
-        final dateStr = income['date']?.toString() ?? '';
+        // Support both 'transaction_date' and 'date' fields
+        final dateStr = income['transaction_date']?.toString() ?? income['date']?.toString() ?? '';
         if (dateStr.isNotEmpty && dateStr != 'null') {
           try {
             final date = DateTime.parse(dateStr);
@@ -687,36 +671,32 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
             final amount = double.tryParse(income['amount']?.toString() ?? '0') ?? 0.0;
             dailyIncome[dateKey] = (dailyIncome[dateKey] ?? 0.0) + amount;
           } catch (e) {
-            debugPrint('Error parsing income date: $e');
+            // Skip invalid dates
+            continue;
           }
         }
       }
-      
       final sortedDates = dailyIncome.keys.toList()..sort();
       final List<FlSpot> spots = [];
-      
       for (int i = 0; i < sortedDates.length; i++) {
         final date = sortedDates[i];
         final amount = dailyIncome[date] ?? 0.0;
-        // Ensure valid values for FlSpot
         final x = i.toDouble();
         final y = amount.isFinite ? amount : 0.0;
         spots.add(FlSpot(x, y));
       }
-      
       return spots;
     } catch (e) {
-      debugPrint('Error in _prepareIncomeChartData: $e');
       return [];
     }
   }
 
   List<FlSpot> _prepareExpenseChartData(List<Map<String, dynamic>> expenses) {
     final Map<String, double> dailyExpense = {};
-    
     try {
       for (var expense in expenses) {
-        final dateStr = expense['date']?.toString() ?? '';
+        // Support both 'transaction_date' and 'date' fields
+        final dateStr = expense['transaction_date']?.toString() ?? expense['date']?.toString() ?? '';
         if (dateStr.isNotEmpty && dateStr != 'null') {
           try {
             final date = DateTime.parse(dateStr);
@@ -724,26 +704,22 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
             final amount = double.tryParse(expense['amount']?.toString() ?? '0') ?? 0.0;
             dailyExpense[dateKey] = (dailyExpense[dateKey] ?? 0.0) + amount;
           } catch (e) {
-            debugPrint('Error parsing expense date: $e');
+            // Skip invalid dates
+            continue;
           }
         }
       }
-      
       final sortedDates = dailyExpense.keys.toList()..sort();
       final List<FlSpot> spots = [];
-      
       for (int i = 0; i < sortedDates.length; i++) {
         final date = sortedDates[i];
         final amount = dailyExpense[date] ?? 0.0;
-        // Ensure valid values for FlSpot
         final x = i.toDouble();
         final y = amount.isFinite ? amount : 0.0;
         spots.add(FlSpot(x, y));
       }
-      
       return spots;
     } catch (e) {
-      debugPrint('Error in _prepareExpenseChartData: $e');
       return [];
     }
   }
@@ -756,23 +732,20 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
     
     try {
       for (var income in incomes) {
-        final dateStr = income['date']?.toString() ?? '';
+        final dateStr = income['transaction_date']?.toString() ?? income['date']?.toString() ?? '';
         if (dateStr.isNotEmpty && dateStr != 'null') {
           allDates.add(dateStr);
         }
       }
-      
       for (var expense in expenses) {
-        final dateStr = expense['date']?.toString() ?? '';
+        final dateStr = expense['transaction_date']?.toString() ?? expense['date']?.toString() ?? '';
         if (dateStr.isNotEmpty && dateStr != 'null') {
           allDates.add(dateStr);
         }
       }
-      
       final sortedDates = allDates.toList()..sort();
       return sortedDates;
     } catch (e) {
-      debugPrint('Error in _getSortedDates: $e');
       return [];
     }
   }
@@ -958,7 +931,7 @@ class _TransactionsReportPageState extends State<TransactionsReportPage> {
                     borderRadius: BorderRadius.circular(12), 
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08), 
+                        color: Colors.black.withValues(alpha: 0.08), 
                         blurRadius: 8, 
                         offset: const Offset(0, 2)
                       )

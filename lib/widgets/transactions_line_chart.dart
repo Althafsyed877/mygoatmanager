@@ -21,6 +21,7 @@ class TransactionsLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      // Debug output for troubleshooting
     final l10n = AppLocalizations.of(context);
     if (l10n == null) {
       return const Center(child: CircularProgressIndicator());

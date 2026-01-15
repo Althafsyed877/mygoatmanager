@@ -31,6 +31,7 @@ class _BreedingReportPageState extends State<BreedingReportPage> {
   }
   
   Future<void> _loadData() async {
+      debugPrint('BreedingReportPage: _loadData called (reload button pressed)');
     setState(() { _isLoading = true; });
     
     final prefs = await SharedPreferences.getInstance();
@@ -261,10 +262,28 @@ class _BreedingReportPageState extends State<BreedingReportPage> {
           style: const TextStyle(color: Colors.white),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: _loadData,
-            tooltip: loc?.refreshData ?? 'Refresh Data',
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (child, animation) => RotationTransition(turns: child.key == const ValueKey('progress') ? animation : const AlwaysStoppedAnimation(1), child: child),
+            child: _isLoading
+                ? Padding(
+                    key: const ValueKey('progress'),
+                    padding: const EdgeInsets.all(12.0),
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.5,
+                      ),
+                    ),
+                  )
+                : IconButton(
+                    key: const ValueKey('refresh'),
+                    icon: const Icon(Icons.refresh, color: Colors.white),
+                    onPressed: _loadData,
+                    tooltip: loc?.refreshData ?? 'Refresh Data',
+                  ),
           ),
         ],
       ),

@@ -100,8 +100,7 @@ class _SettingsPageState extends State<SettingsPage> {
       // Try different video paths
       final videoPaths = [
         'assets/videos/goat.png.mp4',
-        'assets/videos/goat.mp4',
-        'assets/videos/farm.mp4',
+       
       ];
       
       String? workingPath;

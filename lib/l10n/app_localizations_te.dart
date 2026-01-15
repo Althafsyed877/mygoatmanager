@@ -9,7 +9,7 @@ class AppLocalizationsTe extends AppLocalizations {
   AppLocalizationsTe([String locale = 'te']) : super(locale);
 
   @override
-  String get appTitle => 'నా మేకల మేనేజర్';
+  String get appTitle => 'మై గోట్ మేనేజర్';
 
   @override
   String get selectLanguage => 'భాషను ఎంచుకోండి';
@@ -24,7 +24,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get cancel => 'రద్దు చేయండి';
 
   @override
-  String get delete => 'తొలగించండి';
+  String get delete => 'తొలగించు';
 
   @override
   String get languageChangedTo => 'భాష మార్చబడింది';
@@ -391,7 +391,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get breedOptional2 => 'జాతి (ఐచ్ఛికం)';
 
   @override
-  String get selectObtained => 'మేక ఎలా పొందబడిందో ఎంచుకోండి. *';
+  String get selectObtained => 'మేక ఎలా పొందబడింది *';
 
   @override
   String get motherTagLabel => 'తల్లి ట్యాగ్ నం.';
@@ -522,7 +522,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get endDate => 'ముగింపు తేదీ';
 
   @override
-  String get apply => 'వర్తింపజేయండి';
+  String get apply => 'వర్తింపజేయి';
 
   @override
   String get milkType => 'పాలు రకం';
@@ -571,7 +571,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get all => 'అన్నీ';
 
   @override
-  String get to => 'కు';
+  String get to => 'వరకు';
 
   @override
   String get searchEventsHint => 'ఈవెంట్లను వెతకండి...';
@@ -589,7 +589,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get customDateRange => 'కస్టమ్ తేదీ పరిధి';
 
   @override
-  String get from => 'నుండి:';
+  String get from => 'నుండి';
 
   @override
   String get selectDate => 'తేదీ ఎంచుకోండి';
@@ -747,10 +747,10 @@ class AppLocalizationsTe extends AppLocalizations {
   String get more_options => 'మరిన్ని ఎంపికలు';
 
   @override
-  String get search_transactions => 'లావాదేవీలను వెతకండి';
+  String get search_transactions => 'లావాదేవీలు శోధించండి';
 
   @override
-  String get search_by_description => 'వివరణ, మొత్తం ద్వారా వెతకండి...';
+  String get search_by_description => 'వివరణ ద్వారా శోధించండి';
 
   @override
   String get filter_by_date => 'తేదీ ద్వారా ఫిల్టర్ చేయండి';
@@ -770,10 +770,10 @@ class AppLocalizationsTe extends AppLocalizations {
       'ఎంచుకున్న తేదీ పరిధికి ప్రదర్శించడానికి ఖర్చులు లేవు.';
 
   @override
-  String get export_pdf => 'PDF ఎగుమతి చేయండి';
+  String get export_pdf => 'PDF ఎగుమతి చేయి';
 
   @override
-  String get income_type => 'ఆదాయ రకం';
+  String get income_type => 'ఆదాయం రకం';
 
   @override
   String get expense_type => 'ఖర్చు రకం';
@@ -788,7 +788,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get all_types => 'అన్ని రకాలు';
 
   @override
-  String get edit_view_record => 'రికార్డ్ సవరించండి / చూడండి';
+  String get edit_view_record => 'రికార్డ్ సవరించు/చూడు';
 
   @override
   String get record_deleted => 'రికార్డ్ తొలగించబడింది';
@@ -818,22 +818,22 @@ class AppLocalizationsTe extends AppLocalizations {
   String get select_income_type => 'ఆదాయ రకాన్ని ఎంచుకోండి';
 
   @override
-  String get milk_sale => 'పాలు అమ్మకం';
+  String get milk_sale => 'పాల అమ్మకం';
 
   @override
   String get goat_sale => 'మేక అమ్మకం';
 
   @override
-  String get category_income => 'వర్గం ఆదాయం';
+  String get category_income => 'వర్గ ఆదాయం';
 
   @override
-  String get other_specify => 'ఇతర (ప్రత్యేకంగా పేర్కొనండి)';
+  String get other_specify => 'ఇతర (స్పష్టంగా చెప్పండి)';
 
   @override
-  String get category_expense => 'వర్గం ఖర్చు';
+  String get category_expense => 'వర్గ ఖర్చు';
 
   @override
-  String get other_expense => 'ఇతర (ప్రత్యేకంగా పేర్కొనండి)';
+  String get other_expense => 'ఇతర ఖర్చు';
 
   @override
   String get milk_quantity_sold => 'అమ్మబడిన పాలు పరిమాణం';
@@ -882,7 +882,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get please_select_income_type => 'దయచేసి ఆదాయ రకాన్ని ఎంచుకోండి';
 
   @override
-  String get please_enter_amount => 'దయచేసి మొత్తాన్ని నమోదు చేయండి';
+  String get please_enter_amount => 'దయచేసి మొత్తం నమోదు చేయండి';
 
   @override
   String get please_enter_quantity_price =>
@@ -979,7 +979,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get editCategory => 'వర్గాన్ని సవరించండి';
 
   @override
-  String get save => 'సేవ్ చేయండి';
+  String get save => 'సేవ్ చేయి';
 
   @override
   String get recordSuccessfullyUpdated => 'రికార్డ్ విజయవంతంగా నవీకరించబడింది';
@@ -1556,4 +1556,46 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get alreadyHaveAccount => 'ఇప్పటికే ఖాతా ఉందా?';
+
+  @override
+  String get edit_income => 'ఆదాయం సవరించు';
+
+  @override
+  String get edit_expense => 'ఖర్చు సవరించు';
+
+  @override
+  String get category => 'వర్గం';
+
+  @override
+  String get sub_category => 'ఉప వర్గం';
+
+  @override
+  String get description => 'వివరణ';
+
+  @override
+  String get amount => 'మొత్తం';
+
+  @override
+  String get buyer_name => 'కొనుగోలుదారు పేరు';
+
+  @override
+  String get vendor_name => 'విక్రేత పేరు';
+
+  @override
+  String get buyer_contact => 'కొనుగోలుదారు సంప్రదింపు';
+
+  @override
+  String get vendor_contact => 'విక్రేత సంప్రదింపు';
+
+  @override
+  String get receipt_number => 'రసీదు నంబర్';
+
+  @override
+  String get quantity => 'పరిమాణం';
+
+  @override
+  String get price_per_unit => 'యూనిట్ ధర';
+
+  @override
+  String get please_enter_valid_amount => 'దయచేసి సరైన మొత్తం నమోదు చేయండి';
 }

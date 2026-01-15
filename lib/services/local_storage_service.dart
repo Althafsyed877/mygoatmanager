@@ -121,7 +121,7 @@ Future<void> addOrUpdateMilkRecord(MilkRecord record) async {
 }
 
   // ========== TRANSACTIONS ==========
- Future<List<Transaction>> getTransactions() async {
+  Future<List<Transaction>> getTransactions() async {
     final prefs = await _prefs;
     final transactionsData = prefs.getString('transactions');
     
@@ -131,27 +131,23 @@ Future<void> addOrUpdateMilkRecord(MilkRecord record) async {
     
     try {
       final List<dynamic> jsonList = jsonDecode(transactionsData);
-      return jsonList.map((json) => Transaction.fromJson(json)).toList();
+      final transactions = <Transaction>[];
+      
+      for (var json in jsonList) {
+        try {
+          final transaction = Transaction.fromJson(Map<String, dynamic>.from(json));
+          transactions.add(transaction);
+        } catch (e) {
+          print('Error parsing single transaction: $e');
+          print('Problematic JSON: $json');
+        }
+      }
+      
+      return transactions;
     } catch (e) {
       print('Error parsing transactions from local storage: $e');
       return [];
     }
-  }
-
-// Get incomes only
-  Future<List<Transaction>> getIncomes() async {
-    final transactions = await getTransactions();
-    return transactions
-        .where((t) => t.type == TransactionType.income)
-        .toList();
-  }
-
-  // Get expenses only
-  Future<List<Transaction>> getExpenses() async {
-    final transactions = await getTransactions();
-    return transactions
-        .where((t) => t.type == TransactionType.expense)
-        .toList();
   }
 
   // Save all transactions
@@ -159,36 +155,21 @@ Future<void> addOrUpdateMilkRecord(MilkRecord record) async {
     final prefs = await _prefs;
     final transactionsJson = transactions.map((t) => t.toJson()).toList();
     await prefs.setString('transactions', jsonEncode(transactionsJson));
+    print('Saved ${transactions.length} transactions to storage');
   }
 
-  Future<void> saveExpenses(List<Map<String, dynamic>> expenses) async {
-    final prefs = await _prefs;
-    await prefs.setString('saved_expenses', jsonEncode(expenses));
-  }
-  Future<void> saveIncomes(List<Map<String, dynamic>> incomes) async {
-    final prefs = await _prefs;
-    await prefs.setString('saved_incomes', jsonEncode(incomes));
-  }
   // Add or update a transaction
   Future<void> addOrUpdateTransaction(Transaction transaction) async {
     final transactions = await getTransactions();
     
-    // If transaction has ID, update existing, otherwise add new
-    if (transaction.id != null) {
-      final index = transactions.indexWhere((t) => t.id == transaction.id);
-      if (index >= 0) {
-        transactions[index] = transaction;
-      } else {
-        transactions.add(transaction);
-      }
+    // Generate a unique ID if not present
+    if (transaction.id == null) {
+      final maxId = transactions.fold<int>(0, (max, t) => t.id != null && t.id! > max ? t.id! : max);
+      // Create a new transaction with ID - you need to add copyWith method to Transaction model
+      final transactionWithId = transaction.copyWith(id: maxId + 1);
+      transactions.add(transactionWithId);
     } else {
-      // For new transactions, check by date, type, amount
-      final index = transactions.indexWhere((t) =>
-          t.transactionDate == transaction.transactionDate &&
-          t.type == transaction.type &&
-          t.amount == transaction.amount &&
-          (t.category == transaction.category || t.subCategory == transaction.subCategory));
-      
+      final index = transactions.indexWhere((t) => t.id == transaction.id);
       if (index >= 0) {
         transactions[index] = transaction;
       } else {
@@ -197,6 +178,99 @@ Future<void> addOrUpdateMilkRecord(MilkRecord record) async {
     }
     
     await saveTransactions(transactions);
+  }
+
+  // For backward compatibility during transition
+  Future<void> migrateAndConsolidateTransactions() async {
+    final prefs = await _prefs;
+    
+    // First, get transactions from new storage
+    final newTransactions = await getTransactions();
+    
+    // Get old incomes and expenses
+    final oldIncomesJson = prefs.getString('saved_incomes');
+    final oldExpensesJson = prefs.getString('saved_expenses');
+    
+    List<Transaction> allTransactions = [...newTransactions];
+    
+    // Migrate old incomes
+    if (oldIncomesJson != null && oldIncomesJson.isNotEmpty) {
+      try {
+        final List<dynamic> jsonList = jsonDecode(oldIncomesJson);
+        for (final json in jsonList) {
+          try {
+            final map = Map<String, dynamic>.from(json);
+            map['kind'] = 'income'; // Ensure kind is set
+            final transaction = Transaction.fromUIMap(map);
+            
+            // Check if this transaction already exists
+            final exists = allTransactions.any((t) =>
+                t.type == transaction.type &&
+                t.amount == transaction.amount &&
+                t.transactionDate == transaction.transactionDate &&
+                t.category == transaction.category);
+            
+            if (!exists) {
+              allTransactions.add(transaction);
+            }
+          } catch (e) {
+            print('Error migrating old income: $e');
+          }
+        }
+        
+        // Remove old incomes after migration
+        await prefs.remove('saved_incomes');
+      } catch (e) {
+        print('Error parsing old incomes: $e');
+      }
+    }
+    
+    // Migrate old expenses
+    if (oldExpensesJson != null && oldExpensesJson.isNotEmpty) {
+      try {
+        final List<dynamic> jsonList = jsonDecode(oldExpensesJson);
+        for (final json in jsonList) {
+          try {
+            final map = Map<String, dynamic>.from(json);
+            map['kind'] = 'expense'; // Ensure kind is set
+            final transaction = Transaction.fromUIMap(map);
+            
+            // Check if this transaction already exists
+            final exists = allTransactions.any((t) =>
+                t.type == transaction.type &&
+                t.amount == transaction.amount &&
+                t.transactionDate == transaction.transactionDate &&
+                t.category == transaction.category);
+            
+            if (!exists) {
+              allTransactions.add(transaction);
+            }
+          } catch (e) {
+            print('Error migrating old expense: $e');
+          }
+        }
+        
+        // Remove old expenses after migration
+        await prefs.remove('saved_expenses');
+      } catch (e) {
+        print('Error parsing old expenses: $e');
+      }
+    }
+    
+    // Save all consolidated transactions
+    if (allTransactions.isNotEmpty) {
+      // Assign IDs if missing
+      var nextId = 1;
+      final transactionsWithIds = allTransactions.map((t) {
+        if (t.id == null) {
+          return t.copyWith(id: nextId++);
+        }
+        return t;
+      }).toList();
+      
+      await saveTransactions(transactionsWithIds);
+      print('Migrated and consolidated ${allTransactions.length} transactions');
+    }
   }
 
   // Delete transaction
@@ -205,66 +279,32 @@ Future<void> addOrUpdateMilkRecord(MilkRecord record) async {
     transactions.removeWhere((t) => t.id == id);
     await saveTransactions(transactions);
   }
- // Backward compatibility: Convert old incomes/expenses to new Transaction format
-  Future<void> migrateOldTransactions() async {
-    final prefs = await _prefs;
-    
-    // Get old data
-    final oldIncomes = prefs.getString('saved_incomes');
-    final oldExpenses = prefs.getString('saved_expenses');
-    
-    if ((oldIncomes == null || oldIncomes.isEmpty) && 
-        (oldExpenses == null || oldExpenses.isEmpty)) {
-      return; // No old data to migrate
-    }
-    
-    final List<Transaction> allTransactions = [];
-    
-    // Migrate old incomes
-    if (oldIncomes != null && oldIncomes.isNotEmpty) {
-      try {
-        final List<dynamic> jsonList = jsonDecode(oldIncomes);
-        for (final json in jsonList) {
-          final map = Map<String, dynamic>.from(json);
-          final transaction = Transaction.fromUIMap(map);
-          allTransactions.add(transaction);
-        }
-      } catch (e) {
-        print('Error migrating old incomes: $e');
-      }
-    }
-    
-    // Migrate old expenses
-    if (oldExpenses != null && oldExpenses.isNotEmpty) {
-      try {
-        final List<dynamic> jsonList = jsonDecode(oldExpenses);
-        for (final json in jsonList) {
-          final map = Map<String, dynamic>.from(json);
-          final transaction = Transaction.fromUIMap(map);
-          allTransactions.add(transaction);
-        }
-      } catch (e) {
-        print('Error migrating old expenses: $e');
-      }
-    }
 
-    // Save as new format
-    if (allTransactions.isNotEmpty) {
-      await saveTransactions(allTransactions);
-      
-      // Optionally remove old data after migration
-      // await prefs.remove('saved_incomes');
-      // await prefs.remove('saved_expenses');
-    }
-  }
-    // Keep old methods for backward compatibility during transition
+  // DEPRECATED - Remove these old methods or update them to use new system
   Future<void> saveIncomesOld(List<Map<String, dynamic>> incomes) async {
-    final prefs = await _prefs;
-    await prefs.setString('saved_incomes', jsonEncode(incomes));
+    // This should now convert to Transaction format
+    final transactions = incomes.map((map) {
+      map['kind'] = 'income';
+      return Transaction.fromUIMap(map);
+    }).toList();
+    
+    await addMultipleTransactions(transactions);
   }
+  
   Future<void> saveExpensesOld(List<Map<String, dynamic>> expenses) async {
-    final prefs = await _prefs;
-    await prefs.setString('saved_expenses', jsonEncode(expenses));
+    // This should now convert to Transaction format
+    final transactions = expenses.map((map) {
+      map['kind'] = 'expense';
+      return Transaction.fromUIMap(map);
+    }).toList();
+    
+    await addMultipleTransactions(transactions);
+  }
+  
+  Future<void> addMultipleTransactions(List<Transaction> transactions) async {
+    final existingTransactions = await getTransactions();
+    existingTransactions.addAll(transactions);
+    await saveTransactions(existingTransactions);
   }
 
   // ========== SYNC STATUS ==========

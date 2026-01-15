@@ -201,7 +201,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get breedOptional => 'नस्ल (वैकल्पिक)';
 
   @override
-  String get clear => 'साफ करें';
+  String get clear => 'साफ़ करें';
 
   @override
   String get takePhoto => 'फोटो लें';
@@ -389,7 +389,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get breedOptional2 => 'नस्ल (वैकल्पिक)';
 
   @override
-  String get selectObtained => 'चुनें कि बकरी कैसे प्राप्त हुई. *';
+  String get selectObtained => ' बकरी कैसे प्राप्त की गई. *';
 
   @override
   String get motherTagLabel => 'माँ का टैग नं.';
@@ -568,7 +568,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get all => 'सभी';
 
   @override
-  String get to => 'से';
+  String get to => 'तक';
 
   @override
   String get searchEventsHint => 'घटनाएं खोजें...';
@@ -586,7 +586,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get customDateRange => 'कस्टम तिथि सीमा';
 
   @override
-  String get from => 'से:';
+  String get from => 'से';
 
   @override
   String get selectDate => 'तिथि चुनें';
@@ -747,10 +747,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get search_transactions => 'लेन-देन खोजें';
 
   @override
-  String get search_by_description => 'विवरण, राशि द्वारा खोजें...';
+  String get search_by_description => 'विवरण द्वारा खोजें';
 
   @override
-  String get filter_by_date => 'तिथि द्वारा फ़िल्टर करें';
+  String get filter_by_date => 'तिथि से फ़िल्टर करें';
 
   @override
   String get custom_date_range => 'कस्टम तिथि सीमा';
@@ -770,31 +770,31 @@ class AppLocalizationsHi extends AppLocalizations {
   String get export_pdf => 'PDF निर्यात करें';
 
   @override
-  String get income_type => 'आय प्रकार';
+  String get income_type => 'आय का प्रकार';
 
   @override
-  String get expense_type => 'व्यय प्रकार';
+  String get expense_type => 'व्यय का प्रकार';
 
   @override
-  String get filter_by_income_type => 'आय प्रकार द्वारा फ़िल्टर करें';
+  String get filter_by_income_type => 'आय प्रकार से फ़िल्टर करें';
 
   @override
-  String get filter_by_expense_type => 'व्यय प्रकार द्वारा फ़िल्टर करें';
+  String get filter_by_expense_type => 'व्यय प्रकार से फ़िल्टर करें';
 
   @override
   String get all_types => 'सभी प्रकार';
 
   @override
-  String get edit_view_record => 'रिकॉर्ड संपादित करें / देखें';
+  String get edit_view_record => 'रिकॉर्ड संपादित/देखें';
 
   @override
-  String get record_deleted => 'रिकॉर्ड हटा दिया गया';
+  String get record_deleted => 'रिकॉर्ड हटाया गया';
 
   @override
-  String get income_updated => 'आय अपडेट हुई';
+  String get income_updated => 'आय अपडेट की गई';
 
   @override
-  String get expense_updated => 'व्यय अपडेट हुआ';
+  String get expense_updated => 'व्यय अपडेट किया गया';
 
   @override
   String get income_saved => 'आय सहेजी गई';
@@ -830,7 +830,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get category_expense => 'श्रेणी व्यय';
 
   @override
-  String get other_expense => 'अन्य (निर्दिष्ट करें)';
+  String get other_expense => 'अन्य व्यय';
 
   @override
   String get milk_quantity_sold => 'बिके हुए दूध की मात्रा';
@@ -903,7 +903,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get please_enter_name_of_expense => 'कृपया व्यय नाम दर्ज करें';
 
   @override
-  String get please_select_category => 'कृपया श्रेणी चुनें';
+  String get please_select_category => 'कृपया एक श्रेणी चुनें';
 
   @override
   String get how_much_did_you_spend => 'आपने कितना खर्च किया?';
@@ -1557,4 +1557,46 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get alreadyHaveAccount => 'पहले से ही खाता है?';
+
+  @override
+  String get edit_income => 'आय संपादित करें';
+
+  @override
+  String get edit_expense => 'व्यय संपादित करें';
+
+  @override
+  String get category => 'श्रेणी';
+
+  @override
+  String get sub_category => 'उप श्रेणी';
+
+  @override
+  String get description => 'विवरण';
+
+  @override
+  String get amount => 'राशि';
+
+  @override
+  String get buyer_name => 'खरीदार का नाम';
+
+  @override
+  String get vendor_name => 'विक्रेता का नाम';
+
+  @override
+  String get buyer_contact => 'खरीदार का संपर्क';
+
+  @override
+  String get vendor_contact => 'विक्रेता का संपर्क';
+
+  @override
+  String get receipt_number => 'रसीद नंबर';
+
+  @override
+  String get quantity => 'मात्रा';
+
+  @override
+  String get price_per_unit => 'प्रति इकाई मूल्य';
+
+  @override
+  String get please_enter_valid_amount => 'कृपया एक वैध राशि दर्ज करें';
 }

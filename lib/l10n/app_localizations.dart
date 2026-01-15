@@ -857,7 +857,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectObtained.
   ///
   /// In en, this message translates to:
-  /// **'Select how the goat was obtained. *'**
+  /// **' How the goat was obtained. *'**
   String get selectObtained;
 
   /// No description provided for @motherTagLabel.
@@ -1211,7 +1211,7 @@ abstract class AppLocalizations {
   /// No description provided for @to.
   ///
   /// In en, this message translates to:
-  /// **'To:'**
+  /// **'To'**
   String get to;
 
   /// No description provided for @searchEventsHint.
@@ -1247,7 +1247,7 @@ abstract class AppLocalizations {
   /// No description provided for @from.
   ///
   /// In en, this message translates to:
-  /// **'From:'**
+  /// **'From'**
   String get from;
 
   /// No description provided for @selectDate.
@@ -1565,7 +1565,7 @@ abstract class AppLocalizations {
   /// No description provided for @search_by_description.
   ///
   /// In en, this message translates to:
-  /// **'Search by description, amount...'**
+  /// **'Search by description'**
   String get search_by_description;
 
   /// No description provided for @filter_by_date.
@@ -1601,19 +1601,19 @@ abstract class AppLocalizations {
   /// No description provided for @export_pdf.
   ///
   /// In en, this message translates to:
-  /// **'Export Pdf'**
+  /// **'Export PDF'**
   String get export_pdf;
 
   /// No description provided for @income_type.
   ///
   /// In en, this message translates to:
-  /// **'Income type'**
+  /// **'Income Type'**
   String get income_type;
 
   /// No description provided for @expense_type.
   ///
   /// In en, this message translates to:
-  /// **'Expense type'**
+  /// **'Expense Type'**
   String get expense_type;
 
   /// No description provided for @filter_by_income_type.
@@ -1637,7 +1637,7 @@ abstract class AppLocalizations {
   /// No description provided for @edit_view_record.
   ///
   /// In en, this message translates to:
-  /// **'Edit / View record'**
+  /// **'Edit/View Record'**
   String get edit_view_record;
 
   /// No description provided for @record_deleted.
@@ -1727,7 +1727,7 @@ abstract class AppLocalizations {
   /// No description provided for @other_expense.
   ///
   /// In en, this message translates to:
-  /// **'Other (specify)'**
+  /// **'Other Expense'**
   String get other_expense;
 
   /// No description provided for @milk_quantity_sold.
@@ -3133,6 +3133,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Already have an account?'**
   String get alreadyHaveAccount;
+
+  /// No description provided for @edit_income.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Income'**
+  String get edit_income;
+
+  /// No description provided for @edit_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Expense'**
+  String get edit_expense;
+
+  /// No description provided for @category.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get category;
+
+  /// No description provided for @sub_category.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub Category'**
+  String get sub_category;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amount;
+
+  /// No description provided for @buyer_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer Name'**
+  String get buyer_name;
+
+  /// No description provided for @vendor_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Vendor Name'**
+  String get vendor_name;
+
+  /// No description provided for @buyer_contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer Contact'**
+  String get buyer_contact;
+
+  /// No description provided for @vendor_contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Vendor Contact'**
+  String get vendor_contact;
+
+  /// No description provided for @receipt_number.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt Number'**
+  String get receipt_number;
+
+  /// No description provided for @quantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get quantity;
+
+  /// No description provided for @price_per_unit.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per unit'**
+  String get price_per_unit;
+
+  /// No description provided for @please_enter_valid_amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid amount'**
+  String get please_enter_valid_amount;
 }
 
 class _AppLocalizationsDelegate

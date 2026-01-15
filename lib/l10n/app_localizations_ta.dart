@@ -9,7 +9,7 @@ class AppLocalizationsTa extends AppLocalizations {
   AppLocalizationsTa([String locale = 'ta']) : super(locale);
 
   @override
-  String get appTitle => 'என் ஆடு மேலாளர்';
+  String get appTitle => 'மை கோட் மேனேஜர்';
 
   @override
   String get selectLanguage => 'மொழியைத் தேர்ந்தெடுக்கவும்';
@@ -24,7 +24,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get cancel => 'ரத்து செய்';
 
   @override
-  String get delete => 'நீக்கு';
+  String get delete => 'அழி';
 
   @override
   String get languageChangedTo => 'மொழி மாற்றப்பட்டது';
@@ -205,7 +205,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get breedOptional => 'இனம் (விருப்பத்தேர்வு)';
 
   @override
-  String get clear => 'தெளிவாக்கு';
+  String get clear => 'துடை';
 
   @override
   String get takePhoto => 'புகைப்படம் எடுக்கவும்';
@@ -393,8 +393,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get breedOptional2 => 'இனம் (விருப்பத்தேர்வு)';
 
   @override
-  String get selectObtained =>
-      'ஆடு எவ்வாறு பெறப்பட்டது என்பதைத் தேர்ந்தெடுக்கவும். *';
+  String get selectObtained => ' வெள்ளாடு எவ்வாறு பெறப்பட்டது. *';
 
   @override
   String get motherTagLabel => 'தாயின் டேக் எண்.';
@@ -575,7 +574,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get all => 'அனைத்தும்';
 
   @override
-  String get to => 'க்கு';
+  String get to => 'வரை';
 
   @override
   String get searchEventsHint => 'நிகழ்வுகளைத் தேடுங்கள்...';
@@ -593,7 +592,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get customDateRange => 'தனிபயன் தேதி வரம்பு';
 
   @override
-  String get from => 'இருந்து:';
+  String get from => 'இருந்து';
 
   @override
   String get selectDate => 'தேதியைத் தேர்ந்தெடுக்கவும்';
@@ -753,16 +752,16 @@ class AppLocalizationsTa extends AppLocalizations {
   String get more_options => 'மேலும் விருப்பங்கள்';
 
   @override
-  String get search_transactions => 'பரிவர்த்தனைகளைத் தேடுங்கள்';
+  String get search_transactions => 'பரிவர்த்தனைகளை தேடு';
 
   @override
-  String get search_by_description => 'விளக்கம், தொகை மூலம் தேடுங்கள்...';
+  String get search_by_description => 'விளக்கத்தின் மூலம் தேடு';
 
   @override
-  String get filter_by_date => 'தேதியால் வடிகட்டவும்';
+  String get filter_by_date => 'தேதியால் வடிகட்டு';
 
   @override
-  String get custom_date_range => 'தனிபயன் தேதி வரம்பு';
+  String get custom_date_range => 'தனிப்பயன் தேதி வரம்பு';
 
   @override
   String get custom_range => 'தனிபயன் வரம்பு';
@@ -776,7 +775,7 @@ class AppLocalizationsTa extends AppLocalizations {
       'தேர்ந்தெடுக்கப்பட்ட தேதி வரம்பிற்கு காண்பிக்க செலவுகள் இல்லை.';
 
   @override
-  String get export_pdf => 'PDF ஏற்றுமதி செய்யவும்';
+  String get export_pdf => 'PDF ஏற்றுமதி செய்';
 
   @override
   String get income_type => 'வருமான வகை';
@@ -785,16 +784,16 @@ class AppLocalizationsTa extends AppLocalizations {
   String get expense_type => 'செலவு வகை';
 
   @override
-  String get filter_by_income_type => 'வருமான வகையால் வடிகட்டவும்';
+  String get filter_by_income_type => 'வருமான வகையால் வடிகட்டு';
 
   @override
-  String get filter_by_expense_type => 'செலவு வகையால் வடிகட்டவும்';
+  String get filter_by_expense_type => 'செலவு வகையால் வடிகட்டு';
 
   @override
   String get all_types => 'அனைத்து வகைகள்';
 
   @override
-  String get edit_view_record => 'பதிவைத் திருத்து / காண்க';
+  String get edit_view_record => 'பதிவை திருத்து/காண்க';
 
   @override
   String get record_deleted => 'பதிவு நீக்கப்பட்டது';
@@ -833,13 +832,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get category_income => 'வகை வருமானம்';
 
   @override
-  String get other_specify => 'மற்றவை (குறிப்பிடவும்)';
+  String get other_specify => 'மற்ற (குறிப்பிடவும்)';
 
   @override
   String get category_expense => 'வகை செலவு';
 
   @override
-  String get other_expense => 'மற்றவை (குறிப்பிடவும்)';
+  String get other_expense => 'மற்ற செலவு';
 
   @override
   String get milk_quantity_sold => 'விற்கப்பட்ட பாலின் அளவு';
@@ -918,7 +917,8 @@ class AppLocalizationsTa extends AppLocalizations {
       'தயவு செய்து செலவின் பெயரை உள்ளிடவும்';
 
   @override
-  String get please_select_category => 'தயவு செய்து வகையைத் தேர்ந்தெடுக்கவும்';
+  String get please_select_category =>
+      'தயவு செய்து ஒரு வகையைத் தேர்ந்தெடுக்கவும்';
 
   @override
   String get how_much_did_you_spend => 'நீங்கள் எவ்வளவு செலவு செய்தீர்கள்?';
@@ -991,7 +991,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get editCategory => 'வகையைத் திருத்தவும்';
 
   @override
-  String get save => 'சேமிக்கவும்';
+  String get save => 'சேமி';
 
   @override
   String get recordSuccessfullyUpdated =>
@@ -1577,4 +1577,47 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get alreadyHaveAccount => 'ஏற்கனவே கணக்கு உள்ளதா?';
+
+  @override
+  String get edit_income => 'வருமானத்தை திருத்து';
+
+  @override
+  String get edit_expense => 'செலவை திருத்து';
+
+  @override
+  String get category => 'வகை';
+
+  @override
+  String get sub_category => 'துணை வகை';
+
+  @override
+  String get description => 'விளக்கம்';
+
+  @override
+  String get amount => 'தொகை';
+
+  @override
+  String get buyer_name => 'வாங்குபவர் பெயர்';
+
+  @override
+  String get vendor_name => 'விற்பனையாளர் பெயர்';
+
+  @override
+  String get buyer_contact => 'வாங்குபவர் தொடர்பு';
+
+  @override
+  String get vendor_contact => 'விற்பனையாளர் தொடர்பு';
+
+  @override
+  String get receipt_number => 'ரசீது எண்';
+
+  @override
+  String get quantity => 'அளவு';
+
+  @override
+  String get price_per_unit => 'அலகு விலை';
+
+  @override
+  String get please_enter_valid_amount =>
+      'தயவு செய்து செல்லுபடியாகும் தொகையை உள்ளிடவும்';
 }

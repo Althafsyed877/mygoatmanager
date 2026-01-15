@@ -388,7 +388,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get breedOptional2 => 'Breed (optional)';
 
   @override
-  String get selectObtained => 'Select how the goat was obtained. *';
+  String get selectObtained => ' How the goat was obtained. *';
 
   @override
   String get motherTagLabel => 'Mothers tag no.';
@@ -567,7 +567,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get all => 'All';
 
   @override
-  String get to => 'To:';
+  String get to => 'To';
 
   @override
   String get searchEventsHint => 'Search events...';
@@ -585,7 +585,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customDateRange => 'Custom Date Range';
 
   @override
-  String get from => 'From:';
+  String get from => 'From';
 
   @override
   String get selectDate => 'Select Date';
@@ -746,7 +746,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get search_transactions => 'Search Transactions';
 
   @override
-  String get search_by_description => 'Search by description, amount...';
+  String get search_by_description => 'Search by description';
 
   @override
   String get filter_by_date => 'Filter by Date';
@@ -766,13 +766,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'There are no expenses to display\nfor the selected date range.';
 
   @override
-  String get export_pdf => 'Export Pdf';
+  String get export_pdf => 'Export PDF';
 
   @override
-  String get income_type => 'Income type';
+  String get income_type => 'Income Type';
 
   @override
-  String get expense_type => 'Expense type';
+  String get expense_type => 'Expense Type';
 
   @override
   String get filter_by_income_type => 'Filter by Income Type';
@@ -784,7 +784,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get all_types => 'All Types';
 
   @override
-  String get edit_view_record => 'Edit / View record';
+  String get edit_view_record => 'Edit/View Record';
 
   @override
   String get record_deleted => 'Record deleted';
@@ -829,7 +829,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get category_expense => 'Category Expense';
 
   @override
-  String get other_expense => 'Other (specify)';
+  String get other_expense => 'Other Expense';
 
   @override
   String get milk_quantity_sold => 'Milk quantity sold';
@@ -1553,4 +1553,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alreadyHaveAccount => 'Already have an account?';
+
+  @override
+  String get edit_income => 'Edit Income';
+
+  @override
+  String get edit_expense => 'Edit Expense';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get sub_category => 'Sub Category';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get buyer_name => 'Buyer Name';
+
+  @override
+  String get vendor_name => 'Vendor Name';
+
+  @override
+  String get buyer_contact => 'Buyer Contact';
+
+  @override
+  String get vendor_contact => 'Vendor Contact';
+
+  @override
+  String get receipt_number => 'Receipt Number';
+
+  @override
+  String get quantity => 'Quantity';
+
+  @override
+  String get price_per_unit => 'Price per unit';
+
+  @override
+  String get please_enter_valid_amount => 'Please enter a valid amount';
 }

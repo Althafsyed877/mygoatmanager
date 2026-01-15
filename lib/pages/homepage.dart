@@ -1079,15 +1079,7 @@ Future<void> _downloadDataFromServer() async {
         await localStorage.saveMilkRecords(List<MilkRecord>.from(data['milk_records']));
       }
       
-      final localIncomes = await localStorage.getIncomes();
-      if (localIncomes.isEmpty && data['incomes'] != null) {
-        await localStorage.saveIncomes(List<Map<String, dynamic>>.from(data['incomes']));
-      }
       
-      final localExpenses = await localStorage.getExpenses();
-      if (localExpenses.isEmpty && data['expenses'] != null) {
-        await localStorage.saveExpenses(List<Map<String, dynamic>>.from(data['expenses']));
-      }
       
       // Show success message
       if (mounted) {

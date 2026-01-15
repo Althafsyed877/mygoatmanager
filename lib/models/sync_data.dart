@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mygoatmanager/services/api_service.dart';
 import 'package:mygoatmanager/services/local_storage_service.dart';
 import 'package:flutter/foundation.dart';
-import '../models//transaction.dart';
+import '../models/transaction.dart';
 // REMOVE this import since it's unused: import 'package:mygoatmanager/models/milk_record.dart';
 
 class SyncResult {
@@ -168,26 +168,19 @@ class SyncService {
       // ========== 4. SYNC TRANSACTIONS ==========
       try {
         // Migrate old data first
-        await localStorage.migrateOldTransactions();
+       await localStorage.migrateAndConsolidateTransactions();
         
         final localTransactions = await localStorage.getTransactions();
         debugPrint('🔄 Syncing ${localTransactions.length} transactions...');
 
         if (localTransactions.isNotEmpty) {
-          // Convert to old format for current backend compatibility
-          final oldFormatData = localTransactions.map((t) => t.toOldFormat()).toList();
-          
-          // Separate incomes and expenses
-          final incomesData = oldFormatData
-              .where((map) => map['kind'] == 'income')
-              .toList();
-          
-          final expensesData = oldFormatData
-              .where((map) => map['kind'] == 'expense')
-              .toList();
-          
-          debugPrint('   - Incomes: ${incomesData.length}');
-          debugPrint('   - Expenses: ${expensesData.length}');
+       
+        
+       // Debug: Print transaction types
+           final incomeCount = localTransactions.where((t) => t.type == TransactionType.income).length;
+    final expenseCount = localTransactions.where((t) => t.type == TransactionType.expense).length;
+          debugPrint('   - Incomes: ${incomeCount}');
+          debugPrint('   - Expenses: ${expenseCount}');
 
           // Use the combined sync endpoint
           final response = await apiService.syncTransactions(localTransactions);

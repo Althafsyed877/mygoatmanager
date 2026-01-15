@@ -5,6 +5,7 @@ import 'package:mygoatmanager/services/localization_service.dart';
 import 'package:mygoatmanager/services/auth_service.dart';
 import 'pages/homepage.dart';
 import 'pages/auth_page.dart';
+import 'widgets/splash_screen.dart';
 
 
 void main() {
@@ -12,8 +13,10 @@ void main() {
   runApp(const MyApp()); 
 }
 
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -22,6 +25,7 @@ class _MyAppState extends State<MyApp> {
   Locale? _appLocale;
   bool _isAuthenticated = false;
   bool _isLoading = true;
+  bool _showSplash = true;
 
   @override
   void initState() {
@@ -31,9 +35,10 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initializeApp() async {
     try {
+      // Show splash for at least the video duration
+      await Future.delayed(const Duration(milliseconds: 500));
       // Load locale
       final savedLocale = await LocalizationService.getSavedLocale();
-      
       // Check auth
       bool authStatus = false;
       try {
@@ -42,7 +47,6 @@ class _MyAppState extends State<MyApp> {
       } catch (e) {
         authStatus = false;
       }
-      
       if (mounted) {
         setState(() {
           _appLocale = savedLocale ?? const Locale('en');
@@ -70,7 +74,6 @@ class _MyAppState extends State<MyApp> {
     LocalizationService.saveLanguage(newLocale.languageCode, newLocale.countryCode ?? "");
   }
 
-  // **ADD THIS METHOD** - To update auth state after login
   void _updateAuthState(bool isAuthenticated) {
     if (mounted) {
       setState(() {
@@ -81,6 +84,18 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    if (_showSplash) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: SplashScreen(
+          onFinish: () {
+            setState(() {
+              _showSplash = false;
+            });
+          },
+        ),
+      );
+    }
     if (_isLoading) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -107,7 +122,6 @@ class _MyAppState extends State<MyApp> {
         ),
       );
     }
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       locale: _appLocale,
@@ -117,7 +131,6 @@ class _MyAppState extends State<MyApp> {
         Locale('hi'),
         Locale('ta'),
         Locale('kn'),
-        
       ],
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -131,7 +144,6 @@ class _MyAppState extends State<MyApp> {
               onLocaleChanged: _updateLocale,
             )
           : AuthPage(
-              // **PASS CALLBACK** - So auth page can update auth state
               onLoginSuccess: () {
                 _updateAuthState(true);
               },

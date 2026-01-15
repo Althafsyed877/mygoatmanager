@@ -9,7 +9,7 @@ class AppLocalizationsKn extends AppLocalizations {
   AppLocalizationsKn([String locale = 'kn']) : super(locale);
 
   @override
-  String get appTitle => 'ನನ್ನ ಮೇಕೆ ಮ್ಯಾನೇಜರ್';
+  String get appTitle => 'ಮೈ ಗೋಟ್ ಮ್ಯಾನೇಜರ್';
 
   @override
   String get selectLanguage => 'ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ';
@@ -389,7 +389,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get breedOptional2 => 'ಬ್ರೀಡ್ (ಐಚ್ಛಿಕ)';
 
   @override
-  String get selectObtained => 'ಮೇಕೆ ಹೇಗೆ ಪಡೆಯಲ್ಪಟ್ಟಿತು ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ. *';
+  String get selectObtained => 'ಮೇಕೆಯನ್ನು ಹೇಗೆ ಪಡೆಯಲಾಯಿತು. *';
 
   @override
   String get motherTagLabel => 'ತಾಯಿಯ ಟ್ಯಾಗ್ ನಂ.';
@@ -509,7 +509,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get used => 'ಬಳಸಲಾಗಿದೆ';
 
   @override
-  String get notes => 'ನೋಟ್ಸ್';
+  String get notes => 'ಟಿಪ್ಪಣಿಗಳು';
 
   @override
   String get filterByDateRange => 'ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
@@ -570,7 +570,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get all => 'ಎಲ್ಲಾ';
 
   @override
-  String get to => 'ಗೆ';
+  String get to => 'ವರೆಗೆ';
 
   @override
   String get searchEventsHint => 'ಈವೆಂಟ್ಗಳನ್ನು ಹುಡುಕಿ...';
@@ -588,7 +588,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get customDateRange => 'ಕಸ್ಟಮ್ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ';
 
   @override
-  String get from => 'ನಿಂದ:';
+  String get from => 'ಇಂದ';
 
   @override
   String get selectDate => 'ದಿನಾಂಕ ಆಯ್ಕೆಮಾಡಿ';
@@ -746,13 +746,13 @@ class AppLocalizationsKn extends AppLocalizations {
   String get more_options => 'ಹೆಚ್ಚಿನ ಆಯ್ಕೆಗಳು';
 
   @override
-  String get search_transactions => 'ವಹಿವಾಟುಗಳನ್ನು ಹುಡುಕಿ';
+  String get search_transactions => 'ವ್ಯವಹಾರಗಳನ್ನು ಹುಡುಕಿ';
 
   @override
-  String get search_by_description => 'ವಿವರಣೆ, ಮೊತ್ತದ ಮೂಲಕ ಹುಡುಕಿ...';
+  String get search_by_description => 'ವಿವರಣೆಯಿಂದ ಹುಡುಕಿ';
 
   @override
-  String get filter_by_date => 'ದಿನಾಂಕದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filter_by_date => 'ದಿನಾಂಕದಿಂದ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
   String get custom_date_range => 'ಕಸ್ಟಮ್ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ';
@@ -778,31 +778,31 @@ class AppLocalizationsKn extends AppLocalizations {
   String get expense_type => 'ಖರ್ಚು ಪ್ರಕಾರ';
 
   @override
-  String get filter_by_income_type => 'ಆದಾಯ ಪ್ರಕಾರದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filter_by_income_type => 'ಆದಾಯ ಪ್ರಕಾರದಿಂದ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
-  String get filter_by_expense_type => 'ಖರ್ಚು ಪ್ರಕಾರದ ಮೂಲಕ ಫಿಲ್ಟರ್ ಮಾಡಿ';
+  String get filter_by_expense_type => 'ಖರ್ಚು ಪ್ರಕಾರದಿಂದ ಫಿಲ್ಟರ್ ಮಾಡಿ';
 
   @override
   String get all_types => 'ಎಲ್ಲಾ ಪ್ರಕಾರಗಳು';
 
   @override
-  String get edit_view_record => 'ರೆಕಾರ್ಡ್ ಸಂಪಾದಿಸಿ / ನೋಡಿ';
+  String get edit_view_record => 'ರೆಕಾರ್ಡ್ ಸಂಪಾದಿಸಿ/ನೋಡಿ';
 
   @override
-  String get record_deleted => 'ರೆಕಾರ್ಡ್ ಅಳಿಸಲ್ಪಟ್ಟಿದೆ';
+  String get record_deleted => 'ರೆಕಾರ್ಡ್ ಅಳಿಸಲಾಗಿದೆ';
 
   @override
-  String get income_updated => 'ಆದಾಯ ನವೀಕರಿಸಲ್ಪಟ್ಟಿದೆ';
+  String get income_updated => 'ಆದಾಯ ನವೀಕರಿಸಲಾಗಿದೆ';
 
   @override
-  String get expense_updated => 'ಖರ್ಚು ನವೀಕರಿಸಲ್ಪಟ್ಟಿದೆ';
+  String get expense_updated => 'ಖರ್ಚು ನವೀಕರಿಸಲಾಗಿದೆ';
 
   @override
-  String get income_saved => 'ಆದಾಯ ಸೇವ್ ಆಯಿತು';
+  String get income_saved => 'ಆದಾಯ ಉಳಿಸಲಾಗಿದೆ';
 
   @override
-  String get expense_saved => 'ಖರ್ಚು ಸೇವ್ ಆಯಿತು';
+  String get expense_saved => 'ಖರ್ಚು ಉಳಿಸಲಾಗಿದೆ';
 
   @override
   String get add_income => 'ಆದಾಯ ಸೇರಿಸಿ';
@@ -832,7 +832,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get category_expense => 'ವರ್ಗ ಖರ್ಚು';
 
   @override
-  String get other_expense => 'ಇತರೆ (ನಿರ್ದಿಷ್ಟಪಡಿಸಿ)';
+  String get other_expense => 'ಇತರೆ ಖರ್ಚು';
 
   @override
   String get milk_quantity_sold => 'ಮಾರಾಟವಾದ ಹಾಲಿನ ಪ್ರಮಾಣ';
@@ -908,7 +908,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get please_enter_name_of_expense => 'ದಯವಿಟ್ಟು ಖರ್ಚಿನ ಹೆಸರನ್ನು ನಮೂದಿಸಿ';
 
   @override
-  String get please_select_category => 'ದಯವಿಟ್ಟು ವರ್ಗವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
+  String get please_select_category => 'ದಯವಿಟ್ಟು ವರ್ಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ';
 
   @override
   String get how_much_did_you_spend => 'ನೀವು ಎಷ್ಟು ಖರ್ಚು ಮಾಡಿದಿರಿ?';
@@ -980,7 +980,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get editCategory => 'ವರ್ಗವನ್ನು ಸಂಪಾದಿಸಿ';
 
   @override
-  String get save => 'ಸೇವ್ ಮಾಡಿ';
+  String get save => 'ಉಳಿಸಿ';
 
   @override
   String get recordSuccessfullyUpdated =>
@@ -1557,4 +1557,46 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get alreadyHaveAccount => 'ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ?';
+
+  @override
+  String get edit_income => 'ಆದಾಯ ಸಂಪಾದಿಸಿ';
+
+  @override
+  String get edit_expense => 'ಖರ್ಚು ಸಂಪಾದಿಸಿ';
+
+  @override
+  String get category => 'ವರ್ಗ';
+
+  @override
+  String get sub_category => 'ಉಪ ವರ್ಗ';
+
+  @override
+  String get description => 'ವಿವರಣೆ';
+
+  @override
+  String get amount => 'ಮೊತ್ತ';
+
+  @override
+  String get buyer_name => 'ಖರೀದಿದಾರರ ಹೆಸರು';
+
+  @override
+  String get vendor_name => 'ವಿಕ್ರೇತ ಹೆಸರು';
+
+  @override
+  String get buyer_contact => 'ಖರೀದಿದಾರರ ಸಂಪರ್ಕ';
+
+  @override
+  String get vendor_contact => 'ವಿಕ್ರೇತ ಸಂಪರ್ಕ';
+
+  @override
+  String get receipt_number => 'ರಶೀದಿ ಸಂಖ್ಯೆ';
+
+  @override
+  String get quantity => 'ಪರಿಮಾಣ';
+
+  @override
+  String get price_per_unit => 'ಯೂನಿಟ್ ದರ';
+
+  @override
+  String get please_enter_valid_amount => 'ದಯವಿಟ್ಟು ಮಾನ್ಯ ಮೊತ್ತವನ್ನು ನಮೂದಿಸಿ';
 }

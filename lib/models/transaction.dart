@@ -64,33 +64,58 @@ class Transaction {
 
   // Factory constructor from JSON (API response)
   factory Transaction.fromJson(Map<String, dynamic> json) {
-    // Handle both new and old field names
-    final typeStr = json['type'] ?? (json['kind'] == 'income' ? 'income' : 'expense');
-    final category = json['category'] ?? json['income_type'] ?? json['expense_type'];
-    final subCategory = json['sub_category'] ?? json['type'];
-    
-    return Transaction(
-      id: json['id'] != null ? int.tryParse(json['id'].toString()) : null,
-      type: typeStr.toString().toLowerCase() == 'income' 
-          ? TransactionType.income 
-          : TransactionType.expense,
-      category: category?.toString(),
-      subCategory: subCategory?.toString(),
-      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
-      description: json['description'] as String?,
-      transactionDate: DateTime.parse(json['transaction_date'] ?? json['date']),
-      contactName: json['contact_name'] ?? json['buyer_name'] ?? json['vendor_name'],
-      contactInfo: json['contact_info'] ?? json['buyer_contact'] ?? json['vendor_contact'],
-      notes: json['notes'] as String?,
-      receiptNumber: json['receipt_number'] ?? json['receipt'],
-      quantity: json['quantity'] != null ? (json['quantity'] as num).toDouble() : null,
-      pricePerUnit: json['price_per_unit'] ?? json['price'] != null 
-          ? (json['price'] as num).toDouble() 
-          : null,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
-    );
+  // SIMPLIFIED VERSION - No boolean parsing
+  String? typeStr;
+  
+  if (json['type'] != null) {
+    typeStr = json['type'].toString();
+  } else if (json['kind'] != null) {
+    typeStr = json['kind'].toString();
+  } else {
+    typeStr = 'expense';
   }
+  
+  // Get amount as double
+  double amount = 0.0;
+  final amountValue = json['amount'];
+  if (amountValue != null) {
+    if (amountValue is int) {
+      amount = amountValue.toDouble();
+    } else if (amountValue is double) {
+      amount = amountValue;
+    } else if (amountValue is String) {
+      amount = double.tryParse(amountValue) ?? 0.0;
+    }
+  }
+  
+  // Get date
+  DateTime date;
+  try {
+    final dateStr = json['transaction_date'] ?? json['date'];
+    if (dateStr is String) {
+      date = DateTime.parse(dateStr);
+    } else {
+      date = DateTime.now();
+    }
+  } catch (e) {
+    date = DateTime.now();
+  }
+  
+  return Transaction(
+    type: typeStr.toLowerCase() == 'income' ? TransactionType.income : TransactionType.expense,
+    category: json['category']?.toString(),
+    subCategory: json['sub_category']?.toString(),
+    amount: amount,
+    description: json['description']?.toString(),
+    transactionDate: date,
+    contactName: json['contact_name']?.toString(),
+    contactInfo: json['contact_info']?.toString(),
+    notes: json['notes']?.toString(),
+    receiptNumber: json['receipt_number']?.toString(),
+    quantity: json['quantity'] != null ? double.tryParse(json['quantity'].toString()) : null,
+    pricePerUnit: json['price_per_unit'] != null ? double.tryParse(json['price_per_unit'].toString()) : null,
+  );
+}
 
   // Convert to JSON for API request
   Map<String, dynamic> toJson() {
@@ -209,4 +234,41 @@ class Transaction {
       pricePerUnit: map['price'] != null ? double.tryParse(map['price'].toString()) : null,
     );
   }
+
+  // Add this to your Transaction model in transaction.dart
+Transaction copyWith({
+  int? id,
+  TransactionType? type,
+  String? category,
+  String? subCategory,
+  double? amount,
+  String? description,
+  DateTime? transactionDate,
+  String? contactName,
+  String? contactInfo,
+  String? notes,
+  String? receiptNumber,
+  double? quantity,
+  double? pricePerUnit,
+  DateTime? createdAt,
+  DateTime? updatedAt,
+}) {
+  return Transaction(
+    id: id ?? this.id,
+    type: type ?? this.type,
+    category: category ?? this.category,
+    subCategory: subCategory ?? this.subCategory,
+    amount: amount ?? this.amount,
+    description: description ?? this.description,
+    transactionDate: transactionDate ?? this.transactionDate,
+    contactName: contactName ?? this.contactName,
+    contactInfo: contactInfo ?? this.contactInfo,
+    notes: notes ?? this.notes,
+    receiptNumber: receiptNumber ?? this.receiptNumber,
+    quantity: quantity ?? this.quantity,
+    pricePerUnit: pricePerUnit ?? this.pricePerUnit,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+}
 }
